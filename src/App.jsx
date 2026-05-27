@@ -1418,7 +1418,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:6}}>✓ Postcode found — data auto-populated</div>
                   <div style={{fontSize:12,color:G.text}}>District: {postcodeData.admin_district} · Region: {postcodeData.region}</div>
                   {competitorList.length>0&&<div style={{fontSize:12,color:G.text,marginTop:3}}>{competitorList.length} nearby competitors found on map</div>}
-                  {planningApps.length>0&&<div style={{fontSize:12,color:planningApps.some(p=>p.risk==="high")?"#d62828":G.orange,marginTop:3,fontWeight:600}}>{planningApps.length} planning application(s) detected nearby</div>}
+                  {planningApps.length>0&&<div style={{fontSize:12,color:planningApps.some(p=>p.risk==="high")?"#d62828":G.orange,marginTop:3,fontWeight:600}}>{planningApps.length} retail planning application(s) detected nearby</div>}
+                  {postcodeData.admin_district&&(
+                    <a
+                      href={`https://www.planningportal.co.uk/find-a-planning-application?postcode=${encodeURIComponent(postcode.trim())}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:10,padding:"8px 14px",background:G.mid,color:"#fff",borderRadius:7,fontSize:13,fontWeight:700,textDecoration:"none"}}
+                    >
+                      Check live planning applications →
+                    </a>
+                  )}
                 </div>
               )}
             </div>
