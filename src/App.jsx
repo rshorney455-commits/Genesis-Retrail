@@ -2105,57 +2105,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>On iPhone: Share then Print. On laptop: Ctrl+P then Save as PDF.</p>
             </div>
 
-            {/* Key term explainers */}
-            <div className="no-print" style={{marginBottom:24}}>
-              <Sub c="What do these figures mean? Tap to expand"/>
-              <Explainer term="EBITDA">
-                <p style={{marginBottom:10}}><strong>EBITDA</strong> stands for <em>Earnings Before Interest, Tax, Depreciation and Amortisation</em>.</p>
-                <p style={{marginBottom:10}}>Think of it as the <strong>trading profit</strong> — what the store earns from its day-to-day operations before you factor in any loan repayments or tax. It tells you whether the business itself works, stripped of financing decisions.</p>
-                <p style={{marginBottom:10}}>This site's EBITDA is <strong style={{color:C.eb>=0?G.mid:"#d62828"}}>{fmt(C.eb)}</strong> ({pct(C.eb/C.ann*100)} of sales).</p>
-                <div style={{background:"#fff",borderRadius:6,padding:"10px 12px",border:"1px solid #e07020",fontSize:12}}>
-                  <div style={{fontWeight:700,marginBottom:4}}>Genesis Retail benchmarks (EBITDA as % of sales):</div>
-                  <div>✦ Above 15% — Excellent</div>
-                  <div>✦ 8–15% — Healthy, well-run store</div>
-                  <div>✦ 5–8% — Acceptable but limited headroom</div>
-                  <div style={{color:"#d62828"}}>✦ Below 5% — Warning: little room for cost overruns</div>
-                  <div style={{color:"#d62828"}}>✦ Negative — The store is losing money before loan repayments even begin</div>
-                </div>
-              </Explainer>
-              <Explainer term="ROI (Return on Investment)">
-                <p style={{marginBottom:10}}><strong>ROI</strong> = Net Profit ÷ Total Capital Invested × 100.</p>
-                <p style={{marginBottom:10}}>For every £100 you invest, how many pounds come back every year as profit?</p>
-                <p style={{marginBottom:10}}>This site: you invest <strong>{fmt(C.ti)}</strong> and generate <strong style={{color:C.nP>=0?G.mid:"#d62828"}}>{fmt(C.nP)}</strong> net profit — giving an ROI of <strong style={{color:VRD.col}}>{pct(C.roi)}</strong>.</p>
-                <div style={{background:"#fff",borderRadius:6,padding:"10px 12px",border:"1px solid #e07020",fontSize:12,marginBottom:8}}>
-                  <div style={{fontWeight:700,marginBottom:4}}>Genesis Retail thresholds:</div>
-                  <div style={{color:G.mid}}>✦ ≥ 20% — Strong Opportunity. Proceed with confidence.</div>
-                  <div style={{color:G.orange}}>✦ 10–20% — Viable. Proceed with care; negotiate costs hard.</div>
-                  <div style={{color:"#c05010"}}>✦ 0–10% — Marginal. Review all assumptions before committing.</div>
-                  <div style={{color:"#d62828"}}>✦ Negative — Not viable on current figures.</div>
-                </div>
-                <p style={{fontSize:12,color:"#888"}}>Context: a UK savings account currently pays ~4–5%. Retail investment carries far more risk and effort, so a return of 15–25%+ is needed to justify it.</p>
-              </Explainer>
-              <Explainer term="Payback Period">
-                <p style={{marginBottom:10}}>How many years until you earn back your total investment from net profits.</p>
-                <p style={{marginBottom:10}}>Formula: Total Investment ÷ Annual Net Profit. This site: <strong style={{color:G.mid}}>{C.pb?C.pb.toFixed(1)+" years":"N/A (loss-making)"}</strong>.</p>
-                <div style={{background:"#fff",borderRadius:6,padding:"10px 12px",border:"1px solid #e07020",fontSize:12}}>
-                  <div style={{color:G.mid}}>✦ Under 4 years — Excellent</div>
-                  <div style={{color:G.mid}}>✦ 4–6 years — Acceptable</div>
-                  <div style={{color:G.orange}}>✦ 6–8 years — Borderline; depends on lease security</div>
-                  <div style={{color:"#d62828"}}>✦ Over 8 years — Generally too risky</div>
-                </div>
-              </Explainer>
-              <Explainer term="Sales per Square Foot">
-                <p style={{marginBottom:10}}>Weekly sales ÷ net selling area. The retail industry's standard measure of space productivity.</p>
-                <p style={{marginBottom:10}}>This site (post-refit): <strong style={{color:G.mid}}>£{C.upliftedSpf.toFixed(2)}/sqft/wk</strong>.</p>
-                <div style={{background:"#fff",borderRadius:6,padding:"10px 12px",border:"1px solid #e07020",fontSize:12}}>
-                  <div style={{color:G.mid}}>✦ £14+ — Outstanding</div>
-                  <div style={{color:G.mid}}>✦ £12–14 — Well-performing</div>
-                  <div style={{color:G.orange}}>✦ £10–12 — Acceptable</div>
-                  <div style={{color:"#c05010"}}>✦ £8–10 — Below average</div>
-                  <div style={{color:"#d62828"}}>✦ Under £8 — Poor; fundamental review needed</div>
-                </div>
-              </Explainer>
-            </div>
+
 
             {/* COVER */}
             <div style={{minHeight:"90vh",display:"flex",flexDirection:"column",borderBottom:"3px solid "+G.mid,marginBottom:28,paddingBottom:32}}>
@@ -2494,6 +2444,25 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </div>
               </div>
             )}
+
+            {/* Glossary — for retailer and bank */}
+            <div className="page-break avoid-break">
+              <PSH c="Glossary — Key Financial Terms"/>
+              {[
+                {term:"EBITDA", full:"Earnings Before Interest, Tax, Depreciation and Amortisation", body:`The trading profit of the store — what it earns from day-to-day operations before loan repayments or tax. If EBITDA is negative the store is losing money before financing is even considered. Genesis Retail benchmark: 8–15% of sales is healthy.`},
+                {term:"ROI — Return on Investment", full:"Net Profit ÷ Total Capital Invested × 100", body:`For every £100 invested, how many pounds are returned as profit each year. Genesis Retail thresholds: ≥20% Strong Opportunity · 10–20% Viable · 0–10% Marginal · Negative Not Viable.`},
+                {term:"Net Profit", full:"What remains after every cost has been deducted", body:`Sales revenue minus cost of goods, rent, rates, staff, utilities, other costs and loan repayments. The money the owner takes home. A well-run convenience store should generate at least 5–8% net margin.`},
+                {term:"Payback Period", full:"Total Investment ÷ Annual Net Profit", body:`How many years until the investment is recovered from profits. Guide: under 4 years = excellent · 4–6 years = acceptable · over 7 years = high risk.`},
+                {term:"Gross Margin", full:"(Sales − Cost of Goods) ÷ Sales × 100", body:`The percentage of each sale retained after paying the supplier. Convenience retail typically runs at 22–30% blended margin. Higher-margin categories (hot beverages 50%+, health & beauty 35%+) should be prioritised in the ranging plan.`},
+                {term:"Sales per Square Foot", full:"Weekly Sales ÷ Net Selling Area", body:`The retail industry's standard measure of space productivity. Benchmarks: £14+ outstanding · £12–14 well-performing · £10–12 acceptable · under £10 below average.`},
+              ].map((g,i)=>(
+                <div key={i} style={{marginBottom:14,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
+                  <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:3}}>{g.term}</div>
+                  <div style={{fontSize:11,color:G.light,fontStyle:"italic",marginBottom:6}}>{g.full}</div>
+                  <div style={{fontSize:13,color:G.text,lineHeight:1.7}}>{g.body}</div>
+                </div>
+              ))}
+            </div>
 
             {/* Disclaimer */}
             <div style={{marginTop:32,paddingTop:16,borderTop:"1px solid "+G.border,fontSize:12,color:G.light,fontStyle:"italic"}}>
