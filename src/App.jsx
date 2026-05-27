@@ -920,17 +920,42 @@ export default function App(){
         if(compList.length>0) setNearestComp(parseFloat(compList[0].distance));
       } catch(e) { /* OSM may be unavailable, silently skip */ }
 
-      // Retail-only planning applications (convenience, supermarket, food retail, change of use to retail/food)
-      const planningFlags = [];
-      if(Math.random()>0.5) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Change of use to A1 convenience store", status:"Application Pending", distance:"0.2 miles", risk:"high"});
-      if(Math.random()>0.6) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New supermarket A1 retail unit 3,500 sqft", status:"Approved", distance:"0.4 miles", risk:"high"});
-      if(Math.random()>0.7) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Supermarket extension 2,000 sqft", status:"Approved", distance:"0.3 miles", risk:"high"});
-      if(Math.random()>0.75) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/COU", desc:"Change of use A5 hot food takeaway to A1 retail", status:"Application Pending", distance:"0.2 miles", risk:"medium"});
-      if(Math.random()>0.8) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New petrol station with convenience forecourt retail", status:"Approved", distance:"0.5 miles", risk:"high"});
-      // Only keep retail-relevant flags
-      const retailKeywords = ["convenience","supermarket","retail","A1","food store","forecourt","off licence","newsagent","express","local"];
-      const filteredFlags = planningFlags.filter(p => retailKeywords.some(k => p.desc.toLowerCase().includes(k.toLowerCase())));
-      setPlanningApps(filteredFlags);
+      // Real planning applications from PlanIt API — retail only
+      try {
+        const retailTerms = "convenience+supermarket+retail+food+store+off+licence+newsagent+forecourt+A1+takeaway";
+        const planItUrl = `https://api.planit.org.uk/v3/applications?lng=${longitude}&lat=${latitude}&radius=800&pg_sz=50&format=json`;
+        const planRes = await fetch(planItUrl);
+        const planJson = await planRes.json();
+        const retailKeywords = ["convenience","supermarket","retail","a1","food store","forecourt","off licence","newsagent","express","local","shop","store","takeaway","restaurant","cafe","hot food","off-licence","alcohol","drinks"];
+        const allApps = planJson.records || [];
+        const filtered = allApps
+          .filter(app => {
+            const desc = (app.description || app.development_type || "").toLowerCase();
+            return retailKeywords.some(k => desc.includes(k));
+          })
+          .slice(0, 8)
+          .map(app => {
+            const desc = app.description || app.development_type || "Planning application";
+            const status = app.status || "Unknown";
+            const ref = app.uid || app.reference || "N/A";
+            // Calculate distance
+            const dlat = (app.lat||latitude) - latitude;
+            const dlng = (app.lng||longitude) - longitude;
+            const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
+            const distMiles = (distM/1609).toFixed(2);
+            const descLower = desc.toLowerCase();
+            const isHighRisk = descLower.includes("supermarket")||descLower.includes("convenience store")||descLower.includes("food store")||descLower.includes("retail unit");
+            return {
+              ref, desc: desc.length > 120 ? desc.substring(0,120)+"..." : desc,
+              status, distance: distMiles+" miles",
+              risk: isHighRisk ? "high" : "medium"
+            };
+          });
+        setPlanningApps(filtered);
+      } catch(e) {
+        // PlanIt unavailable — set empty
+        setPlanningApps([]);
+      }
 
       // VOA rates estimate based on sqft and region
       const rateMultiplier = region.includes("london") ? 55 : region.includes("south east") ? 42 : 32;
