@@ -72,7 +72,7 @@ const AGE_BANDS   = ["Under 18","18-24","25-34","35-44","45-54","55-64","65+"];
 const EMPLOYMENTS = ["Employed Full-Time","Employed Part-Time","Self-Employed","Unemployed","Retired","Student"];
 const HOUSINGS    = ["Owner Occupied","Private Rented","Social / Council","Other"];
 const TRENDS      = ["Rising Rapidly","Rising Steadily","Stable","Declining Slightly","Declining Rapidly"];
-const TCOLORS     = {"Rising Rapidly":"#2d6a4f","Rising Steadily":"#40916c","Stable":"#e07020","Declining Slightly":"#c05010","Declining Rapidly":"#d62828"};
+const TCOLORS     = {"Rising Rapidly":"#1e3a8a","Rising Steadily":"#2d55c8","Stable":"#b8860b","Declining Slightly":"#c05010","Declining Rapidly":"#d62828"};
 const FHOURS      = ["6-8am","8-10am","10-12pm","12-2pm","2-4pm","4-6pm","6-8pm","8-10pm"];
 const SBANDS      = [{label:"Under £5",key:"u5"},{label:"£5-£9.99",key:"s5"},{label:"£10-£14.99",key:"s10"},{label:"£15-£19.99",key:"s15"},{label:"£20+",key:"s20"}];
 const MISSIONS    = ["Top-up","Grab and Go","Treat or Impulse","Food to Go","Big Shop Supplement"];
@@ -91,23 +91,23 @@ const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",
 const pct = n => n.toFixed(1)+"%";
 
 const G = {
-  bg:"#ffffff", card:"#f4f9f6", border:"#b7d5c4",
-  text:"#1a3d2b", dark:"#1a3d2b", mid:"#2d6a4f", light:"#40916c", pale:"#d8ede3",
-  orange:"#e07020", obg:"#fff4ea",
+  bg:"#f8f9fc", card:"#f0f2f8", border:"#c8cfe8",
+  text:"#1a2144", dark:"#0f1635", mid:"#1e3a8a", light:"#2d55c8", pale:"#dde4f5",
+  orange:"#b8860b", obg:"#fdf8ec",
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#fff4ea",border:"1.5px solid #e07020",borderRadius:8,color:"#e07020",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
-const INP_auto   = {width:"100%",padding:"12px 14px",background:"#f0faf4",border:"1.5px solid #40916c",borderRadius:8,color:"#2d6a4f",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#fdf8ec",border:"1.5px solid #b8860b",borderRadius:8,color:"#7a5800",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
+const INP_auto   = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"1.5px solid #2d55c8",borderRadius:8,color:"#1e3a8a",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
 
 function Legend(){
   return (
     <div style={{display:"flex",gap:16,flexWrap:"wrap",marginBottom:20,padding:"10px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
       <div style={{display:"flex",alignItems:"center",gap:7}}>
-        <div style={{width:14,height:14,borderRadius:3,background:"#fff4ea",border:"1.5px solid #e07020",flexShrink:0}}/>
+        <div style={{width:14,height:14,borderRadius:3,background:"#fdf8ec",border:"1.5px solid #b8860b",flexShrink:0}}/>
         <span style={{fontSize:12,color:G.text}}>You fill in on the visit</span>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:7}}>
-        <div style={{width:14,height:14,borderRadius:3,background:"#f0faf4",border:"1.5px solid #40916c",flexShrink:0}}/>
+        <div style={{width:14,height:14,borderRadius:3,background:"#eef1fb",border:"1.5px solid #2d55c8",flexShrink:0}}/>
         <span style={{fontSize:12,color:G.text}}>Auto-filled / sector average — override if needed</span>
       </div>
     </div>
@@ -406,9 +406,9 @@ function Explainer({term, children}){
   const [open,setOpen]=useState(false);
   return (
     <div style={{marginBottom:8}}>
-      <button onClick={()=>setOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fff4ea",border:"1px solid #e07020",borderRadius:8,cursor:"pointer",fontFamily:"inherit",width:"100%",textAlign:"left"}}>
-        <span style={{fontSize:14,color:"#e07020",fontWeight:700}}>? What is {term}?</span>
-        <span style={{marginLeft:"auto",fontSize:14,color:"#e07020"}}>{open?"▲":"▼"}</span>
+      <button onClick={()=>setOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fdf8ec",border:"1px solid #b8860b",borderRadius:8,cursor:"pointer",fontFamily:"inherit",width:"100%",textAlign:"left"}}>
+        <span style={{fontSize:14,color:"#b8860b",fontWeight:700}}>? What is {term}?</span>
+        <span style={{marginLeft:"auto",fontSize:14,color:"#b8860b"}}>{open?"▲":"▼"}</span>
       </button>
       {open&&(
         <div style={{padding:"14px 16px",background:"#fff4ea",border:"1px solid #e07020",borderTop:"none",borderRadius:"0 0 8px 8px",fontSize:13,color:G.text,lineHeight:1.8}}>
@@ -987,8 +987,8 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"Strong Opportunity",col:G.mid};
-    if(C.roi>=10) return {l:"Viable - Proceed with Care",col:G.orange};
+    if(C.roi>=20) return {l:"Strong Opportunity",col:"#1e3a8a"};
+    if(C.roi>=10) return {l:"Viable - Proceed with Care",col:"#b8860b"};
     if(C.roi>=0)  return {l:"Marginal - Review Costs",col:"#c05010"};
     return              {l:"Not Viable",col:"#d62828"};
   },[C.roi]);
@@ -1292,25 +1292,25 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       )}
 
       {/* Header nav */}
-      <div className="no-print" style={{background:G.mid,padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 2px 8px #1a3d2b22"}}>
+      <div className="no-print" style={{background:"#0f1635",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 16px rgba(15,22,53,0.4)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
           <div>
-            <div style={{fontSize:11,letterSpacing:".18em",color:"#a8d5b5",textTransform:"uppercase",marginBottom:3}}>Convenience Retail</div>
-            <div style={{fontSize:21,fontWeight:700,color:"#fff",lineHeight:1.2}}>Site Viability Assessor</div>
-            {propName&&<div style={{fontSize:13,color:"#a8d5b5",marginTop:2}}>{propName}{postcode?" · "+postcode:""}</div>}
+            <div style={{fontSize:11,letterSpacing:".18em",color:"#c8a84b",textTransform:"uppercase",marginBottom:3}}>Convenience Retail</div>
+            <div style={{fontSize:21,fontWeight:700,color:"#fff",lineHeight:1.2,letterSpacing:".02em"}}>Site Viability Assessor</div>
+            {propName&&<div style={{fontSize:13,color:"#8fa8d8",marginTop:2}}>{propName}{postcode?" · "+postcode:""}</div>}
           </div>
           <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4}}>
-            <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:7,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
+            <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(200,168,75,0.2)",border:"1px solid rgba(200,168,75,0.5)",borderRadius:7,color:"#c8a84b",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
               {saveMsg||"💾 Save"}
             </button>
-            <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(255,255,255,0.15)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:7,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
+            <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(200,168,75,0.2)",border:"1px solid rgba(200,168,75,0.5)",borderRadius:7,color:"#c8a84b",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
               🔒 Share
             </button>
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
-            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#40916c":"transparent",border:"1px solid "+(step===i?"#fff":step>i?"#40916c":"#a8d5b5"),color:step===i?G.mid:step>i?"#fff":"#a8d5b5",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
+            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#c8a84b":"transparent",border:"1px solid "+(step===i?"#fff":step>i?"#c8a84b":"#8fa8d8"),color:step===i?G.mid:step>i?"#0f1635":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
           ))}
