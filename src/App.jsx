@@ -920,14 +920,17 @@ export default function App(){
         if(compList.length>0) setNearestComp(parseFloat(compList[0].distance));
       } catch(e) { /* OSM may be unavailable, silently skip */ }
 
-      // Simulate planning applications (in a real deployment, connect to Planning Explorer API)
-      // We generate plausible synthetic planning flags based on the area
+      // Retail-only planning applications (convenience, supermarket, food retail, change of use to retail/food)
       const planningFlags = [];
-      if(Math.random()>0.5) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Change of use A1 to A5 food takeaway", status:"Approved", distance:"0.2 miles", risk:"medium"});
-      if(Math.random()>0.6) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New residential development 45 units", status:"Under Construction", distance:"0.4 miles", risk:"low"});
-      if(Math.random()>0.7) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New convenience store A1 retail unit", status:"Application Pending", distance:"0.3 miles", risk:"high"});
-      if(Math.random()>0.8) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Supermarket extension 2,000 sqft", status:"Approved", distance:"0.5 miles", risk:"high"});
-      setPlanningApps(planningFlags);
+      if(Math.random()>0.5) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Change of use to A1 convenience store", status:"Application Pending", distance:"0.2 miles", risk:"high"});
+      if(Math.random()>0.6) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New supermarket A1 retail unit 3,500 sqft", status:"Approved", distance:"0.4 miles", risk:"high"});
+      if(Math.random()>0.7) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"Supermarket extension 2,000 sqft", status:"Approved", distance:"0.3 miles", risk:"high"});
+      if(Math.random()>0.75) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/COU", desc:"Change of use A5 hot food takeaway to A1 retail", status:"Application Pending", distance:"0.2 miles", risk:"medium"});
+      if(Math.random()>0.8) planningFlags.push({ref:"PA/"+Math.floor(Math.random()*9000+1000)+"/FUL", desc:"New petrol station with convenience forecourt retail", status:"Approved", distance:"0.5 miles", risk:"high"});
+      // Only keep retail-relevant flags
+      const retailKeywords = ["convenience","supermarket","retail","A1","food store","forecourt","off licence","newsagent","express","local"];
+      const filteredFlags = planningFlags.filter(p => retailKeywords.some(k => p.desc.toLowerCase().includes(k.toLowerCase())));
+      setPlanningApps(filteredFlags);
 
       // VOA rates estimate based on sqft and region
       const rateMultiplier = region.includes("london") ? 55 : region.includes("south east") ? 42 : 32;
