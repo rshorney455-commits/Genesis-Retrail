@@ -72,7 +72,7 @@ const AGE_BANDS   = ["Under 18","18-24","25-34","35-44","45-54","55-64","65+"];
 const EMPLOYMENTS = ["Employed Full-Time","Employed Part-Time","Self-Employed","Unemployed","Retired","Student"];
 const HOUSINGS    = ["Owner Occupied","Private Rented","Social / Council","Other"];
 const TRENDS      = ["Rising Rapidly","Rising Steadily","Stable","Declining Slightly","Declining Rapidly"];
-const TCOLORS     = {"Rising Rapidly":"#1e3a8a","Rising Steadily":"#2d55c8","Stable":"#b8860b","Declining Slightly":"#c05010","Declining Rapidly":"#d62828"};
+const TCOLORS     = {"Rising Rapidly":"#0d2b8a","Rising Steadily":"#1a3fbf","Stable":"#d4a017","Declining Slightly":"#c05010","Declining Rapidly":"#d62828"};
 const FHOURS      = ["6-8am","8-10am","10-12pm","12-2pm","2-4pm","4-6pm","6-8pm","8-10pm"];
 const SBANDS      = [{label:"Under £5",key:"u5"},{label:"£5-£9.99",key:"s5"},{label:"£10-£14.99",key:"s10"},{label:"£15-£19.99",key:"s15"},{label:"£20+",key:"s20"}];
 const MISSIONS    = ["Top-up","Grab and Go","Treat or Impulse","Food to Go","Big Shop Supplement"];
@@ -91,13 +91,13 @@ const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",
 const pct = n => n.toFixed(1)+"%";
 
 const G = {
-  bg:"#f8f9fc", card:"#f0f2f8", border:"#c8cfe8",
-  text:"#1a2144", dark:"#0f1635", mid:"#1e3a8a", light:"#2d55c8", pale:"#dde4f5",
-  orange:"#b8860b", obg:"#fdf8ec",
+  bg:"#f5f6fa", card:"#edf0f9", border:"#c5cce8",
+  text:"#0d1b3e", dark:"#060e24", mid:"#0d2b8a", light:"#1a3fbf", pale:"#d5dcf5",
+  orange:"#d4a017", obg:"#fdf6e3",
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#fdf8ec",border:"1.5px solid #b8860b",borderRadius:8,color:"#7a5800",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
-const INP_auto   = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"1.5px solid #2d55c8",borderRadius:8,color:"#1e3a8a",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:600};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#fffbee",border:"2px solid #d4a017",borderRadius:8,color:"#7a5c00",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_auto   = {width:"100%",padding:"12px 14px",background:"#e8ecf9",border:"2px solid #0d2b8a",borderRadius:8,color:"#0d2b8a",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Legend(){
   return (
@@ -193,14 +193,14 @@ function CompetitorMap({ lat, lng, competitors }) {
 
       // Site marker
       const siteIcon = L.divIcon({
-        html: `<div style="background:#2d6a4f;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🏪</div>`,
+        html: `<div style="background:#0d2b8a;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🏪</div>`,
         iconSize:[32,32], iconAnchor:[16,16], className:""
       });
       L.marker([lat, lng], { icon: siteIcon }).addTo(map).bindPopup("<b>Assessment Site</b>");
 
       // Competitor markers
       (competitors || []).forEach((c, i) => {
-        const col = c.threat === "high" ? "#d62828" : c.threat === "medium" ? "#e07020" : "#40916c";
+        const col = c.threat === "high" ? "#d62828" : c.threat === "medium" ? "#e07020" : "#1a3fbf";
         const icon = L.divIcon({
           html: `<div style="background:${col};color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)">${i+1}</div>`,
           iconSize:[26,26], iconAnchor:[13,13], className:""
@@ -210,7 +210,7 @@ function CompetitorMap({ lat, lng, competitors }) {
       });
 
       // 0.5 mile radius circle
-      L.circle([lat, lng], { radius: 804, color: "#2d6a4f", fillColor:"#2d6a4f", fillOpacity:0.05, weight:1.5, dashArray:"6,4" }).addTo(map);
+      L.circle([lat, lng], { radius: 804, color: "#0d2b8a", fillColor:"#0d2b8a", fillOpacity:0.05, weight:1.5, dashArray:"6,4" }).addTo(map);
     }
 
     return () => { if(mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
@@ -273,7 +273,7 @@ function AISection({ prompt, label }) {
 
 // ── Risk Register ─────────────────────────────────────────────────────────────
 function RiskRegister({ risks }) {
-  const cols = { red:"#d62828", amber:"#e07020", green:"#2d6a4f" };
+  const cols = { red:"#d62828", amber:"#e07020", green:"#0d2b8a" };
   return (
     <div>
       {risks.map((r, i) => (
@@ -312,7 +312,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
         <div key={sg.name} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",marginBottom:8,background:i===0?G.pale:G.card,border:"1px solid "+(i===0?G.mid:G.border),borderRadius:10}}>
           <div style={{fontSize:13,fontWeight:i===0?800:600,color:i===0?G.mid:G.text,minWidth:110}}>{i===0?"⭐ ":""}{sg.name}</div>
           <div style={{flex:1}}>
-            <div style={{height:6,background:"#e0ede6",borderRadius:3}}>
+            <div style={{height:6,background:"#e8ecf9",borderRadius:3}}>
               <div style={{height:"100%",background:i===0?G.mid:G.light,borderRadius:3,width:(sg.score/8*100)+"%"}}/>
             </div>
             <div style={{fontSize:11,color:G.light,marginTop:3}}>{sg.desc}</div>
@@ -364,7 +364,7 @@ function HBar({data}){
 
 function Donut({data}){
   const total=data.reduce((s,d)=>s+d.v,0)||1;
-  const COLS=["#2d6a4f","#40916c","#52b788","#74c69d","#95d5b2","#b7e4c7","#1b4332","#081c15","#e07020","#f4a04a","#ffd166","#06d6a0","#118ab2"];
+  const COLS=["#0d2b8a","#1a3fbf","#1a3fbf","#4a6fd4","#7a9ae0","#c5d0f0","#060e24","#060e24","#e07020","#f4a04a","#ffd166","#1a3fbf","#118ab2"];
   let cum=0;
   const cx=80,cy=80,r=60,ir=36;
   const slices=data.map((d,i)=>{
@@ -398,7 +398,7 @@ const PSH = ({c})=><div style={{fontSize:18,fontWeight:800,color:G.mid,marginBot
 const Sub = ({c})=><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:12,marginTop:4}}>{c}</div>;
 const Row2= ({ch,st})=><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,...(st||{})}}>{ch}</div>;
 const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.light,marginBottom:5}}>{h}</div>}{ch}</div>;
-const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#e8f5e0":G.card,border:"1.5px solid "+(hi?"#40916c":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.mid:G.dark}}>{v}</div></div>)}</div>;
+const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#e8ecf9":G.card,border:"1.5px solid "+(hi?"#1a3fbf":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.mid:G.dark}}>{v}</div></div>)}</div>;
 const RC  = ({t,ch})=><div className="avoid-break" style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:16,marginBottom:20}}><div style={{fontSize:15,fontWeight:700,color:G.dark,marginBottom:14,paddingBottom:8,borderBottom:"1px solid "+G.border}}>{t}</div>{ch}</div>;
 
 // ── Plain-English explainer boxes ─────────────────────────────────────────────
@@ -527,7 +527,7 @@ Reply with ONLY this exact JSON and nothing else:
   };
 
   function buildHTMLPresentation(d, fmt2, pct2) {
-    const GREEN = "#2D6A4F", DARK = "#1A3D2B", PALE = "#D8EDE3", ORANGE = "#E07020";
+    const GREEN = "#0d2b8a", DARK = "#060e24", PALE = "#d5dcf5", ORANGE = "#E07020";
     const slides = [
       // Cover
       `<div class="slide cover">
@@ -674,107 +674,107 @@ Reply with ONLY this exact JSON and nothing else:
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: Calibri, Arial, sans-serif; }
   body { background: #f0f0f0; }
   .slide { width: 297mm; min-height: 167mm; background: #fff; margin: 10mm auto; padding: 0; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
-  .slide-header { background: #1A3D2B; padding: 14px 20px 12px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .slide-header { background: #060e24; padding: 14px 20px 12px; display:flex; justify-content:space-between; align-items:flex-end; }
   .slide-header h3 { color: #fff; font-size: 20px; font-weight: 700; }
-  .slide-sub, .site-tag { color: #A8D5B5; font-size: 10px; }
+  .slide-sub, .site-tag { color: #8fa8d8; font-size: 10px; }
   .cover { flex-direction: row; min-height: 180mm; }
-  .cover-left { background: #2D6A4F; padding: 28px 24px; width: 55%; display:flex; flex-direction:column; }
-  .cover-right { background: #1A3D2B; padding: 28px 20px; flex: 1; }
-  .brand { color: #A8D5B5; font-size: 9px; letter-spacing: 4px; font-weight: 700; margin-bottom: 8px; }
+  .cover-left { background: #0d2b8a; padding: 28px 24px; width: 55%; display:flex; flex-direction:column; }
+  .cover-right { background: #060e24; padding: 28px 20px; flex: 1; }
+  .brand { color: #8fa8d8; font-size: 9px; letter-spacing: 4px; font-weight: 700; margin-bottom: 8px; }
   .cover-left h1 { color: #fff; font-size: 30px; font-weight: 800; line-height: 1.15; margin-bottom: 14px; }
-  .cover-left h2 { color: #D8EDE3; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .cover-left p.sub { color: #A8D5B5; font-size: 11px; margin-bottom: 18px; }
+  .cover-left h2 { color: #d5dcf5; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .cover-left p.sub { color: #8fa8d8; font-size: 11px; margin-bottom: 18px; }
   .badge-row { display:flex; gap: 10px; margin-bottom: 16px; }
-  .badge { background: #1B4332; border: 1px solid #40916C; padding: 8px 12px; border-radius: 4px; flex: 1; }
-  .badge-lbl { color: #A8D5B5; font-size: 8px; font-weight: 700; letter-spacing: 2px; margin-bottom: 3px; }
+  .badge { background: #060e24; border: 1px solid #1a3fbf; padding: 8px 12px; border-radius: 4px; flex: 1; }
+  .badge-lbl { color: #8fa8d8; font-size: 8px; font-weight: 700; letter-spacing: 2px; margin-bottom: 3px; }
   .badge-val { color: #fff; font-size: 15px; font-weight: 800; }
-  .prepared { color: #6B9E83; font-size: 9px; margin-top: auto; }
-  .kpi-title { color: #A8D5B5; font-size: 9px; letter-spacing: 2px; font-weight: 700; margin-bottom: 12px; }
-  .kpi-row { background: #1B4332; border: 1px solid #40916C; padding: 7px 10px; margin-bottom: 5px; display:flex; justify-content:space-between; align-items:center; }
-  .kpi-lbl { color: #A8D5B5; font-size: 9px; }
+  .prepared { color: #5a6fa8; font-size: 9px; margin-top: auto; }
+  .kpi-title { color: #8fa8d8; font-size: 9px; letter-spacing: 2px; font-weight: 700; margin-bottom: 12px; }
+  .kpi-row { background: #060e24; border: 1px solid #1a3fbf; padding: 7px 10px; margin-bottom: 5px; display:flex; justify-content:space-between; align-items:center; }
+  .kpi-lbl { color: #8fa8d8; font-size: 9px; }
   .kpi-val { color: #fff; font-size: 15px; font-weight: 800; }
-  .verdict-bar { background: #2D6A4F; color: #fff; text-align:center; padding: 10px; font-size: 12px; font-weight: 700; }
+  .verdict-bar { background: #0d2b8a; color: #fff; text-align:center; padding: 10px; font-size: 12px; font-weight: 700; }
   .stat-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap: 10px; padding: 14px 16px; }
-  .stat-card { border: 1px solid #D8EDE3; padding: 12px; background: #F4F9F6; }
-  .stat-lbl { font-size: 8px; color: #6B9E83; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
-  .stat-val { font-size: 20px; font-weight: 800; color: #2D6A4F; margin-bottom: 4px; }
-  .stat-sub { font-size: 9px; color: #6B9E83; }
+  .stat-card { border: 1px solid #d5dcf5; padding: 12px; background: #F4F9F6; }
+  .stat-lbl { font-size: 8px; color: #5a6fa8; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px; }
+  .stat-val { font-size: 20px; font-weight: 800; color: #0d2b8a; margin-bottom: 4px; }
+  .stat-sub { font-size: 9px; color: #5a6fa8; }
   .body-text { padding: 0 16px 14px; flex: 1; }
   .body-text p { font-size: 10.5px; color: #334155; line-height: 1.6; margin-bottom: 8px; }
   .kpi-9-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; padding: 14px 16px; flex:1; }
-  .kpi9 { border: 1px solid #D8EDE3; padding: 14px; background: #F4F9F6; }
-  .kpi9-lbl { font-size: 8px; color: #6B9E83; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
-  .kpi9-val { font-size: 22px; font-weight: 800; color: #2D6A4F; margin-bottom: 4px; }
-  .kpi9-sub { font-size: 9px; color: #6B9E83; }
+  .kpi9 { border: 1px solid #d5dcf5; padding: 14px; background: #F4F9F6; }
+  .kpi9-lbl { font-size: 8px; color: #5a6fa8; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px; }
+  .kpi9-val { font-size: 22px; font-weight: 800; color: #0d2b8a; margin-bottom: 4px; }
+  .kpi9-sub { font-size: 9px; color: #5a6fa8; }
   .two-col { display:flex; gap: 16px; padding: 14px 16px; flex:1; }
   .two-col > * { flex: 1; }
   table { border-collapse: collapse; width: 100%; font-size: 10.5px; }
-  th { background: #2D6A4F; color: #fff; padding: 7px 10px; text-align: left; font-size: 10px; }
-  td { padding: 7px 10px; border-bottom: 1px solid #D8EDE3; color: #334155; }
-  .highlight-row td { background: #D8EDE3; font-weight: 700; color: #2D6A4F; }
+  th { background: #0d2b8a; color: #fff; padding: 7px 10px; text-align: left; font-size: 10px; }
+  td { padding: 7px 10px; border-bottom: 1px solid #d5dcf5; color: #334155; }
+  .highlight-row td { background: #d5dcf5; font-weight: 700; color: #0d2b8a; }
   .income-row td { background: #F4F9F6; font-weight: 700; }
-  .ebitda-row td { background: #D8F0E0; font-weight: 700; color: #2D6A4F; }
-  .net-row td { background: #B7E4C7; font-weight: 800; color: #1A3D2B; font-size: 12px; }
+  .ebitda-row td { background: #dce3f8; font-weight: 700; color: #0d2b8a; }
+  .net-row td { background: #c5d0f0; font-weight: 800; color: #060e24; font-size: 12px; }
   .neg { color: #C05010 !important; }
-  .pos { color: #2D6A4F !important; }
+  .pos { color: #0d2b8a !important; }
   .pl-table { font-size: 10px; }
   .bar-chart-area { padding: 10px; }
   .bar-row { display:flex; align-items:center; gap: 8px; margin-bottom: 12px; }
   .bar-label { font-size: 10px; color: #334155; width: 80px; flex-shrink:0; }
-  .bar-track { flex:1; height: 22px; background: #D8EDE3; border-radius: 3px; overflow:hidden; }
-  .bar-fill { height: 100%; background: #2D6A4F; border-radius: 3px; }
-  .bar-value { font-size: 11px; font-weight: 700; color: #2D6A4F; width: 60px; text-align:right; flex-shrink:0; }
+  .bar-track { flex:1; height: 22px; background: #d5dcf5; border-radius: 3px; overflow:hidden; }
+  .bar-fill { height: 100%; background: #0d2b8a; border-radius: 3px; }
+  .bar-value { font-size: 11px; font-weight: 700; color: #0d2b8a; width: 60px; text-align:right; flex-shrink:0; }
   .full-table { font-size: 9.5px; }
-  .progress-row { display:flex; gap: 12px; padding: 12px 16px 8px; align-items:flex-end; border-top: 1px solid #D8EDE3; margin-top: 8px; }
+  .progress-row { display:flex; gap: 12px; padding: 12px 16px 8px; align-items:flex-end; border-top: 1px solid #d5dcf5; margin-top: 8px; }
   .prog-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
-  .prog-lbl { font-size: 9px; color: #6B9E83; font-weight: 700; }
-  .prog-bar { width:100%; height:50px; background:#F4F9F6; border-radius:3px; display:flex; align-items:flex-end; border:1px solid #D8EDE3; }
-  .prog-fill { width:100%; background:#2D6A4F; border-radius:3px; min-height:3px; }
-  .prog-val { font-size: 9px; color: #2D6A4F; font-weight: 700; }
-  .section-title { font-size: 9px; font-weight: 700; color: #2D6A4F; letter-spacing: 2px; margin-bottom: 10px; }
+  .prog-lbl { font-size: 9px; color: #5a6fa8; font-weight: 700; }
+  .prog-bar { width:100%; height:50px; background:#F4F9F6; border-radius:3px; display:flex; align-items:flex-end; border:1px solid #d5dcf5; }
+  .prog-fill { width:100%; background:#0d2b8a; border-radius:3px; min-height:3px; }
+  .prog-val { font-size: 9px; color: #0d2b8a; font-weight: 700; }
+  .section-title { font-size: 9px; font-weight: 700; color: #0d2b8a; letter-spacing: 2px; margin-bottom: 10px; }
   .simple-table { font-size: 10.5px; margin-bottom: 12px; }
-  .big-roi { font-size: 50px; font-weight: 800; color: #2D6A4F; margin: 10px 0 4px; }
-  .roi-lbl { font-size: 9px; letter-spacing: 2px; color: #6B9E83; font-weight: 700; margin-bottom: 4px; }
-  .roi-verdict { font-size: 13px; font-weight: 700; color: #2D6A4F; margin-bottom: 10px; }
-  .payback-box { background: #1A3D2B; color: #fff; padding: 8px 14px; font-size: 14px; font-weight: 700; display:inline-block; margin-bottom: 10px; }
+  .big-roi { font-size: 50px; font-weight: 800; color: #0d2b8a; margin: 10px 0 4px; }
+  .roi-lbl { font-size: 9px; letter-spacing: 2px; color: #5a6fa8; font-weight: 700; margin-bottom: 4px; }
+  .roi-verdict { font-size: 13px; font-weight: 700; color: #0d2b8a; margin-bottom: 10px; }
+  .payback-box { background: #060e24; color: #fff; padding: 8px 14px; font-size: 14px; font-weight: 700; display:inline-block; margin-bottom: 10px; }
   .threshold-list { font-size: 9.5px; margin-bottom: 10px; }
   .t-row { padding: 3px 0; font-weight: 700; }
-  .t-row.green { color: #2D6A4F; }
+  .t-row.green { color: #0d2b8a; }
   .t-row.amber { color: #E07020; }
   .t-row.red { color: #D62828; }
-  .lease-box { background: #F4F9F6; border: 1px solid #D8EDE3; padding: 10px; }
-  .lease-title { font-size: 8px; color: #6B9E83; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 4px; }
-  .lease-val { font-size: 20px; font-weight: 800; color: #2D6A4F; }
-  .lease-note { font-size: 9px; color: #6B9E83; }
+  .lease-box { background: #F4F9F6; border: 1px solid #d5dcf5; padding: 10px; }
+  .lease-title { font-size: 8px; color: #5a6fa8; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 4px; }
+  .lease-val { font-size: 20px; font-weight: 800; color: #0d2b8a; }
+  .lease-note { font-size: 9px; color: #5a6fa8; }
   .risk-list { padding: 12px 16px; flex:1; }
   .risk-row { display:flex; align-items:stretch; border-radius: 4px; margin-bottom: 8px; overflow:hidden; border: 1px solid; }
-  .risk-row.green { background: #E8F5E0; border-color: #2D6A4F; }
+  .risk-row.green { background: #e8ecf9; border-color: #0d2b8a; }
   .risk-row.amber { background: #FFF4EA; border-color: #E07020; }
   .risk-row.red { background: #FDE8E8; border-color: #D62828; }
   .risk-bar { width: 6px; flex-shrink:0; }
-  .risk-row.green .risk-bar { background: #2D6A4F; }
+  .risk-row.green .risk-bar { background: #0d2b8a; }
   .risk-row.amber .risk-bar { background: #E07020; }
   .risk-row.red .risk-bar { background: #D62828; }
   .risk-body { flex:1; padding: 8px 12px; }
-  .risk-title { font-size: 11px; font-weight: 700; color: #1A3D2B; margin-bottom: 3px; }
+  .risk-title { font-size: 11px; font-weight: 700; color: #060e24; margin-bottom: 3px; }
   .risk-detail { font-size: 9.5px; color: #334155; }
   .risk-badge { padding: 0 12px; display:flex; align-items:center; font-size: 9px; font-weight: 800; letter-spacing: 1px; }
-  .risk-row.green .risk-badge { color: #2D6A4F; }
+  .risk-row.green .risk-badge { color: #0d2b8a; }
   .risk-row.amber .risk-badge { color: #E07020; }
   .risk-row.red .risk-badge { color: #D62828; }
-  .risk-legend { padding: 6px 16px; font-size: 9.5px; color: #6B9E83; display:flex; gap:16px; border-top:1px solid #D8EDE3; }
+  .risk-legend { padding: 6px 16px; font-size: 9.5px; color: #5a6fa8; display:flex; gap:16px; border-top:1px solid #d5dcf5; }
   .dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
-  .dot.green { background:#2D6A4F; }
+  .dot.green { background:#0d2b8a; }
   .dot.amber { background:#E07020; }
   .dot.red { background:#D62828; }
   .conclusion .cover-left h1 { font-size: 26px; }
-  .verdict-label { color: #A8D5B5; font-size: 9px; letter-spacing: 3px; font-weight: 700; margin-bottom: 6px; }
+  .verdict-label { color: #8fa8d8; font-size: 9px; letter-spacing: 3px; font-weight: 700; margin-bottom: 6px; }
   .conc-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top: 16px; }
-  .cs-lbl { color: #A8D5B5; font-size: 8px; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 3px; }
+  .cs-lbl { color: #8fa8d8; font-size: 8px; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 3px; }
   .cs-val { color: #fff; font-size: 17px; font-weight: 800; }
-  .rec-text { font-size: 11px; color: #D8EDE3; line-height: 1.7; margin-bottom: 14px; }
+  .rec-text { font-size: 11px; color: #d5dcf5; line-height: 1.7; margin-bottom: 14px; }
   .rec-text strong { color: #fff; }
-  .disclaimer { font-size: 8.5px; color: #6B9E83; font-style: italic; margin-top: auto; }
+  .disclaimer { font-size: 8.5px; color: #5a6fa8; font-style: italic; margin-top: auto; }
   .print-note { text-align:center; padding: 10mm; color: #666; font-size: 12px; }
   @media print { .print-note { display:none; } }
 </style></head><body>
@@ -787,7 +787,7 @@ ${slides.join("\n")}
     <button
       onClick={generate}
       disabled={status==="generating"}
-      style={{width:"100%",padding:12,background:status==="generating"?"#d8ede3":G.orange,border:"none",borderRadius:8,color:status==="generating"?G.mid:"#fff",cursor:status==="generating"?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
+      style={{width:"100%",padding:12,background:status==="generating"?"#d5dcf5":G.orange,border:"none",borderRadius:8,color:status==="generating"?G.mid:"#fff",cursor:status==="generating"?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
     >
       {status==="generating"?"⟳ Generating..." : status==="done" ? "✓ " + msg : status==="error" ? "✗ Failed — retry" : "📊 Download Presentation"}
       {status==="done"&&<div style={{fontSize:10,fontWeight:400,marginTop:4,color:"#fff",lineHeight:1.4}}>{msg}</div>}
@@ -1238,9 +1238,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         *{box-sizing:border-box;margin:0}
         input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
         input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(0,0,0,0.08)}
-        select option{background:#fff;color:#1a3d2b}
+        select option{background:#fff;color:#060e24}
         textarea{resize:vertical}
-        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#b7d5c4;border-radius:3px}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c5cce8;border-radius:3px}
         @media print{.no-print{display:none!important}body,html{background:#fff!important}main{padding:0 24px!important;max-width:100%!important}.page-break{page-break-before:always;padding-top:24px}.avoid-break{page-break-inside:avoid}}
         @keyframes spin{to{transform:rotate(360deg)}}
       `}</style>
@@ -1292,25 +1292,25 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       )}
 
       {/* Header nav */}
-      <div className="no-print" style={{background:"#0f1635",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 16px rgba(15,22,53,0.4)"}}>
+      <div className="no-print" style={{background:"#060e24",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
           <div>
-            <div style={{fontSize:11,letterSpacing:".18em",color:"#c8a84b",textTransform:"uppercase",marginBottom:3}}>Convenience Retail</div>
+            <div style={{fontSize:11,letterSpacing:".18em",color:"#d4a017",textTransform:"uppercase",marginBottom:3}}>Convenience Retail</div>
             <div style={{fontSize:21,fontWeight:700,color:"#fff",lineHeight:1.2,letterSpacing:".02em"}}>Site Viability Assessor</div>
             {propName&&<div style={{fontSize:13,color:"#8fa8d8",marginTop:2}}>{propName}{postcode?" · "+postcode:""}</div>}
           </div>
           <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4}}>
-            <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(200,168,75,0.2)",border:"1px solid rgba(200,168,75,0.5)",borderRadius:7,color:"#c8a84b",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
+            <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #d4a017",borderRadius:7,color:"#d4a017",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               {saveMsg||"💾 Save"}
             </button>
-            <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(200,168,75,0.2)",border:"1px solid rgba(200,168,75,0.5)",borderRadius:7,color:"#c8a84b",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>
+            <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #d4a017",borderRadius:7,color:"#d4a017",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
-            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#c8a84b":"transparent",border:"1px solid "+(step===i?"#fff":step>i?"#c8a84b":"#8fa8d8"),color:step===i?G.mid:step>i?"#0f1635":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
+            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#d4a017":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#d4a017":"#5a6fa8"),color:step===i?G.mid:step>i?"#060e24":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
           ))}
@@ -1393,7 +1393,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Legend/>
 
             {/* Postcode lookup */}
-            <div style={{background:"#e8f5e0",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
+            <div style={{background:"#e8ecf9",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
               <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:8}}>✦ Auto-populate from postcode</div>
               <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>Enter the site postcode to automatically pull: competitor data, local demographics, VOA rates estimate, planning applications, and more.</div>
               <div style={{display:"flex",gap:10}}>
@@ -1451,7 +1451,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Operating Costs"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#e8f5e0",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
+            {postcodeData&&<div style={{background:"#e8ecf9",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
             <Fld l="Annual rent (£)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={rent} onChange={e=>setRent(+e.target.value)}/>}/>
             <Fld l="Business rates (£)" h={postcodeData?"Auto-estimated from VOA — override with actual figure":"Check VOA website or ask the agent"} ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={rates} onChange={e=>setRates(+e.target.value)}/>}/>
             <Fld l="Staff / wages (% of sales)" h={"Sector average = "+fmt(C.stf)+" per year"} ch={<input style={INP_auto} type="number" step="0.5" value={staffPct} onChange={e=>setStaffPct(+e.target.value)}/>}/>
@@ -1492,7 +1492,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Category Sales Mix"/>
             <Legend/>
-            <div style={{padding:"12px 14px",borderRadius:8,marginBottom:16,background:totalMix===100?"#e8f5e0":"#fff4ea",border:"1px solid "+(totalMix===100?"#40916c":G.orange),fontSize:14,color:totalMix===100?G.mid:G.orange,fontWeight:600}}>
+            <div style={{padding:"12px 14px",borderRadius:8,marginBottom:16,background:totalMix===100?"#e8ecf9":"#fff4ea",border:"1px solid "+(totalMix===100?"#1a3fbf":G.orange),fontSize:14,color:totalMix===100?G.mid:G.orange,fontWeight:600}}>
               {totalMix===100?"✓ Mix totals 100%":"Currently "+totalMix.toFixed(1)+"% — adjust to reach 100%"}
             </div>
             {cats.map((cat,i)=>(
@@ -1514,7 +1514,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Catchment Demographics"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#e8f5e0",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
+            {postcodeData&&<div style={{background:"#e8ecf9",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
             <Row2 ch={[
               <Fld key="a" l="Catchment population (1 mile)" h="ONS census or Google Maps" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={catchmentPop} onChange={e=>setCatchmentPop(+e.target.value)}/>}/>,
               <Fld key="b" l="Population density" ch={<select style={postcodeData?INP_auto:INP_manual} value={popDensity} onChange={e=>setPopDensity(e.target.value)}><option value="high">High - urban</option><option value="medium">Medium - suburban</option><option value="low">Low - rural</option></select>}/>,
@@ -1605,7 +1605,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <div style={{fontSize:13,color:G.dark}}>{pa.desc}</div>
                           <div style={{fontSize:11,color:G.light,marginTop:2}}>{pa.distance} · {pa.status}</div>
                         </div>
-                        <div style={{padding:"3px 8px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#e8f5e0",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,border:"1px solid "+(pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid)+"44",flexShrink:0,whiteSpace:"nowrap"}}>{pa.risk.toUpperCase()} RISK</div>
+                        <div style={{padding:"3px 8px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#e8ecf9",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,border:"1px solid "+(pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid)+"44",flexShrink:0,whiteSpace:"nowrap"}}>{pa.risk.toUpperCase()} RISK</div>
                       </div>
                     </div>
                   ))}
@@ -1679,7 +1679,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Export buttons */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
               {/* Excel export */}
-              <div style={{background:"#e8f5e0",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
+              <div style={{background:"#e8ecf9",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
                 <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:6}}>📥 Export Excel</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>Fully populated workbook — P&L, 5-year, cashflow, sensitivity and glossary.</div>
                 <button
@@ -1826,7 +1826,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <th style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:right?"right":"left",whiteSpace:"nowrap",position:"sticky",top:0}}>{t}</th>
               );
               const TD = (v,bold,neg,hi,pctFmt)=>(
-                <td style={{padding:"7px 10px",fontSize:12,textAlign:"right",fontWeight:bold?700:400,color:neg?"#d62828":hi?G.mid:G.dark,background:hi?"#e8f5e0":"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
+                <td style={{padding:"7px 10px",fontSize:12,textAlign:"right",fontWeight:bold?700:400,color:neg?"#d62828":hi?G.mid:G.dark,background:hi?"#e8ecf9":"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
                   {v===null||v===undefined?"":pctFmt?pct(v):typeof v==="number"?fmt(v):v}
                 </td>
               );
@@ -1871,12 +1871,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           ))}
                           <tr style={{background:G.pale}}>{TDL("TOTAL OP COSTS",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:"#c05010",borderBottom:"1px solid "+G.border}}>({fmt(r.tc)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:"#c05010",borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.tc,0))})</td></tr>
                           {SectionRow("EBITDA")}
-                          <tr style={{background:"#e8f5e0"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
+                          <tr style={{background:"#e8ecf9"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
                           {SectionRow("Finance")}
                           <tr>{TDL("Loan Repayment",false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:"#c05010",borderBottom:"1px solid "+G.border}}>({fmt(r.fin)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:"#c05010",borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.fin,0))})</td></tr>
                           {SectionRow("Net Profit")}
-                          <tr style={{background:"#c6ebd4"}}>{TDL("NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:r.np>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.np<0?"("+fmt(Math.abs(r.np))+")":fmt(r.np)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:yr5x.reduce((a,r)=>a+r.np,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.np,0))}</td></tr>
-                          <tr style={{background:"#b7e4c7"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.light,borderBottom:"1px solid "+G.border}}>—</td></tr>
+                          <tr style={{background:"#c5d0f0"}}>{TDL("NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:r.np>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.np<0?"("+fmt(Math.abs(r.np))+")":fmt(r.np)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:yr5x.reduce((a,r)=>a+r.np,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.np,0))}</td></tr>
+                          <tr style={{background:"#c5d0f0"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.light,borderBottom:"1px solid "+G.border}}>—</td></tr>
                           {SectionRow("Key Ratios")}
                           {[["Gross Margin %",r=>r.gm],["EBITDA Margin %",r=>r.em],["Net Margin %",r=>r.nm],["ROI %",r=>r.roi_]].map(([l,fn])=>(
                             <tr key={l} style={{background:G.card}}>{TDL(l,false,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:fn(r)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{pct(fn(r))}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.light,borderBottom:"1px solid "+G.border}}>—</td></tr>
@@ -1929,7 +1929,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             return cfItems.map((item,idx)=>{
                               if(item.type==="hdr") return <tr key={idx}><td colSpan={14} style={{background:G.mid,padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{item.l}</td></tr>;
                               if(item.type==="gap"||!item.l) return <tr key={idx}><td colSpan={14} style={{height:6}}></td></tr>;
-                              const bg = item.hi?"#e8f5e0":item.hi2?"#c6ebd4":"transparent";
+                              const bg = item.hi?"#e8ecf9":item.hi2?"#c5d0f0":"transparent";
                               const col = item.v<0?"#c05010":item.hi||item.hi2?G.mid:G.dark;
                               return (
                                 <tr key={idx} style={{background:bg}}>
@@ -1952,7 +1952,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             const mNet = C.upliftedAnn*(C.blGP/100)/12 - (rent+rates+(C.upliftedAnn*staffPct/100)+utilities+otherCosts)/12 - C.mp;
                             let bal=0;
                             return (
-                              <tr style={{background:"#b7e4c7"}}>
+                              <tr style={{background:"#c5d0f0"}}>
                                 <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:G.mid,borderBottom:"1px solid "+G.border}}>Closing Cash Balance</td>
                                 {months.map((_,mi)=>{
                                   bal+=mNet;
@@ -1983,7 +1983,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                                 <td style={{padding:"10px 12px",fontSize:12,fontWeight:700,color:G.mid,background:G.card,borderBottom:"1px solid "+G.border}}>Footfall {row[0].fp>0?"+":""}{row[0].fp}%</td>
                                 {row.map((cell,ci)=>{
                                   const isBase=cell.fp===0&&cell.rp===0;
-                                  const bg=isBase?"#d8ede3":cell.roi>=20?"#e8f5e0":cell.roi>=10?"#fff4ea":"#fde8e8";
+                                  const bg=isBase?"#d5dcf5":cell.roi>=20?"#e8ecf9":cell.roi>=10?"#fff4ea":"#fde8e8";
                                   const col=isBase?G.mid:cell.roi>=20?G.mid:cell.roi>=10?G.orange:"#d62828";
                                   return <td key={ci} style={{padding:"10px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:13,border:isBase?"2px solid "+G.mid:"1px solid "+G.border}}>{cell.roi.toFixed(1)}%{isBase&&<div style={{fontSize:9,fontWeight:400,color:G.mid}}>BASE</div>}</td>;
                                 })}
@@ -2151,12 +2151,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{minHeight:"90vh",display:"flex",flexDirection:"column",borderBottom:"3px solid "+G.mid,marginBottom:28,paddingBottom:32}}>
               <div style={{background:G.mid,borderRadius:10,padding:"18px 20px",marginBottom:20,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
                 <div>
-                  <div style={{fontSize:10,letterSpacing:".22em",color:"#a8d5b5",textTransform:"uppercase",marginBottom:3}}>Site Viability Assessment Report</div>
+                  <div style={{fontSize:10,letterSpacing:".22em",color:"#8fa8d8",textTransform:"uppercase",marginBottom:3}}>Site Viability Assessment Report</div>
                   <div style={{fontSize:22,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}</div>
-                  <div style={{fontSize:12,color:"#a8d5b5",marginTop:3}}>{postcode&&postcode+" · "}Genesis Retail · {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                  <div style={{fontSize:12,color:"#8fa8d8",marginTop:3}}>{postcode&&postcode+" · "}Genesis Retail · {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
                 </div>
                 <div style={{background:"rgba(255,255,255,0.15)",borderRadius:8,padding:"10px 16px",textAlign:"right",flexShrink:0}}>
-                  <div style={{fontSize:10,color:"#a8d5b5",textTransform:"uppercase",letterSpacing:".12em",marginBottom:2}}>Overall Verdict</div>
+                  <div style={{fontSize:10,color:"#8fa8d8",textTransform:"uppercase",letterSpacing:".12em",marginBottom:2}}>Overall Verdict</div>
                   <div style={{fontSize:14,fontWeight:700,color:"#fff"}}>{VRD.l}</div>
                   <div style={{fontSize:24,fontWeight:800,color:"#fff",lineHeight:1.1,marginTop:2}}>{C.roi.toFixed(1)}% ROI</div>
                 </div>
@@ -2198,7 +2198,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <div key={i} style={{padding:"10px 0",borderBottom:i<planningApps.length-1?"1px solid "+G.border:"none"}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
                           <div><div style={{fontSize:13,fontWeight:700,color:G.dark}}>{pa.desc}</div><div style={{fontSize:12,color:G.light,marginTop:2}}>{pa.ref} · {pa.distance} · {pa.status}</div></div>
-                          <div style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#e8f5e0",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,flexShrink:0}}>{pa.risk.toUpperCase()}</div>
+                          <div style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#e8ecf9",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,flexShrink:0}}>{pa.risk.toUpperCase()}</div>
                         </div>
                       </div>
                     ))}
@@ -2306,7 +2306,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   if(r.type==="head") return <div key={i} style={{background:G.mid,padding:"6px 16px",fontSize:11,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".12em"}}>{r.l}</div>;
                   if(r.type==="kv") return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 16px",borderBottom:"1px solid "+G.border}}><span style={{fontSize:13,color:G.light}}>{r.l}</span><span style={{fontSize:13,fontWeight:700,color:G.mid}}>{r.d}</span></div>;
                   const neg=r.v<0,hiCol=r.v>=0?G.mid:"#d62828";
-                  return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:(r.type==="sub"?"10px":"7px")+" 16px",borderBottom:"1px solid "+G.border,background:r.hi?(r.v>=0?"#e8f5e0":"#fde8e8"):r.type==="sub"?G.pale:"transparent"}}>
+                  return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:(r.type==="sub"?"10px":"7px")+" 16px",borderBottom:"1px solid "+G.border,background:r.hi?(r.v>=0?"#e8ecf9":"#fde8e8"):r.type==="sub"?G.pale:"transparent"}}>
                     <span style={{fontSize:r.bold?14:13,color:r.bold?G.dark:G.text,fontWeight:r.bold?700:400,paddingLeft:r.type==="row"?12:0}}>{r.l}</span>
                     <span style={{fontSize:r.bold?15:13,fontWeight:r.bold?700:400,color:r.hi?hiCol:neg?"#c05010":G.dark}}>{neg?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}</span>
                   </div>;
@@ -2334,7 +2334,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {l:"Finance Cost",k:"fin",neg:true},
                       {l:"Net Profit",k:"np",neg:false,hi:true},
                     ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#e8f5e0":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
+                      <tr key={i} style={{background:dr.hi?"#e8ecf9":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
                         <td style={{padding:"8px 10px",fontSize:13,fontWeight:dr.hi?700:400,color:dr.hi?G.mid:G.text}}>{dr.l}</td>
                         {yr5.map((r,j)=>{const val=dr.neg?-r[dr.k]:r[dr.k];const neg=val<0;return <td key={j} style={{padding:"8px",textAlign:"right",fontWeight:dr.hi?700:400,color:neg?"#d62828":dr.hi?G.mid:G.dark,fontSize:13}}>{neg?"("+fmt(Math.abs(val))+")":fmt(val)}</td>;})}
                       </tr>
@@ -2351,7 +2351,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* S10: SENSITIVITY TABLE */}
             <div className="page-break avoid-break">
               <PSH c="10. Sensitivity Analysis"/>
-              <div style={{background:"#e8f5e0",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>
+              <div style={{background:"#e8ecf9",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>
                 ROI impact if footfall and rent vary from base assumptions. <strong>Green = meets 20% target. Amber = 10–20%. Red = below 10%.</strong>
               </div>
               <div style={{overflowX:"auto"}}>
@@ -2372,7 +2372,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         </td>
                         {row.map((cell,ci)=>{
                           const isBase = cell.fp===0 && cell.rp===0;
-                          const bg = isBase?"#d8ede3":cell.roi>=20?"#e8f5e0":cell.roi>=10?"#fff4ea":"#fde8e8";
+                          const bg = isBase?"#d5dcf5":cell.roi>=20?"#e8ecf9":cell.roi>=10?"#fff4ea":"#fde8e8";
                           const col = isBase?G.mid:cell.roi>=20?G.mid:cell.roi>=10?G.orange:"#d62828";
                           return (
                             <td key={ci} style={{padding:"8px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:12,border:isBase?"2px solid "+G.mid:"none"}}>
@@ -2392,7 +2392,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* S11: LEASE CALCULATOR */}
             <div className="page-break avoid-break">
               <PSH c="11. Lease Calculator — What Can This Site Afford?"/>
-              <div style={{background:"#e8f5e0",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>
+              <div style={{background:"#e8ecf9",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>
                 Use this to negotiate rent. Enter your target ROI and see the maximum annual rent this site can support while still hitting that return.
               </div>
               <Fld l="Target ROI (%)" h="What return do you need to justify the investment?" ch={
@@ -2434,7 +2434,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <div style={{flex:1,textAlign:"right"}}>Sq ft</div>
                       <div style={{flex:1,textAlign:"right"}}>£/sqft/wk</div>
                     </div>
-                    <div style={{display:"flex",padding:"10px 0",borderBottom:"1px solid "+G.border,background:"#e8f5e0"}}>
+                    <div style={{display:"flex",padding:"10px 0",borderBottom:"1px solid "+G.border,background:"#e8ecf9"}}>
                       <div style={{flex:2,fontSize:13,fontWeight:700,color:G.mid}}>This site (post-refit)</div>
                       <div style={{flex:1,textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.upliftedWk)}</div>
                       <div style={{flex:1,textAlign:"right",fontSize:13,color:G.mid}}>{sqft}</div>
