@@ -2355,23 +2355,64 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
 
-            {/* COVER */}
-            <div style={{minHeight:"90vh",display:"flex",flexDirection:"column",borderBottom:"3px solid "+G.mid,marginBottom:28,paddingBottom:32}}>
-              <div style={{background:G.mid,borderRadius:10,padding:"18px 20px",marginBottom:20,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+            {/* COVER — new design: square photo, address, Genesis info, short summary */}
+            <div style={{minHeight:"90vh",display:"flex",flexDirection:"column",borderBottom:"3px solid "+G.mid,marginBottom:28,paddingBottom:32,pageBreakAfter:"always"}}>
+
+              {/* Header band */}
+              <div style={{background:G.dark,borderRadius:10,padding:"14px 20px",marginBottom:24,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div>
-                  <div style={{fontSize:10,letterSpacing:".22em",color:"#8fa8d8",textTransform:"uppercase",marginBottom:3}}>Site Viability Assessment Report</div>
-                  <div style={{fontSize:22,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}</div>
-                  <div style={{fontSize:12,color:"#8fa8d8",marginTop:3}}>{postcode&&postcode+" · "}Genesis Retail · {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                  <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",marginBottom:3,fontWeight:700}}>Genesis Retail</div>
+                  <div style={{fontSize:11,color:"#8fa8d8",letterSpacing:".12em",textTransform:"uppercase"}}>Site Viability Assessment Report</div>
                 </div>
-                <div style={{background:"rgba(255,255,255,0.15)",borderRadius:8,padding:"10px 16px",textAlign:"right",flexShrink:0}}>
-                  <div style={{fontSize:10,color:"#8fa8d8",textTransform:"uppercase",letterSpacing:".12em",marginBottom:2}}>Overall Verdict</div>
-                  <div style={{fontSize:14,fontWeight:700,color:"#fff"}}>{VRD.l}</div>
-                  <div style={{fontSize:24,fontWeight:800,color:"#fff",lineHeight:1.1,marginTop:2}}>{C.roi.toFixed(1)}% ROI</div>
+                <div style={{fontSize:11,color:"#8fa8d8"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+              </div>
+
+              {/* Two column layout: square photo left, details right */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,marginBottom:24,alignItems:"start"}}>
+
+                {/* Square store photo */}
+                <div>
+                  {storePhoto ? (
+                    <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"2px solid "+G.mid,display:"block"}}/>
+                  ) : (
+                    <div style={{width:"100%",aspectRatio:"1/1",background:G.card,border:"2px dashed "+G.border,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:8}}>
+                      <div style={{fontSize:40}}>🏪</div>
+                      <div style={{fontSize:12,color:G.light}}>Store photo</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Address + details */}
+                <div style={{display:"flex",flexDirection:"column",gap:16}}>
+                  {/* Site name & address */}
+                  <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:"16px 18px"}}>
+                    <div style={{fontSize:10,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Site Address</div>
+                    <div style={{fontSize:20,fontWeight:800,color:G.dark,lineHeight:1.2,marginBottom:6}}>{propName||"Site Address"}</div>
+                    {postcode&&<div style={{fontSize:13,color:G.light,marginBottom:4}}>{postcode}</div>}
+                    <div style={{fontSize:12,color:G.light,textTransform:"capitalize"}}>{location.replace("-"," ")}</div>
+                  </div>
+
+                  {/* About Genesis Retail */}
+                  <div style={{background:G.dark,borderRadius:10,padding:"16px 18px"}}>
+                    <div style={{fontSize:10,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About Genesis Retail</div>
+                    {genesisNote ? (
+                      <p style={{fontSize:12,color:"#c8d4f0",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{genesisNote}</p>
+                    ) : (
+                      <p style={{fontSize:12,color:"#8fa8d8",lineHeight:1.7,fontStyle:"italic"}}>Add your Genesis Retail introduction on the Cover tab.</p>
+                    )}
+                  </div>
                 </div>
               </div>
-              {storePhoto&&<div style={{marginBottom:20}}><img src={storePhoto} alt="Store" style={{width:"100%",height:260,objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/></div>}
-              {storeNote&&<div style={{marginBottom:16}}><div style={{fontSize:12,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About the Store</div><p style={{fontSize:14,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:"14px 16px"}}>{storeNote}</p></div>}
-              {genesisNote&&<div style={{marginTop:"auto",paddingTop:16,borderTop:"1px solid "+G.border}}><div style={{fontSize:12,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About Me and Genesis Retail</div><p style={{fontSize:14,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:"14px 16px"}}>{genesisNote}</p></div>}
+
+              {/* Short summary from assessor */}
+              <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:12,padding:"18px 20px",flex:1}}>
+                <div style={{fontSize:10,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Assessor's Summary</div>
+                {storeNote ? (
+                  <p style={{fontSize:13,color:G.text,lineHeight:1.9,whiteSpace:"pre-wrap"}}>{storeNote}</p>
+                ) : (
+                  <p style={{fontSize:13,color:G.light,fontStyle:"italic",lineHeight:1.7}}>Add your summary on the Cover tab — describe the store, location, key observations and your initial impression.</p>
+                )}
+              </div>
             </div>
 
             {/* Refit Commentary — shown in report if filled in */}
@@ -2399,7 +2440,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </strong>.
                 </p>
                 <p style={{fontSize:13,color:G.text,lineHeight:1.8}}>
-                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(C.refitCost||refitCost)} refit + {fmt(C.stockCost||stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?C.pb.toFixed(1)+" years":"N/A"}</strong> from net profits alone, 
+                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(refitCost)} refit + {fmt(stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?C.pb.toFixed(1)+" years":"N/A"}</strong> from net profits alone,
                   with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
                 </p>
               </div>
