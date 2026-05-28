@@ -800,6 +800,7 @@ export default function App(){
   const [step,setStep]=useState(0);
   const [storePhoto,setStorePhoto]=useState(null);
   const [storeNote,setStoreNote]=useState("");
+  const [refitCommentary,setRefitCommentary]=useState("");
   const [genesisNote,setGenesisNote]=useState("");
   const [propName,setPropName]=useState("");
   const [postcode,setPostcode]=useState("");
@@ -1075,7 +1076,7 @@ Traffic: ${traffic.roadVehicles} vehicles/day, ${traffic.pedestrians} pedestrian
 Competitors: ${competitors} within 0.5 miles, nearest ${nearestComp} miles
 Area trends: House prices ${tHP}, Population ${tPG}, Footfall ${tFF}, Regeneration ${tRG}
 Overall verdict: ${VRD.l}
-${areaNotes?"Additional notes: "+areaNotes:""}
+${areaNotes?"Additional notes: "+areaNotes:""}\n${refitCommentary?"Refit plan: "+refitCommentary:""}
 
 Write a concise, professional 4-paragraph executive summary for this site assessment. Be specific to the numbers. Use formal surveyor-style language. Do not use bullet points. Do not include section headers. Paragraph 1: overall verdict and financial headline. Paragraph 2: trading performance and catchment. Paragraph 3: risk factors and competition. Paragraph 4: recommendation.
   `, [propName,postcode,locLabel,C,catchmentPop,medianIncome,deprivation,popDensity,traffic,competitors,nearestComp,tHP,tPG,tFF,tRG,VRD,areaNotes]);
@@ -1092,11 +1093,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,
     spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,
     traffic,fhour,competitors,nearestComp,parking,
-    tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,
+    tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,
     competitorList,planningApps,mapLat,mapLng,
     comparables,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,competitorList,planningApps,mapLat,mapLng,comparables]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables]);
 
   const saveAssessment = useCallback(()=>{
     try {
@@ -1494,6 +1495,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <Fld key="d" l="Finance term (years)" ch={<input style={INP_manual} type="number" min="1" max="10" value={financeYears} onChange={e=>setFinanceYears(+e.target.value)}/>}/>,
             ]}/>
             <S3 items={[{l:"Total investment",v:fmt(C.ti),hi:true},{l:"Monthly payment",v:fmt(Math.round(C.mp))},{l:"Annual finance",v:fmt(Math.round(C.af))}]}/>
+
+            <div style={{marginTop:20}}>
+              <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
+              <div style={{fontSize:12,color:G.light,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
+              <textarea
+                value={refitCommentary}
+                onChange={e=>setRefitCommentary(e.target.value)}
+                placeholder="e.g. The refit will deliver a full symbol group conversion to Nisa, introducing Co-op own brand across chilled, grocery and BWS. The shopfit will include new LED lighting, a 4-door chilled extension, hot beverages station and digital price ticketing. Customer flow will be redesigned to maximise impulse purchase opportunities. The new ranging plan introduces 320 new lines with a focus on fresh, food-to-go and premium. Expected uplift is 18% on base turnover within 12 months of trading..."
+                style={{...INP_manual,minHeight:160,lineHeight:1.7,fontSize:14,width:"100%"}}
+              />
+            </div>
           </div>
         )}
 
@@ -2081,6 +2093,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {storeNote&&<div style={{marginBottom:16}}><div style={{fontSize:12,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About the Store</div><p style={{fontSize:14,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:"14px 16px"}}>{storeNote}</p></div>}
               {genesisNote&&<div style={{marginTop:"auto",paddingTop:16,borderTop:"1px solid "+G.border}}><div style={{fontSize:12,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About Me and Genesis Retail</div><p style={{fontSize:14,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:"14px 16px"}}>{genesisNote}</p></div>}
             </div>
+
+            {/* Refit Commentary — shown in report if filled in */}
+            {refitCommentary&&(
+              <div className="avoid-break" style={{marginBottom:28,padding:"18px 20px",background:G.card,border:"1.5px solid "+G.mid,borderRadius:12}}>
+                <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Post-Refit Plan & Expected Benefits</div>
+                <p style={{fontSize:14,color:G.text,lineHeight:1.9,whiteSpace:"pre-wrap"}}>{refitCommentary}</p>
+              </div>
+            )}
 
             {/* S0: AI EXECUTIVE SUMMARY */}
             <div className="page-break avoid-break">
