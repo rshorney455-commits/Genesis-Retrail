@@ -1602,7 +1602,63 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <DemoSec label="Age breakdown % — ONS census data" keys={AGE_BANDS} values={ageBands} setter={setAgeBands}/>
             <DemoSec label="Employment status % — ONS census data" keys={EMPLOYMENTS} values={employment} setter={setEmployment}/>
             <DemoSec label="Housing tenure % — ONS census data" keys={HOUSINGS} values={housing} setter={setHousing}/>
-            <S3 items={[{l:"Catchment pop",v:catchmentPop.toLocaleString()},{l:"Penetration",v:pct(C.pen),hi:true},{l:"Demo score",v:DS+"/9",hi:DS>=6}]}/>
+            {/* Annotated stats row */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>
+              {/* Catchment Pop */}
+              <div style={{background:G.card,border:"1.5px solid "+G.border,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
+                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Catchment Pop</div>
+                <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{catchmentPop.toLocaleString()}</div>
+              </div>
+
+              {/* Penetration Rate - with annotation */}
+              <div style={{background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
+                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
+                <div style={{fontSize:16,fontWeight:700,color:G.mid,marginBottom:6}}>{pct(C.pen)}</div>
+                <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
+                  <strong style={{color:G.mid}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
+                  <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?G.orange:"#c05010"}}>{C.pen>=20?"✓ Strong — well above the 15% target":C.pen>=15?"✓ Good — meets the 15% benchmark":C.pen>=10?"⚠ Below target — aim for 15%+ with good ranging":"✗ Low — consider whether catchment is large enough"}</span>
+                  <br/><span style={{fontSize:9,color:G.light}}>Benchmark: 15–25% for a well-run convenience store</span>
+                </div>
+              </div>
+
+              {/* Demographic Score - with annotation */}
+              <div style={{background:DS>=6?"#eef1fb":DS>=4?G.card:"#fdf8ec",border:"1.5px solid "+(DS>=6?G.mid:DS>=4?G.border:G.orange),borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
+                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Demographic Score</div>
+                <div style={{fontSize:16,fontWeight:700,color:DS>=6?G.mid:DS>=4?G.dark:G.orange,marginBottom:6}}>{DS}/9</div>
+                <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
+                  <strong style={{color:G.mid}}>What this means:</strong> A composite score (out of 9) based on income, population size, density, deprivation and working-age proportion.
+                  <br/><span style={{color:DS>=6?G.mid:DS>=4?G.orange:"#c05010"}}>{DS>=7?"✓ Excellent catchment — high demand indicators":DS>=5?"✓ Good catchment — solid trading base":DS>=3?"⚠ Average — manageable but limited upside":"✗ Weak catchment — review assumptions carefully"}</span>
+                  <br/><span style={{fontSize:9,color:G.light}}>6+ = strong · 4–5 = average · below 4 = weak</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Deprivation Index annotation */}
+            <div style={{marginTop:8,marginBottom:16,padding:"12px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,flexWrap:"wrap"}}>
+                <div style={{flex:1,minWidth:200}}>
+                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:4}}>Deprivation Index: {deprivation}/10</div>
+                  <div style={{fontSize:11,color:G.light,lineHeight:1.6}}>
+                    <strong style={{color:G.dark}}>What this means:</strong> Measures how deprived the area is. <strong>1 = most deprived, 10 = least deprived.</strong> Based on the government's Index of Multiple Deprivation (IMD) covering income, employment, health, education and crime.
+                  </div>
+                </div>
+                <div style={{minWidth:200,flex:1}}>
+                  <div style={{height:8,background:G.pale,borderRadius:4,marginBottom:6,position:"relative"}}>
+                    <div style={{position:"absolute",left:0,top:0,height:"100%",borderRadius:4,width:(deprivation/10*100)+"%",background:deprivation>=7?G.mid:deprivation>=5?G.orange:"#d62828"}}/>
+                    <div style={{position:"absolute",top:-2,width:12,height:12,borderRadius:50,background:deprivation>=7?G.mid:deprivation>=5?G.orange:"#d62828",border:"2px solid #fff",left:"calc("+(deprivation/10*100)+"% - 6px)"}}/>
+                  </div>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:G.light}}>
+                    <span>1 Most deprived</span><span>10 Least deprived</span>
+                  </div>
+                  <div style={{marginTop:6,fontSize:11,fontWeight:600,color:deprivation>=7?G.mid:deprivation>=5?G.orange:"#d62828"}}>
+                    {deprivation>=8?"Premium catchment — full range appropriate, invest in quality and fresh":
+                     deprivation>=6?"Mainstream catchment — balance quality with value, PMPs important":
+                     deprivation>=4?"Value-led catchment — PMPs essential, strong BWS and tobacco":
+                     "High deprivation — focus on value, everyday essentials and tobacco"}
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Food consumption profile */}
             {foodProfile&&(
