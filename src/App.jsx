@@ -1180,7 +1180,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setUtilities(saved.utilities||9000); setOtherCosts(saved.otherCosts||8000);
     setRefitCost(saved.refitCost||75000); setStockCost(saved.stockCost||35000);
     setFinanceRate(saved.financeRate||8); setFinanceYears(saved.financeYears||5);
-    if(saved.cats) setCats(saved.cats);
+    setCats(CATS0.map(c=>({...c})));  // Always reset to ACS 2025 defaults on load
     if(saved.ageBands) setAgeBands(saved.ageBands);
     if(saved.employment) setEmployment(saved.employment);
     if(saved.housing) setHousing(saved.housing);
