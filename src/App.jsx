@@ -570,7 +570,7 @@ Reply with ONLY this exact JSON and nothing else:
       `<div class="slide">
         <div class="slide-header"><h3>Financial Highlights</h3><span class="slide-sub">Year 1 projected figures — post-refit</span></div>
         <div class="kpi-9-grid">
-          ${[["Base Weekly Turnover",fmt2(d.derived.wk),"Pre-investment baseline"],["Post-Refit Weekly Sales",fmt2(d.derived.uplWk),d.uplift+"% uplift applied"],["Annual Sales",fmt2(d.derived.uplAnn),"Post-refit Year 1"],["Gross Profit",fmt2(d.derived.annGP),pct2(d.derived.blGP)+" blended margin"],["EBITDA",fmt2(d.derived.eb),pct2(d.derived.eb/d.derived.ann*100)+" margin"],["Net Profit",fmt2(d.derived.nP),"After finance costs"],["Return on Investment",pct2(d.derived.roi),"Target: 20%+"],["Payback Period",d.derived.pb?d.derived.pb.toFixed(1)+" yrs":"N/A","From day 1 trading"],["Sales / Sq Ft / Week","£"+d.derived.uplSpf.toFixed(2),"Benchmark: £12+"]].map(([l,v,s])=>`<div class="kpi9"><div class="kpi9-lbl">${l.toUpperCase()}</div><div class="kpi9-val">${v}</div><div class="kpi9-sub">${s}</div></div>`).join("")}
+          ${[["Base Weekly Turnover",fmt2(d.derived.wk),"Pre-investment baseline"],["Post-Refit Weekly Sales",fmt2(d.derived.uplWk),d.uplift+"% uplift applied"],["Annual Sales",fmt2(d.derived.uplAnn),"Post-refit Year 1"],["Gross Profit",fmt2(d.derived.annGP),pct2(d.derived.blGP)+" blended margin"],["EBITDA",fmt2(d.derived.eb),pct2(d.derived.eb/d.derived.ann*100)+" margin"],["Net Profit",fmt2(d.derived.nP),"After finance costs"],["Return on Investment",pct2(d.derived.roi),"Target: 20%+"],["Payback Period",d.derived.pb?d.derived.pb.toFixed(1)+" yrs":"N/A","From day 1 trading"],["Sales / Sq Ft / Week","£"+d.derived.uplSpf.toFixed(2),"Benchmark: £18+ (symbol group)"]].map(([l,v,s])=>`<div class="kpi9"><div class="kpi9-lbl">${l.toUpperCase()}</div><div class="kpi9-val">${v}</div><div class="kpi9-sub">${s}</div></div>`).join("")}
         </div>
       </div>`,
       // P&L
@@ -1088,9 +1088,10 @@ The index field is a number showing consumption vs national average (100=average
     else if(planningApps.filter(p=>p.risk==="medium").length>0) r.push({rag:"amber",title:"Planning activity in catchment",detail:"Some planning activity detected nearby. Monitor for new food retail approvals."});
     else r.push({rag:"green",title:"No significant planning conflicts detected",detail:"No high-risk retail planning applications found in the immediate catchment."});
 
-    if(C.upliftedSpf < 10) r.push({rag:"red",title:"Sales density below benchmark",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £10 minimum benchmark for viable convenience retail.`});
-    else if(C.upliftedSpf < 12) r.push({rag:"amber",title:"Sales density below ideal",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £12 benchmark for a well-performing store.`});
-    else r.push({rag:"green",title:"Sales density on target",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk meets or exceeds the benchmark.`});
+    if(C.upliftedSpf < 12) r.push({rag:"red",title:"Sales density below benchmark",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £12 minimum benchmark for a viable convenience store. UK average independent runs at £17-19/sqft/wk.`});
+    else if(C.upliftedSpf < 16) r.push({rag:"amber",title:"Sales density below symbol group average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £16-20 benchmark for a well-performing symbol group store.`});
+    else if(C.upliftedSpf < 20) r.push({rag:"green",title:"Sales density meets average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is in line with a well-run symbol group store (UK average £17-19/sqft/wk).`});
+    else r.push({rag:"green",title:"Sales density above average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk exceeds the UK symbol group average of £18-20/sqft/wk — strong performance.`});
 
     if(C.roi < 0) r.push({rag:"red",title:"Negative ROI — not viable on current assumptions",detail:"The business does not generate sufficient profit to service the investment."});
     else if(C.roi < 10) r.push({rag:"amber",title:"ROI below target threshold",detail:`${pct(C.roi)} ROI is below the 10% minimum typically required for convenience retail investment.`});
@@ -2674,7 +2675,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 {term:"Net Profit", full:"What remains after every cost has been deducted", body:`Sales revenue minus cost of goods, rent, rates, staff, utilities, other costs and loan repayments. The money the owner takes home. A well-run convenience store should generate at least 5–8% net margin.`},
                 {term:"Payback Period", full:"Total Investment ÷ Annual Net Profit", body:`How many years until the investment is recovered from profits. Guide: under 4 years = excellent · 4–6 years = acceptable · over 7 years = high risk.`},
                 {term:"Gross Margin", full:"(Sales − Cost of Goods) ÷ Sales × 100", body:`The percentage of each sale retained after paying the supplier. Convenience retail typically runs at 22–30% blended margin. Higher-margin categories (hot beverages 50%+, health & beauty 35%+) should be prioritised in the ranging plan.`},
-                {term:"Sales per Square Foot", full:"Weekly Sales ÷ Net Selling Area", body:`The retail industry's standard measure of space productivity. Benchmarks: £14+ outstanding · £12–14 well-performing · £10–12 acceptable · under £10 below average.`},
+                {term:"Sales per Square Foot", full:"Weekly Sales ÷ Net Selling Area", body:`The retail industry's standard measure of space productivity. UK 2025 benchmarks (weekly): £20+ outstanding · £16–20 well-performing symbol group · £12–16 average independent · under £12 below average. Source: IBISWorld/ACS 2025.`},
               ].map((g,i)=>(
                 <div key={i} style={{marginBottom:14,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
                   <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:3}}>{g.term}</div>
