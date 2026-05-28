@@ -45,20 +45,25 @@ const SYMBOL_GROUPS = [
   { name:"Budgens",      tier:"premium",  minSpend:12000, margin:25, bestFor:["village","suburban"],               desc:"Premium positioning, strong fresh, higher basket" },
 ];
 
+// ACS Local Shop Report 2025 — actual UK convenience sector category mix
+// Source: ACS/Lumina Intelligence/Shopmate 2025 (IGD September 2024 overall convenience market)
 const CATS0 = [
-  {name:"Tobacco & Vaping",    mix:22, gp:8,  icon:"🚬"},
-  {name:"Soft Drinks & Water", mix:12, gp:28, icon:"🥤"},
-  {name:"Alcohol",             mix:11, gp:22, icon:"🍺"},
-  {name:"Confectionery",       mix:9,  gp:32, icon:"🍫"},
-  {name:"Grocery & Ambient",   mix:9,  gp:25, icon:"🛒"},
-  {name:"Chilled & Dairy",     mix:8,  gp:27, icon:"🥛"},
-  {name:"Snacks & Crisps",     mix:7,  gp:30, icon:"🍟"},
-  {name:"News & Mags",         mix:5,  gp:24, icon:"📰"},
-  {name:"Frozen",              mix:4,  gp:29, icon:"🧊"},
-  {name:"Hot Beverages",       mix:4,  gp:55, icon:"☕"},
-  {name:"Health & Beauty",     mix:3,  gp:38, icon:"💊"},
-  {name:"Lottery & Services",  mix:3,  gp:6,  icon:"🎟️"},
-  {name:"Other / Impulse",     mix:3,  gp:33, icon:"⭐"},
+  {name:"Tobacco & Vaping",      mix:18.8, gp:8,  icon:"🚬", acs:true},
+  {name:"Alcohol",               mix:15.2, gp:22, icon:"🍺", acs:true},
+  {name:"Chilled Foods",         mix:12.9, gp:27, icon:"🥛", acs:true},
+  {name:"Soft Drinks",           mix:7.9,  gp:28, icon:"🥤", acs:true},
+  {name:"Canned & Packaged Grocery", mix:7.6, gp:25, icon:"🛒", acs:true},
+  {name:"Confectionery",         mix:6.4,  gp:32, icon:"🍫", acs:true},
+  {name:"Bread & Bakery",        mix:5.7,  gp:30, icon:"🍞", acs:true},
+  {name:"Fruit & Veg",           mix:3.8,  gp:35, icon:"🥦", acs:true},
+  {name:"Bagged Savoury Snacks", mix:3.9,  gp:30, icon:"🍟", acs:true},
+  {name:"Fresh Milk",            mix:3.2,  gp:18, icon:"🥛", acs:true},
+  {name:"Frozen Foods",          mix:2.7,  gp:29, icon:"🧊", acs:true},
+  {name:"Health & Beauty",       mix:2.6,  gp:38, icon:"💊", acs:true},
+  {name:"Household",             mix:2.7,  gp:28, icon:"🏠", acs:true},
+  {name:"News & Magazines",      mix:2.2,  gp:24, icon:"📰", acs:true},
+  {name:"Hot Food & Drinks To Go",mix:1.0, gp:55, icon:"☕", acs:true},
+  {name:"Non-Food / Other",      mix:3.4,  gp:33, icon:"⭐", acs:true},
 ];
 
 const REFITS = [
