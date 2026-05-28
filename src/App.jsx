@@ -1813,7 +1813,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 {id:"pl",     label:"P&L"},
                 {id:"cf",     label:"Cashflow"},
                 {id:"sens",   label:"Sensitivity"},
-                {id:"lease",  label:"Lease Calc"},
+
                 {id:"cats",   label:"Categories"},
               ];
               const months = ["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"];
@@ -2002,50 +2002,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           </tbody>
                         </table>
                         <div style={{fontSize:11,color:G.light,marginTop:10}}>Base: {footfall} transactions/day · {fmt(rent)}/yr rent · {uplift}% uplift · {fmt(C.ti)} investment</div>
-                      </div>
-                    )}
-
-                    {/* ── Lease Calculator Sheet ── */}
-                    {sheet==="lease"&&(
-                      <div style={{padding:16}}>
-                        <div style={{fontSize:13,color:G.text,marginBottom:16,lineHeight:1.6}}>Maximum affordable annual rent at each ROI target, based on post-refit sales of <strong>{fmt(C.upliftedAnn)}</strong>/yr and investment of <strong>{fmt(C.ti)}</strong>.</div>
-                        <Fld l="Your target ROI (%)" h="Adjust to see how it affects the maximum rent" ch={
-                          <input style={INP_manual} type="number" min="0" max="50" step="1" value={targetRoi} onChange={e=>setTargetRoi(+e.target.value)}/>
-                        }/>
-                        <div style={{background:G.pale,border:"2px solid "+G.mid,borderRadius:12,padding:20,marginBottom:20,textAlign:"center"}}>
-                          <div style={{fontSize:12,color:G.light,textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Max rent at {targetRoi}% ROI</div>
-                          <div style={{fontSize:40,fontWeight:800,color:maxRent>rent?G.mid:maxRent>0?G.orange:"#d62828",lineHeight:1}}>{fmt(maxRent)}</div>
-                          <div style={{fontSize:13,color:G.light,marginTop:8}}>
-                            {maxRent>rent?`✓ ${fmt(maxRent-rent)} headroom vs current asking rent of ${fmt(rent)}`
-                             :maxRent>0?`⚠ ${fmt(rent-maxRent)} over budget vs current asking rent of ${fmt(rent)}`
-                             :"✗ Site cannot support any rent at this ROI target"}
-                          </div>
-                        </div>
-                        <table style={{width:"100%",borderCollapse:"collapse"}}>
-                          <thead>
-                            <tr>
-                              {["ROI Target","Max Annual Rent","vs Asking Rent","Headroom / Shortfall","Status"].map(h=>(
-                                <th key={h} style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:"right",firstChild:{textAlign:"left"}}}>{h}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {rentSensitivity.map(({tgt,maxR},i)=>{
-                              const delta=maxR-rent;
-                              const col=maxR>rent?G.mid:maxR>0?G.orange:"#d62828";
-                              const isTarget=tgt===targetRoi;
-                              return (
-                                <tr key={i} style={{background:isTarget?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
-                                  <td style={{padding:"9px 10px",fontSize:13,fontWeight:isTarget?800:400,color:isTarget?G.mid:G.text}}>{tgt}%{isTarget?" ← current":""}</td>
-                                  <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:col}}>{fmt(maxR)}</td>
-                                  <td style={{padding:"9px 10px",textAlign:"right",fontSize:12,color:G.light}}>{fmt(rent)}</td>
-                                  <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:col}}>{delta>=0?"+"+fmt(delta):"("+fmt(Math.abs(delta))+")"}</td>
-                                  <td style={{padding:"9px 10px",textAlign:"right",fontSize:11,fontWeight:700,color:col}}>{maxR>rent?"✓ OK":maxR>0?"⚠ Over":"✗ N/A"}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
                       </div>
                     )}
 
@@ -2349,83 +2305,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{fontSize:12,color:G.light,marginTop:8}}>Base case: {footfall} transactions/day at {fmt(rent)}/yr rent · Post-refit uplift {uplift}%</div>
             </div>
 
-            {/* S11: LEASE CALCULATOR */}
-            <div className="page-break avoid-break">
-              <PSH c="11. Lease Calculator — What Can This Site Afford?"/>
-              <div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>
-                Use this to negotiate rent. Enter your target ROI and see the maximum annual rent this site can support while still hitting that return.
-              </div>
-              <Fld l="Target ROI (%)" h="What return do you need to justify the investment?" ch={
-                <input style={INP_manual} type="number" min="0" max="50" step="1" value={targetRoi} onChange={e=>setTargetRoi(+e.target.value)}/>
-              }/>
-              <div style={{background:G.pale,border:"1.5px solid "+G.mid,borderRadius:12,padding:20,marginBottom:20,textAlign:"center"}}>
-                <div style={{fontSize:13,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Maximum affordable annual rent at {targetRoi}% ROI target</div>
-                <div style={{fontSize:36,fontWeight:800,color:maxRent>rent?G.mid:maxRent>0?G.orange:"#d62828",lineHeight:1}}>{fmt(maxRent)}</div>
-                <div style={{fontSize:13,color:G.light,marginTop:8}}>
-                  {maxRent>rent ? `✓ Current rent of ${fmt(rent)} is BELOW this ceiling — you have negotiating headroom of ${fmt(maxRent-rent)}`
-                   : maxRent>0  ? `⚠ Current rent of ${fmt(rent)} EXCEEDS the ceiling by ${fmt(rent-maxRent)} — renegotiate before committing`
-                   :              `✗ At ${targetRoi}% ROI target this site cannot afford any rent on current trading assumptions`}
-                </div>
-              </div>
-              <Sub c="Maximum rent at different ROI targets"/>
-              <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,overflow:"hidden"}}>
-                {rentSensitivity.map(({tgt,maxR},i)=>(
-                  <div key={tgt} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 16px",borderBottom:i<rentSensitivity.length-1?"1px solid "+G.border:"none",background:tgt===targetRoi?G.pale:"transparent"}}>
-                    <div style={{fontSize:13,fontWeight:tgt===targetRoi?700:400,color:tgt===targetRoi?G.mid:G.text}}>{tgt}% ROI target{tgt===targetRoi?" ← current":""}</div>
-                    <div style={{display:"flex",alignItems:"center",gap:12}}>
-                      <div style={{fontSize:11,color:maxR>rent?G.mid:maxR>0?G.orange:"#d62828"}}>
-                        {maxR>rent?"✓ above asking":maxR>0?"⚠ below asking":"✗ not viable"}
-                      </div>
-                      <div style={{fontSize:15,fontWeight:700,color:maxR>rent?G.mid:maxR>0?G.orange:"#d62828"}}>{fmt(maxR)}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{fontSize:12,color:G.light,marginTop:8}}>Based on post-refit sales of {fmt(C.upliftedAnn)}/yr · Investment {fmt(C.ti)} · Current asking rent {fmt(rent)}/yr</div>
-            </div>
-            {comparables.some(c=>c.name)&&(
-              <div className="page-break avoid-break">
-                <PSH c="12. Comparable Sites"/>
-                <RC t="Benchmark Comparison" ch={
-                  <div>
-                    <div style={{display:"flex",padding:"8px 0",borderBottom:"2px solid "+G.border,fontSize:11,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".06em"}}>
-                      <div style={{flex:2}}>Site</div>
-                      <div style={{flex:1,textAlign:"right"}}>Weekly T/O</div>
-                      <div style={{flex:1,textAlign:"right"}}>Sq ft</div>
-                      <div style={{flex:1,textAlign:"right"}}>£/sqft/wk</div>
-                    </div>
-                    <div style={{display:"flex",padding:"10px 0",borderBottom:"1px solid "+G.border,background:"#dde4f5"}}>
-                      <div style={{flex:2,fontSize:13,fontWeight:700,color:G.mid}}>This site (post-refit)</div>
-                      <div style={{flex:1,textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.upliftedWk)}</div>
-                      <div style={{flex:1,textAlign:"right",fontSize:13,color:G.mid}}>{sqft}</div>
-                      <div style={{flex:1,textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>£{C.upliftedSpf.toFixed(2)}</div>
-                    </div>
-                    {comparables.filter(c=>c.name).map((c,i)=>(
-                      <div key={i} style={{display:"flex",padding:"10px 0",borderBottom:"1px solid "+G.border}}>
-                        <div style={{flex:2,fontSize:13,color:G.text}}>{c.name}</div>
-                        <div style={{flex:1,textAlign:"right",fontSize:13,color:G.text}}>{fmt(c.weeklyT)}</div>
-                        <div style={{flex:1,textAlign:"right",fontSize:13,color:G.text}}>{c.sqft}</div>
-                        <div style={{flex:1,textAlign:"right",fontSize:13,fontWeight:600,color:c.sqft>0&&c.weeklyT>0?(c.weeklyT/c.sqft>C.upliftedSpf?G.mid:"#c05010"):G.text}}>{c.sqft>0&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2):"—"}</div>
-                      </div>
-                    ))}
-                  </div>
-                }/>
-              </div>
-            )}
-
-            {/* S11: AREA */}
-            <div className="page-break avoid-break">
-              <PSH c="13. Area Trends and Traffic"/>
-              <RC t="Area Trend Summary" ch={
-                <div>{[["House prices",tHP],["Population growth",tPG],["New housing",tNH],["Footfall trend",tFF],["Area regeneration",tRG],["Retail vacancy",tVA]].map(([l,v])=>(
-                  <div key={l} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"9px 0",borderBottom:"1px solid "+G.border}}>
-                    <span style={{fontSize:14,color:G.text,fontWeight:500}}>{l}</span>
-                    <span style={{padding:"4px 12px",borderRadius:6,fontSize:12,fontWeight:700,background:TCOLORS[v]+"18",color:TCOLORS[v],border:"1px solid "+TCOLORS[v]+"44"}}>{v}</span>
-                  </div>
-                ))}</div>
-              }/>
-              {areaNotes&&<RC t="Area Intelligence Notes" ch={<p style={{fontSize:14,color:G.text,lineHeight:1.7,fontStyle:"italic"}}>{areaNotes}</p>}/>}
-            </div>
 
             {/* S12: VISIT PHOTOS */}
             {photos.length>0&&(
