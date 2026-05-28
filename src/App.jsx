@@ -851,6 +851,7 @@ export default function App(){
 
   // Postcode data state
   const [postcodeData,setPostcodeData]=useState(null);
+  const [foodProfile,setFoodProfile]=useState(null);
   const [postcodeLoading,setPostcodeLoading]=useState(false);
   const [postcodeError,setPostcodeError]=useState(null);
   const [competitorList,setCompetitorList]=useState([]);
@@ -895,6 +896,58 @@ export default function App(){
       else if(region.includes("south east")||region.includes("east of england")) { setCatchmentPop(9000); setPopDensity("medium"); setMedianIncome(33000); }
       else if(region.includes("north")||region.includes("yorkshire")||region.includes("midlands")) { setCatchmentPop(7500); setPopDensity("medium"); setMedianIncome(27000); }
       else { setCatchmentPop(8500); setPopDensity("medium"); setMedianIncome(30000); }
+
+      // ── Food consumption profile via AI + ONS regional data ──────────────────
+      try {
+        const deprivScore = deprivation;
+        const regionName = r.region || "England";
+        const adminDist = r.admin_district || "";
+        const foodPrompt = `You are a UK convenience retail ranging expert with access to ONS Family Food Survey data and regional eating habit research.
+
+Postcode: ${clean}
+Local authority: ${adminDist}
+Region: ${regionName}
+Deprivation score: ${deprivScore}/10 (10=least deprived)
+Location type: ${location}
+
+Based on ONS Family Food Survey regional data, Kantar household panel data, and local demographic indicators, provide a food consumption profile for this specific area.
+
+Respond ONLY with a valid JSON object in this exact format, no other text:
+{
+  "summary": "2-sentence plain English summary of eating habits in this area",
+  "topFoods": [
+    {"category": "category name", "insight": "specific local insight", "index": 115, "action": "ranging recommendation"},
+    {"category": "category name", "insight": "specific local insight", "index": 108, "action": "ranging recommendation"},
+    {"category": "category name", "insight": "specific local insight", "index": 122, "action": "ranging recommendation"},
+    {"category": "category name", "insight": "specific local insight", "index": 95, "action": "ranging recommendation"},
+    {"category": "category name", "insight": "specific local insight", "index": 88, "action": "ranging recommendation"},
+    {"category": "category name", "insight": "specific local insight", "index": 104, "action": "ranging recommendation"}
+  ],
+  "avoidCategories": ["category to de-prioritise", "category to de-prioritise"],
+  "keyInsight": "single most important ranging recommendation for this specific postcode",
+  "ethnicFoodNote": "brief note on any relevant ethnic food preferences based on local demographics",
+  "healthTrend": "note on health consciousness level and relevant products"
+}
+
+The index field is a number showing consumption vs national average (100=average, 115=15% above average, 85=15% below). Be specific to the region and deprivation level.`;
+
+        const foodRes = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            messages: [{ role: "user", content: foodPrompt }]
+          })
+        });
+        const foodData = await foodRes.json();
+        const foodText = foodData.content?.find(b=>b.type==="text")?.text||"";
+        const cleanJson = foodText.replace(/```json|```/g,"").trim();
+        const foodProfile = JSON.parse(cleanJson);
+        setFoodProfile(foodProfile);
+      } catch(e) {
+        console.log("Food profile lookup failed:", e.message);
+      }
 
       // Fetch nearby competitors via Overpass API (OSM)
       const overpassQuery = `[out:json][timeout:15];(node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent"](around:1000,${lat},${lng});node["amenity"~"fuel"](around:1000,${lat},${lng}););out body;`;
@@ -1550,6 +1603,61 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <DemoSec label="Employment status % — ONS census data" keys={EMPLOYMENTS} values={employment} setter={setEmployment}/>
             <DemoSec label="Housing tenure % — ONS census data" keys={HOUSINGS} values={housing} setter={setHousing}/>
             <S3 items={[{l:"Catchment pop",v:catchmentPop.toLocaleString()},{l:"Penetration",v:pct(C.pen),hi:true},{l:"Demo score",v:DS+"/9",hi:DS>=6}]}/>
+
+            {/* Food consumption profile */}
+            {foodProfile&&(
+              <div style={{marginTop:20}}>
+                <Sub c="Local Food Consumption Profile — auto-generated from postcode"/>
+                <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:16}}>
+                  <div style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>{foodProfile.summary}</div>
+                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:4}}>Key insight</div>
+                  <div style={{fontSize:13,color:G.text,lineHeight:1.7,padding:"10px 14px",background:G.pale,borderRadius:8,borderLeft:"3px solid "+G.mid}}>{foodProfile.keyInsight}</div>
+                </div>
+
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+                  {(foodProfile.topFoods||[]).map((f,i)=>{
+                    const above = f.index >= 100;
+                    const diff = Math.abs(f.index - 100);
+                    return (
+                      <div key={i} style={{background:above?"#eef1fb":"#f8f9fc",border:"1px solid "+(above?G.mid:G.border),borderRadius:10,padding:14}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+                          <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{f.category}</div>
+                          <div style={{padding:"3px 8px",borderRadius:6,fontSize:11,fontWeight:800,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index >= 100?"+":"-"}{diff}%</div>
+                        </div>
+                        <div style={{fontSize:11,color:G.light,marginBottom:6,lineHeight:1.5}}>{f.insight}</div>
+                        <div style={{fontSize:11,color:G.mid,fontWeight:600,borderTop:"1px solid "+G.border,paddingTop:6}}>→ {f.action}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+                  <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Ethnic Food Preferences</div>
+                    <div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.ethnicFoodNote}</div>
+                  </div>
+                  <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Health Trends</div>
+                    <div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.healthTrend}</div>
+                  </div>
+                </div>
+
+                {foodProfile.avoidCategories&&foodProfile.avoidCategories.length>0&&(
+                  <div style={{background:"#fdf8ec",border:"1px solid "+G.orange,borderRadius:10,padding:14}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>De-prioritise in ranging</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                      {foodProfile.avoidCategories.map((c,i)=>(
+                        <div key={i} style={{padding:"4px 10px",background:"#fff",border:"1px solid "+G.orange,borderRadius:6,fontSize:12,color:G.orange,fontWeight:600}}>{c}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div style={{fontSize:11,color:G.light,marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside your visit observations.</div>
+              </div>
+            )}
+            {!foodProfile&&postcodeData&&(
+              <div style={{marginTop:16,padding:"10px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:12,color:G.light}}>Food consumption profile generating... (enter postcode on Property tab first)</div>
+            )}
           </div>
         )}
 
@@ -2202,6 +2310,48 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
               <RC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
             </div>
+
+            {/* S7b: LOCAL FOOD CONSUMPTION PROFILE */}
+            {foodProfile&&(
+              <div className="page-break avoid-break">
+                <PSH c="Local Food Consumption Profile"/>
+                <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:16,marginBottom:16}}>
+                  <div style={{fontSize:14,color:G.text,lineHeight:1.8,marginBottom:10}}>{foodProfile.summary}</div>
+                  <div style={{padding:"12px 16px",background:G.pale,borderRadius:8,borderLeft:"3px solid "+G.mid}}>
+                    <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:4}}>Key Ranging Recommendation</div>
+                    <div style={{fontSize:13,color:G.text,lineHeight:1.7}}>{foodProfile.keyInsight}</div>
+                  </div>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+                  {(foodProfile.topFoods||[]).map((f,i)=>{
+                    const above = f.index >= 100;
+                    return (
+                      <div key={i} style={{background:above?"#eef1fb":"#f8f9fc",border:"1px solid "+(above?G.mid:G.border),borderRadius:8,padding:12}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                          <div style={{fontSize:12,fontWeight:700,color:G.dark}}>{f.category}</div>
+                          <div style={{fontSize:11,fontWeight:800,padding:"2px 6px",borderRadius:4,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
+                        </div>
+                        <div style={{fontSize:10,color:G.light,marginBottom:5,lineHeight:1.4}}>{f.insight}</div>
+                        <div style={{fontSize:10,color:G.mid,fontWeight:600,borderTop:"1px solid "+G.border,paddingTop:5}}>→ {f.action}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <RC t="Ethnic Food Preferences & Health Trends" ch={
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+                    <div><div style={{fontSize:11,fontWeight:700,color:G.mid,marginBottom:4}}>Ethnic Food Preferences</div><div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.ethnicFoodNote}</div></div>
+                    <div><div style={{fontSize:11,fontWeight:700,color:G.mid,marginBottom:4}}>Health Consciousness</div><div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.healthTrend}</div></div>
+                  </div>
+                }/>
+                {foodProfile.avoidCategories&&foodProfile.avoidCategories.length>0&&(
+                  <div style={{background:"#fdf8ec",border:"1px solid "+G.orange,borderRadius:8,padding:12}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.orange,marginBottom:6}}>DE-PRIORITISE IN RANGING</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{foodProfile.avoidCategories.map((c,i)=><div key={i} style={{padding:"3px 10px",background:"#fff",border:"1px solid "+G.orange,borderRadius:6,fontSize:12,color:G.orange}}>{c}</div>)}</div>
+                  </div>
+                )}
+                <div style={{fontSize:11,color:G.light,marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside visit observations.</div>
+              </div>
+            )}
 
             {/* S8: DETAILED P&L */}
             <div className="page-break avoid-break">
