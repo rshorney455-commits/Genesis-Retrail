@@ -1137,7 +1137,7 @@ Area trends: House prices ${tHP}, Population ${tPG}, Footfall ${tFF}, Regenerati
 Overall verdict: ${VRD.l}
 ${areaNotes?"Additional notes: "+areaNotes:""}\n${refitCommentary?"Refit plan: "+refitCommentary:""}
 
-Write a concise, professional 4-paragraph executive summary for this site assessment. Be specific to the numbers. Use formal surveyor-style language. Do not use bullet points. Do not include section headers. Paragraph 1: overall verdict and financial headline. Paragraph 2: trading performance and catchment. Paragraph 3: risk factors and competition. Paragraph 4: recommendation.
+Write a concise, professional 4-paragraph executive summary for this site assessment. Be specific to the numbers. Use formal surveyor-style language suitable for both the retailer and their bank. Do not use bullet points. Do not use section headers. Do not use phrases like "For the Retailer" or "For the Bank". Paragraph 1: overall verdict and ROI — explain what the ROI figure means in plain terms. Paragraph 2: trading performance, catchment and post-refit uplift. Paragraph 3: risk factors, competition and any planning considerations. Paragraph 4: recommendation and next steps.
   `, [propName,postcode,locLabel,C,catchmentPop,medianIncome,deprivation,popDensity,traffic,competitors,nearestComp,tHP,tPG,tFF,tRG,VRD,areaNotes]);
 
   // ── Save / Restore ──────────────────────────────────────────────────────────
@@ -2385,6 +2385,24 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* S0: AI EXECUTIVE SUMMARY */}
             <div className="page-break avoid-break">
               <PSH c="Executive Summary"/>
+              {/* ROI explanation box */}
+              <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:16}}>
+                <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:10}}>What does {pct(C.roi)} ROI mean?</div>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>
+                  <strong>Return on Investment (ROI)</strong> measures how much profit the business generates each year as a percentage of the total capital invested.
+                  A <strong style={{color:VRD.col}}>{pct(C.roi)} ROI</strong> means that for every <strong>£100</strong> invested in this business, <strong>£{C.roi.toFixed(0)}</strong> comes back as profit every year.
+                </p>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>
+                  To put that in context: a UK savings account currently pays around 4–5% per year. The Genesis Retail minimum threshold for a viable convenience retail investment is 20%.
+                  At {pct(C.roi)}, this site <strong style={{color:VRD.col}}>
+                    {C.roi>=20?"comfortably exceeds that threshold":C.roi>=15?"meets that threshold":"falls below that threshold — see risk register"}
+                  </strong>.
+                </p>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8}}>
+                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(C.refitCost||refitCost)} refit + {fmt(C.stockCost||stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?C.pb.toFixed(1)+" years":"N/A"}</strong> from net profits alone, 
+                  with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
+                </p>
+              </div>
               <AISection prompt={aiPrompt} label="AI Executive Summary"/>
             </div>
 
