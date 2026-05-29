@@ -1161,6 +1161,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const saveAssessment = useCallback(()=>{
     try {
       const state = gatherState();
+      // Don't save cats - always use ACS defaults on load
+      delete state.cats;
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
       const idx = existing.findIndex(a=>a.postcode===state.postcode && a.propName===state.propName);
       if(idx>=0) existing[idx]=state; else existing.unshift(state);
