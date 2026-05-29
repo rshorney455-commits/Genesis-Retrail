@@ -1581,7 +1581,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Category table */}
             <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,overflow:"hidden",marginBottom:16}}>
               {/* Header row */}
-              <div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,background:G.mid,padding:"10px 14px"}}>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,background:G.mid,padding:"12px 14px"}}>
                 {["Category","ACS Mix %","Your Mix %","GP %","Annual Sales","Annual GP"].map(h=>(
                   <div key={h} style={{fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".07em",textAlign:h==="Category"?"left":"center"}}>{h}</div>
                 ))}
@@ -1597,31 +1597,31 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 const annGP    = annSales * cat.gp / 100;
                 const isEven   = i % 2 === 0;
                 return (
-                  <div key={cat.name} style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,padding:"10px 14px",background:isEven?G.card:"#fff",borderTop:"1px solid "+G.border,alignItems:"center"}}>
+                  <div key={cat.name} style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,padding:"14px 14px",background:isEven?G.card:"#fff",borderTop:"1px solid "+G.border,alignItems:"center"}}>
                     {/* Category name + bar */}
-                    <div>
-                      <div style={{fontSize:13,fontWeight:600,color:G.dark,marginBottom:4}}>{cat.icon} {cat.name}</div>
-                      <div style={{height:4,background:G.pale,borderRadius:2}}>
-                        <div style={{height:"100%",background:G.mid,borderRadius:2,width:Math.min(cat.mix/20*100,100)+"%"}}/>
+                    <div style={{paddingRight:8}}>
+                      <div style={{fontSize:14,fontWeight:600,color:G.dark,marginBottom:6}}>{cat.icon} {cat.name}</div>
+                      <div style={{height:5,background:G.pale,borderRadius:3}}>
+                        <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
                       </div>
                     </div>
 
                     {/* ACS benchmark */}
                     <div style={{textAlign:"center"}}>
-                      <div style={{fontSize:13,color:G.light,fontWeight:600}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
-                      <div style={{fontSize:9,color:G.light,marginTop:2}}>benchmark</div>
+                      <div style={{fontSize:14,color:G.light,fontWeight:700}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
+                      <div style={{fontSize:10,color:G.light,marginTop:3}}>benchmark</div>
                     </div>
 
                     {/* Your mix — editable */}
                     <div style={{textAlign:"center"}}>
                       <input
-                        style={{...INP_manual,padding:"6px 8px",textAlign:"center",fontSize:13,width:"100%"}}
+                        style={{...INP_manual,padding:"10px 8px",textAlign:"center",fontSize:14,width:"100%"}}
                         type="number" step="0.1" min="0" max="100"
                         value={cat.mix}
                         onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,mix:parseFloat(e.target.value)||0}:c))}
                       />
                       {acsMix !== null && Math.abs(mixDiff) >= 0.5 && (
-                        <div style={{fontSize:9,marginTop:2,color:mixDiff>0?G.mid:"#c05010",fontWeight:600}}>
+                        <div style={{fontSize:10,marginTop:3,color:mixDiff>0?G.mid:"#c05010",fontWeight:600}}>
                           {mixDiff>0?"▲":""}{mixDiff<0?"▼":""}{Math.abs(mixDiff).toFixed(1)}% vs ACS
                         </div>
                       )}
@@ -1630,13 +1630,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     {/* GP % — editable with ACS benchmark tooltip */}
                     <div style={{textAlign:"center"}}>
                       <input
-                        style={{...INP_auto,padding:"6px 8px",textAlign:"center",fontSize:13,width:"100%"}}
+                        style={{...INP_auto,padding:"10px 8px",textAlign:"center",fontSize:14,width:"100%"}}
                         type="number" step="0.5" min="0" max="100"
                         value={cat.gp}
                         onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,gp:parseFloat(e.target.value)||0}:c))}
                       />
                       {acsGp !== null && (
-                        <div style={{fontSize:9,marginTop:2,color:G.light}}>
+                        <div style={{fontSize:10,marginTop:3,color:G.light}}>
                           avg {acsGp}%
                         </div>
                       )}
@@ -1644,21 +1644,21 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
                     {/* Annual sales */}
                     <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
-                      <div style={{fontSize:9,color:G.light,marginTop:2}}>{cat.mix.toFixed(1)}% of sales</div>
+                      <div style={{fontSize:14,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
+                      <div style={{fontSize:10,color:G.light,marginTop:3}}>{cat.mix.toFixed(1)}% of sales</div>
                     </div>
 
                     {/* Annual GP */}
                     <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:13,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
-                      <div style={{fontSize:9,color:G.light,marginTop:2}}>{cat.gp}% margin</div>
+                      <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
+                      <div style={{fontSize:10,color:G.light,marginTop:3}}>{cat.gp}% margin</div>
                     </div>
                   </div>
                 );
               })}
 
               {/* Totals row */}
-              <div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,padding:"12px 14px",background:G.pale,borderTop:"2px solid "+G.mid,alignItems:"center"}}>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 1.2fr 1.2fr 1.2fr 1.4fr 1.4fr",gap:0,padding:"14px 14px",background:G.pale,borderTop:"2px solid "+G.mid,alignItems:"center"}}>
                 <div style={{fontSize:13,fontWeight:800,color:G.mid}}>TOTAL</div>
                 <div style={{textAlign:"center",fontSize:12,color:G.light}}>100%</div>
                 <div style={{textAlign:"center"}}>
