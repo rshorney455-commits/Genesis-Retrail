@@ -45,7 +45,7 @@ const SYMBOL_GROUPS = [
   { name:"Budgens",      tier:"premium",  minSpend:12000, margin:25, bestFor:["village","suburban"],               desc:"Premium positioning, strong fresh, higher basket" },
 ];
 
-// ACS Local Shop Report 2025 — actual UK convenience sector category mix
+// ACS Local Shop Report 2025 — actual UK convenience sector category mix (v2)
 // Source: ACS/Lumina Intelligence/Shopmate 2025 (IGD September 2024 overall convenience market)
 const CATS0 = [
   {name:"Tobacco & Vaping",      mix:18.8, gp:8,  icon:"🚬", acs:true},
