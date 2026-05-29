@@ -45,7 +45,7 @@ const SYMBOL_GROUPS = [
   { name:"Budgens",      tier:"premium",  minSpend:12000, margin:25, bestFor:["village","suburban"],               desc:"Premium positioning, strong fresh, higher basket" },
 ];
 
-// ACS Local Shop Report 2025 — actual UK convenience sector category mix (v2)
+// ACS Local Shop Report 2025 — actual UK convenience sector category mix
 // Source: ACS/Lumina Intelligence/Shopmate 2025 (IGD September 2024 overall convenience market)
 const CATS0 = [
   {name:"Tobacco & Vaping",      mix:18.8, gp:8,  icon:"🚬", acs:true},
@@ -1580,153 +1580,80 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
             {/* Category cards */}
             {cats.map((cat,i)=>{
-                const acsDefault = CATS0.find(c=>c.name===cat.name);
-                const acsMix = acsDefault ? acsDefault.mix : null;
-                const acsGp  = acsDefault ? acsDefault.gp  : null;
-                const mixDiff = acsMix !== null ? cat.mix - acsMix : 0;
-                const annSales = C.ann * cat.mix / 100;
-                const annGP    = annSales * cat.gp / 100;
-                return (
-                  <div key={cat.name} style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:18,marginBottom:12}}>
-
-                    {/* Top row: icon + name + annual figures */}
-                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-                      <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{cat.icon} {cat.name}</div>
-                      <div style={{display:"flex",gap:20,textAlign:"right"}}>
-                        <div>
-                          <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual Sales</div>
-                          <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
-                        </div>
-                        <div>
-                          <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual GP</div>
-                          <div style={{fontSize:16,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
-                        </div>
+              const acsDefault = CATS0.find(c=>c.name===cat.name);
+              const acsMix = acsDefault ? acsDefault.mix : null;
+              const acsGp  = acsDefault ? acsDefault.gp  : null;
+              const mixDiff = acsMix !== null ? cat.mix - acsMix : 0;
+              const annSales = C.ann * cat.mix / 100;
+              const annGP = annSales * cat.gp / 100;
+              return (
+                <div key={cat.name} style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:18,marginBottom:14}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                    <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{cat.icon} {cat.name}</div>
+                    <div style={{display:"flex",gap:20}}>
+                      <div style={{textAlign:"right"}}>
+                        <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual Sales</div>
+                        <div style={{fontSize:15,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
                       </div>
-                    </div>
-
-                    {/* Mix bar */}
-                    <div style={{height:6,background:G.pale,borderRadius:3,marginBottom:14}}>
-                      <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
-                    </div>
-
-                    {/* Bottom row: ACS benchmark + your mix input + GP input */}
-                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
-
-                      {/* ACS benchmark */}
-                      <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px 14px",textAlign:"center"}}>
-                        <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>ACS Benchmark</div>
-                        <div style={{fontSize:22,fontWeight:800,color:G.light}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
-                        {acsMix !== null && Math.abs(mixDiff) >= 0.5 && (
-                          <div style={{fontSize:10,marginTop:4,color:mixDiff>0?G.mid:"#c05010",fontWeight:700}}>
-                            {mixDiff>0?"▲ ":""}{mixDiff<0?"▼ ":""}{Math.abs(mixDiff).toFixed(1)}% vs ACS
-                          </div>
-                        )}
+                      <div style={{textAlign:"right"}}>
+                        <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual GP</div>
+                        <div style={{fontSize:15,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
                       </div>
-
-                      {/* Your mix */}
-                      <div style={{textAlign:"center"}}>
-                        <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>Your Mix %</div>
-                        <input
-                          style={{...INP_manual,padding:"12px 8px",textAlign:"center",fontSize:20,fontWeight:700,width:"100%"}}
-                          type="number" step="0.1" min="0" max="100"
-                          value={cat.mix}
-                          onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,mix:parseFloat(e.target.value)||0}:c))}
-                        />
-                      </div>
-
-                      {/* GP % */}
-                      <div style={{textAlign:"center"}}>
-                        <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>GP % <span style={{fontWeight:400}}>(avg {acsGp}%)</span></div>
-                        <input
-                          style={{...INP_auto,padding:"12px 8px",textAlign:"center",fontSize:20,fontWeight:700,width:"100%"}}
-                          type="number" step="0.5" min="0" max="100"
-                          value={cat.gp}
-                          onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,gp:parseFloat(e.target.value)||0}:c))}
-                        />
-                      </div>
-
                     </div>
                   </div>
-                );
-              })}
-
-              {/* Totals card */}
-              <div style={{background:G.pale,border:"2px solid "+G.mid,borderRadius:12,padding:18,marginBottom:16}}>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,textAlign:"center"}}>
-                  {[["Total Mix",totalMix.toFixed(1)+"%",Math.abs(totalMix-100)<0.1?G.mid:G.orange],
-                    ["Blended GP",C.blGP.toFixed(1)+"%",G.mid],
-                    ["Total Sales",fmt(C.ann),G.dark],
-                    ["Total GP",fmt(C.annGP),G.mid]].map(([l,v,col])=>(
-                    <div key={l}>
-                      <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
-                      <div style={{fontSize:18,fontWeight:800,color:col}}>{v}</div>
+                  <div style={{height:5,background:G.pale,borderRadius:3,marginBottom:14}}>
+                    <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+                    <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px",textAlign:"center"}}>
+                      <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>ACS Benchmark</div>
+                      <div style={{fontSize:22,fontWeight:800,color:G.light}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
+                      {acsMix !== null && Math.abs(mixDiff)>=0.5 && (
+                        <div style={{fontSize:10,marginTop:4,fontWeight:700,color:mixDiff>0?G.mid:"#c05010"}}>
+                          {mixDiff>0?"▲ ":"▼ "}{Math.abs(mixDiff).toFixed(1)}% vs ACS
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-                {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:G.orange,marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
-              </div>
-                    {/* Category name + bar */}
-                    <div style={{paddingRight:8}}>
-                      <div style={{fontSize:14,fontWeight:600,color:G.dark,marginBottom:6}}>{cat.icon} {cat.name}</div>
-                      <div style={{height:5,background:G.pale,borderRadius:3}}>
-                        <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
-                      </div>
-                    </div>
-
-                    {/* ACS benchmark */}
                     <div style={{textAlign:"center"}}>
-                      <div style={{fontSize:14,color:G.light,fontWeight:700}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
-                      <div style={{fontSize:10,color:G.light,marginTop:3}}>benchmark</div>
-                    </div>
-
-                    {/* Your mix — editable */}
-                    <div style={{textAlign:"center"}}>
+                      <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>Your Mix %</div>
                       <input
-                        style={{...INP_manual,padding:"10px 8px",textAlign:"center",fontSize:14,width:"100%"}}
+                        style={{...INP_manual,padding:"12px 8px",textAlign:"center",fontSize:20,fontWeight:700,width:"100%"}}
                         type="number" step="0.1" min="0" max="100"
                         value={cat.mix}
                         onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,mix:parseFloat(e.target.value)||0}:c))}
                       />
-                      {acsMix !== null && Math.abs(mixDiff) >= 0.5 && (
-                        <div style={{fontSize:10,marginTop:3,color:mixDiff>0?G.mid:"#c05010",fontWeight:600}}>
-                          {mixDiff>0?"▲":""}{mixDiff<0?"▼":""}{Math.abs(mixDiff).toFixed(1)}% vs ACS
-                        </div>
-                      )}
                     </div>
-
-                    {/* GP % — editable with ACS benchmark tooltip */}
                     <div style={{textAlign:"center"}}>
+                      <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>GP % <span style={{fontWeight:400}}>(avg {acsGp}%)</span></div>
                       <input
-                        style={{...INP_auto,padding:"10px 8px",textAlign:"center",fontSize:14,width:"100%"}}
+                        style={{...INP_auto,padding:"12px 8px",textAlign:"center",fontSize:20,fontWeight:700,width:"100%"}}
                         type="number" step="0.5" min="0" max="100"
                         value={cat.gp}
                         onChange={e=>setCats(p=>p.map((c,j)=>j===i?{...c,gp:parseFloat(e.target.value)||0}:c))}
                       />
-                      {acsGp !== null && (
-                        <div style={{fontSize:10,marginTop:3,color:G.light}}>
-                          avg {acsGp}%
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Annual sales */}
-                    <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:14,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
-                      <div style={{fontSize:10,color:G.light,marginTop:3}}>{cat.mix.toFixed(1)}% of sales</div>
-                    </div>
-
-                    {/* Annual GP */}
-                    <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
-                      <div style={{fontSize:10,color:G.light,marginTop:3}}>{cat.gp}% margin</div>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              );
+            })}
 
+            {/* Totals card */}
+            <div style={{background:G.pale,border:"2px solid "+G.mid,borderRadius:12,padding:18,marginBottom:16}}>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,textAlign:"center"}}>
+                {[["Total Mix",totalMix.toFixed(1)+"%",Math.abs(totalMix-100)<0.1?G.mid:G.orange],
+                  ["Blended GP",C.blGP.toFixed(1)+"%",G.mid],
+                  ["Total Sales",fmt(C.ann),G.dark],
+                  ["Total GP",fmt(C.annGP),G.mid]].map(([l,v,col])=>(
+                  <div key={l}>
+                    <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
+                    <div style={{fontSize:18,fontWeight:800,color:col}}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:G.orange,marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
+            </div>
 
-
-            {/* GP margin context */}
+                        {/* GP margin context */}
             <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:8}}>
               <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:10}}>ACS 2025 Average GP Margins by Category</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
