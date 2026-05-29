@@ -2431,6 +2431,81 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <AISection prompt={aiPrompt} label="AI Executive Summary"/>
             </div>
 
+            {/* S0b: MARKET SHARE ANALYSIS */}
+            <div className="page-break avoid-break">
+              <PSH c="Market Share & Catchment Analysis"/>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
+                {[
+                  ["Local Weekly Market",`£${Math.round(marketShareData.weeklyMarket).toLocaleString()}`,`${Math.round(catchmentPop/(householdSz||2.3)).toLocaleString()} households × £${marketShareData.avgHhSpend}/wk avg spend`],
+                  ["Market Share Factor",`${marketShareData.marketShareFactor.toFixed(1)}%`,"Based on competition scoring matrix"],
+                  ["Captured Weekly",`£${Math.round(marketShareData.capturedWeekly).toLocaleString()}`,`At ${marketShareData.marketShareFactor.toFixed(1)}% of local market`],
+                ].map(([l,v,s])=>(
+                  <div key={l} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,textAlign:"center"}}>
+                    <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>
+                    <div style={{fontSize:20,fontWeight:800,color:G.mid}}>{v}</div>
+                    <div style={{fontSize:10,color:G.light,marginTop:4}}>{s}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Competition scoring matrix */}
+              <RC t="Competition Scoring Matrix" ch={
+                <div>
+                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,background:G.mid,padding:"8px 12px",borderRadius:"8px 8px 0 0"}}>
+                    {["Scoring Category","Max Score","This Store","Weighting"].map(h=>(
+                      <div key={h} style={{fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase"}}>{h}</div>
+                    ))}
+                  </div>
+                  {[
+                    ["Store Quality / Shopfit",18,marketShareData.scoring.storeQuality],
+                    ["Trading Location",18,marketShareData.scoring.locationScore],
+                    ["Stocking Range",18,marketShareData.scoring.stockingScore],
+                    ["Categories Sold",18,marketShareData.scoring.categoriesScore],
+                    ["Pricing Strategy",18,marketShareData.scoring.pricingScore],
+                    ["Marketing Activity",18,marketShareData.scoring.marketingScore],
+                    ["Availability / Hours",18,marketShareData.scoring.availabilityScore],
+                    ["Customer Service",10,marketShareData.scoring.serviceScore],
+                  ].map(([l,max,score],i)=>(
+                    <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
+                      <div style={{fontSize:12,color:G.text}}>{l}</div>
+                      <div style={{fontSize:12,color:G.light,textAlign:"center"}}>{max}</div>
+                      <div style={{fontSize:12,fontWeight:700,color:G.mid,textAlign:"center"}}>{score}</div>
+                      <div style={{textAlign:"center"}}>
+                        <div style={{height:6,background:G.pale,borderRadius:3,marginTop:4}}>
+                          <div style={{height:"100%",background:G.mid,borderRadius:3,width:(score/max*100)+"%"}}/>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"8px 12px",background:G.pale,borderRadius:"0 0 8px 8px",borderTop:"2px solid "+G.mid}}>
+                    <div style={{fontSize:12,fontWeight:700,color:G.mid}}>TOTAL SCORE</div>
+                    <div style={{fontSize:12,color:G.light,textAlign:"center"}}>136</div>
+                    <div style={{fontSize:13,fontWeight:800,color:G.mid,textAlign:"center"}}>{marketShareData.ourScore}</div>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textAlign:"center"}}>{marketShareData.marketShareFactor.toFixed(1)}% share</div>
+                  </div>
+                </div>
+              }/>
+
+              {/* Year 1 Quarterly ramp-up */}
+              <Sub c="Year 1 — Quarterly Trading Ramp-Up"/>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:8}}>
+                {marketShareData.yr1Quarterly.map(q=>(
+                  <div key={q.q} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,textAlign:"center"}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,marginBottom:6}}>Q{q.q} — {["Jan-Mar","Apr-Jun","Jul-Sep","Oct-Dec"][q.q-1]}</div>
+                    <div style={{fontSize:10,color:G.light,marginBottom:4}}>{Math.round(q.factor*100)}% of mature trading</div>
+                    <div style={{height:4,background:G.pale,borderRadius:2,marginBottom:8}}>
+                      <div style={{height:"100%",background:G.mid,borderRadius:2,width:(q.factor*100)+"%"}}/>
+                    </div>
+                    <div style={{fontSize:15,fontWeight:700,color:G.dark,marginBottom:2}}>{fmt(q.sales)}</div>
+                    <div style={{fontSize:11,color:G.mid}}>GP: {fmt(q.gp)}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{fontSize:11,color:G.light,fontStyle:"italic"}}>
+                Year 1 ramp-up assumes 75% of mature trading in Q1, rising to 100% by Q4 as the store establishes its customer base post-refit. Based on Project Retail methodology.
+              </div>
+            </div>
+
             {/* S1: FINANCIAL */}
             <div className="page-break avoid-break">
               <PSH c="1. Financial Summary"/>
