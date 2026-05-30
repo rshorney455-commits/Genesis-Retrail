@@ -826,6 +826,7 @@ export default function App(){
   const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
   const [storeNote,setStoreNote]=useState("");
+  const [postcodeNotes,setPostcodeNotes]=useState("");
   const [clientName,setClientName]=useState("");
   const [refitCommentary,setRefitCommentary]=useState("");
   const [genesisNote,setGenesisNote]=useState("");
@@ -1228,7 +1229,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const [saveMsg, setSaveMsg] = useState("");
 
   const gatherState = useCallback(()=>({
-    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,
+    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
     rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
     cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,
     spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,
@@ -1581,6 +1582,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       </a>
                     </div>
                   )}
+
+                  {/* Postcode commentary box */}
+                  <div style={{marginTop:14,borderTop:"1px solid "+G.border,paddingTop:12}}>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Postcode Notes</div>
+                    <div style={{fontSize:11,color:G.light,marginBottom:6}}>Record your observations about this location — what you noticed on the visit, the feel of the area, footfall patterns, anything relevant.</div>
+                    <textarea
+                      value={postcodeNotes}
+                      onChange={e=>setPostcodeNotes(e.target.value)}
+                      placeholder="e.g. High footfall residential estate, strong commuter flow in mornings. Large Tesco 0.3 miles away but no direct convenience competition on the parade. Good parking, well-maintained environment. Local demographic appears family-oriented with a mix of ages..."
+                      style={{...INP_manual,minHeight:100,lineHeight:1.7,fontSize:13,width:"100%"}}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -2689,6 +2702,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
               <RC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
             </div>
+
+            {/* Postcode notes in report */}
+            {postcodeNotes&&(
+              <div className="avoid-break" style={{marginBottom:20,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
+                <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Location Notes — {postcode}</div>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",margin:0}}>{postcodeNotes}</p>
+              </div>
+            )}
 
             {/* S7b: LOCAL FOOD CONSUMPTION PROFILE */}
             {foodProfile&&(
