@@ -1029,6 +1029,44 @@ The index field is a number showing consumption vs national average (100=average
 
   const totalMix=cats.reduce((s,c)=>s+c.mix,0);
 
+  // ── Auto market share (Project Retail methodology) ──────────────────────────
+  const marketShareData = useMemo(()=>{
+    try {
+      const refitPerSqft = sqft > 0 ? refitCost / sqft : 0;
+      const storeQuality  = refitPerSqft > 150 ? 18 : refitPerSqft > 80 ? 14 : refitPerSqft > 40 ? 10 : 7;
+      const locationScore = {"city-centre":18,"forecourt":16,"parade":14,"suburban":13,"village":11}[location] || 12;
+      const stockingScore = cats.filter(c=>c.mix>3).length > 10 ? 14 : cats.filter(c=>c.mix>3).length > 7 ? 11 : 8;
+      const categoriesScore = cats.length >= 14 ? 18 : cats.length >= 10 ? 14 : 10;
+      const pricingScore = 12, marketingScore = 12, serviceScore = 8;
+      const availabilityScore = (openHours||16) >= 16 ? 16 : (openHours||16) >= 14 ? 12 : 9;
+      const ourScore = storeQuality+locationScore+stockingScore+categoriesScore+pricingScore+marketingScore+availabilityScore+serviceScore;
+      const ourServices = 26+2.4+(parking*2.8)+((openHours||16)*0.59)+94;
+      const hasChilled = cats.find(c=>c.name.includes("Chilled"))?.mix > 5;
+      const hasOff = cats.find(c=>c.name.includes("Alcohol"))?.mix > 8;
+      const ourCatTotal = (hasChilled?18:10)+14+14+14+12+14+(hasOff?18:10)+14+18;
+      const ourDet = ourScore+ourServices+ourCatTotal;
+      const compDet = competitors > 3 ? 480 : competitors > 1 ? 380 : 300;
+      const totalDet = ourDet+compDet;
+      const marketShareFactor = totalDet > 0 ? (ourDet/totalDet)*100 : 52;
+      const avgHhSpend = medianIncome > 40000 ? 82 : medianIncome > 30000 ? 70 : medianIncome > 22000 ? 60 : 52;
+      const weeklyMarket = (catchmentPop/(householdSz||2.3))*avgHhSpend;
+      const capturedWeekly = weeklyMarket*(marketShareFactor/100);
+      const blGP_ms = cats.reduce((s,c)=>s+(c.mix/100)*c.gp,0);
+      const yr1Quarterly = [0.75,0.85,0.93,1.0].map((f,q)=>({
+        q:q+1, factor:f,
+        sales:capturedWeekly*f*13,
+        gp:capturedWeekly*f*13*blGP_ms/100,
+      }));
+      return {ourScore,ourServices,ourCatTotal,ourDet,compDet,totalDet,marketShareFactor,weeklyMarket,capturedWeekly,avgHhSpend,yr1Quarterly,
+        scoring:{storeQuality,locationScore,stockingScore,categoriesScore,pricingScore,marketingScore,availabilityScore,serviceScore}};
+    } catch(e) {
+      return {ourScore:118,ourServices:180,ourCatTotal:126,ourDet:424,compDet:380,totalDet:804,
+        marketShareFactor:52,weeklyMarket:77400,capturedWeekly:40000,avgHhSpend:70,
+        yr1Quarterly:[{q:1,factor:0.75,sales:390000,gp:93000},{q:2,factor:0.85,sales:442000,gp:105000},{q:3,factor:0.93,sales:484000,gp:115000},{q:4,factor:1.0,sales:520000,gp:124000}],
+        scoring:{storeQuality:14,locationScore:13,stockingScore:11,categoriesScore:14,pricingScore:12,marketingScore:12,availabilityScore:12,serviceScore:8}};
+    }
+  }, [competitors, parking, location, sqft, refitCost, cats, catchmentPop, medianIncome, householdSz, openHours]);
+
   const C=useMemo(()=>{
     const wk=footfall*7*avgBasket, ann=wk*52;
     const upliftedWk = wk*(1+uplift/100);
