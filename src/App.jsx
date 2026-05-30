@@ -826,6 +826,7 @@ export default function App(){
   const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
   const [storeNote,setStoreNote]=useState("");
+  const [clientName,setClientName]=useState("");
   const [refitCommentary,setRefitCommentary]=useState("");
   const [genesisNote,setGenesisNote]=useState("");
   const [propName,setPropName]=useState("");
@@ -1227,7 +1228,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const [saveMsg, setSaveMsg] = useState("");
 
   const gatherState = useCallback(()=>({
-    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,
+    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,
     rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
     cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,
     spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,
@@ -2156,7 +2157,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   deprivation={deprivation} popDensity={popDensity} householdSz={householdSz}
                   competitors={competitors} nearestComp={nearestComp} parking={parking}
                   tHP={tHP} tPG={tPG} tNH={tNH} tFF={tFF} tRG={tRG} tVA={tVA}
-                  areaNotes={areaNotes} storeNote={storeNote}
+                  areaNotes={areaNotes} storeNote={storeNote} clientName={clientName}
                   C={C} VRD={VRD} yr5={yr5} risks={risks}
                 />
               </div>
