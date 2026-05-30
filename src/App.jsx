@@ -1564,14 +1564,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {competitorList.length>0&&<div style={{fontSize:12,color:G.text,marginTop:3}}>{competitorList.length} nearby competitors found on map</div>}
                   {planningApps.length>0&&<div style={{fontSize:12,color:planningApps.some(p=>p.risk==="high")?"#d62828":G.orange,marginTop:3,fontWeight:600}}>{planningApps.length} retail planning application(s) detected nearby</div>}
                   {postcodeData.admin_district&&(
-                    <a
-                      href={`https://www.planningportal.co.uk/find-a-planning-application?postcode=${encodeURIComponent(postcode.trim())}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:10,padding:"8px 14px",background:G.mid,color:"#fff",borderRadius:7,fontSize:13,fontWeight:700,textDecoration:"none"}}
-                    >
-                      Check live planning applications →
-                    </a>
+                    <div style={{marginTop:10,display:"flex",gap:8,flexWrap:"wrap"}}>
+                      <a
+                        href={`https://www.planning.data.gov.uk/map/?postcode=${encodeURIComponent(postcode.trim())}&dataset=planning-application`}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:G.mid,color:"#fff",borderRadius:7,fontSize:13,fontWeight:700,textDecoration:"none"}}
+                      >
+                        Gov.uk planning map →
+                      </a>
+                      <a
+                        href={`https://searchplan.co.uk/?postcode=${encodeURIComponent(postcode.trim())}`}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:7,color:G.mid,fontSize:13,fontWeight:600,textDecoration:"none"}}
+                      >
+                        Local council portal →
+                      </a>
+                    </div>
                   )}
                 </div>
               )}
