@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 // ── Sector averages by location type ─────────────────────────────────────────
 const SECTOR = {
@@ -801,12 +801,32 @@ ${slides.join("\n")}
 }
 
 // ── Main App ──────────────────────────────────────────────────────────────────
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  componentDidCatch(e, info) { console.error("Genesis Retail error:", e, info); }
+  render() {
+    if (this.state.error) return (
+      <div style={{padding:32,textAlign:"center",fontFamily:"inherit"}}>
+        <div style={{fontSize:32,marginBottom:12}}>⚠️</div>
+        <div style={{fontSize:18,fontWeight:700,color:"#1e3a8a",marginBottom:8}}>Something went wrong</div>
+        <div style={{fontSize:13,color:"#5a6fa8",marginBottom:20}}>{this.state.error.message}</div>
+        <button onClick={()=>this.setState({error:null})}
+          style={{padding:"10px 24px",background:"#1e3a8a",border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>
+          Try Again
+        </button>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
 export default function App(){
   const [step,setStep]=useState(0);
+  const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
   const [storeNote,setStoreNote]=useState("");
   const [refitCommentary,setRefitCommentary]=useState("");
-  const [sheet,setSheet]=useState("pl");
   const [genesisNote,setGenesisNote]=useState("");
   const [propName,setPropName]=useState("");
   const [postcode,setPostcode]=useState("");
@@ -1069,6 +1089,7 @@ The index field is a number showing consumption vs national average (100=average
   }, [competitors, parking, location, sqft, refitCost, cats, catchmentPop, medianIncome, householdSz, openHours]);
 
   const C=useMemo(()=>{
+    try {
     const wk=footfall*7*avgBasket, ann=wk*52;
     const upliftedWk = wk*(1+uplift/100);
     const upliftedAnn = upliftedWk*52;
@@ -1081,7 +1102,27 @@ The index field is a number showing consumption vs national average (100=average
     const mp=ti*(mr*Math.pow(1+mr,np2))/(Math.pow(1+mr,np2)-1);
     const af=mp*12, eb=annGP-annC, nP=annGP-annC-af;
     const roi=ti>0?(nP/ti)*100:0, pb=nP>0?ti/nP:null;
-    return {wk,ann,upliftedWk,upliftedAnn,blGP,annGP,stf,annC,ti,mp,af,eb,nP,roi,pb,spf:wk/sqft,upliftedSpf:upliftedWk/sqft,pen:(footfall*365)/catchmentPop*100};
+    // Quarterly Y1 ramp-up
+    const q1Factors=[0.75,0.85,0.93,1.0];
+    const uplAnn2=upliftedWk*52;
+    const yr1Q=q1Factors.map((f,i)=>({q:i+1,factor:f,sales:uplAnn2*f/4,gp:uplAnn2*f/4*blGP/100,np:(uplAnn2*f/4*blGP/100)-(annC+af)/4}));
+    // Price index
+    const priceIndex=location==="city-centre"?6:location==="forecourt"?8:location==="village"?5:4;
+    // Symbol group scores
+    const symGroups=[
+      {name:"Nisa",     score:8, desc:"Co-op own brand access, flexible terms, strong fresh food range"},
+      {name:"Spar",     score:7, desc:"Strong fresh food, good margin support, wide UK coverage"},
+      {name:"Budgens",  score:medianIncome>=35000?6:4, desc:"Premium positioning, ideal for higher-income catchments"},
+      {name:"Costcutter",score:4,desc:"Value positioning, strong chilled range, lower entry threshold"},
+      {name:"Premier",  score:5, desc:"Flexible terms, strong tobacco and impulse range"},
+      {name:"Londis",   score:5, desc:"Good value, strong BWS range, flexible ordering"},
+    ];
+    return {wk,ann,upliftedWk,upliftedAnn,blGP,annGP,stf,annC,ti,mp,af,eb,nP,roi,pb,spf:wk/sqft,upliftedSpf:upliftedWk/sqft,pen:(footfall*365)/catchmentPop*100,yr1Q,priceIndex,refitCost,stockCost,symGroups};
+    } catch(e) {
+      console.error("C calc error:", e);
+      return {wk:0,ann:0,upliftedWk:0,upliftedAnn:0,blGP:25,annGP:0,stf:0,annC:0,ti:0,mp:0,af:0,eb:0,nP:0,roi:0,pb:null,spf:0,upliftedSpf:0,pen:0,yr1Q:[],priceIndex:4,refitCost:0,stockCost:0,
+        symGroups:[{name:"Nisa",score:8,desc:"Recommended"},{name:"Spar",score:7,desc:""},{name:"Budgens",score:6,desc:""},{name:"Costcutter",score:4,desc:""}]};
+    }
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop]);
 
   const VRD=useMemo(()=>{
@@ -1127,10 +1168,10 @@ The index field is a number showing consumption vs national average (100=average
     else if(planningApps.filter(p=>p.risk==="medium").length>0) r.push({rag:"amber",title:"Planning activity in catchment",detail:"Some planning activity detected nearby. Monitor for new food retail approvals."});
     else r.push({rag:"green",title:"No significant planning conflicts detected",detail:"No high-risk retail planning applications found in the immediate catchment."});
 
-    if(C.upliftedSpf < 12) r.push({rag:"red",title:"Sales density below benchmark",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £12 minimum benchmark for a viable convenience store. UK average independent runs at £17-19/sqft/wk.`});
-    else if(C.upliftedSpf < 16) r.push({rag:"amber",title:"Sales density below symbol group average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is below the £16-20 benchmark for a well-performing symbol group store.`});
-    else if(C.upliftedSpf < 20) r.push({rag:"green",title:"Sales density meets average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk is in line with a well-run symbol group store (UK average £17-19/sqft/wk).`});
-    else r.push({rag:"green",title:"Sales density above average",detail:`£${C.upliftedSpf.toFixed(2)}/sqft/wk exceeds the UK symbol group average of £18-20/sqft/wk — strong performance.`});
+    if(C.upliftedSpf < 12) r.push({rag:"red",title:"Sales density below benchmark",detail:`£${(C.upliftedSpf||0).toFixed(2)}/sqft/wk is below the £12 minimum benchmark for a viable convenience store. UK average independent runs at £17-19/sqft/wk.`});
+    else if(C.upliftedSpf < 16) r.push({rag:"amber",title:"Sales density below symbol group average",detail:`£${(C.upliftedSpf||0).toFixed(2)}/sqft/wk is below the £16-20 benchmark for a well-performing symbol group store.`});
+    else if(C.upliftedSpf < 20) r.push({rag:"green",title:"Sales density meets average",detail:`£${(C.upliftedSpf||0).toFixed(2)}/sqft/wk is in line with a well-run symbol group store (UK average £17-19/sqft/wk).`});
+    else r.push({rag:"green",title:"Sales density above average",detail:`£${(C.upliftedSpf||0).toFixed(2)}/sqft/wk exceeds the UK symbol group average of £18-20/sqft/wk — strong performance.`});
 
     if(C.roi < 0) r.push({rag:"red",title:"Negative ROI — not viable on current assumptions",detail:"The business does not generate sufficient profit to service the investment."});
     else if(C.roi < 10) r.push({rag:"amber",title:"ROI below target threshold",detail:`${pct(C.roi)} ROI is below the 10% minimum typically required for convenience retail investment.`});
@@ -1168,7 +1209,7 @@ The index field is a number showing consumption vs national average (100=average
 You are a senior convenience retail analyst at Genesis Retail writing a professional site viability assessment report section.
 
 Site: ${propName||"unnamed site"}, Postcode: ${postcode}, Location type: ${locLabel}
-Financial: Weekly sales ${fmt(C.wk)}, Post-refit weekly ${fmt(C.upliftedWk)}, Annual sales ${fmt(C.ann)}, Gross margin ${pct(C.blGP)}, Net profit ${fmt(C.nP)}, ROI ${pct(C.roi)}, Payback ${C.pb?C.pb.toFixed(1)+" years":"N/A"}, Total investment ${fmt(C.ti)}
+Financial: Weekly sales ${fmt(C.wk)}, Post-refit weekly ${fmt(C.upliftedWk)}, Annual sales ${fmt(C.ann)}, Gross margin ${pct(C.blGP)}, Net profit ${fmt(C.nP)}, ROI ${pct(C.roi)}, Payback ${C.pb?(C.pb||0).toFixed(1)+" years":"N/A"}, Total investment ${fmt(C.ti)}
 Catchment: Population ${catchmentPop.toLocaleString()}, Median income ${fmt(medianIncome)}, Deprivation ${deprivation}/10, Density: ${popDensity}
 Traffic: ${traffic.roadVehicles} vehicles/day, ${traffic.pedestrians} pedestrians/day, Bus stop: ${traffic.busStop?"yes":"no"}, Train station: ${traffic.trainStation?"yes":"no"}
 Competitors: ${competitors} within 0.5 miles, nearest ${nearestComp} miles
@@ -1334,6 +1375,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
 
   return (
+    <ErrorBoundary>
     <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:G.bg,minHeight:"100vh",color:G.text}}>
       <style>{`
         *{box-sizing:border-box;margin:0}
@@ -1553,7 +1595,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <Fld key="d" l="Average basket (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" step="0.50" value={avgBasket} onChange={e=>setAvgBasket(+e.target.value)}/>}/>,
             ]}/>
             <Fld l="Post-refit uplift (%)" h="Expected uplift after new symbol group and refit (sector average 10-25%)" ch={<input style={INP_manual} type="number" step="1" min="0" max="50" value={uplift} onChange={e=>setUplift(+e.target.value)}/>}/>
-            <S3 items={[{l:"Weekly turnover (base)",v:fmt(C.wk)},{l:"Post-refit weekly",v:fmt(C.upliftedWk),hi:true},{l:"Sales/sqft/wk",v:"£"+C.upliftedSpf.toFixed(2),hi:true}]}/>
+            <S3 items={[{l:"Weekly turnover (base)",v:fmt(C.wk)},{l:"Post-refit weekly",v:fmt(C.upliftedWk),hi:true},{l:"Sales/sqft/wk",v:"£"+(C.upliftedSpf||0).toFixed(2),hi:true}]}/>
           </div>
         )}
 
@@ -1680,7 +1722,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{background:G.pale,border:"2px solid "+G.mid,borderRadius:12,padding:18,marginBottom:16}}>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,textAlign:"center"}}>
                 {[["Total Mix",totalMix.toFixed(1)+"%",Math.abs(totalMix-100)<0.1?G.mid:G.orange],
-                  ["Blended GP",C.blGP.toFixed(1)+"%",G.mid],
+                  ["Blended GP",(C.blGP||0).toFixed(1)+"%",G.mid],
                   ["Total Sales",fmt(C.ann),G.dark],
                   ["Total GP",fmt(C.annGP),G.mid]].map(([l,v,col])=>(
                   <div key={l}>
@@ -1990,7 +2032,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <Fld key="b" l="Sq ft" ch={<input style={INP_manual} type="number" value={comp.sqft} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
-                {comp.sqft>0&&comp.weeklyT>0&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{C.upliftedSpf.toFixed(2)}/sqft/wk</div>}
+                {comp.sqft>0&&comp.weeklyT>0&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
               </div>
             ))}
           </div>
@@ -2453,7 +2495,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:10}}>What does {pct(C.roi)} ROI mean?</div>
                 <p style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>
                   <strong>Return on Investment (ROI)</strong> measures how much profit the business generates each year as a percentage of the total capital invested.
-                  A <strong style={{color:VRD.col}}>{pct(C.roi)} ROI</strong> means that for every <strong>£100</strong> invested in this business, <strong>£{C.roi.toFixed(0)}</strong> comes back as profit every year.
+                  A <strong style={{color:VRD.col}}>{pct(C.roi)} ROI</strong> means that for every <strong>£100</strong> invested in this business, <strong>£{(C.roi||0).toFixed(0)}</strong> comes back as profit every year.
                 </p>
                 <p style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>
                   To put that in context: a UK savings account currently pays around 4–5% per year. The Genesis Retail minimum threshold for a viable convenience retail investment is 20%.
@@ -2462,7 +2504,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </strong>.
                 </p>
                 <p style={{fontSize:13,color:G.text,lineHeight:1.8}}>
-                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(refitCost)} refit + {fmt(stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?C.pb.toFixed(1)+" years":"N/A"}</strong> from net profits alone,
+                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(refitCost)} refit + {fmt(stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?(C.pb||0).toFixed(1)+" years":"N/A"}</strong> from net profits alone,
                   with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
                 </p>
               </div>
@@ -2470,13 +2512,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             {/* S0b: MARKET SHARE ANALYSIS */}
-            <div className="page-break avoid-break">
+            {marketShareData&&<div className="page-break avoid-break">
               <PSH c="Market Share & Catchment Analysis"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
                 {[
-                  ["Local Weekly Market",`£${Math.round(marketShareData.weeklyMarket).toLocaleString()}`,`${Math.round(catchmentPop/(householdSz||2.3)).toLocaleString()} households × £${marketShareData.avgHhSpend}/wk avg spend`],
-                  ["Market Share Factor",`${marketShareData.marketShareFactor.toFixed(1)}%`,"Based on competition scoring matrix"],
-                  ["Captured Weekly",`£${Math.round(marketShareData.capturedWeekly).toLocaleString()}`,`At ${marketShareData.marketShareFactor.toFixed(1)}% of local market`],
+                  ["Local Weekly Market",`£${Math.round((marketShareData?.weeklyMarket||0)).toLocaleString()}`,`${Math.round(catchmentPop/(householdSz||2.3)).toLocaleString()} households × £${(marketShareData?.avgHhSpend||70)}/wk avg spend`],
+                  ["Market Share Factor",`${(marketShareData?.marketShareFactor||52).toFixed(1)}%`,"Based on competition scoring matrix"],
+                  ["Captured Weekly",`£${Math.round((marketShareData?.capturedWeekly||0)).toLocaleString()}`,`At ${(marketShareData?.marketShareFactor||52).toFixed(1)}% of local market`],
                 ].map(([l,v,s])=>(
                   <div key={l} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,textAlign:"center"}}>
                     <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>
@@ -2495,14 +2537,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     ))}
                   </div>
                   {[
-                    ["Store Quality / Shopfit",18,marketShareData.scoring.storeQuality],
-                    ["Trading Location",18,marketShareData.scoring.locationScore],
-                    ["Stocking Range",18,marketShareData.scoring.stockingScore],
-                    ["Categories Sold",18,marketShareData.scoring.categoriesScore],
-                    ["Pricing Strategy",18,marketShareData.scoring.pricingScore],
-                    ["Marketing Activity",18,marketShareData.scoring.marketingScore],
-                    ["Availability / Hours",18,marketShareData.scoring.availabilityScore],
-                    ["Customer Service",10,marketShareData.scoring.serviceScore],
+                    ["Store Quality / Shopfit",18,(marketShareData?.scoring?.storeQuality||14)],
+                    ["Trading Location",18,(marketShareData?.scoring?.locationScore||13)],
+                    ["Stocking Range",18,(marketShareData?.scoring?.stockingScore||11)],
+                    ["Categories Sold",18,(marketShareData?.scoring?.categoriesScore||14)],
+                    ["Pricing Strategy",18,(marketShareData?.scoring?.pricingScore||12)],
+                    ["Marketing Activity",18,(marketShareData?.scoring?.marketingScore||12)],
+                    ["Availability / Hours",18,(marketShareData?.scoring?.availabilityScore||12)],
+                    ["Customer Service",10,(marketShareData?.scoring?.serviceScore||8)],
                   ].map(([l,max,score],i)=>(
                     <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
                       <div style={{fontSize:12,color:G.text}}>{l}</div>
@@ -2518,8 +2560,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"8px 12px",background:G.pale,borderRadius:"0 0 8px 8px",borderTop:"2px solid "+G.mid}}>
                     <div style={{fontSize:12,fontWeight:700,color:G.mid}}>TOTAL SCORE</div>
                     <div style={{fontSize:12,color:G.light,textAlign:"center"}}>136</div>
-                    <div style={{fontSize:13,fontWeight:800,color:G.mid,textAlign:"center"}}>{marketShareData.ourScore}</div>
-                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textAlign:"center"}}>{marketShareData.marketShareFactor.toFixed(1)}% share</div>
+                    <div style={{fontSize:13,fontWeight:800,color:G.mid,textAlign:"center"}}>{(marketShareData?.ourScore||118)}</div>
+                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textAlign:"center"}}>{(marketShareData?.marketShareFactor||52).toFixed(1)}% share</div>
                   </div>
                 </div>
               }/>
@@ -2527,7 +2569,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Year 1 Quarterly ramp-up */}
               <Sub c="Year 1 — Quarterly Trading Ramp-Up"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:8}}>
-                {marketShareData.yr1Quarterly.map(q=>(
+                {(marketShareData?.yr1Quarterly||[]).map(q=>(
                   <div key={q.q} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,textAlign:"center"}}>
                     <div style={{fontSize:11,fontWeight:700,color:G.mid,marginBottom:6}}>Q{q.q} — {["Jan-Mar","Apr-Jun","Jul-Sep","Oct-Dec"][q.q-1]}</div>
                     <div style={{fontSize:10,color:G.light,marginBottom:4}}>{Math.round(q.factor*100)}% of mature trading</div>
@@ -2542,13 +2584,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{fontSize:11,color:G.light,fontStyle:"italic"}}>
                 Year 1 ramp-up assumes 75% of mature trading in Q1, rising to 100% by Q4 as the store establishes its customer base post-refit. Based on Project Retail methodology.
               </div>
-            </div>
+            </div>}
 
             {/* S1: FINANCIAL */}
             <div className="page-break avoid-break">
               <PSH c="1. Financial Summary"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
-                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?C.pb.toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+C.upliftedSpf.toFixed(2)]].map(([l,v])=>(
+                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)]].map(([l,v])=>(
                   <div key={l} style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,textAlign:"center"}}>
                     <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
                     <div style={{fontSize:17,fontWeight:700,color:G.mid}}>{v}</div>
@@ -2713,8 +2755,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.ann*100)},
                   {type:"kv",l:"Net Margin",d:pct(C.nP/C.ann*100)},
                   {type:"kv",l:"Return on Investment",d:pct(C.roi)},
-                  {type:"kv",l:"Payback Period",d:C.pb?C.pb.toFixed(1)+" years":"N/A"},
-                  {type:"kv",l:"Sales per Sq Ft weekly",d:"£"+C.spf.toFixed(2)},
+                  {type:"kv",l:"Payback Period",d:C.pb?(C.pb||0).toFixed(1)+" years":"N/A"},
+                  {type:"kv",l:"Sales per Sq Ft weekly",d:"£"+(C.spf||0).toFixed(2)},
                 ].map((r,i)=>{
                   if(r.type==="gap") return <div key={i} style={{height:8}}/>;
                   if(r.type==="head") return <div key={i} style={{background:G.mid,padding:"6px 16px",fontSize:11,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".12em"}}>{r.l}</div>;
@@ -2861,5 +2903,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
