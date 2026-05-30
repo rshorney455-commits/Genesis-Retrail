@@ -806,6 +806,7 @@ export default function App(){
   const [storePhoto,setStorePhoto]=useState(null);
   const [storeNote,setStoreNote]=useState("");
   const [refitCommentary,setRefitCommentary]=useState("");
+  const [sheet,setSheet]=useState("pl");
   const [genesisNote,setGenesisNote]=useState("");
   const [propName,setPropName]=useState("");
   const [postcode,setPostcode]=useState("");
@@ -2122,7 +2123,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* In-app spreadsheet sheets */}
             {(()=>{
-              const [sheet,setSheet2] = useState("pl");
               const sheets = [
                 {id:"pl",     label:"P&L"},
                 {id:"cf",     label:"Cashflow"},
@@ -2166,7 +2166,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {/* Sheet tabs */}
                   <div style={{display:"flex",gap:2,marginBottom:0,borderBottom:"2px solid "+G.mid,overflowX:"auto"}}>
                     {sheets.map(s=>(
-                      <button key={s.id} onClick={()=>setSheet2(s.id)} style={{padding:"8px 14px",background:sheet===s.id?"#fff":G.card,border:"1px solid "+G.border,borderBottom:sheet===s.id?"2px solid #fff":"none",borderRadius:"6px 6px 0 0",color:sheet===s.id?G.mid:G.light,fontSize:12,fontWeight:sheet===s.id?700:400,cursor:"pointer",fontFamily:"inherit",flexShrink:0,marginBottom:sheet===s.id?-2:0}}>
+                      <button key={s.id} onClick={()=>setSheet(s.id)} style={{padding:"8px 14px",background:sheet===s.id?"#fff":G.card,border:"1px solid "+G.border,borderBottom:sheet===s.id?"2px solid #fff":"none",borderRadius:"6px 6px 0 0",color:sheet===s.id?G.mid:G.light,fontSize:12,fontWeight:sheet===s.id?700:400,cursor:"pointer",fontFamily:"inherit",flexShrink:0,marginBottom:sheet===s.id?-2:0}}>
                         {s.label}
                       </button>
                     ))}
