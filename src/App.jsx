@@ -1406,11 +1406,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Store Photo</div>
               {storePhoto?(
                 <div style={{position:"relative"}}>
-                  <img src={storePhoto} alt="Store" style={{width:"100%",height:240,objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/>
+                  <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/>
                   <button onClick={()=>setStorePhoto(null)} style={{position:"absolute",top:10,right:10,background:"#fff",border:"1px solid "+G.border,borderRadius:6,padding:"5px 12px",fontSize:12,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Remove</button>
                 </div>
               ):(
-                <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,height:180,background:G.card,border:"2px dashed "+G.border,borderRadius:12,cursor:"pointer",textAlign:"center"}}>
+                <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,aspectRatio:"1/1",background:G.card,border:"2px dashed "+G.border,borderRadius:12,cursor:"pointer",textAlign:"center"}}>
                   <div style={{fontSize:40}}>📷</div>
                   <div style={{fontSize:15,fontWeight:700,color:G.mid}}>Tap to add a store photo</div>
                   <div style={{fontSize:13,color:G.light}}>JPG or PNG from your camera roll</div>
@@ -1425,7 +1425,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                 {photos.map((ph,i)=>(
                   <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,overflow:"hidden"}}>
-                    <img src={ph.src} alt="Visit" style={{width:"100%",height:120,objectFit:"cover",display:"block"}}/>
+                    <img src={ph.src} alt="Visit" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/>
                     <div style={{padding:8}}>
                       <select value={ph.tag} onChange={e=>setPhotos(p=>p.map((x,j)=>j===i?{...x,tag:e.target.value}:x))} style={{...INP_manual,fontSize:12,padding:"6px 8px",marginBottom:6}}>
                         {["exterior","interior","chillers","signage","competitor","other"].map(t=><option key={t}>{t}</option>)}
