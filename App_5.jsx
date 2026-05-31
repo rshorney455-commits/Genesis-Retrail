@@ -1681,6 +1681,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Cover Page"/>
 
+            <Fld l="Site name / address" h="Required — autosave won't start without this" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 5-6 Canterbury Parade, South Ockendon"/>}/>
+            <Fld l="Client name" ch={<input style={INP_manual} value={clientName} onChange={e=>setClientName(e.target.value)} placeholder="e.g. Mr J Smith"/>}/>
+
             {/* Saved assessments */}
             {savedAssessments.length>0&&(
               <div style={{marginBottom:24}}>
@@ -1810,7 +1813,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               )}
             </div>
 
-            <Fld l="Site name / address" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 14 Station Road, Watford"/>}/>
             <Row2 ch={[
               <Fld key="a" l="Net selling area (sq ft)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={sqft} onFocus={e=>e.target.select()} onChange={e=>setSqft(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="b" l="Trading hours / day" h="Your assessment on the visit" ch={<input style={INP_manual} type="number" value={openHours} onFocus={e=>e.target.select()} onChange={e=>setOpenHours(e.target.value===""?0:+e.target.value)}/>}/>,
