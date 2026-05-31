@@ -1260,7 +1260,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — debounced 3s after any change, only if propName is set ────────
+  // ── Autosave — debounced 1s after any change, only if propName is set ────────
   useEffect(()=>{
     if(!propName) return;
     const timer = setTimeout(()=>{
@@ -1275,9 +1275,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         setAutoSaveMsg("✓ Auto-saved");
         setTimeout(()=>setAutoSaveMsg(""),2000);
       } catch(e){}
-    }, 3000);
+    }, 1000);
     return ()=>clearTimeout(timer);
   },[gatherState, propName]);
+
+  // ── Warn before closing/refreshing if assessment is in progress ──────────────
+  useEffect(()=>{
+    if(!propName) return;
+    const handler = (e)=>{ e.preventDefault(); e.returnValue=""; };
+    window.addEventListener("beforeunload", handler);
+    return ()=>window.removeEventListener("beforeunload", handler);
+  },[propName]);
+
   const loadAssessment = useCallback((saved)=>{
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
