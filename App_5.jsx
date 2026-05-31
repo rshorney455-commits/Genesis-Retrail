@@ -2087,8 +2087,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:10}}>Comparable {i+1}</div>
                 <Fld l="Store name" ch={<input style={INP_manual} value={comp.name} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} placeholder="e.g. Spar, Kings Road"/>}/>
                 <Row2 ch={[
-                  <Fld key="a" l="Weekly turnover (£)" ch={<input style={INP_manual} type="number" value={comp.weeklyT} onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,weeklyT:e.target.value===""?0:+e.target.value}:x))}/>}/>,
-                  <Fld key="b" l="Sq ft" ch={<input style={INP_manual} type="number" value={comp.sqft} onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
+                  <Fld key="a" l="Weekly turnover (£)" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.weeklyT||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,weeklyT:e.target.value===""?0:+e.target.value}:x))}/>}/>,
+                  <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
                 {comp.sqft>0&&comp.weeklyT>0&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
