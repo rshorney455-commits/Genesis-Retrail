@@ -1312,6 +1312,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setTHP(saved.tHP||"Stable"); setTPG(saved.tPG||"Stable"); setTNH(saved.tNH||"Stable");
     setTFF(saved.tFF||"Stable"); setTRG(saved.tRG||"Stable"); setTVA(saved.tVA||"Stable");
     setAreaNotes(saved.areaNotes||""); setStoreNote(saved.storeNote||""); setGenesisNote(saved.genesisNote||"");
+    setPostcodeNotes(saved.postcodeNotes||""); setClientName(saved.clientName||""); setRefitCommentary(saved.refitCommentary||"");
+    if(saved.foodProfile) setFoodProfile(saved.foodProfile);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
     if(saved.planningApps) setPlanningApps(saved.planningApps);
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
