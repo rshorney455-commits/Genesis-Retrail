@@ -2646,6 +2646,27 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {/* ── RESULTS ── */}
         {step===9&&(
           <div>
+
+            {/* ── FULL WRITTEN ASSESSMENT — screen view ── */}
+            <div style={{background:"#fff",border:"2px solid "+G.mid,borderRadius:12,padding:"20px 22px",marginBottom:20}}>
+              <div style={{fontSize:10,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".15em",marginBottom:4}}>Genesis Retail</div>
+              <div style={{fontSize:17,fontWeight:800,color:G.dark,marginBottom:20,paddingBottom:14,borderBottom:"2px solid "+G.mid}}>Site Assessment — {propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
+              <div style={{fontSize:14,color:"#1a2144",lineHeight:2.0}}>
+                <p style={{marginBottom:16}}>{commentary.financial}</p>
+                <p style={{marginBottom:16}}>{commentary.risks}</p>
+                <p style={{marginBottom:16}}>{commentary.competitors}</p>
+                <p style={{marginBottom:16}}>{commentary.categories}</p>
+                <p style={{marginBottom:16}}>{commentary.footfall}</p>
+                <p style={{marginBottom:16}}>{commentary.demographics}</p>
+                <p style={{marginBottom:16}}>{commentary.pl}</p>
+                <p style={{marginBottom:16}}>{commentary.fiveYear}</p>
+                <p style={{marginBottom:0}}>{commentary.sensitivity}</p>
+              </div>
+              <div style={{marginTop:20,paddingTop:14,borderTop:"1px solid "+G.border,fontSize:12,color:G.light,fontStyle:"italic"}}>
+                Prepared by Genesis Retail · {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · All projections are indicative and based on the assumptions stated in this report.
+              </div>
+            </div>
+
             <div style={{marginBottom:16}}>
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
@@ -3183,23 +3204,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
 
-            {/* Glossary — for retailer and bank */}
+            {/* Written Assessment Summary */}
             <div className="avoid-break">
-              <PSH c="Glossary — Key Financial Terms"/>
-              {[
-                {term:"EBITDA", full:"Earnings Before Interest, Tax, Depreciation and Amortisation", body:`The trading profit of the store — what it earns from day-to-day operations before loan repayments or tax. If EBITDA is negative the store is losing money before financing is even considered. Genesis Retail benchmark: 8–15% of sales is healthy.`},
-                {term:"ROI — Return on Investment", full:"Net Profit ÷ Total Capital Invested × 100", body:`For every £100 invested, how many pounds are returned as profit each year. Genesis Retail thresholds: ≥20% Strong Opportunity · 10–20% Viable · 0–10% Marginal · Negative Not Viable.`},
-                {term:"Net Profit", full:"What remains after every cost has been deducted", body:`Sales revenue minus cost of goods, rent, rates, staff, utilities, other costs and loan repayments. The money the owner takes home. A well-run convenience store should generate at least 5–8% net margin.`},
-                {term:"Payback Period", full:"Total Investment ÷ Annual Net Profit", body:`How many years until the investment is recovered from profits. Guide: under 4 years = excellent · 4–6 years = acceptable · over 7 years = high risk.`},
-                {term:"Gross Margin", full:"(Sales − Cost of Goods) ÷ Sales × 100", body:`The percentage of each sale retained after paying the supplier. Convenience retail typically runs at 22–30% blended margin. Higher-margin categories (hot beverages 50%+, health & beauty 35%+) should be prioritised in the ranging plan.`},
-                {term:"Sales per Square Foot", full:"Weekly Sales ÷ Net Selling Area", body:`The retail industry's standard measure of space productivity. UK 2025 benchmarks (weekly): £20+ outstanding · £16–20 well-performing symbol group · £12–16 average independent · under £12 below average. Source: IBISWorld/ACS 2025.`},
-              ].map((g,i)=>(
-                <div key={i} style={{marginBottom:14,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
-                  <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:3}}>{g.term}</div>
-                  <div style={{fontSize:11,color:G.light,fontStyle:"italic",marginBottom:6}}>{g.full}</div>
-                  <div style={{fontSize:13,color:G.text,lineHeight:1.7}}>{g.body}</div>
-                </div>
-              ))}
+              <PSH c="Genesis Retail — Written Assessment"/>
+              <div style={{fontSize:14,color:"#1a2144",lineHeight:2.0}}>
+                <p style={{marginBottom:16}}>{commentary.financial}</p>
+                <p style={{marginBottom:16}}>{commentary.risks}</p>
+                <p style={{marginBottom:16}}>{commentary.competitors}</p>
+                <p style={{marginBottom:16}}>{commentary.categories}</p>
+                <p style={{marginBottom:16}}>{commentary.footfall}</p>
+                <p style={{marginBottom:16}}>{commentary.demographics}</p>
+                <p style={{marginBottom:16}}>{commentary.pl}</p>
+                <p style={{marginBottom:16}}>{commentary.fiveYear}</p>
+                <p style={{marginBottom:0}}>{commentary.sensitivity}</p>
+              </div>
             </div>
 
             {/* Disclaimer */}
