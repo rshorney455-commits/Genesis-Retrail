@@ -1229,6 +1229,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     try { return JSON.parse(localStorage.getItem("genesis_assessments")||"[]"); } catch{ return []; }
   });
   const [saveMsg, setSaveMsg] = useState("");
+  const [autoSaveMsg, setAutoSaveMsg] = useState("");
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1258,6 +1259,25 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     } catch(e){ setSaveMsg("Save failed"); }
   },[gatherState]);
 
+
+  // ── Autosave — debounced 3s after any change, only if propName is set ────────
+  useEffect(()=>{
+    if(!propName) return;
+    const timer = setTimeout(()=>{
+      try {
+        const state = gatherState();
+        delete state.cats;
+        const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const idx = existing.findIndex(a=>a.postcode===state.postcode && a.propName===state.propName);
+        if(idx>=0) existing[idx]=state; else existing.unshift(state);
+        localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+        setSavedAssessments(existing.slice(0,20));
+        setAutoSaveMsg("✓ Auto-saved");
+        setTimeout(()=>setAutoSaveMsg(""),2000);
+      } catch(e){}
+    }, 3000);
+    return ()=>clearTimeout(timer);
+  },[gatherState, propName]);
   const loadAssessment = useCallback((saved)=>{
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
@@ -1488,6 +1508,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
+            {autoSaveMsg&&<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>{autoSaveMsg}</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
