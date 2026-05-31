@@ -104,6 +104,15 @@ const G = {
 const INP_manual = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"2px solid #2d55c8",borderRadius:8,color:"#1a2e6b",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 const INP_auto   = {width:"100%",padding:"12px 14px",background:"#dde4f5",border:"2px solid #1e3a8a",borderRadius:8,color:"#1e3a8a",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
+function Commentary({text}){
+  if(!text) return null;
+  return (
+    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#eef1fb",border:"1px solid #2d55c8",borderLeft:"4px solid #1e3a8a",borderRadius:"0 8px 8px 0",fontSize:13,color:"#1a2144",lineHeight:1.9}}>
+      {text}
+    </div>
+  );
+}
+
 function Legend(){
   return (
     <div style={{display:"flex",gap:16,flexWrap:"wrap",marginBottom:20,padding:"10px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
@@ -1098,8 +1107,8 @@ The index field is a number showing consumption vs national average (100=average
     const upliftedWk = wk*(1+uplift/100);
     const upliftedAnn = upliftedWk*52;
     const blGP=cats.reduce((s,c)=>s+(c.mix/100)*c.gp,0);
-    const annGP=ann*(blGP/100);
-    const stf=ann*(staffPct/100);
+    const annGP=upliftedAnn*(blGP/100);
+    const stf=upliftedAnn*(staffPct/100);
     const annC=rent+rates+stf+utilities+otherCosts;
     const ti=refitCost+stockCost;
     const mr=financeRate/100/12, np2=financeYears*12;
@@ -1127,7 +1136,7 @@ The index field is a number showing consumption vs national average (100=average
       return {wk:0,ann:0,upliftedWk:0,upliftedAnn:0,blGP:25,annGP:0,stf:0,annC:0,ti:0,mp:0,af:0,eb:0,nP:0,roi:0,pb:null,spf:0,upliftedSpf:0,pen:0,yr1Q:[],priceIndex:4,refitCost:0,stockCost:0,
         symGroups:[{name:"Nisa",score:8,desc:"Recommended"},{name:"Spar",score:7,desc:""},{name:"Budgens",score:6,desc:""},{name:"Costcutter",score:4,desc:""}]};
     }
-  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop]);
+  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
     if(C.roi>=20) return {l:"Strong Opportunity",col:"#1e3a8a"};
@@ -1159,7 +1168,7 @@ The index field is a number showing consumption vs national average (100=average
   // Auto-generate risks
   const risks = useMemo(()=>{
     const r=[];
-    const rentRatio = rent/C.ann*100;
+    const rentRatio = rent/C.upliftedAnn*100;
     if(rentRatio>15) r.push({rag:"red",title:"Rent too high relative to turnover",detail:`Rent is ${pct(rentRatio)} of projected sales. Ideal is under 10%. Negotiate hard or walk away.`});
     else if(rentRatio>10) r.push({rag:"amber",title:"Rent at upper limit",detail:`Rent is ${pct(rentRatio)} of sales. Aim to get below 10% before committing.`});
     else r.push({rag:"green",title:"Rent within acceptable range",detail:`Rent at ${pct(rentRatio)} of sales is within the target range.`});
@@ -1200,7 +1209,7 @@ The index field is a number showing consumption vs national average (100=average
 
   const yr5=useMemo(()=>[1,2,3,4,5].map(yr=>{
     const g=Math.pow(1.03,yr-1),cg=Math.pow(1.02,yr-1);
-    const s=C.ann*g,gp=s*(C.blGP/100),stf2=s*(staffPct/100);
+    const s=C.upliftedAnn*g,gp=s*(C.blGP/100),stf2=s*(staffPct/100);
     const tc=(rent+rates+utilities+otherCosts)*cg+stf2;
     const eb=gp-tc,fin=yr<=financeYears?C.af:0,np=eb-fin;
     return {yr,s,gp,stf2,tc,eb,fin,np};
@@ -1208,7 +1217,7 @@ The index field is a number showing consumption vs national average (100=average
 
   const cumNp=yr=>yr5.slice(0,yr).reduce((a,r)=>a+r.np,0);
 
-  // Build AI prompt for narrative
+
   const aiPrompt = useMemo(()=>`
 You are a senior convenience retail analyst at Genesis Retail writing a professional site viability assessment report section.
 
@@ -1229,6 +1238,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     try { return JSON.parse(localStorage.getItem("genesis_assessments")||"[]"); } catch{ return []; }
   });
   const [saveMsg, setSaveMsg] = useState("");
+  const [autoSaveMsg, setAutoSaveMsg] = useState("");
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1238,9 +1248,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     traffic,fhour,competitors,nearestComp,parking,
     tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,
     competitorList,planningApps,mapLat,mapLng,
-    comparables,
+    comparables,foodProfile,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
   const saveAssessment = useCallback(()=>{
     try {
@@ -1257,6 +1267,34 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       setTimeout(()=>setSaveMsg(""),2500);
     } catch(e){ setSaveMsg("Save failed"); }
   },[gatherState]);
+
+
+  // ── Autosave — debounced 1s after any change, only if propName is set ────────
+  useEffect(()=>{
+    if(!propName) return;
+    const timer = setTimeout(()=>{
+      try {
+        const state = gatherState();
+        delete state.cats;
+        const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const idx = existing.findIndex(a=>a.postcode===state.postcode && a.propName===state.propName);
+        if(idx>=0) existing[idx]=state; else existing.unshift(state);
+        localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+        setSavedAssessments(existing.slice(0,20));
+        setAutoSaveMsg("✓ Auto-saved");
+        setTimeout(()=>setAutoSaveMsg(""),2000);
+      } catch(e){}
+    }, 1000);
+    return ()=>clearTimeout(timer);
+  },[gatherState, propName]);
+
+  // ── Warn before closing/refreshing if assessment is in progress ──────────────
+  useEffect(()=>{
+    if(!propName) return;
+    const handler = (e)=>{ e.preventDefault(); e.returnValue=""; };
+    window.addEventListener("beforeunload", handler);
+    return ()=>window.removeEventListener("beforeunload", handler);
+  },[propName]);
 
   const loadAssessment = useCallback((saved)=>{
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
@@ -1283,6 +1321,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setTHP(saved.tHP||"Stable"); setTPG(saved.tPG||"Stable"); setTNH(saved.tNH||"Stable");
     setTFF(saved.tFF||"Stable"); setTRG(saved.tRG||"Stable"); setTVA(saved.tVA||"Stable");
     setAreaNotes(saved.areaNotes||""); setStoreNote(saved.storeNote||""); setGenesisNote(saved.genesisNote||"");
+    setPostcodeNotes(saved.postcodeNotes||""); setClientName(saved.clientName||""); setRefitCommentary(saved.refitCommentary||"");
+    if(saved.foodProfile) setFoodProfile(saved.foodProfile);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
     if(saved.planningApps) setPlanningApps(saved.planningApps);
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
@@ -1353,6 +1393,140 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       });
     });
   },[footfall,rent,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
+  // ── Dynamic commentary — bank-grade, human-written tone ──────────────────────
+  const commentary = useMemo(()=>{
+    const topCat = [...cats].sort((a,b)=>b.mix-a.mix)[0];
+    const tobaccoMix = cats.find(c=>c.name.includes("Tobacco"))?.mix||0;
+    const alcoholMix = cats.find(c=>c.name.includes("Alcohol"))?.mix||0;
+    const chilledMix = cats.find(c=>c.name.includes("Chilled"))?.mix||0;
+    const hotFoodMix = cats.find(c=>c.name.includes("Hot Food"))?.mix||0;
+    const peakHourVal = Math.max(...FHOURS.map(h=>fhour[h]||0));
+    const peakHourKey = FHOURS.find(h=>fhour[h]===peakHourVal)||"12-2pm";
+    const topMission = MISSIONS.reduce((a,b)=>missions[a]>missions[b]?a:b);
+    const highBasket = spendBands.s10+spendBands.s15+spendBands.s20;
+    const highThreatComps = competitorList.filter(c=>c.threat==="high").length;
+    const rentRatio = rent/C.upliftedAnn*100;
+    const staffRatio = C.stf/C.upliftedAnn*100;
+    const ebitdaMargin = C.eb/C.upliftedAnn*100;
+    const totalCostRatio = C.annC/C.upliftedAnn*100;
+    const workingAge = (ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0);
+    const socialHousing = housing["Social / Council"]||0;
+    const ownerOccupied = housing["Owner Occupied"]||0;
+    const fullTimeEmployed = employment["Employed Full-Time"]||0;
+    const redRisks = risks.filter(r=>r.rag==="red").length;
+    const amberRisks = risks.filter(r=>r.rag==="amber").length;
+    const highRiskPlanning = planningApps.filter(p=>p.risk==="high").length;
+    const roiVerdict = C.roi>=20?"strong":C.roi>=10?"viable but tight":"below target";
+    const paybackVerdict = C.pb&&C.pb<=4?"excellent":C.pb&&C.pb<=6?"acceptable":"extended";
+    const spfVerdict = C.upliftedSpf>=20?"well above the symbol group average":C.upliftedSpf>=16?"in line with the symbol group average":C.upliftedSpf>=12?"below the symbol group average but above the independent minimum":"below the independent minimum";
+
+    return {
+
+      financial: [
+        `Post-refit, the store is projected to turn over ${fmt(C.upliftedWk)} per week — ${fmt(C.upliftedAnn)} annually. This is built on a current base of ${fmt(C.wk)}/week, with a ${uplift}% uplift applied to reflect the larger unit, improved format, extended range and the trading benefit of symbol group affiliation.`,
+        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24–26%."}. After all costs — rent, rates, staff, utilities and finance — the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
+        `The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} is ${paybackVerdict} — ${C.pb&&C.pb<=4?"well inside the 4-year benchmark that lenders and operators look for in convenience retail.":C.pb&&C.pb<=6?"within the 4–6 year range generally considered acceptable for this type of investment.":"above the 6-year marker. This does not make the investment unviable, but it does mean the operator will need to be confident in the trading projections before committing."}`,
+        `Sales density of £${(C.upliftedSpf||0).toFixed(2)} per square foot per week is ${spfVerdict} of £16–20. ${C.upliftedSpf<16?"Improving this figure should be a priority — a broader chilled and food-to-go range is the most reliable way to drive sales per square foot in a convenience store of this type.":"This is a credible figure and consistent with well-run stores in similar locations."}`
+      ].join(" "),
+
+      risks: [
+        `The risk assessment has flagged ${redRisks} red item${redRisks!==1?"s":""} and ${amberRisks} amber item${amberRisks!==1?"s":""}. ${redRisks>0?"Red flags represent material risks to the investment case and should be resolved before heads of terms are agreed.":"There are no red flags — on the metrics assessed, this site does not carry any immediately disqualifying risks."}`,
+        `Rent is running at ${pct(rentRatio)} of projected post-refit turnover. ${rentRatio>15?"The Genesis Retail threshold is 10% — at "+pct(rentRatio)+" this is the most significant financial risk in this assessment. The operator should negotiate hard on the lease before exchange. Every pound off the annual rent drops directly to the bottom line.":rentRatio>10?"This sits above the 10% target. It is not a dealbreaker, but the operator should make every effort to bring it down before signing.":"This is within the 10% target range and does not represent a structural risk to the business."}`,
+        highThreatComps>0
+          ? `There ${highThreatComps===1?"is":"are"} ${highThreatComps} major competitor${highThreatComps>1?"s":""} within 300 metres that the trading projections need to account for. The operator's existing customer relationships and knowledge of this catchment are the strongest mitigant against this risk.`
+          : `No high-threat competitors were identified within 300 metres. The nearest competitor is ${nearestComp} miles away, which offers reasonable insulation from direct head-to-head competition on the core convenience mission.`,
+        highRiskPlanning>0
+          ? `Planning data shows ${highRiskPlanning} high-risk application${highRiskPlanning>1?"s":""} in the immediate area. These must be verified directly with the Local Planning Authority before any commitment is made — a competing food retail consent within walking distance would materially affect the projections in this report.`
+          : ""
+      ].filter(Boolean).join(" "),
+
+      symbolGroup: [
+        `The symbol group scoring model has ranked the options above based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria — but the final decision should always involve a formal conversation with the wholesaler about terms, ranging support and the refit contribution they are prepared to offer.`,
+        alcoholMix>=15
+          ? `The BWS mix of ${pct(alcoholMix)} is strong, which adds weight to any group with a specialist drinks offer.`
+          : "",
+        deprivation<=4
+          ? `Given the deprivation index of ${deprivation}/10, price perception will matter to this customer base. A group with strong PMP coverage and a value-led own-brand range will trade better here than a premium fascia.`
+          : medianIncome>=35000
+          ? `The catchment income profile of ${fmt(medianIncome)} median household income is strong enough to support a mid-tier or premium fascia — customers here will respond to quality and range depth.`
+          : `The catchment sits in the mainstream — a well-supported mid-tier group is the right fit, balancing value credentials with enough ranging flexibility to build a credible fresh and chilled offer.`,
+        `Whichever group is selected, the operator should negotiate the refit terms, minimum weekly drop and exclusivity clauses carefully. These are the three areas where independent retailers most often find themselves locked into unfavourable positions.`
+      ].filter(Boolean).join(" "),
+
+      competitors: [
+        competitorList.length>0
+          ? `The map shows ${competitorList.length} competitor${competitorList.length!==1?"s":""} identified within the catchment via open mapping data. ${highThreatComps>0?highThreatComps+" of these are rated high threat — typically a major multiple or established symbol group store within 300 metres.":"None are rated high threat at this point."}`
+          : `No competitors were automatically identified within the catchment from open mapping data. This should be verified on the ground during the site visit — the tool sources from public data and may not reflect every operator.`,
+        nearestComp>0
+          ? `The nearest competitor is ${nearestComp} miles away. ${nearestComp<0.25?"At this distance, the two stores are effectively competing for the same passing trade and the same top-up mission. The operator will need to be better — on range, on availability, on service — not just present.":nearestComp<0.5?"Within half a mile, this is close enough to feel in day-to-day trading, particularly if the competitor holds a stronger fresh food offer or a more prominent fascia.":"This is a comfortable buffer for a convenience store. The majority of convenience shopping happens within a 5-minute walk, so beyond half a mile the competitive impact diminishes significantly."}`
+          : "",
+        highRiskPlanning>0
+          ? `Planning activity nearby is worth monitoring closely. An approved food retail unit within this catchment — even if currently vacant — represents a potential future competitive risk that is not yet visible in the trading figures.`
+          : `No significant planning activity was detected in the catchment. The competitive position as assessed appears stable.`
+      ].filter(Boolean).join(" "),
+
+      categories: [
+        `The largest category by sales mix is ${topCat?.name} at ${topCat?.mix}%, contributing around ${fmt(C.upliftedAnn*(topCat?.mix||0)/100)} to annual turnover.`,
+        tobaccoMix>=18
+          ? `Tobacco and vaping at ${pct(tobaccoMix)} is in line with — or above — the national convenience average of 18.8% (ACS 2025). This category drives high-frequency visits and is important to protect, but its long-term trajectory is downward due to regulatory pressure. The operator should be actively building alternative traffic drivers — hot drinks, food to go, chilled — to reduce dependency over time.`
+          : `Tobacco at ${pct(tobaccoMix)}% is below the sector average. Ensure the range is wide enough to retain the tobacco customer, who typically shops multiple categories in the same visit.`,
+        chilledMix<12
+          ? `Chilled foods at ${pct(chilledMix)} is below the sector average of 12.9%. The additional space in the new unit should be used to build a proper chilled run — dairy, fresh, ready meals, sandwiches. Chilled is the single biggest driver of basket value growth in a convenience store and customers increasingly expect it.`
+          : `Chilled foods at ${pct(chilledMix)} is ${chilledMix>=15?"strong":"healthy"} — this is a key category for driving basket value and repeat visits.`,
+        hotFoodMix>0
+          ? `Hot food and drinks to go carries the highest gross margin of any category in the mix at 55%+. At ${pct(hotFoodMix)} of the mix it is ${hotFoodMix>=3?"already contributing meaningfully":"currently a small part of the range"} — there is a strong case for investing in equipment and fixture space to grow this in the refit.`
+          : "",
+        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%. This is partly a function of the category mix — categories like confectionery, health and beauty and hot food carry significantly higher margins than tobacco and fresh milk, which are included here at their sector averages.":"broadly in line with the convenience sector average of 24–26%. There is scope to improve this over time by growing the higher-margin categories — chilled, food to go and health and beauty — relative to the lower-margin volume drivers."}`
+      ].filter(Boolean).join(" "),
+
+      footfall: [
+        `The peak trading hour is ${peakHourKey}, accounting for ${peakHourVal}% of daily footfall. ${peakHourKey.includes("12")||peakHourKey.includes("2pm")?"A lunchtime peak indicates strong demand for food to go and meal deals. The entrance area should be set up to capture this customer on the way in — a hot food and snacking fixture at eye level as they enter is the standard approach in well-run convenience stores.":peakHourKey.includes("8am")||peakHourKey.includes("6am")?"A morning commuter peak calls for coffee, pastries and grab-and-go lines to be prominent and available from opening. This customer has limited time — speed of service and availability are the critical metrics, not price.":"Trading is spread across the day, which is typical of a residential parade store serving multiple missions. The layout should reflect this — it needs to work for the quick top-up, the lunch grab and the evening meal solution without any one mission compromising the others."}`,
+        `The dominant shopping mission is ${topMission} at ${missions[topMission]}%. ${topMission==="Top-up"?"This is the bread-and-butter of convenience retail. The store layout needs to support speed and familiarity — regular customers should be able to get in, find what they need and get out quickly. Every fixture change needs to be considered against how it affects the top-up customer.":topMission==="Grab and Go"?"Grab and go customers are high frequency but low dwell time. Range availability, strong impulse lines at the till and a clean, fast checkout experience are the priorities.":topMission==="Food to Go"?"A food-to-go dominant mission is a real opportunity — this is the highest-margin trade in the store. The refit plan should put food to go at the centre of the layout, not as an afterthought.":"This mission profile points to a store that does meaningful work as a local food shop, not just a convenience top-up point. Deeper ranging, a stronger fresh offer and extended chilled capacity will hold and grow this customer."}`,
+        highBasket>=30
+          ? `${pct(highBasket)} of transactions are £10 or above, which is a strong indicator that customers are treating this store as a regular food shop rather than a quick top-up point. This should be reflected in the depth of range — particularly in chilled, grocery and ambient.`
+          : `The majority of baskets are under £10, which is consistent with a high-frequency top-up mission. Growing average basket size — through meal deals, cross-category ranging and the introduction of a stronger food-to-go offer — is one of the most reliable levers for improving overall store profitability.`
+      ].join(" "),
+
+      demographics: [
+        `With a catchment population of ${catchmentPop.toLocaleString()} within one mile, the store has a penetration rate of ${pct(C.pen)}. ${C.pen>=20?"This is a strong penetration rate and suggests the store already plays an important role in the local food economy. The challenge is to hold that share and grow basket rather than grow footfall.":C.pen>=15?"This is above the 15% benchmark for a viable convenience store and indicates a healthy customer base to build on.":"This is below the 15% benchmark. Building penetration will require the store to give customers a reason to choose it over alternatives — a cleaner, more comprehensive offer post-refit is the most direct way to achieve this."}`,
+        `The working-age population of 18–54 accounts for ${pct(workingAge)} of the catchment. ${workingAge>=55?"This is a strong working-age proportion — it supports demand across all trading periods and justifies investment in food to go, coffee and a decent lunch offer alongside the core convenience range.":"This is a slightly lower working-age proportion than average. The store should still cover all missions, but the emphasis on grab-and-go and food to go should be calibrated against the actual daytime footfall pattern observed on the visit."}`,
+        `${socialHousing>=25?`Social and council housing accounts for ${pct(socialHousing)} of housing tenure — a significant proportion. Price-marked packs are not optional in a catchment like this, they are expected. Own-brand ranges, value tiers and consistent pricing on everyday lines will be central to building loyalty with this customer base.`:ownerOccupied>=60?`Owner occupation at ${pct(ownerOccupied)} is above average, which typically points to a more settled, higher-spending customer base with less price sensitivity than a predominantly rented catchment. The operator has room to invest in quality and range breadth.`:`The tenure mix reflects a broadly mainstream catchment. A balanced approach — covering value lines without compromising on the quality and range that attract higher-spending customers — is the right positioning.`}`,
+        `A median household income of ${fmt(medianIncome)} ${medianIncome>=35000?"is above the national average and supports a fuller, better-quality convenience offer. Customers here will pay for freshness, range and service.":medianIncome>=27000?"sits broadly in line with the national average. Mainstream pricing, a solid symbol group range and a clean store will be the foundation of a strong trading position.":"is below the national average. Value credentials matter here — PMPs, price-marked promotions and a well-controlled cost structure are essential."}`,
+        `The deprivation index of ${deprivation}/10 ${deprivation<=3?"indicates a high-deprivation catchment. This is not a barrier to a successful store — high-deprivation areas often have the strongest convenience retail penetration — but the range and pricing strategy need to reflect the economic reality of the customer base.":deprivation<=6?"indicates moderate deprivation. The store needs to cover value without sacrificing the range quality that brings in the broader catchment.":"indicates a relatively low-deprivation catchment, which gives the operator more flexibility on ranging and pricing strategy."}`
+      ].join(" "),
+
+      pl: [
+        `The profit and loss account is built on post-refit annual revenue of ${fmt(C.upliftedAnn)}, with a cost of goods of ${fmt(Math.round(C.upliftedAnn*(1-C.blGP/100)))} — leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin.`,
+        `Total operating costs — rent, rates, staff, utilities and other costs — come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The business is generating sufficient gross profit to cover these costs and service the loan, but the headroom is limited. Any underperformance on sales or an unexpected cost increase — a rates revaluation, a rent review, an equipment failure — would have a disproportionate impact on the bottom line. The operator should stress-test the cost base carefully before proceeding.":totalCostRatio>65?"This is within the expected range for a convenience store of this type, but the operator should be conscious that there is not a great deal of room to absorb cost shocks. Tightly managed operations with a focus on rota efficiency and energy costs will be important.":"This is well-controlled and leaves healthy headroom for profit delivery. The business can absorb a reasonable degree of cost variation without dropping below viability."}`,
+        `Staff costs at ${pct(staffRatio)} of sales ${staffRatio>12?"are above the 9–12% sector norm. This should be reviewed — either the staffing model has been set above what the projected turnover justifies, or the store relies heavily on higher-cost staff. Both are worth addressing before the refit completes.":staffRatio<9?"are lean. This is achievable in a well-run owner-operated store, but the operator should be confident the store can be covered safely and compliantly at this level.":"are within the 9–12% sector norm and do not raise any concerns."}`,
+        `EBITDA — the trading profit before finance — is ${fmt(C.eb)}, representing ${pct(ebitdaMargin)} of sales. ${ebitdaMargin>=12?"This is a strong EBITDA margin for a convenience store and gives the business a solid platform to service the finance and still deliver meaningful net profit.":ebitdaMargin>=8?"This is at the lower end of what Genesis Retail would consider healthy — sufficient to service the loan comfortably, but without significant surplus.":ebitdaMargin>=5?"EBITDA at this level covers the finance charge but leaves limited buffer. The business needs to trade to plan; there is not much room for error.":"EBITDA is below the 8% minimum threshold Genesis Retail applies to viable convenience retail investments. The cost base or the trading projections — or both — need to be reviewed before this assessment can support a lending application."}`
+      ].join(" "),
+
+      fiveYear: [
+        `The five-year forecast applies 3% annual sales growth to the post-refit Year 1 base, with operating costs inflating at 2% per year. These are deliberately conservative assumptions — 3% growth in a well-run convenience store in an established residential catchment is achievable without any step change in the business.`,
+        `By Year 5, the store is forecast to generate annual sales of ${fmt(yr5[4]?.s||0)} and a net profit of ${fmt(yr5[4]?.np||0)}. Cumulative net profit across the five-year period is ${fmt(cumNp(5))}.`,
+        financeYears<=5
+          ? `The loan facility is fully repaid within the forecast period. From Year ${financeYears+1} onwards the finance charge drops away, which will materially improve the net profit position. This is a significant positive for the medium-term cash generation of the business.`
+          : `The finance facility runs beyond the five-year forecast window. The loan repayment of ${fmt(Math.round(C.mp))}/month remains a constant cost throughout the period modelled — cash generation in the later years will be constrained accordingly.`,
+        cumNp(5)>0
+          ? `A cumulative return of ${fmt(cumNp(5))} against an initial investment of ${fmt(C.ti)} represents a strong five-year position. The business more than recovers the investment within the forecast period, which is the primary test a lender will apply to this projection.`
+          : `The cumulative position over five years is negative, which means the investment does not recover within the modelled window on current assumptions. This does not necessarily mean the opportunity is unviable — the sensitivity of these projections to relatively small improvements in turnover or cost is significant — but it is a finding that lenders will scrutinise closely. The operator should be prepared to explain the basis for the uplift assumptions in detail.`
+      ].join(" "),
+
+      sensitivity: [
+        `The table models the impact on return on investment of footfall varying between -20% and +20% of the base case, and rent varying by the same range. The base case sits in the centre cell.`,
+        sensitivityData[2][2]?.roi>=20
+          ? `The base case delivers a ${sensitivityData[2][2].roi.toFixed(1)}% ROI — above the 20% Genesis Retail threshold. The investment case is sound on the central assumptions.`
+          : `The base case delivers a ${sensitivityData[2][2]?.roi.toFixed(1)}% ROI, which is below the 20% Genesis Retail threshold. The investment is viable but does not meet the target return on the central assumptions — the operator and any financier should understand the basis for the projections carefully.`,
+        sensitivityData[0]?.[0]?.roi>=10
+          ? `Even in the most adverse scenario modelled — footfall 20% below forecast and rent 20% above — the store still returns ${sensitivityData[0][0].roi.toFixed(1)}% ROI. This is a resilient investment with meaningful downside protection.`
+          : `In the most adverse scenario modelled, the store drops to ${sensitivityData[0]?.[0]?.roi.toFixed(1)||0}% ROI. This limited downside protection means the investment is sensitive to trading performance — the operator needs to be confident in the footfall projections, and the rent negotiation should prioritise locking in a level that keeps the base case well clear of the break-even line.`,
+        `${sensitivityData.flat().filter(c=>c.roi>=20).length} of the 25 scenarios modelled produce a return of 20% or above. ${sensitivityData.flat().filter(c=>c.roi>=20).length>=20?"The investment is robust across the vast majority of scenarios. A lender reviewing this table should be comfortable with the risk profile.":sensitivityData.flat().filter(c=>c.roi>=20).length>=12?"The investment meets the target return across the majority of scenarios. It is sensitive to a combination of footfall underperformance and cost pressure, but is not fragile.":"The investment only meets the target return in a minority of scenarios. This should be discussed openly with any financier — the projections need to be stress-tested and the key assumptions clearly documented."}`
+      ].join(" "),
+
+    };
+  },[C,cats,uplift,rent,rates,staffPct,utilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,DS]);
+
 
   // ── Max affordable rent (Lease Calculator) ──────────────────────────────────
   const [targetRoi, setTargetRoi] = useState(15);
@@ -1422,6 +1596,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
         @media print{.no-print{display:none!important}body,html{background:#fff!important}main{padding:0 24px!important;max-width:100%!important}.page-break{page-break-before:always;padding-top:24px}.avoid-break{page-break-inside:avoid}}
         @keyframes spin{to{transform:rotate(360deg)}}
+        .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
+        .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
+        .pdf-wrapper{position:relative;}
       `}</style>
       {/* Load SheetJS for Excel export */}
       {!window.XLSX&&(()=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";document.head.appendChild(s);return null;})()}
@@ -1485,11 +1662,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
+            {autoSaveMsg&&<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>{autoSaveMsg}</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
-            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:"#fff",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
+            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:step>i?"#0c1024":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
           ))}
@@ -1502,6 +1680,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {step===0&&(
           <div>
             <SH c="Cover Page"/>
+
+            <Fld l="Site name / address" h="Required — autosave won't start without this" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 5-6 Canterbury Parade, South Ockendon"/>}/>
+            <Fld l="Client name" ch={<input style={INP_manual} value={clientName} onChange={e=>setClientName(e.target.value)} placeholder="e.g. Mr J Smith"/>}/>
 
             {/* Saved assessments */}
             {savedAssessments.length>0&&(
@@ -1632,7 +1813,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               )}
             </div>
 
-            <Fld l="Site name / address" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 14 Station Road, Watford"/>}/>
             <Row2 ch={[
               <Fld key="a" l="Net selling area (sq ft)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={sqft} onFocus={e=>e.target.select()} onChange={e=>setSqft(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="b" l="Trading hours / day" h="Your assessment on the visit" ch={<input style={INP_manual} type="number" value={openHours} onFocus={e=>e.target.select()} onChange={e=>setOpenHours(e.target.value===""?0:+e.target.value)}/>}/>,
@@ -2084,8 +2264,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:10}}>Comparable {i+1}</div>
                 <Fld l="Store name" ch={<input style={INP_manual} value={comp.name} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} placeholder="e.g. Spar, Kings Road"/>}/>
                 <Row2 ch={[
-                  <Fld key="a" l="Weekly turnover (£)" ch={<input style={INP_manual} type="number" value={comp.weeklyT} onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,weeklyT:e.target.value===""?0:+e.target.value}:x))}/>}/>,
-                  <Fld key="b" l="Sq ft" ch={<input style={INP_manual} type="number" value={comp.sqft} onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
+                  <Fld key="a" l="Weekly turnover (£)" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.weeklyT||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,weeklyT:e.target.value===""?0:+e.target.value}:x))}/>}/>,
+                  <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
                 {comp.sqft>0&&comp.weeklyT>0&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
@@ -2119,7 +2299,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["Base Weekly Turnover", C.wk, "Post-Refit Weekly Turnover", C.upliftedWk],
                         ["Annual Sales (post-refit)", C.upliftedAnn, "Gross Profit %", C.blGP/100],
                         ["Annual Gross Profit", C.annGP, "Total Annual Costs", C.annC],
-                        ["EBITDA", C.eb, "EBITDA Margin", C.eb/C.ann],
+                        ["EBITDA", C.eb, "EBITDA Margin", C.eb/C.upliftedAnn],
                         ["Annual Finance Cost", C.af, "Net Profit", C.nP],
                         ["Total Investment", C.ti, "ROI", C.roi/100],
                         ["Monthly Loan Payment", C.mp, "Payback Period (years)", C.pb||0],
@@ -2433,8 +2613,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               <td style={{padding:"8px 10px",fontSize:12,color:G.text}}>{cat.icon} {cat.name}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{cat.mix}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.light}}>{cat.gp}%</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.ann*cat.mix/100)}</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{fmt(C.ann*cat.mix/100*cat.gp/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
@@ -2449,7 +2629,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.mid}}>TOTAL</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{pct(C.blGP)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.ann)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.upliftedAnn)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.annGP)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>100%</td>
                           </tr>
@@ -2478,7 +2658,19 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
-            <div ref={pdfRef}>
+            <div ref={pdfRef} className="pdf-wrapper">
+            {/* Watermark — rendered into PDF via html2canvas */}
+            <div className="pdf-watermark" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                  <pattern id="wm" x="0" y="0" width="320" height="200" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+                    <text x="10" y="80" fontFamily="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" fontSize="13" fontWeight="700" fill="rgba(30,58,138,0.07)" letterSpacing="3">GENESIS RETAIL</text>
+                    <text x="10" y="100" fontFamily="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" fontSize="10" fontWeight="400" fill="rgba(30,58,138,0.06)" letterSpacing="2">CONFIDENTIAL</text>
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#wm)"/>
+              </svg>
+            </div>
             <div style={{display:"flex",flexDirection:"column",borderBottom:"2px solid "+G.mid,marginBottom:16,paddingBottom:16}}>
 
               {/* Header band */}
@@ -2486,6 +2678,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div>
                   <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",marginBottom:3,fontWeight:700}}>Genesis Retail</div>
                   <div style={{fontSize:11,color:"#8fa8d8",letterSpacing:".12em",textTransform:"uppercase"}}>Site Viability Assessment Report</div>
+                  {clientName&&<div style={{fontSize:12,color:"#c8d4f0",marginTop:4}}>Prepared for: <strong>{clientName}</strong></div>}
                 </div>
                 <div style={{fontSize:11,color:"#8fa8d8"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
               </div>
@@ -2566,6 +2759,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(refitCost)} refit + {fmt(stockCost)} opening stock) is forecast to be recovered in <strong style={{color:G.mid}}>{C.pb?(C.pb||0).toFixed(1)+" years":"N/A"}</strong> from net profits alone,
                   with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
                 </p>
+              </div>
+              {/* 5-Year Cumulative Net Profit strip */}
+              <div style={{background:G.dark,borderRadius:10,padding:"14px 16px",marginBottom:16}}>
+                <div style={{fontSize:10,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".12em",marginBottom:12}}>5-Year Cumulative Net Profit</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>
+                  {yr5.map((r,i)=>(
+                    <div key={i} style={{textAlign:"center"}}>
+                      <div style={{fontSize:9,color:"#8fa8d8",marginBottom:4,textTransform:"uppercase",letterSpacing:".08em"}}>Year {r.yr}</div>
+                      <div style={{fontSize:14,fontWeight:800,color:"#1a2144",background:"#fef08a",borderRadius:4,padding:"2px 6px",display:"inline-block"}}>{fmt(cumNp(r.yr))}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <AISection prompt={aiPrompt} label="AI Executive Summary"/>
             </div>
@@ -2649,7 +2854,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="avoid-break">
               <PSH c="1. Financial Summary"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
-                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)]].map(([l,v])=>(
+                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)],["Opening Hours",openHours+"hrs/day"]].map(([l,v])=>(
                   <div key={l} style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,textAlign:"center"}}>
                     <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
                     <div style={{fontSize:17,fontWeight:700,color:G.mid}}>{v}</div>
@@ -2657,12 +2862,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 ))}
               </div>
               <RC t="Profit and Loss" ch={<HBar data={[{l:"Gross Profit",v:C.annGP},{l:"Rent",v:-rent},{l:"Rates",v:-rates},{l:"Staff "+staffPct+"%",v:-C.stf},{l:"Utilities",v:-utilities},{l:"Other",v:-otherCosts},{l:"EBITDA",v:C.eb},{l:"Finance",v:-C.af},{l:"Net Profit",v:C.nP}]}/>}/>
+              <Commentary text={commentary.financial}/>
             </div>
 
             {/* S2: RISK REGISTER */}
             <div className="avoid-break">
               <PSH c="2. Risk Register"/>
               <RC t="Automated Risk Assessment" ch={<RiskRegister risks={risks}/>}/>
+              <Commentary text={commentary.risks}/>
 
               {planningApps.length>0&&(
                 <RC t="Planning Conflict Assessment" ch={
@@ -2685,6 +2892,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="avoid-break">
               <PSH c="3. Symbol Group Recommendation"/>
               <RC t="Best-fit symbol groups for this site" ch={<SymbolGroupScorer location={location} weeklyTurnover={C.upliftedWk} demographics={{medianIncome,deprivation}} cats={cats}/>}/>
+              <Commentary text={commentary.symbolGroup}/>
             </div>
 
             {/* S4: COMPETITORS */}
@@ -2706,14 +2914,55 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   }/>
                 )}
               </div>
+              <Commentary text={commentary.competitors}/>
+            )}
+
+            {/* S4b: COMPARABLE SITES */}
+            {comparables.some(c=>c.name)&&(
+              <div className="avoid-break">
+                <PSH c="4b. Comparable Store Benchmarks"/>
+                <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>The following comparable stores have been selected as trading benchmarks for this assessment. Sales density comparisons are based on post-refit projections for the subject site.</div>
+                {comparables.filter(c=>c.name).map((c,i)=>(
+                  <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:16,marginBottom:12}}>
+                    <div style={{fontSize:15,fontWeight:700,color:G.mid,marginBottom:12}}>{c.name}</div>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
+                      {[
+                        ["Weekly Turnover",c.weeklyT>0?fmt(c.weeklyT):"Not stated"],
+                        ["Store Size",c.sqft>0?c.sqft.toLocaleString()+" sq ft":"Not stated"],
+                        ["Sales Density",c.sqft>0&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2)+"/sqft/wk":"—"],
+                      ].map(([l,v])=>(
+                        <div key={l} style={{textAlign:"center",background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"10px 8px"}}>
+                          <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
+                          <div style={{fontSize:15,fontWeight:700,color:G.mid}}>{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {c.sqft>0&&c.weeklyT>0&&(
+                      <div style={{fontSize:12,color:G.mid,fontWeight:600,padding:"8px 12px",background:G.pale,borderRadius:6}}>
+                        Subject site post-refit sales density: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk — {C.upliftedSpf>=(c.weeklyT/c.sqft)?"above":"below"} this comparable
+                      </div>
+                    )}
+                    {c.notes&&<div style={{fontSize:13,color:G.text,marginTop:10,lineHeight:1.7,borderTop:"1px solid "+G.border,paddingTop:10}}>{c.notes}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Area notes */}
+            {areaNotes&&(
+              <div className="avoid-break" style={{marginBottom:20,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
+                <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Area Notes</div>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",margin:0}}>{areaNotes}</p>
+              </div>
             )}
 
             {/* S5: CATEGORIES */}
             <div className="avoid-break">
               <PSH c="5. Category Sales Mix"/>
-              <RC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.ann*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
+              <RC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.upliftedAnn*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
               <RC t="Category Mix" ch={<Donut data={cats.filter(c=>c.mix>0).map(c=>({l:c.name,v:c.mix}))}/>}/>
               <RC t="Gross Profit % by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.gp-a.gp).map(c=>({l:c.name.split(" ")[0],v:c.gp}))} height={160} fv={v=>v+"%"}/>}/>
+              <Commentary text={commentary.categories}/>
             </div>
 
             {/* S6: FOOTFALL */}
@@ -2722,6 +2971,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Footfall by Hour of Day" ch={<BarChart data={FHOURS.map(h=>({l:h,v:fhour[h]}))} height={160} fv={v=>v+"%"}/>}/>
               <RC t="Basket Size Distribution" ch={<BarChart data={SBANDS.map(b=>({l:b.label,v:spendBands[b.key]}))} height={150} fv={v=>v+"%"}/>}/>
               <RC t="Shopping Mission Mix" ch={<Donut data={MISSIONS.map(k=>({l:k,v:missions[k]}))}/>}/>
+              <Commentary text={commentary.footfall}/>
             </div>
 
             {/* S7: DEMOGRAPHICS */}
@@ -2738,6 +2988,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Age Profile" ch={<BarChart data={AGE_BANDS.map(k=>({l:k,v:ageBands[k]}))} height={140} fv={v=>v+"%"}/>}/>
               <RC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
               <RC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
+              <Commentary text={commentary.demographics}/>
             </div>
 
             {/* Postcode notes in report */}
@@ -2796,8 +3047,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,overflow:"hidden",marginBottom:20}}>
                 {[
                   {type:"head",l:"INCOME"},
-                  {type:"row", l:"Gross Sales Revenue",v:C.ann,bold:true},
-                  {type:"row", l:"Cost of Goods "+pct(100-C.blGP),v:-(C.ann*(1-C.blGP/100))},
+                  {type:"row", l:"Gross Sales Revenue (post-refit)",v:C.upliftedAnn,bold:true},
+                  {type:"row", l:"Cost of Goods "+pct(100-C.blGP),v:-(C.upliftedAnn*(1-C.blGP/100))},
                   {type:"sub", l:"GROSS PROFIT",v:C.annGP,bold:true},
                   {type:"gap"},
                   {type:"head",l:"OPERATING COSTS"},
@@ -2818,9 +3069,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {type:"head",l:"KEY RATIOS"},
                   {type:"kv",l:"Gross Margin",d:pct(C.blGP)},
                   {type:"kv",l:"Staff Cost Ratio",d:staffPct+"%"},
-                  {type:"kv",l:"Total Cost Ratio",d:pct(C.annC/C.ann*100)},
-                  {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.ann*100)},
-                  {type:"kv",l:"Net Margin",d:pct(C.nP/C.ann*100)},
+                  {type:"kv",l:"Total Cost Ratio",d:pct(C.annC/C.upliftedAnn*100)},
+                  {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.upliftedAnn*100)},
+                  {type:"kv",l:"Net Margin",d:pct(C.nP/C.upliftedAnn*100)},
                   {type:"kv",l:"Return on Investment",d:pct(C.roi)},
                   {type:"kv",l:"Payback Period",d:C.pb?(C.pb||0).toFixed(1)+" years":"N/A"},
                   {type:"kv",l:"Sales per Sq Ft weekly",d:"£"+(C.spf||0).toFixed(2)},
@@ -2836,6 +3087,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 })}
               </div>
             </div>
+            <Commentary text={commentary.pl}/>
 
             {/* S9: 5-YEAR */}
             <div className="avoid-break">
@@ -2870,6 +3122,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </table>
               </div>
             </div>
+            <Commentary text={commentary.fiveYear}/>
 
             {/* S10: SENSITIVITY TABLE */}
             <div className="avoid-break">
@@ -2910,6 +3163,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </table>
               </div>
               <div style={{fontSize:12,color:G.light,marginTop:8}}>Base case: {footfall} transactions/day at {fmt(rent)}/yr rent · Post-refit uplift {uplift}%</div>
+              <Commentary text={commentary.sensitivity}/>
             </div>
 
 
@@ -2931,23 +3185,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
 
-            {/* Glossary — for retailer and bank */}
+            {/* Written Assessment Summary */}
             <div className="avoid-break">
-              <PSH c="Glossary — Key Financial Terms"/>
-              {[
-                {term:"EBITDA", full:"Earnings Before Interest, Tax, Depreciation and Amortisation", body:`The trading profit of the store — what it earns from day-to-day operations before loan repayments or tax. If EBITDA is negative the store is losing money before financing is even considered. Genesis Retail benchmark: 8–15% of sales is healthy.`},
-                {term:"ROI — Return on Investment", full:"Net Profit ÷ Total Capital Invested × 100", body:`For every £100 invested, how many pounds are returned as profit each year. Genesis Retail thresholds: ≥20% Strong Opportunity · 10–20% Viable · 0–10% Marginal · Negative Not Viable.`},
-                {term:"Net Profit", full:"What remains after every cost has been deducted", body:`Sales revenue minus cost of goods, rent, rates, staff, utilities, other costs and loan repayments. The money the owner takes home. A well-run convenience store should generate at least 5–8% net margin.`},
-                {term:"Payback Period", full:"Total Investment ÷ Annual Net Profit", body:`How many years until the investment is recovered from profits. Guide: under 4 years = excellent · 4–6 years = acceptable · over 7 years = high risk.`},
-                {term:"Gross Margin", full:"(Sales − Cost of Goods) ÷ Sales × 100", body:`The percentage of each sale retained after paying the supplier. Convenience retail typically runs at 22–30% blended margin. Higher-margin categories (hot beverages 50%+, health & beauty 35%+) should be prioritised in the ranging plan.`},
-                {term:"Sales per Square Foot", full:"Weekly Sales ÷ Net Selling Area", body:`The retail industry's standard measure of space productivity. UK 2025 benchmarks (weekly): £20+ outstanding · £16–20 well-performing symbol group · £12–16 average independent · under £12 below average. Source: IBISWorld/ACS 2025.`},
-              ].map((g,i)=>(
-                <div key={i} style={{marginBottom:14,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
-                  <div style={{fontSize:14,fontWeight:800,color:G.mid,marginBottom:3}}>{g.term}</div>
-                  <div style={{fontSize:11,color:G.light,fontStyle:"italic",marginBottom:6}}>{g.full}</div>
-                  <div style={{fontSize:13,color:G.text,lineHeight:1.7}}>{g.body}</div>
-                </div>
-              ))}
+              <PSH c="Genesis Retail — Written Assessment"/>
+              <div style={{fontSize:14,color:"#1a2144",lineHeight:2.0}}>
+                <p style={{marginBottom:16}}>{commentary.financial}</p>
+                <p style={{marginBottom:16}}>{commentary.risks}</p>
+                <p style={{marginBottom:16}}>{commentary.competitors}</p>
+                <p style={{marginBottom:16}}>{commentary.categories}</p>
+                <p style={{marginBottom:16}}>{commentary.footfall}</p>
+                <p style={{marginBottom:16}}>{commentary.demographics}</p>
+                <p style={{marginBottom:16}}>{commentary.pl}</p>
+                <p style={{marginBottom:16}}>{commentary.fiveYear}</p>
+                <p style={{marginBottom:0}}>{commentary.sensitivity}</p>
+              </div>
             </div>
 
             {/* Disclaimer */}
@@ -2960,6 +3211,74 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{display:"flex",gap:12,marginTop:16}}>
               <button onClick={()=>setStep(8)} style={{flex:1,padding:14,background:G.bg,border:"1.5px solid "+G.border,borderRadius:10,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:600}}>Back</button>
               <button onClick={()=>setStep(0)} style={{flex:1,padding:14,background:G.pale,border:"1.5px solid "+G.mid,borderRadius:10,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:700}}>New Assessment</button>
+            </div>
+
+            {/* ── FULL WRITTEN ASSESSMENT ── */}
+            <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
+              <div style={{background:G.dark,padding:"18px 24px"}}>
+                <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
+                <div style={{fontSize:18,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
+                <div style={{fontSize:12,color:"#8fa8d8",marginTop:6}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · Prepared by Richard Shorney, Genesis Retail</div>
+              </div>
+              <div style={{padding:"24px 24px 8px"}}>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.financial}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.risks}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.competitors}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.categories}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.footfall}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.demographics}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.pl}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.fiveYear}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.sensitivity}</div>
+                </div>
+
+                <div style={{marginBottom:24,padding:"16px 20px",background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
+                  <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.9}}>
+                    {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed — in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
+                  </div>
+                </div>
+
+              </div>
+              <div style={{padding:"14px 24px",background:G.card,borderTop:"1px solid "+G.border,fontSize:11,color:G.light,fontStyle:"italic"}}>
+                This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from projections. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for decisions made on the basis of this assessment without independent professional verification.
+              </div>
             </div>
           </div>
         )}
