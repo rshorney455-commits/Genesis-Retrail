@@ -2619,7 +2619,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {yr5.map((r,i)=>(
                     <div key={i} style={{textAlign:"center"}}>
                       <div style={{fontSize:9,color:"#8fa8d8",marginBottom:4,textTransform:"uppercase",letterSpacing:".08em"}}>Year {r.yr}</div>
-                      <div style={{fontSize:14,fontWeight:800,color:cumNp(r.yr)>=0?"#7dd3fc":"#fca5a5"}}>{fmt(cumNp(r.yr))}</div>
+                      <div style={{fontSize:14,fontWeight:800,color:"#1a2144",background:"#fef08a",borderRadius:4,padding:"2px 6px",display:"inline-block"}}>{fmt(cumNp(r.yr))}</div>
                     </div>
                   ))}
                 </div>
