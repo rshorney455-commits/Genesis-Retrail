@@ -2531,6 +2531,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div>
                   <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",marginBottom:3,fontWeight:700}}>Genesis Retail</div>
                   <div style={{fontSize:11,color:"#8fa8d8",letterSpacing:".12em",textTransform:"uppercase"}}>Site Viability Assessment Report</div>
+                  {clientName&&<div style={{fontSize:12,color:"#c8d4f0",marginTop:4}}>Prepared for: <strong>{clientName}</strong></div>}
                 </div>
                 <div style={{fontSize:11,color:"#8fa8d8"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
               </div>
@@ -2706,7 +2707,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="avoid-break">
               <PSH c="1. Financial Summary"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
-                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)]].map(([l,v])=>(
+                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)],["Opening Hours",openHours+"hrs/day"]].map(([l,v])=>(
                   <div key={l} style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,textAlign:"center"}}>
                     <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
                     <div style={{fontSize:17,fontWeight:700,color:G.mid}}>{v}</div>
@@ -2762,6 +2763,45 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     </div>
                   }/>
                 )}
+              </div>
+            )}
+
+            {/* S4b: COMPARABLE SITES */}
+            {comparables.some(c=>c.name)&&(
+              <div className="avoid-break">
+                <PSH c="4b. Comparable Store Benchmarks"/>
+                <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>The following comparable stores have been selected as trading benchmarks for this assessment. Sales density comparisons are based on post-refit projections for the subject site.</div>
+                {comparables.filter(c=>c.name).map((c,i)=>(
+                  <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:16,marginBottom:12}}>
+                    <div style={{fontSize:15,fontWeight:700,color:G.mid,marginBottom:12}}>{c.name}</div>
+                    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
+                      {[
+                        ["Weekly Turnover",c.weeklyT>0?fmt(c.weeklyT):"Not stated"],
+                        ["Store Size",c.sqft>0?c.sqft.toLocaleString()+" sq ft":"Not stated"],
+                        ["Sales Density",c.sqft>0&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2)+"/sqft/wk":"—"],
+                      ].map(([l,v])=>(
+                        <div key={l} style={{textAlign:"center",background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"10px 8px"}}>
+                          <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
+                          <div style={{fontSize:15,fontWeight:700,color:G.mid}}>{v}</div>
+                        </div>
+                      ))}
+                    </div>
+                    {c.sqft>0&&c.weeklyT>0&&(
+                      <div style={{fontSize:12,color:G.mid,fontWeight:600,padding:"8px 12px",background:G.pale,borderRadius:6}}>
+                        Subject site post-refit sales density: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk — {C.upliftedSpf>=(c.weeklyT/c.sqft)?"above":"below"} this comparable
+                      </div>
+                    )}
+                    {c.notes&&<div style={{fontSize:13,color:G.text,marginTop:10,lineHeight:1.7,borderTop:"1px solid "+G.border,paddingTop:10}}>{c.notes}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Area notes */}
+            {areaNotes&&(
+              <div className="avoid-break" style={{marginBottom:20,padding:"14px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
+                <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Area Notes</div>
+                <p style={{fontSize:13,color:G.text,lineHeight:1.8,whiteSpace:"pre-wrap",margin:0}}>{areaNotes}</p>
               </div>
             )}
 
@@ -2853,8 +2893,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,overflow:"hidden",marginBottom:20}}>
                 {[
                   {type:"head",l:"INCOME"},
-                  {type:"row", l:"Gross Sales Revenue",v:C.ann,bold:true},
-                  {type:"row", l:"Cost of Goods "+pct(100-C.blGP),v:-(C.ann*(1-C.blGP/100))},
+                  {type:"row", l:"Gross Sales Revenue (post-refit)",v:C.upliftedAnn,bold:true},
+                  {type:"row", l:"Cost of Goods "+pct(100-C.blGP),v:-(C.upliftedAnn*(1-C.blGP/100))},
                   {type:"sub", l:"GROSS PROFIT",v:C.annGP,bold:true},
                   {type:"gap"},
                   {type:"head",l:"OPERATING COSTS"},
@@ -2875,9 +2915,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {type:"head",l:"KEY RATIOS"},
                   {type:"kv",l:"Gross Margin",d:pct(C.blGP)},
                   {type:"kv",l:"Staff Cost Ratio",d:staffPct+"%"},
-                  {type:"kv",l:"Total Cost Ratio",d:pct(C.annC/C.ann*100)},
-                  {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.ann*100)},
-                  {type:"kv",l:"Net Margin",d:pct(C.nP/C.ann*100)},
+                  {type:"kv",l:"Total Cost Ratio",d:pct(C.annC/C.upliftedAnn*100)},
+                  {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.upliftedAnn*100)},
+                  {type:"kv",l:"Net Margin",d:pct(C.nP/C.upliftedAnn*100)},
                   {type:"kv",l:"Return on Investment",d:pct(C.roi)},
                   {type:"kv",l:"Payback Period",d:C.pb?(C.pb||0).toFixed(1)+" years":"N/A"},
                   {type:"kv",l:"Sales per Sq Ft weekly",d:"£"+(C.spf||0).toFixed(2)},
