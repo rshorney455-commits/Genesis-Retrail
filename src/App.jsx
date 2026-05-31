@@ -1258,7 +1258,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       // Don't save cats - always use ACS defaults on load
       delete state.cats;
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-      const idx = existing.findIndex(a=>a.postcode===state.postcode && a.propName===state.propName);
+      const idx = existing.findIndex(a=>a.propName===state.propName);
       if(idx>=0) existing[idx]=state; else existing.unshift(state);
       const trimmed = existing.slice(0,20);
       localStorage.setItem("genesis_assessments", JSON.stringify(trimmed));
@@ -1277,7 +1277,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         const state = gatherState();
         delete state.cats;
         const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-        const idx = existing.findIndex(a=>a.postcode===state.postcode && a.propName===state.propName);
+        const idx = existing.findIndex(a=>a.propName===state.propName);
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
