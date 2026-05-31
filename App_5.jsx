@@ -1098,8 +1098,8 @@ The index field is a number showing consumption vs national average (100=average
     const upliftedWk = wk*(1+uplift/100);
     const upliftedAnn = upliftedWk*52;
     const blGP=cats.reduce((s,c)=>s+(c.mix/100)*c.gp,0);
-    const annGP=ann*(blGP/100);
-    const stf=ann*(staffPct/100);
+    const annGP=upliftedAnn*(blGP/100);
+    const stf=upliftedAnn*(staffPct/100);
     const annC=rent+rates+stf+utilities+otherCosts;
     const ti=refitCost+stockCost;
     const mr=financeRate/100/12, np2=financeYears*12;
@@ -1127,7 +1127,7 @@ The index field is a number showing consumption vs national average (100=average
       return {wk:0,ann:0,upliftedWk:0,upliftedAnn:0,blGP:25,annGP:0,stf:0,annC:0,ti:0,mp:0,af:0,eb:0,nP:0,roi:0,pb:null,spf:0,upliftedSpf:0,pen:0,yr1Q:[],priceIndex:4,refitCost:0,stockCost:0,
         symGroups:[{name:"Nisa",score:8,desc:"Recommended"},{name:"Spar",score:7,desc:""},{name:"Budgens",score:6,desc:""},{name:"Costcutter",score:4,desc:""}]};
     }
-  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop]);
+  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
     if(C.roi>=20) return {l:"Strong Opportunity",col:"#1e3a8a"};
