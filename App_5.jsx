@@ -2646,27 +2646,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {/* ── RESULTS ── */}
         {step===9&&(
           <div>
-
-            {/* ── FULL WRITTEN ASSESSMENT — screen view ── */}
-            <div style={{background:"#fff",border:"2px solid "+G.mid,borderRadius:12,padding:"20px 22px",marginBottom:20}}>
-              <div style={{fontSize:10,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".15em",marginBottom:4}}>Genesis Retail</div>
-              <div style={{fontSize:17,fontWeight:800,color:G.dark,marginBottom:20,paddingBottom:14,borderBottom:"2px solid "+G.mid}}>Site Assessment — {propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
-              <div style={{fontSize:14,color:"#1a2144",lineHeight:2.0}}>
-                <p style={{marginBottom:16}}>{commentary.financial}</p>
-                <p style={{marginBottom:16}}>{commentary.risks}</p>
-                <p style={{marginBottom:16}}>{commentary.competitors}</p>
-                <p style={{marginBottom:16}}>{commentary.categories}</p>
-                <p style={{marginBottom:16}}>{commentary.footfall}</p>
-                <p style={{marginBottom:16}}>{commentary.demographics}</p>
-                <p style={{marginBottom:16}}>{commentary.pl}</p>
-                <p style={{marginBottom:16}}>{commentary.fiveYear}</p>
-                <p style={{marginBottom:0}}>{commentary.sensitivity}</p>
-              </div>
-              <div style={{marginTop:20,paddingTop:14,borderTop:"1px solid "+G.border,fontSize:12,color:G.light,fontStyle:"italic"}}>
-                Prepared by Genesis Retail · {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · All projections are indicative and based on the assumptions stated in this report.
-              </div>
-            </div>
-
             <div style={{marginBottom:16}}>
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
@@ -3230,6 +3209,74 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{display:"flex",gap:12,marginTop:16}}>
               <button onClick={()=>setStep(8)} style={{flex:1,padding:14,background:G.bg,border:"1.5px solid "+G.border,borderRadius:10,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:600}}>Back</button>
               <button onClick={()=>setStep(0)} style={{flex:1,padding:14,background:G.pale,border:"1.5px solid "+G.mid,borderRadius:10,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:700}}>New Assessment</button>
+            </div>
+
+            {/* ── FULL WRITTEN ASSESSMENT ── */}
+            <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
+              <div style={{background:G.dark,padding:"18px 24px"}}>
+                <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
+                <div style={{fontSize:18,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
+                <div style={{fontSize:12,color:"#8fa8d8",marginTop:6}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · Prepared by Richard Shorney, Genesis Retail</div>
+              </div>
+              <div style={{padding:"24px 24px 8px"}}>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.financial}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.risks}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.competitors}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.categories}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.footfall}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.demographics}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.pl}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.fiveYear}</div>
+                </div>
+
+                <div style={{marginBottom:24}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.95}}>{commentary.sensitivity}</div>
+                </div>
+
+                <div style={{marginBottom:24,padding:"16px 20px",background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10}}>
+                  <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
+                  <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
+                  <div style={{fontSize:14,color:"#1a2144",lineHeight:1.9}}>
+                    {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed — in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
+                  </div>
+                </div>
+
+              </div>
+              <div style={{padding:"14px 24px",background:G.card,borderTop:"1px solid "+G.border,fontSize:11,color:G.light,fontStyle:"italic"}}>
+                This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from projections. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for decisions made on the basis of this assessment without independent professional verification.
+              </div>
             </div>
           </div>
         )}
