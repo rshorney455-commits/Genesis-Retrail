@@ -1217,140 +1217,6 @@ The index field is a number showing consumption vs national average (100=average
 
   const cumNp=yr=>yr5.slice(0,yr).reduce((a,r)=>a+r.np,0);
 
-  // ── Dynamic commentary — bank-grade, human-written tone ──────────────────────
-  const commentary = useMemo(()=>{
-    const topCat = [...cats].sort((a,b)=>b.mix-a.mix)[0];
-    const tobaccoMix = cats.find(c=>c.name.includes("Tobacco"))?.mix||0;
-    const alcoholMix = cats.find(c=>c.name.includes("Alcohol"))?.mix||0;
-    const chilledMix = cats.find(c=>c.name.includes("Chilled"))?.mix||0;
-    const hotFoodMix = cats.find(c=>c.name.includes("Hot Food"))?.mix||0;
-    const peakHourVal = Math.max(...FHOURS.map(h=>fhour[h]||0));
-    const peakHourKey = FHOURS.find(h=>fhour[h]===peakHourVal)||"12-2pm";
-    const topMission = MISSIONS.reduce((a,b)=>missions[a]>missions[b]?a:b);
-    const highBasket = spendBands.s10+spendBands.s15+spendBands.s20;
-    const highThreatComps = competitorList.filter(c=>c.threat==="high").length;
-    const rentRatio = rent/C.upliftedAnn*100;
-    const staffRatio = C.stf/C.upliftedAnn*100;
-    const ebitdaMargin = C.eb/C.upliftedAnn*100;
-    const totalCostRatio = C.annC/C.upliftedAnn*100;
-    const workingAge = (ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0);
-    const socialHousing = housing["Social / Council"]||0;
-    const ownerOccupied = housing["Owner Occupied"]||0;
-    const fullTimeEmployed = employment["Employed Full-Time"]||0;
-    const redRisks = risks.filter(r=>r.rag==="red").length;
-    const amberRisks = risks.filter(r=>r.rag==="amber").length;
-    const highRiskPlanning = planningApps.filter(p=>p.risk==="high").length;
-    const roiVerdict = C.roi>=20?"strong":C.roi>=10?"viable but tight":"below target";
-    const paybackVerdict = C.pb&&C.pb<=4?"excellent":C.pb&&C.pb<=6?"acceptable":"extended";
-    const spfVerdict = C.upliftedSpf>=20?"well above the symbol group average":C.upliftedSpf>=16?"in line with the symbol group average":C.upliftedSpf>=12?"below the symbol group average but above the independent minimum":"below the independent minimum";
-
-    return {
-
-      financial: [
-        `Post-refit, the store is projected to turn over ${fmt(C.upliftedWk)} per week — ${fmt(C.upliftedAnn)} annually. This is built on a current base of ${fmt(C.wk)}/week, with a ${uplift}% uplift applied to reflect the larger unit, improved format, extended range and the trading benefit of symbol group affiliation.`,
-        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24–26%."}. After all costs — rent, rates, staff, utilities and finance — the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
-        `The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} is ${paybackVerdict} — ${C.pb&&C.pb<=4?"well inside the 4-year benchmark that lenders and operators look for in convenience retail.":C.pb&&C.pb<=6?"within the 4–6 year range generally considered acceptable for this type of investment.":"above the 6-year marker. This does not make the investment unviable, but it does mean the operator will need to be confident in the trading projections before committing."}`,
-        `Sales density of £${(C.upliftedSpf||0).toFixed(2)} per square foot per week is ${spfVerdict} of £16–20. ${C.upliftedSpf<16?"Improving this figure should be a priority — a broader chilled and food-to-go range is the most reliable way to drive sales per square foot in a convenience store of this type.":"This is a credible figure and consistent with well-run stores in similar locations."}`
-      ].join(" "),
-
-      risks: [
-        `The risk assessment has flagged ${redRisks} red item${redRisks!==1?"s":""} and ${amberRisks} amber item${amberRisks!==1?"s":""}. ${redRisks>0?"Red flags represent material risks to the investment case and should be resolved before heads of terms are agreed.":"There are no red flags — on the metrics assessed, this site does not carry any immediately disqualifying risks."}`,
-        `Rent is running at ${pct(rentRatio)} of projected post-refit turnover. ${rentRatio>15?"The Genesis Retail threshold is 10% — at "+pct(rentRatio)+" this is the most significant financial risk in this assessment. The operator should negotiate hard on the lease before exchange. Every pound off the annual rent drops directly to the bottom line.":rentRatio>10?"This sits above the 10% target. It is not a dealbreaker, but the operator should make every effort to bring it down before signing.":"This is within the 10% target range and does not represent a structural risk to the business."}`,
-        highThreatComps>0
-          ? `There ${highThreatComps===1?"is":"are"} ${highThreatComps} major competitor${highThreatComps>1?"s":""} within 300 metres that the trading projections need to account for. The operator's existing customer relationships and knowledge of this catchment are the strongest mitigant against this risk.`
-          : `No high-threat competitors were identified within 300 metres. The nearest competitor is ${nearestComp} miles away, which offers reasonable insulation from direct head-to-head competition on the core convenience mission.`,
-        highRiskPlanning>0
-          ? `Planning data shows ${highRiskPlanning} high-risk application${highRiskPlanning>1?"s":""} in the immediate area. These must be verified directly with the Local Planning Authority before any commitment is made — a competing food retail consent within walking distance would materially affect the projections in this report.`
-          : ""
-      ].filter(Boolean).join(" "),
-
-      symbolGroup: [
-        `The symbol group scoring model has ranked the options above based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria — but the final decision should always involve a formal conversation with the wholesaler about terms, ranging support and the refit contribution they are prepared to offer.`,
-        alcoholMix>=15
-          ? `The BWS mix of ${pct(alcoholMix)} is strong, which adds weight to any group with a specialist drinks offer.`
-          : "",
-        deprivation<=4
-          ? `Given the deprivation index of ${deprivation}/10, price perception will matter to this customer base. A group with strong PMP coverage and a value-led own-brand range will trade better here than a premium fascia.`
-          : medianIncome>=35000
-          ? `The catchment income profile of ${fmt(medianIncome)} median household income is strong enough to support a mid-tier or premium fascia — customers here will respond to quality and range depth.`
-          : `The catchment sits in the mainstream — a well-supported mid-tier group is the right fit, balancing value credentials with enough ranging flexibility to build a credible fresh and chilled offer.`,
-        `Whichever group is selected, the operator should negotiate the refit terms, minimum weekly drop and exclusivity clauses carefully. These are the three areas where independent retailers most often find themselves locked into unfavourable positions.`
-      ].filter(Boolean).join(" "),
-
-      competitors: [
-        competitorList.length>0
-          ? `The map shows ${competitorList.length} competitor${competitorList.length!==1?"s":""} identified within the catchment via open mapping data. ${highThreatComps>0?highThreatComps+" of these are rated high threat — typically a major multiple or established symbol group store within 300 metres.":"None are rated high threat at this point."}`
-          : `No competitors were automatically identified within the catchment from open mapping data. This should be verified on the ground during the site visit — the tool sources from public data and may not reflect every operator.`,
-        nearestComp>0
-          ? `The nearest competitor is ${nearestComp} miles away. ${nearestComp<0.25?"At this distance, the two stores are effectively competing for the same passing trade and the same top-up mission. The operator will need to be better — on range, on availability, on service — not just present.":nearestComp<0.5?"Within half a mile, this is close enough to feel in day-to-day trading, particularly if the competitor holds a stronger fresh food offer or a more prominent fascia.":"This is a comfortable buffer for a convenience store. The majority of convenience shopping happens within a 5-minute walk, so beyond half a mile the competitive impact diminishes significantly."}`
-          : "",
-        highRiskPlanning>0
-          ? `Planning activity nearby is worth monitoring closely. An approved food retail unit within this catchment — even if currently vacant — represents a potential future competitive risk that is not yet visible in the trading figures.`
-          : `No significant planning activity was detected in the catchment. The competitive position as assessed appears stable.`
-      ].filter(Boolean).join(" "),
-
-      categories: [
-        `The largest category by sales mix is ${topCat?.name} at ${topCat?.mix}%, contributing around ${fmt(C.upliftedAnn*(topCat?.mix||0)/100)} to annual turnover.`,
-        tobaccoMix>=18
-          ? `Tobacco and vaping at ${pct(tobaccoMix)} is in line with — or above — the national convenience average of 18.8% (ACS 2025). This category drives high-frequency visits and is important to protect, but its long-term trajectory is downward due to regulatory pressure. The operator should be actively building alternative traffic drivers — hot drinks, food to go, chilled — to reduce dependency over time.`
-          : `Tobacco at ${pct(tobaccoMix)}% is below the sector average. Ensure the range is wide enough to retain the tobacco customer, who typically shops multiple categories in the same visit.`,
-        chilledMix<12
-          ? `Chilled foods at ${pct(chilledMix)} is below the sector average of 12.9%. The additional space in the new unit should be used to build a proper chilled run — dairy, fresh, ready meals, sandwiches. Chilled is the single biggest driver of basket value growth in a convenience store and customers increasingly expect it.`
-          : `Chilled foods at ${pct(chilledMix)} is ${chilledMix>=15?"strong":"healthy"} — this is a key category for driving basket value and repeat visits.`,
-        hotFoodMix>0
-          ? `Hot food and drinks to go carries the highest gross margin of any category in the mix at 55%+. At ${pct(hotFoodMix)} of the mix it is ${hotFoodMix>=3?"already contributing meaningfully":"currently a small part of the range"} — there is a strong case for investing in equipment and fixture space to grow this in the refit.`
-          : "",
-        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%. This is partly a function of the category mix — categories like confectionery, health and beauty and hot food carry significantly higher margins than tobacco and fresh milk, which are included here at their sector averages.":"broadly in line with the convenience sector average of 24–26%. There is scope to improve this over time by growing the higher-margin categories — chilled, food to go and health and beauty — relative to the lower-margin volume drivers."}`
-      ].filter(Boolean).join(" "),
-
-      footfall: [
-        `The peak trading hour is ${peakHourKey}, accounting for ${peakHourVal}% of daily footfall. ${peakHourKey.includes("12")||peakHourKey.includes("2pm")?"A lunchtime peak indicates strong demand for food to go and meal deals. The entrance area should be set up to capture this customer on the way in — a hot food and snacking fixture at eye level as they enter is the standard approach in well-run convenience stores.":peakHourKey.includes("8am")||peakHourKey.includes("6am")?"A morning commuter peak calls for coffee, pastries and grab-and-go lines to be prominent and available from opening. This customer has limited time — speed of service and availability are the critical metrics, not price.":"Trading is spread across the day, which is typical of a residential parade store serving multiple missions. The layout should reflect this — it needs to work for the quick top-up, the lunch grab and the evening meal solution without any one mission compromising the others."}`,
-        `The dominant shopping mission is ${topMission} at ${missions[topMission]}%. ${topMission==="Top-up"?"This is the bread-and-butter of convenience retail. The store layout needs to support speed and familiarity — regular customers should be able to get in, find what they need and get out quickly. Every fixture change needs to be considered against how it affects the top-up customer.":topMission==="Grab and Go"?"Grab and go customers are high frequency but low dwell time. Range availability, strong impulse lines at the till and a clean, fast checkout experience are the priorities.":topMission==="Food to Go"?"A food-to-go dominant mission is a real opportunity — this is the highest-margin trade in the store. The refit plan should put food to go at the centre of the layout, not as an afterthought.":"This mission profile points to a store that does meaningful work as a local food shop, not just a convenience top-up point. Deeper ranging, a stronger fresh offer and extended chilled capacity will hold and grow this customer."}`,
-        highBasket>=30
-          ? `${pct(highBasket)} of transactions are £10 or above, which is a strong indicator that customers are treating this store as a regular food shop rather than a quick top-up point. This should be reflected in the depth of range — particularly in chilled, grocery and ambient.`
-          : `The majority of baskets are under £10, which is consistent with a high-frequency top-up mission. Growing average basket size — through meal deals, cross-category ranging and the introduction of a stronger food-to-go offer — is one of the most reliable levers for improving overall store profitability.`
-      ].join(" "),
-
-      demographics: [
-        `With a catchment population of ${catchmentPop.toLocaleString()} within one mile, the store has a penetration rate of ${pct(C.pen)}. ${C.pen>=20?"This is a strong penetration rate and suggests the store already plays an important role in the local food economy. The challenge is to hold that share and grow basket rather than grow footfall.":C.pen>=15?"This is above the 15% benchmark for a viable convenience store and indicates a healthy customer base to build on.":"This is below the 15% benchmark. Building penetration will require the store to give customers a reason to choose it over alternatives — a cleaner, more comprehensive offer post-refit is the most direct way to achieve this."}`,
-        `The working-age population of 18–54 accounts for ${pct(workingAge)} of the catchment. ${workingAge>=55?"This is a strong working-age proportion — it supports demand across all trading periods and justifies investment in food to go, coffee and a decent lunch offer alongside the core convenience range.":"This is a slightly lower working-age proportion than average. The store should still cover all missions, but the emphasis on grab-and-go and food to go should be calibrated against the actual daytime footfall pattern observed on the visit."}`,
-        `${socialHousing>=25?`Social and council housing accounts for ${pct(socialHousing)} of housing tenure — a significant proportion. Price-marked packs are not optional in a catchment like this, they are expected. Own-brand ranges, value tiers and consistent pricing on everyday lines will be central to building loyalty with this customer base.`:ownerOccupied>=60?`Owner occupation at ${pct(ownerOccupied)} is above average, which typically points to a more settled, higher-spending customer base with less price sensitivity than a predominantly rented catchment. The operator has room to invest in quality and range breadth.`:`The tenure mix reflects a broadly mainstream catchment. A balanced approach — covering value lines without compromising on the quality and range that attract higher-spending customers — is the right positioning.`}`,
-        `A median household income of ${fmt(medianIncome)} ${medianIncome>=35000?"is above the national average and supports a fuller, better-quality convenience offer. Customers here will pay for freshness, range and service.":medianIncome>=27000?"sits broadly in line with the national average. Mainstream pricing, a solid symbol group range and a clean store will be the foundation of a strong trading position.":"is below the national average. Value credentials matter here — PMPs, price-marked promotions and a well-controlled cost structure are essential."}`,
-        `The deprivation index of ${deprivation}/10 ${deprivation<=3?"indicates a high-deprivation catchment. This is not a barrier to a successful store — high-deprivation areas often have the strongest convenience retail penetration — but the range and pricing strategy need to reflect the economic reality of the customer base.":deprivation<=6?"indicates moderate deprivation. The store needs to cover value without sacrificing the range quality that brings in the broader catchment.":"indicates a relatively low-deprivation catchment, which gives the operator more flexibility on ranging and pricing strategy."}`
-      ].join(" "),
-
-      pl: [
-        `The profit and loss account is built on post-refit annual revenue of ${fmt(C.upliftedAnn)}, with a cost of goods of ${fmt(Math.round(C.upliftedAnn*(1-C.blGP/100)))} — leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin.`,
-        `Total operating costs — rent, rates, staff, utilities and other costs — come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The business is generating sufficient gross profit to cover these costs and service the loan, but the headroom is limited. Any underperformance on sales or an unexpected cost increase — a rates revaluation, a rent review, an equipment failure — would have a disproportionate impact on the bottom line. The operator should stress-test the cost base carefully before proceeding.":totalCostRatio>65?"This is within the expected range for a convenience store of this type, but the operator should be conscious that there is not a great deal of room to absorb cost shocks. Tightly managed operations with a focus on rota efficiency and energy costs will be important.":"This is well-controlled and leaves healthy headroom for profit delivery. The business can absorb a reasonable degree of cost variation without dropping below viability."}`,
-        `Staff costs at ${pct(staffRatio)} of sales ${staffRatio>12?"are above the 9–12% sector norm. This should be reviewed — either the staffing model has been set above what the projected turnover justifies, or the store relies heavily on higher-cost staff. Both are worth addressing before the refit completes.":staffRatio<9?"are lean. This is achievable in a well-run owner-operated store, but the operator should be confident the store can be covered safely and compliantly at this level.":"are within the 9–12% sector norm and do not raise any concerns."}`,
-        `EBITDA — the trading profit before finance — is ${fmt(C.eb)}, representing ${pct(ebitdaMargin)} of sales. ${ebitdaMargin>=12?"This is a strong EBITDA margin for a convenience store and gives the business a solid platform to service the finance and still deliver meaningful net profit.":ebitdaMargin>=8?"This is at the lower end of what Genesis Retail would consider healthy — sufficient to service the loan comfortably, but without significant surplus.":ebitdaMargin>=5?"EBITDA at this level covers the finance charge but leaves limited buffer. The business needs to trade to plan; there is not much room for error.":"EBITDA is below the 8% minimum threshold Genesis Retail applies to viable convenience retail investments. The cost base or the trading projections — or both — need to be reviewed before this assessment can support a lending application."}`
-      ].join(" "),
-
-      fiveYear: [
-        `The five-year forecast applies 3% annual sales growth to the post-refit Year 1 base, with operating costs inflating at 2% per year. These are deliberately conservative assumptions — 3% growth in a well-run convenience store in an established residential catchment is achievable without any step change in the business.`,
-        `By Year 5, the store is forecast to generate annual sales of ${fmt(yr5[4]?.s||0)} and a net profit of ${fmt(yr5[4]?.np||0)}. Cumulative net profit across the five-year period is ${fmt(cumNp(5))}.`,
-        financeYears<=5
-          ? `The loan facility is fully repaid within the forecast period. From Year ${financeYears+1} onwards the finance charge drops away, which will materially improve the net profit position. This is a significant positive for the medium-term cash generation of the business.`
-          : `The finance facility runs beyond the five-year forecast window. The loan repayment of ${fmt(Math.round(C.mp))}/month remains a constant cost throughout the period modelled — cash generation in the later years will be constrained accordingly.`,
-        cumNp(5)>0
-          ? `A cumulative return of ${fmt(cumNp(5))} against an initial investment of ${fmt(C.ti)} represents a strong five-year position. The business more than recovers the investment within the forecast period, which is the primary test a lender will apply to this projection.`
-          : `The cumulative position over five years is negative, which means the investment does not recover within the modelled window on current assumptions. This does not necessarily mean the opportunity is unviable — the sensitivity of these projections to relatively small improvements in turnover or cost is significant — but it is a finding that lenders will scrutinise closely. The operator should be prepared to explain the basis for the uplift assumptions in detail.`
-      ].join(" "),
-
-      sensitivity: [
-        `The table models the impact on return on investment of footfall varying between -20% and +20% of the base case, and rent varying by the same range. The base case sits in the centre cell.`,
-        sensitivityData[2][2]?.roi>=20
-          ? `The base case delivers a ${sensitivityData[2][2].roi.toFixed(1)}% ROI — above the 20% Genesis Retail threshold. The investment case is sound on the central assumptions.`
-          : `The base case delivers a ${sensitivityData[2][2]?.roi.toFixed(1)}% ROI, which is below the 20% Genesis Retail threshold. The investment is viable but does not meet the target return on the central assumptions — the operator and any financier should understand the basis for the projections carefully.`,
-        sensitivityData[0]?.[0]?.roi>=10
-          ? `Even in the most adverse scenario modelled — footfall 20% below forecast and rent 20% above — the store still returns ${sensitivityData[0][0].roi.toFixed(1)}% ROI. This is a resilient investment with meaningful downside protection.`
-          : `In the most adverse scenario modelled, the store drops to ${sensitivityData[0]?.[0]?.roi.toFixed(1)||0}% ROI. This limited downside protection means the investment is sensitive to trading performance — the operator needs to be confident in the footfall projections, and the rent negotiation should prioritise locking in a level that keeps the base case well clear of the break-even line.`,
-        `${sensitivityData.flat().filter(c=>c.roi>=20).length} of the 25 scenarios modelled produce a return of 20% or above. ${sensitivityData.flat().filter(c=>c.roi>=20).length>=20?"The investment is robust across the vast majority of scenarios. A lender reviewing this table should be comfortable with the risk profile.":sensitivityData.flat().filter(c=>c.roi>=20).length>=12?"The investment meets the target return across the majority of scenarios. It is sensitive to a combination of footfall underperformance and cost pressure, but is not fragile.":"The investment only meets the target return in a minority of scenarios. This should be discussed openly with any financier — the projections need to be stress-tested and the key assumptions clearly documented."}`
-      ].join(" "),
-
-    };
-  },[C,cats,uplift,rent,rates,staffPct,utilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,DS]);
-
 
   const aiPrompt = useMemo(()=>`
 You are a senior convenience retail analyst at Genesis Retail writing a professional site viability assessment report section.
@@ -1527,6 +1393,140 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       });
     });
   },[footfall,rent,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
+  // ── Dynamic commentary — bank-grade, human-written tone ──────────────────────
+  const commentary = useMemo(()=>{
+    const topCat = [...cats].sort((a,b)=>b.mix-a.mix)[0];
+    const tobaccoMix = cats.find(c=>c.name.includes("Tobacco"))?.mix||0;
+    const alcoholMix = cats.find(c=>c.name.includes("Alcohol"))?.mix||0;
+    const chilledMix = cats.find(c=>c.name.includes("Chilled"))?.mix||0;
+    const hotFoodMix = cats.find(c=>c.name.includes("Hot Food"))?.mix||0;
+    const peakHourVal = Math.max(...FHOURS.map(h=>fhour[h]||0));
+    const peakHourKey = FHOURS.find(h=>fhour[h]===peakHourVal)||"12-2pm";
+    const topMission = MISSIONS.reduce((a,b)=>missions[a]>missions[b]?a:b);
+    const highBasket = spendBands.s10+spendBands.s15+spendBands.s20;
+    const highThreatComps = competitorList.filter(c=>c.threat==="high").length;
+    const rentRatio = rent/C.upliftedAnn*100;
+    const staffRatio = C.stf/C.upliftedAnn*100;
+    const ebitdaMargin = C.eb/C.upliftedAnn*100;
+    const totalCostRatio = C.annC/C.upliftedAnn*100;
+    const workingAge = (ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0);
+    const socialHousing = housing["Social / Council"]||0;
+    const ownerOccupied = housing["Owner Occupied"]||0;
+    const fullTimeEmployed = employment["Employed Full-Time"]||0;
+    const redRisks = risks.filter(r=>r.rag==="red").length;
+    const amberRisks = risks.filter(r=>r.rag==="amber").length;
+    const highRiskPlanning = planningApps.filter(p=>p.risk==="high").length;
+    const roiVerdict = C.roi>=20?"strong":C.roi>=10?"viable but tight":"below target";
+    const paybackVerdict = C.pb&&C.pb<=4?"excellent":C.pb&&C.pb<=6?"acceptable":"extended";
+    const spfVerdict = C.upliftedSpf>=20?"well above the symbol group average":C.upliftedSpf>=16?"in line with the symbol group average":C.upliftedSpf>=12?"below the symbol group average but above the independent minimum":"below the independent minimum";
+
+    return {
+
+      financial: [
+        `Post-refit, the store is projected to turn over ${fmt(C.upliftedWk)} per week — ${fmt(C.upliftedAnn)} annually. This is built on a current base of ${fmt(C.wk)}/week, with a ${uplift}% uplift applied to reflect the larger unit, improved format, extended range and the trading benefit of symbol group affiliation.`,
+        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24–26%."}. After all costs — rent, rates, staff, utilities and finance — the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
+        `The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} is ${paybackVerdict} — ${C.pb&&C.pb<=4?"well inside the 4-year benchmark that lenders and operators look for in convenience retail.":C.pb&&C.pb<=6?"within the 4–6 year range generally considered acceptable for this type of investment.":"above the 6-year marker. This does not make the investment unviable, but it does mean the operator will need to be confident in the trading projections before committing."}`,
+        `Sales density of £${(C.upliftedSpf||0).toFixed(2)} per square foot per week is ${spfVerdict} of £16–20. ${C.upliftedSpf<16?"Improving this figure should be a priority — a broader chilled and food-to-go range is the most reliable way to drive sales per square foot in a convenience store of this type.":"This is a credible figure and consistent with well-run stores in similar locations."}`
+      ].join(" "),
+
+      risks: [
+        `The risk assessment has flagged ${redRisks} red item${redRisks!==1?"s":""} and ${amberRisks} amber item${amberRisks!==1?"s":""}. ${redRisks>0?"Red flags represent material risks to the investment case and should be resolved before heads of terms are agreed.":"There are no red flags — on the metrics assessed, this site does not carry any immediately disqualifying risks."}`,
+        `Rent is running at ${pct(rentRatio)} of projected post-refit turnover. ${rentRatio>15?"The Genesis Retail threshold is 10% — at "+pct(rentRatio)+" this is the most significant financial risk in this assessment. The operator should negotiate hard on the lease before exchange. Every pound off the annual rent drops directly to the bottom line.":rentRatio>10?"This sits above the 10% target. It is not a dealbreaker, but the operator should make every effort to bring it down before signing.":"This is within the 10% target range and does not represent a structural risk to the business."}`,
+        highThreatComps>0
+          ? `There ${highThreatComps===1?"is":"are"} ${highThreatComps} major competitor${highThreatComps>1?"s":""} within 300 metres that the trading projections need to account for. The operator's existing customer relationships and knowledge of this catchment are the strongest mitigant against this risk.`
+          : `No high-threat competitors were identified within 300 metres. The nearest competitor is ${nearestComp} miles away, which offers reasonable insulation from direct head-to-head competition on the core convenience mission.`,
+        highRiskPlanning>0
+          ? `Planning data shows ${highRiskPlanning} high-risk application${highRiskPlanning>1?"s":""} in the immediate area. These must be verified directly with the Local Planning Authority before any commitment is made — a competing food retail consent within walking distance would materially affect the projections in this report.`
+          : ""
+      ].filter(Boolean).join(" "),
+
+      symbolGroup: [
+        `The symbol group scoring model has ranked the options above based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria — but the final decision should always involve a formal conversation with the wholesaler about terms, ranging support and the refit contribution they are prepared to offer.`,
+        alcoholMix>=15
+          ? `The BWS mix of ${pct(alcoholMix)} is strong, which adds weight to any group with a specialist drinks offer.`
+          : "",
+        deprivation<=4
+          ? `Given the deprivation index of ${deprivation}/10, price perception will matter to this customer base. A group with strong PMP coverage and a value-led own-brand range will trade better here than a premium fascia.`
+          : medianIncome>=35000
+          ? `The catchment income profile of ${fmt(medianIncome)} median household income is strong enough to support a mid-tier or premium fascia — customers here will respond to quality and range depth.`
+          : `The catchment sits in the mainstream — a well-supported mid-tier group is the right fit, balancing value credentials with enough ranging flexibility to build a credible fresh and chilled offer.`,
+        `Whichever group is selected, the operator should negotiate the refit terms, minimum weekly drop and exclusivity clauses carefully. These are the three areas where independent retailers most often find themselves locked into unfavourable positions.`
+      ].filter(Boolean).join(" "),
+
+      competitors: [
+        competitorList.length>0
+          ? `The map shows ${competitorList.length} competitor${competitorList.length!==1?"s":""} identified within the catchment via open mapping data. ${highThreatComps>0?highThreatComps+" of these are rated high threat — typically a major multiple or established symbol group store within 300 metres.":"None are rated high threat at this point."}`
+          : `No competitors were automatically identified within the catchment from open mapping data. This should be verified on the ground during the site visit — the tool sources from public data and may not reflect every operator.`,
+        nearestComp>0
+          ? `The nearest competitor is ${nearestComp} miles away. ${nearestComp<0.25?"At this distance, the two stores are effectively competing for the same passing trade and the same top-up mission. The operator will need to be better — on range, on availability, on service — not just present.":nearestComp<0.5?"Within half a mile, this is close enough to feel in day-to-day trading, particularly if the competitor holds a stronger fresh food offer or a more prominent fascia.":"This is a comfortable buffer for a convenience store. The majority of convenience shopping happens within a 5-minute walk, so beyond half a mile the competitive impact diminishes significantly."}`
+          : "",
+        highRiskPlanning>0
+          ? `Planning activity nearby is worth monitoring closely. An approved food retail unit within this catchment — even if currently vacant — represents a potential future competitive risk that is not yet visible in the trading figures.`
+          : `No significant planning activity was detected in the catchment. The competitive position as assessed appears stable.`
+      ].filter(Boolean).join(" "),
+
+      categories: [
+        `The largest category by sales mix is ${topCat?.name} at ${topCat?.mix}%, contributing around ${fmt(C.upliftedAnn*(topCat?.mix||0)/100)} to annual turnover.`,
+        tobaccoMix>=18
+          ? `Tobacco and vaping at ${pct(tobaccoMix)} is in line with — or above — the national convenience average of 18.8% (ACS 2025). This category drives high-frequency visits and is important to protect, but its long-term trajectory is downward due to regulatory pressure. The operator should be actively building alternative traffic drivers — hot drinks, food to go, chilled — to reduce dependency over time.`
+          : `Tobacco at ${pct(tobaccoMix)}% is below the sector average. Ensure the range is wide enough to retain the tobacco customer, who typically shops multiple categories in the same visit.`,
+        chilledMix<12
+          ? `Chilled foods at ${pct(chilledMix)} is below the sector average of 12.9%. The additional space in the new unit should be used to build a proper chilled run — dairy, fresh, ready meals, sandwiches. Chilled is the single biggest driver of basket value growth in a convenience store and customers increasingly expect it.`
+          : `Chilled foods at ${pct(chilledMix)} is ${chilledMix>=15?"strong":"healthy"} — this is a key category for driving basket value and repeat visits.`,
+        hotFoodMix>0
+          ? `Hot food and drinks to go carries the highest gross margin of any category in the mix at 55%+. At ${pct(hotFoodMix)} of the mix it is ${hotFoodMix>=3?"already contributing meaningfully":"currently a small part of the range"} — there is a strong case for investing in equipment and fixture space to grow this in the refit.`
+          : "",
+        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%. This is partly a function of the category mix — categories like confectionery, health and beauty and hot food carry significantly higher margins than tobacco and fresh milk, which are included here at their sector averages.":"broadly in line with the convenience sector average of 24–26%. There is scope to improve this over time by growing the higher-margin categories — chilled, food to go and health and beauty — relative to the lower-margin volume drivers."}`
+      ].filter(Boolean).join(" "),
+
+      footfall: [
+        `The peak trading hour is ${peakHourKey}, accounting for ${peakHourVal}% of daily footfall. ${peakHourKey.includes("12")||peakHourKey.includes("2pm")?"A lunchtime peak indicates strong demand for food to go and meal deals. The entrance area should be set up to capture this customer on the way in — a hot food and snacking fixture at eye level as they enter is the standard approach in well-run convenience stores.":peakHourKey.includes("8am")||peakHourKey.includes("6am")?"A morning commuter peak calls for coffee, pastries and grab-and-go lines to be prominent and available from opening. This customer has limited time — speed of service and availability are the critical metrics, not price.":"Trading is spread across the day, which is typical of a residential parade store serving multiple missions. The layout should reflect this — it needs to work for the quick top-up, the lunch grab and the evening meal solution without any one mission compromising the others."}`,
+        `The dominant shopping mission is ${topMission} at ${missions[topMission]}%. ${topMission==="Top-up"?"This is the bread-and-butter of convenience retail. The store layout needs to support speed and familiarity — regular customers should be able to get in, find what they need and get out quickly. Every fixture change needs to be considered against how it affects the top-up customer.":topMission==="Grab and Go"?"Grab and go customers are high frequency but low dwell time. Range availability, strong impulse lines at the till and a clean, fast checkout experience are the priorities.":topMission==="Food to Go"?"A food-to-go dominant mission is a real opportunity — this is the highest-margin trade in the store. The refit plan should put food to go at the centre of the layout, not as an afterthought.":"This mission profile points to a store that does meaningful work as a local food shop, not just a convenience top-up point. Deeper ranging, a stronger fresh offer and extended chilled capacity will hold and grow this customer."}`,
+        highBasket>=30
+          ? `${pct(highBasket)} of transactions are £10 or above, which is a strong indicator that customers are treating this store as a regular food shop rather than a quick top-up point. This should be reflected in the depth of range — particularly in chilled, grocery and ambient.`
+          : `The majority of baskets are under £10, which is consistent with a high-frequency top-up mission. Growing average basket size — through meal deals, cross-category ranging and the introduction of a stronger food-to-go offer — is one of the most reliable levers for improving overall store profitability.`
+      ].join(" "),
+
+      demographics: [
+        `With a catchment population of ${catchmentPop.toLocaleString()} within one mile, the store has a penetration rate of ${pct(C.pen)}. ${C.pen>=20?"This is a strong penetration rate and suggests the store already plays an important role in the local food economy. The challenge is to hold that share and grow basket rather than grow footfall.":C.pen>=15?"This is above the 15% benchmark for a viable convenience store and indicates a healthy customer base to build on.":"This is below the 15% benchmark. Building penetration will require the store to give customers a reason to choose it over alternatives — a cleaner, more comprehensive offer post-refit is the most direct way to achieve this."}`,
+        `The working-age population of 18–54 accounts for ${pct(workingAge)} of the catchment. ${workingAge>=55?"This is a strong working-age proportion — it supports demand across all trading periods and justifies investment in food to go, coffee and a decent lunch offer alongside the core convenience range.":"This is a slightly lower working-age proportion than average. The store should still cover all missions, but the emphasis on grab-and-go and food to go should be calibrated against the actual daytime footfall pattern observed on the visit."}`,
+        `${socialHousing>=25?`Social and council housing accounts for ${pct(socialHousing)} of housing tenure — a significant proportion. Price-marked packs are not optional in a catchment like this, they are expected. Own-brand ranges, value tiers and consistent pricing on everyday lines will be central to building loyalty with this customer base.`:ownerOccupied>=60?`Owner occupation at ${pct(ownerOccupied)} is above average, which typically points to a more settled, higher-spending customer base with less price sensitivity than a predominantly rented catchment. The operator has room to invest in quality and range breadth.`:`The tenure mix reflects a broadly mainstream catchment. A balanced approach — covering value lines without compromising on the quality and range that attract higher-spending customers — is the right positioning.`}`,
+        `A median household income of ${fmt(medianIncome)} ${medianIncome>=35000?"is above the national average and supports a fuller, better-quality convenience offer. Customers here will pay for freshness, range and service.":medianIncome>=27000?"sits broadly in line with the national average. Mainstream pricing, a solid symbol group range and a clean store will be the foundation of a strong trading position.":"is below the national average. Value credentials matter here — PMPs, price-marked promotions and a well-controlled cost structure are essential."}`,
+        `The deprivation index of ${deprivation}/10 ${deprivation<=3?"indicates a high-deprivation catchment. This is not a barrier to a successful store — high-deprivation areas often have the strongest convenience retail penetration — but the range and pricing strategy need to reflect the economic reality of the customer base.":deprivation<=6?"indicates moderate deprivation. The store needs to cover value without sacrificing the range quality that brings in the broader catchment.":"indicates a relatively low-deprivation catchment, which gives the operator more flexibility on ranging and pricing strategy."}`
+      ].join(" "),
+
+      pl: [
+        `The profit and loss account is built on post-refit annual revenue of ${fmt(C.upliftedAnn)}, with a cost of goods of ${fmt(Math.round(C.upliftedAnn*(1-C.blGP/100)))} — leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin.`,
+        `Total operating costs — rent, rates, staff, utilities and other costs — come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The business is generating sufficient gross profit to cover these costs and service the loan, but the headroom is limited. Any underperformance on sales or an unexpected cost increase — a rates revaluation, a rent review, an equipment failure — would have a disproportionate impact on the bottom line. The operator should stress-test the cost base carefully before proceeding.":totalCostRatio>65?"This is within the expected range for a convenience store of this type, but the operator should be conscious that there is not a great deal of room to absorb cost shocks. Tightly managed operations with a focus on rota efficiency and energy costs will be important.":"This is well-controlled and leaves healthy headroom for profit delivery. The business can absorb a reasonable degree of cost variation without dropping below viability."}`,
+        `Staff costs at ${pct(staffRatio)} of sales ${staffRatio>12?"are above the 9–12% sector norm. This should be reviewed — either the staffing model has been set above what the projected turnover justifies, or the store relies heavily on higher-cost staff. Both are worth addressing before the refit completes.":staffRatio<9?"are lean. This is achievable in a well-run owner-operated store, but the operator should be confident the store can be covered safely and compliantly at this level.":"are within the 9–12% sector norm and do not raise any concerns."}`,
+        `EBITDA — the trading profit before finance — is ${fmt(C.eb)}, representing ${pct(ebitdaMargin)} of sales. ${ebitdaMargin>=12?"This is a strong EBITDA margin for a convenience store and gives the business a solid platform to service the finance and still deliver meaningful net profit.":ebitdaMargin>=8?"This is at the lower end of what Genesis Retail would consider healthy — sufficient to service the loan comfortably, but without significant surplus.":ebitdaMargin>=5?"EBITDA at this level covers the finance charge but leaves limited buffer. The business needs to trade to plan; there is not much room for error.":"EBITDA is below the 8% minimum threshold Genesis Retail applies to viable convenience retail investments. The cost base or the trading projections — or both — need to be reviewed before this assessment can support a lending application."}`
+      ].join(" "),
+
+      fiveYear: [
+        `The five-year forecast applies 3% annual sales growth to the post-refit Year 1 base, with operating costs inflating at 2% per year. These are deliberately conservative assumptions — 3% growth in a well-run convenience store in an established residential catchment is achievable without any step change in the business.`,
+        `By Year 5, the store is forecast to generate annual sales of ${fmt(yr5[4]?.s||0)} and a net profit of ${fmt(yr5[4]?.np||0)}. Cumulative net profit across the five-year period is ${fmt(cumNp(5))}.`,
+        financeYears<=5
+          ? `The loan facility is fully repaid within the forecast period. From Year ${financeYears+1} onwards the finance charge drops away, which will materially improve the net profit position. This is a significant positive for the medium-term cash generation of the business.`
+          : `The finance facility runs beyond the five-year forecast window. The loan repayment of ${fmt(Math.round(C.mp))}/month remains a constant cost throughout the period modelled — cash generation in the later years will be constrained accordingly.`,
+        cumNp(5)>0
+          ? `A cumulative return of ${fmt(cumNp(5))} against an initial investment of ${fmt(C.ti)} represents a strong five-year position. The business more than recovers the investment within the forecast period, which is the primary test a lender will apply to this projection.`
+          : `The cumulative position over five years is negative, which means the investment does not recover within the modelled window on current assumptions. This does not necessarily mean the opportunity is unviable — the sensitivity of these projections to relatively small improvements in turnover or cost is significant — but it is a finding that lenders will scrutinise closely. The operator should be prepared to explain the basis for the uplift assumptions in detail.`
+      ].join(" "),
+
+      sensitivity: [
+        `The table models the impact on return on investment of footfall varying between -20% and +20% of the base case, and rent varying by the same range. The base case sits in the centre cell.`,
+        sensitivityData[2][2]?.roi>=20
+          ? `The base case delivers a ${sensitivityData[2][2].roi.toFixed(1)}% ROI — above the 20% Genesis Retail threshold. The investment case is sound on the central assumptions.`
+          : `The base case delivers a ${sensitivityData[2][2]?.roi.toFixed(1)}% ROI, which is below the 20% Genesis Retail threshold. The investment is viable but does not meet the target return on the central assumptions — the operator and any financier should understand the basis for the projections carefully.`,
+        sensitivityData[0]?.[0]?.roi>=10
+          ? `Even in the most adverse scenario modelled — footfall 20% below forecast and rent 20% above — the store still returns ${sensitivityData[0][0].roi.toFixed(1)}% ROI. This is a resilient investment with meaningful downside protection.`
+          : `In the most adverse scenario modelled, the store drops to ${sensitivityData[0]?.[0]?.roi.toFixed(1)||0}% ROI. This limited downside protection means the investment is sensitive to trading performance — the operator needs to be confident in the footfall projections, and the rent negotiation should prioritise locking in a level that keeps the base case well clear of the break-even line.`,
+        `${sensitivityData.flat().filter(c=>c.roi>=20).length} of the 25 scenarios modelled produce a return of 20% or above. ${sensitivityData.flat().filter(c=>c.roi>=20).length>=20?"The investment is robust across the vast majority of scenarios. A lender reviewing this table should be comfortable with the risk profile.":sensitivityData.flat().filter(c=>c.roi>=20).length>=12?"The investment meets the target return across the majority of scenarios. It is sensitive to a combination of footfall underperformance and cost pressure, but is not fragile.":"The investment only meets the target return in a minority of scenarios. This should be discussed openly with any financier — the projections need to be stress-tested and the key assumptions clearly documented."}`
+      ].join(" "),
+
+    };
+  },[C,cats,uplift,rent,rates,staffPct,utilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,DS]);
+
 
   // ── Max affordable rent (Lease Calculator) ──────────────────────────────────
   const [targetRoi, setTargetRoi] = useState(15);
