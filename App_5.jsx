@@ -1159,7 +1159,7 @@ The index field is a number showing consumption vs national average (100=average
   // Auto-generate risks
   const risks = useMemo(()=>{
     const r=[];
-    const rentRatio = rent/C.ann*100;
+    const rentRatio = rent/C.upliftedAnn*100;
     if(rentRatio>15) r.push({rag:"red",title:"Rent too high relative to turnover",detail:`Rent is ${pct(rentRatio)} of projected sales. Ideal is under 10%. Negotiate hard or walk away.`});
     else if(rentRatio>10) r.push({rag:"amber",title:"Rent at upper limit",detail:`Rent is ${pct(rentRatio)} of sales. Aim to get below 10% before committing.`});
     else r.push({rag:"green",title:"Rent within acceptable range",detail:`Rent at ${pct(rentRatio)} of sales is within the target range.`});
@@ -1200,7 +1200,7 @@ The index field is a number showing consumption vs national average (100=average
 
   const yr5=useMemo(()=>[1,2,3,4,5].map(yr=>{
     const g=Math.pow(1.03,yr-1),cg=Math.pow(1.02,yr-1);
-    const s=C.ann*g,gp=s*(C.blGP/100),stf2=s*(staffPct/100);
+    const s=C.upliftedAnn*g,gp=s*(C.blGP/100),stf2=s*(staffPct/100);
     const tc=(rent+rates+utilities+otherCosts)*cg+stf2;
     const eb=gp-tc,fin=yr<=financeYears?C.af:0,np=eb-fin;
     return {yr,s,gp,stf2,tc,eb,fin,np};
@@ -2152,7 +2152,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["Base Weekly Turnover", C.wk, "Post-Refit Weekly Turnover", C.upliftedWk],
                         ["Annual Sales (post-refit)", C.upliftedAnn, "Gross Profit %", C.blGP/100],
                         ["Annual Gross Profit", C.annGP, "Total Annual Costs", C.annC],
-                        ["EBITDA", C.eb, "EBITDA Margin", C.eb/C.ann],
+                        ["EBITDA", C.eb, "EBITDA Margin", C.eb/C.upliftedAnn],
                         ["Annual Finance Cost", C.af, "Net Profit", C.nP],
                         ["Total Investment", C.ti, "ROI", C.roi/100],
                         ["Monthly Loan Payment", C.mp, "Payback Period (years)", C.pb||0],
@@ -2466,8 +2466,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               <td style={{padding:"8px 10px",fontSize:12,color:G.text}}>{cat.icon} {cat.name}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{cat.mix}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.light}}>{cat.gp}%</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.ann*cat.mix/100)}</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{fmt(C.ann*cat.mix/100*cat.gp/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
@@ -2482,7 +2482,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.mid}}>TOTAL</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{pct(C.blGP)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.ann)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.upliftedAnn)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.annGP)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>100%</td>
                           </tr>
@@ -2808,7 +2808,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* S5: CATEGORIES */}
             <div className="avoid-break">
               <PSH c="5. Category Sales Mix"/>
-              <RC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.ann*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
+              <RC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.upliftedAnn*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
               <RC t="Category Mix" ch={<Donut data={cats.filter(c=>c.mix>0).map(c=>({l:c.name,v:c.mix}))}/>}/>
               <RC t="Gross Profit % by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.gp-a.gp).map(c=>({l:c.name.split(" ")[0],v:c.gp}))} height={160} fv={v=>v+"%"}/>}/>
             </div>
