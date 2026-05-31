@@ -104,6 +104,15 @@ const G = {
 const INP_manual = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"2px solid #2d55c8",borderRadius:8,color:"#1a2e6b",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 const INP_auto   = {width:"100%",padding:"12px 14px",background:"#dde4f5",border:"2px solid #1e3a8a",borderRadius:8,color:"#1e3a8a",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
+function Commentary({text}){
+  if(!text) return null;
+  return (
+    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#eef1fb",border:"1px solid #2d55c8",borderLeft:"4px solid #1e3a8a",borderRadius:"0 8px 8px 0",fontSize:13,color:"#1a2144",lineHeight:1.9}}>
+      {text}
+    </div>
+  );
+}
+
 function Legend(){
   return (
     <div style={{display:"flex",gap:16,flexWrap:"wrap",marginBottom:20,padding:"10px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
@@ -1208,7 +1217,50 @@ The index field is a number showing consumption vs national average (100=average
 
   const cumNp=yr=>yr5.slice(0,yr).reduce((a,r)=>a+r.np,0);
 
-  // Build AI prompt for narrative
+  // ── Dynamic commentary for each report section ───────────────────────────────
+  const commentary = useMemo(()=>{
+    const topCat = [...cats].sort((a,b)=>b.mix-a.mix)[0];
+    const topGpCat = [...cats].sort((a,b)=>b.gp-a.gp)[0];
+    const tobaccoMix = cats.find(c=>c.name.includes("Tobacco"))?.mix||0;
+    const alcoholMix = cats.find(c=>c.name.includes("Alcohol"))?.mix||0;
+    const chilledMix = cats.find(c=>c.name.includes("Chilled"))?.mix||0;
+    const hotFoodMix = cats.find(c=>c.name.includes("Hot Food"))?.mix||0;
+    const peakHourVal = Math.max(...FHOURS.map(h=>fhour[h]||0));
+    const peakHourKey = FHOURS.find(h=>fhour[h]===peakHourVal)||"12-2pm";
+    const topMission = MISSIONS.reduce((a,b)=>missions[a]>missions[b]?a:b);
+    const highBasket = spendBands.s10+spendBands.s15+spendBands.s20;
+    const highThreatComps = competitorList.filter(c=>c.threat==="high").length;
+    const rentRatio = rent/C.upliftedAnn*100;
+    const staffRatio = C.stf/C.upliftedAnn*100;
+    const workingAge = (ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0);
+    const ownerOccupied = housing["Owner Occupied"]||0;
+    const socialHousing = housing["Social / Council"]||0;
+    const fullTimeEmployed = employment["Employed Full-Time"]||0;
+
+    return {
+      financial: `The store is projected to generate post-refit weekly sales of ${fmt(C.upliftedWk)}, up from a base of ${fmt(C.wk)} — a ${uplift}% uplift reflecting the improved store format, wider range and symbol group affiliation. At an annual turnover of ${fmt(C.upliftedAnn)}, the blended gross margin of ${pct(C.blGP)} delivers ${fmt(C.annGP)} in gross profit. After all operating costs and finance charges, the business returns a net profit of ${fmt(C.nP)}, equating to a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}. ${C.roi>=20?"This comfortably exceeds the Genesis Retail minimum threshold of 20% and represents a strong investment case.":C.roi>=10?"This meets the minimum viability threshold, though there is limited headroom — cost management will be critical.":"This falls below the 20% target threshold. The investment case requires careful review before proceeding."} The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} ${C.pb&&C.pb<=4?"is excellent — well within the 4-year benchmark for convenience retail.":C.pb&&C.pb<=6?"is within the acceptable 4–6 year range.":"is above the 6-year benchmark and should be reviewed."} Sales density of £${(C.upliftedSpf||0).toFixed(2)}/sqft/week ${C.upliftedSpf>=20?"is outstanding and exceeds the symbol group benchmark of £18-20.":C.upliftedSpf>=16?"meets the symbol group average of £16-20.":C.upliftedSpf>=12?"is below the symbol group average but above the independent minimum of £12.":"is below the £12 minimum benchmark for a viable convenience store."}`,
+
+      risks: `The automated risk assessment has identified ${risks.filter(r=>r.rag==="red").length} red, ${risks.filter(r=>r.rag==="amber").length} amber and ${risks.filter(r=>r.rag==="green").length} green flags. ${risks.filter(r=>r.rag==="red").length>0?"The red flags require attention before proceeding — these represent material threats to the investment case.":"There are no red flags, which is a positive indicator for this site."} Rent represents ${pct(rentRatio)} of projected turnover${rentRatio>15?" — this is above the 10% target and is the most significant financial risk on this assessment. Negotiating the rent down should be a priority before exchange.":rentRatio>10?" — slightly above the 10% target. Every effort should be made to reduce this before committing.":"— within the acceptable range of under 10%. This is a healthy position."}${highThreatComps>0?` There ${highThreatComps===1?"is":"are"} ${highThreatComps} major competitor${highThreatComps>1?"s":""} within close proximity that ${highThreatComps===1?"poses a":"pose"} a direct threat to footfall — this needs to be factored into the trading projections.`:" The competitive landscape does not present an immediate high-level threat."}`,
+
+      symbolGroup: `Based on the location type, projected turnover, catchment demographics and category mix, the scoring model has ranked the symbol groups above in order of suitability for this site. ${alcoholMix>=15?"The strong alcohol mix of "+pct(alcoholMix)+" suggests Bargain Booze or a BWS-specialist fascia may add value alongside the main symbol group affiliation. ":""}${medianIncome>=35000?"With a median income of "+fmt(medianIncome)+", the catchment can support a premium or mid-tier fascia such as Budgens or Nisa. ":""}${deprivation<=4?"The higher deprivation index points toward a value-led fascia — Premier or Costcutter may better match the price expectations of the catchment.":""} Symbol group selection should be confirmed with the chosen wholesaler following a formal range and terms review.`,
+
+      competitors: `The postcode lookup has identified ${competitorList.length} competitors within the catchment, of which ${highThreatComps} ${highThreatComps===1?"is":"are"} rated as high threat. ${highThreatComps>0?"High-threat operators are typically major multiples or well-established symbol group stores within 300 metres — these will directly compete for the same top-up and daily mission customers.":"No high-threat competitors were detected within 300 metres, which is a positive indicator for the trading potential of this site."} The nearest competitor is ${nearestComp} miles away. ${nearestComp<0.2?"At under 0.2 miles, this proximity is significant and the operator will need to differentiate clearly on range, service and convenience.":nearestComp<0.5?"This is within comfortable walking distance and should not be underestimated, particularly if they hold a strong fascia or fresh food offer.":"This distance provides reasonable protection from direct competition on the core convenience mission."} ${planningApps.filter(p=>p.risk==="high").length>0?"Planning data shows high-risk applications in the area — these should be verified with the Local Planning Authority before commitment.":""}`,
+
+      categories: `The category mix shows ${topCat?.name} as the largest contributor at ${topCat?.mix}% of sales, generating approximately ${fmt(C.upliftedAnn*(topCat?.mix||0)/100)} annually. ${tobaccoMix>20?"Tobacco and vaping at "+pct(tobaccoMix)+" is above the national average of 18.8% — while this drives footfall, the long-term regulatory risk to this category is significant and the ranging plan should build other traffic drivers to reduce dependency.":tobaccoMix<12?"Tobacco at "+pct(tobaccoMix)+" is below the sector average — ensure the range is broad enough to retain this high-frequency customer.":""} ${alcoholMix>18?"A strong BWS mix of "+pct(alcoholMix)+" is positive for margin and basket value — ensure licensing compliance and consider a dedicated cold beer fixture.":""} ${chilledMix<10?"Chilled foods at only "+pct(chilledMix)+"% is below the sector average of 12.9% — the new unit's additional space should be used to expand the chilled offer, which is the single biggest driver of basket value uplift.":""} ${hotFoodMix>0?"Hot food and drinks to go at "+pct(hotFoodMix)+"% carries a "+topGpCat?.gp+"% gross margin — this is among the highest-margin categories in convenience retail and should be prioritised in the refit layout.":""} The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above":"below"} the sector average of 24-26% for a well-run symbol group store.`,
+
+      footfall: `Trading peaks at ${peakHourKey}, which accounts for ${peakHourVal}% of daily footfall. ${peakHourKey.includes("12")||peakHourKey.includes("2pm")?"The lunchtime peak suggests strong food-to-go demand — the refit should include a hot food and snacking fixture near the entrance to capture this mission.":peakHourKey.includes("8")||peakHourKey.includes("6am")?"The morning commuter peak suggests strong demand for coffee, pastries and grab-and-go breakfast — these should be prioritised in the refit layout.":" "} The primary shopping mission is ${topMission} at ${missions[topMission]}%, which should drive the store layout and ranging priorities. ${highBasket>=30?"A significant "+pct(highBasket)+" of transactions are £10 or above — this indicates customers are using the store for more than just a quick top-up, and the range should reflect a fuller convenience offer.":"The majority of transactions are under £10, typical of a high-frequency top-up mission. Encouraging basket growth through meal deals, multibuys and cross-category ranging should be a priority."}`,
+
+      demographics: `The catchment population of ${catchmentPop.toLocaleString()} within 1 mile gives a penetration rate of ${pct(C.pen)} — ${C.pen>=15?"above the 15% benchmark, indicating strong local demand for a convenience offer.":"below the 15% benchmark. Efforts to build loyalty and destination missions will be important to grow market share."} The working-age population (18-54) accounts for ${pct(workingAge)} of the catchment${workingAge>=55?" — a strong proportion that supports demand across all dayparts, particularly morning commute and lunch.":"."} ${socialHousing>=25?"Social and council housing at "+pct(socialHousing)+" is significant — PMPs (price-marked packs) and value lines will be essential to retain this customer base.":""} ${ownerOccupied>=60?"Owner-occupied housing at "+pct(ownerOccupied)+" suggests an established, rooted community with stable regular spend patterns.":""} ${fullTimeEmployed>=40?"Full-time employment at "+pct(fullTimeEmployed)+" supports morning and evening trade patterns and justifies investment in a food-to-go offer.":""} The deprivation index of ${deprivation}/10 ${deprivation<=4?"indicates a high-deprivation area — value positioning, tobacco, alcohol and everyday essentials should dominate the range.":deprivation<=6?"indicates moderate deprivation — a balance of value and mainstream lines is appropriate.":"indicates a relatively affluent catchment — a broader, higher-quality range is justified."} Median household income of ${fmt(medianIncome)} compares ${medianIncome>=35000?"favourably to the national average, supporting a fuller convenience and food-to-go offer.":medianIncome>=27000?"broadly to the national average.":"below the national average — price sensitivity should be a key consideration in purchasing and ranging."}`,
+
+      pl: `The detailed profit and loss account confirms annual post-refit revenue of ${fmt(C.upliftedAnn)} against a cost of goods of ${fmt(C.upliftedAnn*(1-C.blGP/100))}, leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin. Total operating costs of ${fmt(C.annC)} represent ${pct(C.annC/C.upliftedAnn*100)} of sales${C.annC/C.upliftedAnn*100>70?" — this is high and leaves limited margin for error. A cost reduction plan should be prepared alongside this assessment.":C.annC/C.upliftedAnn*100>60?" — within the expected range for this type of location.":"  — well controlled and leaves healthy headroom for profit delivery."}. Staff costs of ${pct(staffRatio)} ${staffRatio>12?"are above the 9-12% sector norm — review rota efficiency and consider if the staffing model is appropriate for the projected turnover.":staffRatio<=9?"are lean — ensure the store can be operated safely and effectively at this level.":"are within the 9-12% sector norm."} EBITDA of ${fmt(C.eb)} represents ${pct(C.eb/C.upliftedAnn*100)} of sales — ${C.eb/C.upliftedAnn*100>=10?"a healthy trading profit that comfortably covers the finance charge.":C.eb/C.upliftedAnn*100>=5?"sufficient to service the loan, though with limited headroom.":"below the 8% minimum recommended by Genesis Retail — the underlying cost base needs review."}`,
+
+      fiveYear: `The five-year forecast models 3% annual sales growth against 2% cost inflation, which reflects conservative but achievable assumptions for an established convenience store in this location. By Year 5 the store is projected to generate annual sales of ${fmt(yr5[4]?.s||0)} and net profit of ${fmt(yr5[4]?.np||0)}. ${financeYears<=5?"The finance facility clears within the forecast period, which will significantly improve cash generation in the later years.":"Note that the finance facility extends beyond the 5-year forecast period — cash flow in years 1-5 will be constrained by the loan repayment."} Cumulative net profit over 5 years is projected at ${fmt(cumNp(5))}${cumNp(5)>0?", which represents a strong return on the initial investment of "+fmt(C.ti)+".":", which is negative — the investment does not recover within the 5-year window on current assumptions."}`,
+
+      sensitivity: `The sensitivity table shows how the return on investment changes under different footfall and rent scenarios. ${sensitivityData[2][2].roi>=20?"The base case (centre cell) meets the 20% ROI target — the investment case is sound under the current assumptions.":"The base case does not meet the 20% ROI target — the investment is marginal and dependent on trading performance improving on current projections."} ${sensitivityData[0][0].roi>=10?"Even in the worst-case scenario modelled (-20% footfall, +20% rent), the store remains above 10% ROI — this is a resilient investment.":"The worst-case scenario produces negative or very low returns — this site has limited downside protection and should be treated with caution."} The analysis demonstrates that ${sensitivityData.flat().filter(c=>c.roi>=20).length>=15?"the investment is robust across most scenarios modelled.":sensitivityData.flat().filter(c=>c.roi>=20).length>=10?"the investment is viable across the majority of scenarios, but is sensitive to footfall underperformance.":"the investment is highly sensitive to trading conditions — only a narrow range of scenarios produce acceptable returns."}`,
+    };
+  },[C,cats,uplift,rent,rates,staffPct,utilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,location,DS]);
+
+
   const aiPrompt = useMemo(()=>`
 You are a senior convenience retail analyst at Genesis Retail writing a professional site viability assessment report section.
 
@@ -2717,12 +2769,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 ))}
               </div>
               <RC t="Profit and Loss" ch={<HBar data={[{l:"Gross Profit",v:C.annGP},{l:"Rent",v:-rent},{l:"Rates",v:-rates},{l:"Staff "+staffPct+"%",v:-C.stf},{l:"Utilities",v:-utilities},{l:"Other",v:-otherCosts},{l:"EBITDA",v:C.eb},{l:"Finance",v:-C.af},{l:"Net Profit",v:C.nP}]}/>}/>
+              <Commentary text={commentary.financial}/>
             </div>
 
             {/* S2: RISK REGISTER */}
             <div className="avoid-break">
               <PSH c="2. Risk Register"/>
               <RC t="Automated Risk Assessment" ch={<RiskRegister risks={risks}/>}/>
+              <Commentary text={commentary.risks}/>
 
               {planningApps.length>0&&(
                 <RC t="Planning Conflict Assessment" ch={
@@ -2745,6 +2799,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="avoid-break">
               <PSH c="3. Symbol Group Recommendation"/>
               <RC t="Best-fit symbol groups for this site" ch={<SymbolGroupScorer location={location} weeklyTurnover={C.upliftedWk} demographics={{medianIncome,deprivation}} cats={cats}/>}/>
+              <Commentary text={commentary.symbolGroup}/>
             </div>
 
             {/* S4: COMPETITORS */}
@@ -2766,6 +2821,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   }/>
                 )}
               </div>
+              <Commentary text={commentary.competitors}/>
             )}
 
             {/* S4b: COMPARABLE SITES */}
@@ -2813,6 +2869,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.upliftedAnn*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
               <RC t="Category Mix" ch={<Donut data={cats.filter(c=>c.mix>0).map(c=>({l:c.name,v:c.mix}))}/>}/>
               <RC t="Gross Profit % by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.gp-a.gp).map(c=>({l:c.name.split(" ")[0],v:c.gp}))} height={160} fv={v=>v+"%"}/>}/>
+              <Commentary text={commentary.categories}/>
             </div>
 
             {/* S6: FOOTFALL */}
@@ -2821,6 +2878,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Footfall by Hour of Day" ch={<BarChart data={FHOURS.map(h=>({l:h,v:fhour[h]}))} height={160} fv={v=>v+"%"}/>}/>
               <RC t="Basket Size Distribution" ch={<BarChart data={SBANDS.map(b=>({l:b.label,v:spendBands[b.key]}))} height={150} fv={v=>v+"%"}/>}/>
               <RC t="Shopping Mission Mix" ch={<Donut data={MISSIONS.map(k=>({l:k,v:missions[k]}))}/>}/>
+              <Commentary text={commentary.footfall}/>
             </div>
 
             {/* S7: DEMOGRAPHICS */}
@@ -2837,6 +2895,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RC t="Age Profile" ch={<BarChart data={AGE_BANDS.map(k=>({l:k,v:ageBands[k]}))} height={140} fv={v=>v+"%"}/>}/>
               <RC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
               <RC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
+              <Commentary text={commentary.demographics}/>
             </div>
 
             {/* Postcode notes in report */}
@@ -2935,6 +2994,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 })}
               </div>
             </div>
+            <Commentary text={commentary.pl}/>
 
             {/* S9: 5-YEAR */}
             <div className="avoid-break">
@@ -2969,6 +3029,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </table>
               </div>
             </div>
+            <Commentary text={commentary.fiveYear}/>
 
             {/* S10: SENSITIVITY TABLE */}
             <div className="avoid-break">
@@ -3009,6 +3070,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </table>
               </div>
               <div style={{fontSize:12,color:G.light,marginTop:8}}>Base case: {footfall} transactions/day at {fmt(rent)}/yr rent · Post-refit uplift {uplift}%</div>
+              <Commentary text={commentary.sensitivity}/>
             </div>
 
 
