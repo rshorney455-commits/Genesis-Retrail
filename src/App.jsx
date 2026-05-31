@@ -1741,8 +1741,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </label>
             </div>
 
-            <Fld l="About the Store" ch={<textarea value={storeNote} onChange={e=>setStoreNote(e.target.value)} placeholder="Describe the store, location, format, key features..." style={{...INP_manual,minHeight:120,lineHeight:1.7,fontSize:15}}/>}/>
-            <Fld l="About Me and Genesis Retail" ch={<textarea value={genesisNote} onChange={e=>setGenesisNote(e.target.value)} placeholder="Introduce yourself and Genesis Retail..." style={{...INP_manual,minHeight:120,lineHeight:1.7,fontSize:15}}/>}/>
+            <Fld l="About the Store" ch={<textarea value={storeNote} onChange={e=>setStoreNote(e.target.value)} onBlur={saveAssessment} placeholder="Describe the store, location, format, key features..." style={{...INP_manual,minHeight:120,lineHeight:1.7,fontSize:15}}/>}/>
+            <Fld l="About Me and Genesis Retail" ch={<textarea value={genesisNote} onChange={e=>setGenesisNote(e.target.value)} onBlur={saveAssessment} placeholder="Introduce yourself and Genesis Retail..." style={{...INP_manual,minHeight:120,lineHeight:1.7,fontSize:15}}/>}/>
           </div>
         )}
 
@@ -1880,6 +1880,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <textarea
                 value={refitCommentary}
                 onChange={e=>setRefitCommentary(e.target.value)}
+                onBlur={saveAssessment}
                 placeholder="e.g. The refit will deliver a full symbol group conversion to Nisa, introducing Co-op own brand across chilled, grocery and BWS. The shopfit will include new LED lighting, a 4-door chilled extension, hot beverages station and digital price ticketing. Customer flow will be redesigned to maximise impulse purchase opportunities. The new ranging plan introduces 320 new lines with a focus on fresh, food-to-go and premium. Expected uplift is 18% on base turnover within 12 months of trading..."
                 style={{...INP_manual,minHeight:160,lineHeight:1.7,fontSize:14,width:"100%"}}
               />
@@ -2255,7 +2256,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </div>
               </div>
             ))}
-            <Fld l="Area notes" ch={<textarea style={{...INP_manual,minHeight:80,lineHeight:1.5}} value={areaNotes} onChange={e=>setAreaNotes(e.target.value)} placeholder="e.g. 200-unit housing development 0.3 miles north due Q3 2026..."/>}/>
+            <Fld l="Area notes" ch={<textarea style={{...INP_manual,minHeight:80,lineHeight:1.5}} value={areaNotes} onChange={e=>setAreaNotes(e.target.value)} onBlur={saveAssessment} placeholder="e.g. 200-unit housing development 0.3 miles north due Q3 2026..."/>}/>
 
             {/* Comparable sites */}
             <Sub c="Comparable sites — Genesis Retail benchmarks"/>
