@@ -2655,6 +2655,57 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
+            {/* ── 5-YEAR P&L — screen view ── */}
+            <div style={{background:"#fff",border:"2px solid "+G.mid,borderRadius:12,overflow:"hidden",marginBottom:20}}>
+              <div style={{background:G.dark,padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{fontSize:13,fontWeight:700,color:"#fff"}}>Five-Year Profit & Loss Forecast</div>
+                <div style={{fontSize:11,color:"#8fa8d8"}}>3% sales growth · 2% cost inflation</div>
+              </div>
+              <div style={{overflowX:"auto"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+                  <thead>
+                    <tr style={{background:G.pale}}>
+                      <th style={{padding:"10px 12px",textAlign:"left",color:G.mid,fontWeight:700,minWidth:160}}>£</th>
+                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:G.mid,fontWeight:700,minWidth:90}}>Year {y}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {l:"Sales Revenue",      k:"s",   neg:false, hi:false, sub:false},
+                      {l:"Gross Profit",        k:"gp",  neg:false, hi:false, sub:true},
+                      {l:"Operating Costs",     k:"tc",  neg:true,  hi:false, sub:false},
+                      {l:"EBITDA",              k:"eb",  neg:false, hi:true,  sub:true},
+                      {l:"Finance Cost",        k:"fin", neg:true,  hi:false, sub:false},
+                      {l:"Net Profit",          k:"np",  neg:false, hi:true,  sub:true},
+                    ].map((dr,i)=>(
+                      <tr key={i} style={{background:dr.hi?"#eef1fb":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
+                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?G.mid:G.text}}>{dr.l}</td>
+                        {yr5.map((r,j)=>{
+                          const val=dr.neg?-r[dr.k]:r[dr.k];
+                          const neg=val<0;
+                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#d62828":dr.hi?G.mid:G.dark,fontSize:13}}>
+                            {neg?"("+fmt(Math.abs(val))+")":fmt(val)}
+                          </td>;
+                        })}
+                      </tr>
+                    ))}
+                    <tr style={{background:G.dark,borderTop:"2px solid "+G.mid}}>
+                      <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:"#fef08a"}}>Cumulative Net Profit</td>
+                      {[1,2,3,4,5].map(y=>{
+                        const cn=cumNp(y);
+                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#fca5a5":"#fef08a",fontSize:13}}>
+                          {cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}
+                        </td>;
+                      })}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style={{padding:"10px 14px",background:G.card,borderTop:"1px solid "+G.border,fontSize:11,color:G.light}}>
+                Base: {fmt(C.upliftedAnn)}/yr post-refit · Total investment {fmt(C.ti)} · Finance {financeRate}% APR over {financeYears} years · Payback {C.pb?C.pb.toFixed(1)+" years":"N/A"}
+              </div>
+            </div>
+
 
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
