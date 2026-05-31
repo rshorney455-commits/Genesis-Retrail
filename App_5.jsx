@@ -2582,6 +2582,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
                 </p>
               </div>
+              {/* 5-Year Cumulative Net Profit strip */}
+              <div style={{background:G.dark,borderRadius:10,padding:"14px 16px",marginBottom:16}}>
+                <div style={{fontSize:10,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".12em",marginBottom:12}}>5-Year Cumulative Net Profit</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>
+                  {yr5.map((r,i)=>(
+                    <div key={i} style={{textAlign:"center"}}>
+                      <div style={{fontSize:9,color:"#8fa8d8",marginBottom:4,textTransform:"uppercase",letterSpacing:".08em"}}>Year {r.yr}</div>
+                      <div style={{fontSize:14,fontWeight:800,color:cumNp(r.yr)>=0?"#7dd3fc":"#fca5a5"}}>{fmt(cumNp(r.yr))}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <AISection prompt={aiPrompt} label="AI Executive Summary"/>
             </div>
 
