@@ -2831,13 +2831,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
-            {/* ROI sanity warning */}
+            {/* ROI context note */}
             {C.roi>50&&(
-              <div style={{background:"#fff3cd",border:"2px solid #b45309",borderRadius:10,padding:"14px 18px",marginBottom:16,display:"flex",gap:12,alignItems:"flex-start"}}>
-                <div style={{fontSize:20,flexShrink:0}}>⚠️</div>
-                <div>
-                  <div style={{fontSize:13,fontWeight:700,color:"#b45309",marginBottom:4}}>ROI of {pct(C.roi)} — check your investment figures before presenting this report</div>
-                  <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.7}}>A return above 50% will raise serious questions with any bank or financier. The most likely cause is an underestimated total investment. A full convenience store refit plus opening stock typically costs £100,000–£180,000. Current total investment: <strong>{fmt(C.ti)}</strong>. Review the Refit tab before presenting this report.</div>
+              <div style={{background:"#f0f4ff",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
+                <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
+                <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.9}}>
+                  {`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}
+                </div>
+                <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.9,marginTop:10}}>
+                  {`The total investment of ${fmt(C.ti)} — comprising a ${fmt(refitCost)} refit and ${fmt(stockCost)} opening stock — should be supported by shopfitter quotes and a stock valuation from the chosen symbol group wholesaler before submission to any lender. The post-refit uplift of ${uplift}% is based on the increased store footprint, extended chilled capacity, symbol group conversion and the introduction of a dedicated world foods range. Comparable store evidence is provided in Section 4b of this report.`}
+                </div>
+                <div style={{fontSize:12,color:"#4a5568",marginTop:10,fontStyle:"italic"}}>
+                  Genesis Retail recommends this figure is presented alongside 12 months of till data or bank statements from the existing store to evidence the base turnover assumption.
                 </div>
               </div>
             )}
@@ -3014,6 +3019,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </div>
               </div>
               <AISection prompt={aiPrompt} label="AI Executive Summary"/>
+              {C.roi>50&&(
+                <div style={{marginBottom:16,padding:"16px 18px",background:"#f0f4ff",border:"1.5px solid #1e3a8a",borderRadius:10}}>
+                  <div style={{fontSize:10,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Note on Return on Investment — {pct(C.roi)}</div>
+                  <p style={{fontSize:12,color:"#1a1a2e",lineHeight:1.85,marginBottom:8}}>{`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}</p>
+                  <p style={{fontSize:12,color:"#1a1a2e",lineHeight:1.85,marginBottom:8}}>{`The total investment of ${fmt(C.ti)} — comprising a ${fmt(refitCost)} refit and ${fmt(stockCost)} opening stock — should be supported by shopfitter quotes and a stock valuation from the chosen symbol group wholesaler before submission to any lender. The post-refit uplift of ${uplift}% is based on the increased store footprint, extended chilled capacity, symbol group conversion and the introduction of a dedicated world foods range. Comparable store evidence is provided in Section 4b of this report.`}</p>
+                  <p style={{fontSize:11,color:"#4a5568",fontStyle:"italic",margin:0}}>Genesis Retail recommends this figure is presented alongside 12 months of till data or bank statements from the existing store to evidence the base turnover assumption.</p>
+                </div>
+              )}
             </div>
 
             {/* S0b: MARKET SHARE ANALYSIS */}
