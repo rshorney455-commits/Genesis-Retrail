@@ -90,7 +90,7 @@ const TRAFFIC_F   = [
   {k:"school",      l:"School nearby",         h:"Within 400m",                 num:false},
   {k:"office",      l:"Office / industrial",   h:"Significant employer nearby", num:false},
 ];
-const STEPS = ["Cover","Property","Costs","Refit","Categories","Demographics","Spend","Traffic","Spreadsheet","Results"];
+const STEPS = ["Cover","Property","Costs","Refit","Categories","Demographics","Spend","Traffic","Spreadsheet","Results","Admin"];
 
 const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
 const pct = n => n.toFixed(1)+"%";
@@ -829,6 +829,140 @@ class ErrorBoundary extends React.Component {
     );
     return this.props.children;
   }
+}
+
+// ── AdminTab — AI Code Agent & Tools ─────────────────────────────────────────
+function AdminTab({ onBack, appState }) {
+  const [agentMsg, setAgentMsg] = useState("");
+  const [agentRes, setAgentRes] = useState("");
+  const [agentLoading, setAgentLoading] = useState(false);
+  const [auditRes, setAuditRes] = useState("");
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [tab, setTab] = useState("agent");
+
+  const systemPrompt = `You are an expert React developer and convenience retail analyst working on the Genesis Retail Site Viability Assessor app (App_5.jsx). 
+You have deep knowledge of:
+- The app's data model: all state variables, calculations, save/load logic
+- Convenience retail KPIs: ROI, EBITDA, sales density, payback period, gross margin
+- The report output and what banks and financiers expect to see
+- The full assessment workflow across 10 tabs
+
+When asked to audit or fix code issues, be specific about what file, function and line to change. 
+When asked about the assessment data, interpret the figures like a senior retail analyst.
+Always be direct, professional and concise. No AI tells.
+
+Current assessment state: ${JSON.stringify(appState, null, 2).slice(0, 3000)}`;
+
+  const runAgent = async () => {
+    if (!agentMsg.trim()) return;
+    setAgentLoading(true); setAgentRes("");
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: "user", content: agentMsg }]
+        })
+      });
+      const data = await res.json();
+      setAgentRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
+    } catch (e) { setAgentRes("Error — please try again."); }
+    finally { setAgentLoading(false); }
+  };
+
+  const runAudit = async () => {
+    setAuditLoading(true); setAuditRes("");
+    const auditPrompt = `You are auditing the Genesis Retail Site Viability Assessor app. 
+
+Current assessment data: ${JSON.stringify(appState, null, 2).slice(0, 2000)}
+
+Run a complete audit across these 5 areas and report findings with a RAG status (🔴 Critical / 🟡 Warning / 🟢 OK):
+
+1. FINANCIAL CALCULATIONS — Are all figures consistent? Does post-refit turnover flow correctly through P&L, 5-year forecast, sensitivity and all charts? Any C.ann vs C.upliftedAnn mismatches?
+2. SAVE/LOAD INTEGRITY — Are all state fields being saved and restored? Any fields that could be lost on refresh?
+3. REPORT COMPLETENESS — Is every tab's data represented in the Results report? Anything missing that a bank would expect?
+4. DATA QUALITY — Based on the current assessment values, flag any figures that look implausible or inconsistent (e.g. unrealistic margins, zero values where data is expected)
+5. UX & WORKFLOW — Any steps or fields that are confusing, missing labels, or likely to cause user errors?
+
+For each finding give: Status · Issue · Recommended fix. Be specific.`;
+
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: auditPrompt }]
+        })
+      });
+      const data = await res.json();
+      setAuditRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
+    } catch (e) { setAuditRes("Error — please try again."); }
+    finally { setAuditLoading(false); }
+  };
+
+  const tabs = ["agent","audit"];
+  const tabLabels = { agent:"AI Assistant", audit:"Auto Audit" };
+
+  return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,paddingBottom:14,borderBottom:"2px solid "+G.mid}}>
+        <button onClick={onBack} style={{padding:"6px 12px",background:"transparent",border:"1.5px solid "+G.border,borderRadius:7,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>← Back</button>
+        <div>
+          <div style={{fontSize:9,letterSpacing:".2em",color:G.orange,textTransform:"uppercase",fontWeight:700}}>Genesis Retail</div>
+          <div style={{fontSize:16,fontWeight:800,color:G.dark}}>Admin & AI Tools</div>
+        </div>
+      </div>
+
+      <div style={{display:"flex",gap:8,marginBottom:20}}>
+        {tabs.map(t=>(
+          <button key={t} onClick={()=>setTab(t)} style={{padding:"8px 16px",background:tab===t?G.mid:"transparent",border:"1.5px solid "+(tab===t?G.mid:G.border),borderRadius:8,color:tab===t?"#fff":G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:700}}>
+            {tabLabels[t]}
+          </button>
+        ))}
+      </div>
+
+      {tab==="agent"&&(
+        <div>
+          <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>Ask anything about the app, the current assessment, the calculations or what to fix. The agent has full context of the current assessment state.</div>
+          <textarea
+            value={agentMsg}
+            onChange={e=>setAgentMsg(e.target.value)}
+            placeholder="e.g. Why is the net profit lower than expected? / Check the 5-year forecast logic / What's missing from the report for a bank submission?"
+            style={{...INP_manual,minHeight:100,width:"100%",lineHeight:1.7,fontSize:14,marginBottom:10}}
+          />
+          <button onClick={runAgent} disabled={agentLoading||!agentMsg.trim()} style={{width:"100%",padding:13,background:agentLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:agentLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
+            {agentLoading?"Thinking...":"Ask Agent →"}
+          </button>
+          {agentRes&&(
+            <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:10,padding:"16px 18px",fontSize:14,color:"#1a2144",lineHeight:1.9,whiteSpace:"pre-wrap"}}>
+              {agentRes}
+              <button onClick={()=>{setAgentRes("");setAgentMsg("");}} style={{display:"block",marginTop:12,padding:"6px 12px",background:"transparent",border:"1px solid "+G.border,borderRadius:6,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Clear</button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab==="audit"&&(
+        <div>
+          <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
+          <button onClick={runAudit} disabled={auditLoading} style={{width:"100%",padding:13,background:auditLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:auditLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
+            {auditLoading?"Running audit...":"Run Full Audit →"}
+          </button>
+          {auditRes&&(
+            <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:10,padding:"16px 18px",fontSize:14,color:"#1a2144",lineHeight:1.9,whiteSpace:"pre-wrap"}}>
+              {auditRes}
+              <button onClick={()=>setAuditRes("")} style={{display:"block",marginTop:12,padding:"6px 12px",background:"transparent",border:"1px solid "+G.border,borderRadius:6,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Clear</button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function App(){
@@ -1663,11 +1797,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
+            <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}} title="Admin">⚙</button>
             {autoSaveMsg&&<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>{autoSaveMsg}</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
+            i===10 ? null :
             <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:step>i?"#0c1024":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
@@ -3342,6 +3478,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setStep(s=>s+1)} style={{flex:2,padding:14,background:G.mid,border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>{step===8?"View Full Report →":"Continue"}</button>
           </div>
         )}
+
+        {/* ── ADMIN / AI AGENT ── */}
+        {step===10&&<AdminTab onBack={()=>setStep(9)} appState={gatherState()}/>}
       </div>
     </div>
     </ErrorBoundary>
