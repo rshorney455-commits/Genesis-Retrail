@@ -3616,11 +3616,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             </div>{/* end pdfRef */}
 
-            <div style={{display:"flex",gap:12,marginTop:16}}>
-              <button onClick={()=>setStep(8)} style={{flex:1,padding:14,background:"#ffffff",border:"1.5px solid "+"#d1d9e6",borderRadius:10,color:"#1e3a8a",cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:600}}>Back</button>
-              <button onClick={()=>setStep(0)} style={{flex:1,padding:14,background:"#f0f4ff",border:"1.5px solid "+G.mid,borderRadius:10,color:"#1e3a8a",cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:700}}>New Assessment</button>
-            </div>
-
             {/* ── FULL WRITTEN ASSESSMENT ── */}
             <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
               <div style={{background:"#1e3a8a",padding:"18px 24px"}}>
