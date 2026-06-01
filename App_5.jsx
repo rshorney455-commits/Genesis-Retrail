@@ -3627,6 +3627,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </tbody>
                 </table>
               </div>
+              <div style={{fontSize:12,color:"#4a5568",fontStyle:"italic",marginTop:10,padding:"10px 14px",background:"#f8f9fd",border:"1px solid #d1d9e6",borderRadius:6}}>
+                Monthly figures represent steady-state post-refit trading based on annual projections divided equally across 12 months. Seasonal variation has not been modelled. Actual trading performance in the early months of operation may differ as the store establishes its post-refit customer base.
+              </div>
             </div>
             <div className="avoid-break">
               <RPSH c="10. Sensitivity Analysis"/>
