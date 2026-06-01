@@ -1953,7 +1953,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8}}>
                     <div style={{flex:1,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
                       <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{a.propName||"Unnamed site"}</div>
-                      <div style={{fontSize:12,color:G.light}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")}</div>
+                      <div style={{fontSize:12,color:G.light}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")} {new Date(a.savedAt).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div>
                     </div>
                     <div style={{fontSize:13,fontWeight:700,color:G.mid,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>Load →</div>
                     <button onClick={e=>{
