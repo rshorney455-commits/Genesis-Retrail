@@ -244,7 +244,8 @@ function AISection({ prompt, label }) {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const generate = async () => {
+  const generate = useCallback(async () => {
+    if(!prompt) return;
     setLoading(true); setText(""); setDone(false);
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -266,19 +267,19 @@ function AISection({ prompt, label }) {
     } finally {
       setLoading(false);
     }
-  };
+  },[prompt]);
+
+  useEffect(()=>{ generate(); },[]);
 
   return (
     <div style={{marginBottom:16}}>
-      {!done && (
-        <button onClick={generate} disabled={loading} style={{padding:"10px 18px",background:loading?G.pale:G.mid,border:"none",borderRadius:8,color:loading?G.mid:"#fff",cursor:loading?"default":"pointer",fontFamily:"inherit",fontSize:13,fontWeight:700,marginBottom:10}}>
-          {loading ? "✦ Generating..." : `✦ Auto-generate ${label}`}
-        </button>
+      {loading && (
+        <div style={{padding:"12px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:13,color:G.light,fontStyle:"italic"}}>✦ Generating executive summary...</div>
       )}
       {text && (
         <div style={{fontSize:14,color:G.text,lineHeight:1.9,background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"14px 16px",whiteSpace:"pre-wrap"}}>
           {text}
-          <button onClick={()=>{setText("");setDone(false);}} style={{display:"block",marginTop:10,padding:"6px 12px",background:"transparent",border:"1px solid "+G.border,borderRadius:6,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Regenerate</button>
+          <button onClick={generate} style={{display:"block",marginTop:10,padding:"6px 12px",background:"transparent",border:"1px solid "+G.border,borderRadius:6,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Regenerate</button>
         </div>
       )}
     </div>
