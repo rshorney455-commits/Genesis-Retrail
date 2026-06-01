@@ -3638,10 +3638,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div>rshorney455@gmail.com</div>
                 </div>
               </div>
-            </div>{/* end written assessment */}
             </div>{/* end pdfRef */}
-
-            {/* ── FULL WRITTEN ASSESSMENT ── */}
             <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
               <div style={{background:"#1e3a8a",padding:"18px 24px"}}>
                 <div style={{fontSize:9,letterSpacing:".25em",color:"#b45309",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
