@@ -173,13 +173,12 @@ function usePostcodeLookup() {
 }
 
 // ── Competitor Map (OpenStreetMap + Leaflet via CDN) ──────────────────────────
-function CompetitorMap({ lat, lng, competitors }) {
+function CompetitorMap({ lat, lng, competitors, existingStore }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
 
   useEffect(() => {
     if (!lat || !lng || !mapRef.current) return;
-    // Load Leaflet dynamically
     if (!window.L) {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -194,10 +193,7 @@ function CompetitorMap({ lat, lng, competitors }) {
     }
 
     function initMap() {
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
+      if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; }
       const L = window.L;
       const map = L.map(mapRef.current).setView([lat, lng], 15);
       mapInstance.current = map;
@@ -205,12 +201,23 @@ function CompetitorMap({ lat, lng, competitors }) {
         attribution: "© OpenStreetMap contributors", maxZoom: 19
       }).addTo(map);
 
-      // Site marker
+      // Subject site marker — gold star
       const siteIcon = L.divIcon({
-        html: `<div style="background:#1e3a8a;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🏪</div>`,
-        iconSize:[32,32], iconAnchor:[16,16], className:""
+        html: `<div style="background:#1e3a8a;color:#d4af37;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;border:3px solid #d4af37;box-shadow:0 2px 10px rgba(0,0,0,0.4);font-weight:700">★</div>`,
+        iconSize:[36,36], iconAnchor:[18,18], className:""
       });
-      L.marker([lat, lng], { icon: siteIcon }).addTo(map).bindPopup("<b>Assessment Site</b>");
+      L.marker([lat, lng], { icon: siteIcon }).addTo(map)
+        .bindPopup(`<b>📍 Subject Site</b><br>This assessment`);
+
+      // Existing store marker — green pin
+      if(existingStore) {
+        const existIcon = L.divIcon({
+          html: `<div style="background:#166534;color:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🏪</div>`,
+          iconSize:[30,30], iconAnchor:[15,15], className:""
+        });
+        L.marker([existingStore.lat, existingStore.lng], { icon: existIcon }).addTo(map)
+          .bindPopup(`<b>Existing Store</b><br>${existingStore.name||"Current trading location"}`);
+      }
 
       // Competitor markers
       (competitors || []).forEach((c, i) => {
@@ -228,7 +235,7 @@ function CompetitorMap({ lat, lng, competitors }) {
     }
 
     return () => { if(mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
-  }, [lat, lng, competitors]);
+  }, [lat, lng, competitors, existingStore]);
 
   return (
     <div>
@@ -1068,6 +1075,7 @@ export default function App(){
   const [planningApps,setPlanningApps]=useState([]);
   const [mapLat,setMapLat]=useState(null);
   const [mapLng,setMapLng]=useState(null);
+  const [existingStore,setExistingStore]=useState(null);
 
   // Comparable sites
   const [comparables,setComparables]=useState([
@@ -1463,7 +1471,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     traffic,fhour,competitors,nearestComp,parking,
     tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,
     competitorList,planningApps,mapLat,mapLng,
-    comparables,foodProfile,
+    comparables,foodProfile,existingStore,
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
@@ -1540,6 +1548,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setAreaNotes(saved.areaNotes||""); setStoreNote(saved.storeNote||""); setGenesisNote(saved.genesisNote||"");
     setPostcodeNotes(saved.postcodeNotes||""); setClientName(saved.clientName||""); setRefitCommentary(saved.refitCommentary||"");
     if(saved.foodProfile) setFoodProfile(saved.foodProfile);
+    if(saved.existingStore) setExistingStore(saved.existingStore);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
     if(saved.planningApps) setPlanningApps(saved.planningApps);
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
@@ -2417,7 +2426,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {mapLat && (
               <div style={{marginBottom:24}}>
                 <Sub c="Competitor Map — auto-generated from postcode"/>
-                <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList}/>
+                <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore}/>
                 {competitorList.length>0&&(
                   <div style={{marginTop:12}}>
                     {competitorList.slice(0,8).map((c,i)=>(
@@ -2499,6 +2508,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <Fld key="b" l="Competitors within 0.5 mile" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={competitors} onFocus={e=>e.target.select()} onChange={e=>setCompetitors(e.target.value===""?0:+e.target.value)}/>}/>,
             ]} st={{marginTop:8}}/>
             <Fld l="Nearest competitor (miles)" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" step="0.1" value={nearestComp} onFocus={e=>e.target.select()} onChange={e=>setNearestComp(e.target.value===""?0:+e.target.value)}/>}/>
+            <Fld l="Existing store address (optional — shows on map)" h="e.g. 1 Canterbury Parade, South Ockendon, RM15 6NH" ch={<div style={{display:"flex",gap:8}}>
+              <input id="existing-store-addr" style={{...INP_manual,flex:1}} placeholder="e.g. 1 Canterbury Parade, South Ockendon, RM15 6NH" defaultValue={existingStore?.name||""}/>
+              <button onClick={async()=>{
+                const addr = document.getElementById("existing-store-addr")?.value?.trim();
+                if(!addr) return;
+                try {
+                  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`);
+                  const data = await res.json();
+                  if(data[0]) setExistingStore({name:addr,lat:parseFloat(data[0].lat),lng:parseFloat(data[0].lon)});
+                  else alert("Address not found — try adding the postcode");
+                } catch(e) { alert("Lookup failed"); }
+              }} style={{padding:"8px 14px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600,flexShrink:0}}>Locate</button>
+              {existingStore&&<button onClick={()=>setExistingStore(null)} style={{padding:"8px 10px",background:"transparent",border:"1px solid "+G.border,borderRadius:7,cursor:"pointer",color:G.light,fontSize:13}}>✕</button>}
+            </div>}/>
             <Sub c="Footfall by hour — sector average, override if needed"/>
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
               {FHOURS.map(h=>(
@@ -3283,7 +3306,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <>
                 <div className="avoid-break">
                   <RPSH c="4. Competitor Analysis"/>
-                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList}/>}/>
+                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore}/>}/>
                   {competitorList.length>0&&(
                     <RRC t="Competitor List" ch={
                       <div>
