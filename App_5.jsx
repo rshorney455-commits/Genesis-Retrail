@@ -1842,7 +1842,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
             i===10 ? null :
-            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:step>i?"#0c1024":"#8fa8d8",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
+            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:"#fff",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
           ))}
@@ -3106,7 +3106,62 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RCommentary text={commentary.financial}/>
             </div>
 
-            {/* S2: RISK REGISTER */}
+            {/* S1: FINANCIAL */}
+            <div className="avoid-break">
+              <RPSH c="1. Financial Summary"/>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
+                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)],["Opening Hours",openHours+"hrs/day"]].map(([l,v])=>(
+                  <div key={l} style={{background:"#f8f9fd",border:"1px solid "+"#d1d9e6",borderRadius:8,padding:12,textAlign:"center"}}>
+                    <div style={{fontSize:11,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
+                    <div style={{fontSize:17,fontWeight:700,color:"#1e3a8a"}}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              <RRC t="Profit and Loss" ch={<HBar data={[{l:"Gross Profit",v:C.annGP},{l:"Rent",v:-rent},{l:"Rates",v:-rates},{l:"Staff "+staffPct+"%",v:-C.stf},{l:"Utilities",v:-utilities},{l:"Other",v:-otherCosts},{l:"EBITDA",v:C.eb},{l:"Finance",v:-C.af},{l:"Net Profit",v:C.nP}]}/>}/>
+              <RCommentary text={commentary.financial}/>
+            </div>
+
+            {/* S1b: PROPERTY, COSTS & INVESTMENT */}
+            <div className="avoid-break">
+              <RPSH c="1b. Property, Costs & Investment"/>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+                <div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Property</div>
+                  {[["Net Selling Area",sqft.toLocaleString()+" sq ft"],["Location Type",location.replace(/-/g," ")],["Opening Hours",openHours+" hrs/day"],["Post-Refit Uplift",uplift+"%"]].map(([l,v])=>(
+                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #d1d9e6",fontSize:13}}>
+                      <span style={{color:"#4a5568"}}>{l}</span><span style={{fontWeight:700,color:"#1a1a2e"}}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Annual Operating Costs</div>
+                  {[["Rent",fmt(rent)],["Business Rates",fmt(rates)],["Staff Wages "+staffPct+"%",fmt(C.stf)],["Utilities",fmt(utilities)],["Other Costs",fmt(otherCosts)],["Total Costs",fmt(C.annC)]].map(([l,v],i)=>(
+                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #d1d9e6",fontSize:13,fontWeight:i===5?700:400}}>
+                      <span style={{color:i===5?"#1e3a8a":"#4a5568"}}>{l}</span><span style={{fontWeight:i===5?800:700,color:i===5?"#1e3a8a":"#1a1a2e"}}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+                <div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Investment</div>
+                  {[["Refit Cost",fmt(refitCost)],["Opening Stock",fmt(stockCost)],["Total Investment",fmt(C.ti)],["Finance Rate",financeRate+"%"],["Finance Term",financeYears+" years"],["Monthly Repayment",fmt(Math.round(C.mp))]].map(([l,v],i)=>(
+                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #d1d9e6",fontSize:13}}>
+                      <span style={{color:"#4a5568"}}>{l}</span><span style={{fontWeight:700,color:"#1a1a2e"}}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Area Trends</div>
+                  {[["House Prices",tHP],["Population Growth",tPG],["New Homes",tNH],["Food & Fuel",tFF],["Retail Growth",tRG],["Vehicle Access",tVA]].map(([l,v])=>(
+                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #d1d9e6",fontSize:13}}>
+                      <span style={{color:"#4a5568"}}>{l}</span>
+                      <span style={{fontWeight:700,color:v.includes("Rising")?"#166534":v.includes("Declining")?"#d62828":"#1a1a2e"}}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
             <div className="avoid-break">
               <RPSH c="2. Risk Register"/>
               <RRC t="Automated Risk Assessment" ch={<RiskRegister risks={risks}/>}/>
