@@ -1788,6 +1788,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         textarea{resize:vertical}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
         @media print{.no-print{display:none!important}body,html{background:#fff!important}main{padding:0 24px!important;max-width:100%!important}.page-break{page-break-before:always;padding-top:24px}.avoid-break{page-break-inside:avoid}}
+        @media print{.pdf-footer{display:block!important}}
+        .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
         .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
@@ -3622,6 +3624,21 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             </div>
 
+              {/* PDF Footer — branding on every print page */}
+              <div style={{marginTop:24,borderTop:"2px solid #1e3a8a",paddingTop:12,display:"flex",justifyContent:"space-between",alignItems:"center",background:"#fff"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{width:28,height:28,background:"#1e3a8a",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",color:"#d4af37",fontWeight:800,fontSize:14}}>G</div>
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",letterSpacing:".05em"}}>GENESIS RETAIL</div>
+                    <div style={{fontSize:9,color:"#4a5568",letterSpacing:".1em",textTransform:"uppercase"}}>Independent Convenience Consultancy</div>
+                  </div>
+                </div>
+                <div style={{textAlign:"right",fontSize:11,color:"#4a5568"}}>
+                  <div style={{fontWeight:600,color:"#1e3a8a"}}>Richard Shorney</div>
+                  <div>rshorney455@gmail.com</div>
+                </div>
+              </div>
+            </div>{/* end written assessment */}
             </div>{/* end pdfRef */}
 
             {/* ── FULL WRITTEN ASSESSMENT ── */}
