@@ -2990,14 +2990,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     ))}
                   </div>
                   {[
-                    ["Store Quality / Shopfit",18,(marketShareData?.scoring?.storeQuality||14)],
+                    ["Store Quality / Shopfit",18,(marketShareData?.scoring?.storeQuality||18)],
                     ["Trading Location",18,(marketShareData?.scoring?.locationScore||13)],
-                    ["Stocking Range",18,(marketShareData?.scoring?.stockingScore||11)],
+                    ["Stocking Range",18,(marketShareData?.scoring?.stockingScore||18)],
                     ["Categories Sold",18,(marketShareData?.scoring?.categoriesScore||14)],
                     ["Pricing Strategy",18,(marketShareData?.scoring?.pricingScore||12)],
                     ["Marketing Activity",18,(marketShareData?.scoring?.marketingScore||12)],
-                    ["Availability / Hours",18,(marketShareData?.scoring?.availabilityScore||12)],
-                    ["Customer Service",10,(marketShareData?.scoring?.serviceScore||8)],
+                    ["Availability / Hours",18,(marketShareData?.scoring?.availabilityScore||16)],
+                    ["Customer Service",10,(marketShareData?.scoring?.serviceScore||10)],
                   ].map(([l,max,score],i)=>(
                     <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
                       <div style={{fontSize:12,color:G.text}}>{l}</div>
