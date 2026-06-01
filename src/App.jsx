@@ -1159,29 +1159,49 @@ The index field is a number showing consumption vs national average (100=average
         console.log("Food profile lookup failed:", e.message);
       }
 
-      // Fetch nearby competitors via Overpass API (OSM)
-      const overpassQuery = `[out:json][timeout:15];(node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent"](around:1000,${lat},${lng});node["amenity"~"fuel"](around:1000,${lat},${lng}););out body;`;
+      // Fetch nearby competitors via Overpass API (OSM) — nodes AND ways, 1500m radius
+      const overpassQuery = `[out:json][timeout:25];(
+node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
+way["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
+node["amenity"~"fuel"](around:1500,${lat},${lng});
+way["amenity"~"fuel"](around:1500,${lat},${lng});
+node["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
+way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
+);out center body;`;
       try {
         const ovRes = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`);
         const ovJson = await ovRes.json();
-        const compList = (ovJson.elements||[]).slice(0,12).map((el,i) => {
-          const dlat = el.lat - lat, dlng = el.lon - lng;
+        const compList = (ovJson.elements||[]).map((el,i) => {
+          // Ways have center coords, nodes have direct lat/lng
+          const elLat = el.lat || el.center?.lat;
+          const elLng = el.lon || el.center?.lon;
+          if(!elLat || !elLng) return null;
+          const dlat = elLat - lat, dlng = elLng - lng;
           const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
           const distMiles = (distM/1609).toFixed(2);
           const shopType = el.tags?.shop || el.tags?.amenity || "store";
-          const name = el.tags?.name || el.tags?.operator || ("Competitor "+(i+1));
-          const brandLower = name.toLowerCase();
-          const isMajor = ["tesco","co-op","sainsbury","asda","morrisons","lidl","aldi","spar","nisa"].some(b=>brandLower.includes(b));
+          const name = el.tags?.name || el.tags?.brand || el.tags?.operator || ("Competitor "+(i+1));
+          const brandLower = (name+" "+(el.tags?.brand||"")).toLowerCase();
+          const isMajor = ["tesco","co-op","coop","sainsbury","asda","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","mccoll","booker","iceland","farmfoods","poundland","heron"].some(b=>brandLower.includes(b));
+          const isLargeMultiple = ["tesco","sainsbury","asda","morrisons","lidl","aldi","iceland"].some(b=>brandLower.includes(b));
           return {
-            name, type: shopType, lat: el.lat, lng: el.lon,
+            name, type: shopType, lat: elLat, lng: elLng,
             distance: distMiles+" miles",
             distM,
-            threat: distM < 300 && isMajor ? "high" : distM < 500 ? "medium" : "low"
+            threat: distM < 400 && (isMajor||isLargeMultiple) ? "high" : distM < 800 && isMajor ? "medium" : distM < 400 ? "medium" : "low"
           };
-        }).sort((a,b)=>a.distM-b.distM);
-        setCompetitorList(compList);
-        setCompetitors(compList.filter(c=>c.distM<=804).length);
-        if(compList.length>0) setNearestComp(parseFloat(compList[0].distance));
+        }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
+        // Deduplicate by name+approximate location
+        const seen = new Set();
+        const dedupedList = compList.filter(c=>{
+          const key = c.name.toLowerCase().replace(/\s/g,"")+Math.round(c.distM/50);
+          if(seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }).slice(0,15);
+        setCompetitorList(dedupedList);
+        setCompetitors(dedupedList.filter(c=>c.distM<=804).length);
+        if(dedupedList.length>0) setNearestComp(parseFloat(dedupedList[0].distance));
       } catch(e) { /* OSM may be unavailable, silently skip */ }
 
       // Real planning applications from PlanIt API — retail only
@@ -2364,10 +2384,37 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid,color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
                         <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:G.dark}}>{c.name}</div><div style={{fontSize:11,color:G.light}}>{c.type}</div></div>
                         <div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid}}>{c.distance}</div>
+                        <button onClick={()=>setCompetitorList(p=>p.filter((_,j)=>j!==i))} style={{background:"transparent",border:"none",color:G.light,cursor:"pointer",fontSize:16,padding:"0 4px"}}>×</button>
                       </div>
                     ))}
                   </div>
                 )}
+                {/* Manual competitor add */}
+                <div style={{marginTop:12,padding:"14px 16px",background:G.pale,border:"1px solid "+G.border,borderRadius:10}}>
+                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:10}}>Add competitor manually</div>
+                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:8,alignItems:"end"}}>
+                    <input id="mc-name" style={{...INP_manual,fontSize:13}} placeholder="Store name e.g. Nisa, Derwent Parade"/>
+                    <input id="mc-type" style={{...INP_manual,fontSize:13}} placeholder="Type e.g. Nisa"/>
+                    <input id="mc-dist" style={{...INP_manual,fontSize:13}} placeholder="Distance e.g. 0.6"/>
+                    <select id="mc-threat" style={{...INP_manual,fontSize:13}}>
+                      <option value="high">High threat</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                  <button onClick={()=>{
+                    const name = document.getElementById("mc-name")?.value?.trim();
+                    const type = document.getElementById("mc-type")?.value?.trim()||"store";
+                    const dist = document.getElementById("mc-dist")?.value?.trim()||"0.5";
+                    const threat = document.getElementById("mc-threat")?.value||"medium";
+                    if(!name) return;
+                    const distM = Math.round(parseFloat(dist)*1609);
+                    setCompetitorList(p=>[...p,{name,type,distance:dist+" miles",distM,threat,lat:mapLat,lng:mapLng}]);
+                    if(document.getElementById("mc-name")) document.getElementById("mc-name").value="";
+                    if(document.getElementById("mc-type")) document.getElementById("mc-type").value="";
+                    if(document.getElementById("mc-dist")) document.getElementById("mc-dist").value="";
+                  }} style={{marginTop:10,padding:"9px 20px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600}}>+ Add</button>
+                </div>
               </div>
             )}
 
