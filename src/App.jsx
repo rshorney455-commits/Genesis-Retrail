@@ -422,21 +422,26 @@ const R = {
 };
 
 // ── Report UI components ──────────────────────────────────────────────────────
-const RPSH = ({c,n})=>(
-  <div style={{marginBottom:18,paddingBottom:8,borderBottom:"2px solid "+R.rule}}>
-    {n&&<div style={{fontSize:10,fontWeight:700,color:R.orange,textTransform:"uppercase",letterSpacing:".15em",marginBottom:2}}>{n}</div>}
-    <div style={{fontSize:16,fontWeight:800,color:R.mid,letterSpacing:".01em"}}>{c}</div>
-  </div>
-);
-const RRC = ({t,ch})=>(
-  <div className="avoid-break" style={{marginBottom:22,paddingBottom:18,borderBottom:"1px solid "+R.border}}>
-    <div style={{fontSize:12,fontWeight:700,color:R.light,textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>{t}</div>
-    {ch}
-  </div>
-);
-const RCommentary = ({text})=>(
-  text ? <div style={{fontSize:13,color:R.text,lineHeight:1.95,marginBottom:20,paddingLeft:14,borderLeft:"3px solid "+R.mid}}>{text}</div> : null
-);
+function RPSH({c,n}){
+  return (
+    <div style={{marginBottom:18,paddingBottom:8,borderBottom:"2px solid "+R.rule}}>
+      {n&&<div style={{fontSize:10,fontWeight:700,color:R.orange,textTransform:"uppercase",letterSpacing:".15em",marginBottom:2}}>{n}</div>}
+      <div style={{fontSize:16,fontWeight:800,color:R.mid,letterSpacing:".01em"}}>{c}</div>
+    </div>
+  );
+}
+function RRC({t,ch}){
+  return (
+    <div className="avoid-break" style={{marginBottom:22,paddingBottom:18,borderBottom:"1px solid "+R.border}}>
+      <div style={{fontSize:12,fontWeight:700,color:R.light,textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>{t}</div>
+      {ch}
+    </div>
+  );
+}
+function RCommentary({text}){
+  if(!text) return null;
+  return <div style={{fontSize:13,color:R.text,lineHeight:1.95,marginBottom:20,paddingLeft:14,borderLeft:"3px solid "+R.mid}}>{text}</div>;
+}
 
 
 const SH  = ({c})=><div style={{fontSize:20,fontWeight:700,color:G.dark,marginBottom:18,paddingBottom:10,borderBottom:"2px solid "+G.border}}>{c}</div>;
@@ -3120,24 +3125,26 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* S4: COMPETITORS */}
             {mapLat&&(
-              <div className="avoid-break">
-                <RPSH c="4. Competitor Analysis"/>
-                <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList}/>}/>
-                {competitorList.length>0&&(
-                  <RRC t="Competitor List" ch={
-                    <div>
-                      {competitorList.slice(0,10).map((c,i)=>(
-                        <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 0",borderBottom:"1px solid "+"#d1d9e6"}}>
-                          <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid,color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
-                          <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:"#1a1a2e"}}>{c.name}</div><div style={{fontSize:11,color:"#4a5568"}}>{c.type}</div></div>
-                          <div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid}}>{c.distance}</div><div style={{fontSize:10,color:"#4a5568"}}>{c.threat} threat</div></div>
-                        </div>
-                      ))}
-                    </div>
-                  }/>
-                )}
-              </div>
-              <RCommentary text={commentary.competitors}/>
+              <>
+                <div className="avoid-break">
+                  <RPSH c="4. Competitor Analysis"/>
+                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList}/>}/>
+                  {competitorList.length>0&&(
+                    <RRC t="Competitor List" ch={
+                      <div>
+                        {competitorList.slice(0,10).map((c,i)=>(
+                          <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 0",borderBottom:"1px solid "+"#d1d9e6"}}>
+                            <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid,color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
+                            <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:"#1a1a2e"}}>{c.name}</div><div style={{fontSize:11,color:"#4a5568"}}>{c.type}</div></div>
+                            <div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid}}>{c.distance}</div><div style={{fontSize:10,color:"#4a5568"}}>{c.threat} threat</div></div>
+                          </div>
+                        ))}
+                      </div>
+                    }/>
+                  )}
+                </div>
+                <RCommentary text={commentary.competitors}/>
+              </>
             )}
 
             {/* S4b: COMPARABLE SITES */}
