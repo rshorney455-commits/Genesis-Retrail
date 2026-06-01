@@ -1409,7 +1409,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     try { return JSON.parse(localStorage.getItem("genesis_assessments")||"[]"); } catch{ return []; }
   });
   const [saveMsg, setSaveMsg] = useState("");
-  const [autoSaveMsg, setAutoSaveMsg] = useState("");
+  const [lastSaved, setLastSaved] = useState("");
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1451,9 +1451,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         const idx = existing.findIndex(a=>a.propName===state.propName);
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+        setLastSaved("Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
         setSavedAssessments(existing.slice(0,20));
-        setAutoSaveMsg("✓ Auto-saved");
-        setTimeout(()=>setAutoSaveMsg(""),2000);
       } catch(e){}
     }, 1000);
     return ()=>clearTimeout(timer);
@@ -1834,7 +1833,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               🔒 Share
             </button>
             <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}} title="Admin">⚙</button>
-            {autoSaveMsg&&<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>{autoSaveMsg}</div>}
+            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>{propName?"Saving...":"Enter site name to save"}</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
