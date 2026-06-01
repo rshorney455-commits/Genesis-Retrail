@@ -1025,8 +1025,8 @@ export default function App(){
   const [staffPct,setStaffPct]=useState(SECTOR.suburban.staffPct);
   const [utilities,setUtilities]=useState(SECTOR.suburban.utilities);
   const [otherCosts,setOtherCosts]=useState(SECTOR.suburban.otherCosts);
-  const [refitCost,setRefitCost]=useState(75000);
-  const [stockCost,setStockCost]=useState(35000);
+  const [refitCost,setRefitCost]=useState(110000);
+  const [stockCost,setStockCost]=useState(40000);
   const [financeRate,setFinanceRate]=useState(8);
   const [financeYears,setFinanceYears]=useState(5);
   const [customRefit,setCustomRefit]=useState(false);
@@ -2828,6 +2828,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </button>
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
+
+            {/* ROI sanity warning */}
+            {C.roi>50&&(
+              <div style={{background:"#fff3cd",border:"2px solid #b45309",borderRadius:10,padding:"14px 18px",marginBottom:16,display:"flex",gap:12,alignItems:"flex-start"}}>
+                <div style={{fontSize:20,flexShrink:0}}>⚠️</div>
+                <div>
+                  <div style={{fontSize:13,fontWeight:700,color:"#b45309",marginBottom:4}}>ROI of {pct(C.roi)} — check your investment figures before presenting this report</div>
+                  <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.7}}>A return above 50% will raise serious questions with any bank or financier. The most likely cause is an underestimated total investment. A full convenience store refit plus opening stock typically costs £100,000–£180,000. Current total investment: <strong>{fmt(C.ti)}</strong>. Review the Refit tab before presenting this report.</div>
+                </div>
+              </div>
+            )}
 
             {/* ── 5-YEAR P&L — screen view ── */}
             <div style={{background:"#fff",border:"1.5px solid #1e3a8a",borderRadius:12,overflow:"hidden",marginBottom:20}}>
