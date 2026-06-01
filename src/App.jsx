@@ -1127,54 +1127,45 @@ export default function App(){
       else if(region.includes("north")||region.includes("yorkshire")||region.includes("midlands")) { setCatchmentPop(7500); setPopDensity("medium"); setMedianIncome(27000); }
       else { setCatchmentPop(8500); setPopDensity("medium"); setMedianIncome(30000); }
 
-      // ── Food consumption profile via AI + ONS regional data ──────────────────
+      // ── Food consumption profile — static lookup by deprivation + region ────────
       try {
-        const deprivScore = deprivation;
-        const regionName = r.region || "England";
-        const adminDist = r.admin_district || "";
-        const foodPrompt = `You are a UK convenience retail ranging expert with access to ONS Family Food Survey data and regional eating habit research.
+        const dep = deprivation;
+        const isHighDep = dep <= 4;
+        const isMidDep = dep > 4 && dep <= 7;
+        const isLowDep = dep > 7;
+        const isLondon = (r.region||"").toLowerCase().includes("london") || (r.nuts1||"").includes("E13");
+        const isEssex = (r.admin_county||"").toLowerCase().includes("essex") || (r.admin_district||"").toLowerCase().includes("thurrock");
 
-Postcode: ${clean}
-Local authority: ${adminDist}
-Region: ${regionName}
-Deprivation score: ${deprivScore}/10 (10=least deprived)
-Location type: ${location}
-
-Based on ONS Family Food Survey regional data, Kantar household panel data, and local demographic indicators, provide a food consumption profile for this specific area.
-
-Respond ONLY with a valid JSON object in this exact format, no other text:
-{
-  "summary": "2-sentence plain English summary of eating habits in this area",
-  "topFoods": [
-    {"category": "category name", "insight": "specific local insight", "index": 115, "action": "ranging recommendation"},
-    {"category": "category name", "insight": "specific local insight", "index": 108, "action": "ranging recommendation"},
-    {"category": "category name", "insight": "specific local insight", "index": 122, "action": "ranging recommendation"},
-    {"category": "category name", "insight": "specific local insight", "index": 95, "action": "ranging recommendation"},
-    {"category": "category name", "insight": "specific local insight", "index": 88, "action": "ranging recommendation"},
-    {"category": "category name", "insight": "specific local insight", "index": 104, "action": "ranging recommendation"}
-  ],
-  "avoidCategories": ["category to de-prioritise", "category to de-prioritise"],
-  "keyInsight": "single most important ranging recommendation for this specific postcode",
-  "ethnicFoodNote": "brief note on any relevant ethnic food preferences based on local demographics",
-  "healthTrend": "note on health consciousness level and relevant products"
-}
-
-The index field is a number showing consumption vs national average (100=average, 115=15% above average, 85=15% below). Be specific to the region and deprivation level.`;
-
-        const foodRes = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            messages: [{ role: "user", content: foodPrompt }]
-          })
-        });
-        const foodData = await foodRes.json();
-        const foodText = foodData.content?.find(b=>b.type==="text")?.text||"";
-        const cleanJson = foodText.replace(/```json|```/g,"").trim();
-        const foodProfile = JSON.parse(cleanJson);
-        setFoodProfile(foodProfile);
+        const profile = {
+          summary: isHighDep
+            ? `This is a high-deprivation catchment where value and convenience are the primary purchase drivers. Households spend a higher-than-average share of income on food and rely heavily on local convenience stores for daily essentials.`
+            : isMidDep
+            ? `A moderate-deprivation catchment with mixed purchase motivations — value lines remain important but there is meaningful demand for quality and range depth, particularly in chilled and fresh.`
+            : `A lower-deprivation catchment where range quality, freshness and brand choice drive footfall. Customers have higher disposable income and are more likely to trade up across categories.`,
+          keyInsight: isHighDep
+            ? `Price-marked packs are non-negotiable in this catchment — they build trust and drive repeat visits. Stock deep on tobacco, alcohol, carbonates and frozen. World Foods and ethnic grocery will over-index significantly given the demographic profile.`
+            : isMidDep
+            ? `Balance value credentials with range quality. PMPs on core lines, but invest in chilled, food to go and own-brand. Customers will trade up if the range earns it.`
+            : `Premium and fresh will drive basket value here. Invest in chilled, food to go, coffee and health lines. PMPs less critical — focus on availability and quality.`,
+          ethnicFoodNote: isEssex || isLondon
+            ? `South Asian, African and Eastern European communities are present in this catchment. World Foods — rice, lentils, spices, plantain, specialist condiments and imported soft drinks — will significantly over-index. Allocate dedicated fixture space.`
+            : `Some ethnic food demand likely. Stock a core world foods range covering rice, cooking oils, spices and international soft drinks.`,
+          healthTrend: isHighDep
+            ? `Health consciousness is below the national average in this catchment. Functional health (vitamins, cold remedies) will sell but premium wellness products will not. Energy drinks over-index strongly.`
+            : `Growing interest in healthier options. Stock meal deals with fresh options, zero-sugar alternatives and a basic health and beauty range.`,
+          topFoods: [
+            {category:"Tobacco & Vaping", insight: isHighDep?"Significantly above national average — key traffic driver in this catchment":"Above average — important footfall driver, ensure full range", index:isHighDep?128:110, action:"Stock full tobacco range including RYO, ensure heated tobacco products (HTP) and a strong vaping wall"},
+            {category:"Alcohol & BWS", insight: isHighDep?"Strong demand for beer, cider and spirits — value brands dominate":"Good demand across BWS — mix of value and mainstream brands", index:isHighDep?118:108, action:"Prioritise price-marked cans and litre bottles. Cold beer fixture essential. Spirits above £20 will underperform"},
+            {category:"Carbonates & Energy", insight:"Energy drinks significantly over-index in urban deprived areas — Monster, Lucozade, Prime", index:isHighDep?132:115, action:"Dedicate a full door of the chilled cabinet to energy drinks. Stock large formats and multipack deals"},
+            {category:"World Foods", insight: isEssex||isLondon?"High demand — diverse community with strong preference for ethnic grocery":"Some demand — stock a core world foods range", index:isEssex||isLondon?125:95, action:"Allocate 4–6ft of ambient fixture to world foods: rice, oils, spices, pulses, international sauces and soft drinks"},
+            {category:"Chilled & Fresh", insight: isHighDep?"Below national average but growing — chilled convenience meals and dairy core":"Good opportunity — chilled is the key basket value driver", index:isHighDep?88:105, action:isHighDep?"Stock value dairy, ready meals under £3 and basics. Avoid premium fresh — it will be slow.":"Invest in chilled run — fresh, ready meals, meal deal components. Key driver of basket growth."},
+            {category:"Frozen Foods", insight:"Over-indexes in value-led catchments — chips, ready meals, pizza", index:isHighDep?115:95, action:isHighDep?"Stock a strong frozen section: chips, ready meals, pizza. Iceland proximity is a risk — compete on convenience not price.":"Core frozen range only — focus investment on chilled instead."},
+          ],
+          avoidCategories: isHighDep
+            ? ["Premium organic/artisan", "High-end wine (£10+)", "Health supplements", "Gluten-free premium lines"]
+            : ["Budget white-label lines", "Deep tobacco range beyond mainstream brands"],
+        };
+        setFoodProfile(profile);
       } catch(e) {
         console.log("Food profile lookup failed:", e.message);
       }
