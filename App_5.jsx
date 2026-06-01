@@ -1440,15 +1440,19 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — debounced 1s after any change, only if propName is set ────────
+  // ── Autosave — always fires, no propName requirement ────────────────────────
   useEffect(()=>{
-    if(!propName) return;
     const timer = setTimeout(()=>{
       try {
         const state = gatherState();
         delete state.cats;
         const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-        const idx = existing.findIndex(a=>a.propName===state.propName);
+        const idx = existing.findIndex(a=>
+          (state.propName && a.propName===state.propName) ||
+          (!state.propName && state.postcode && a.postcode===state.postcode) ||
+          (!state.propName && !state.postcode && a.propName==="draft")
+        );
+        if(!state.propName) state.propName = state.postcode || "draft";
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setLastSaved("Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
@@ -1456,15 +1460,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       } catch(e){}
     }, 1000);
     return ()=>clearTimeout(timer);
-  },[gatherState, propName]);
+  },[gatherState]);
 
-  // ── Warn before closing/refreshing if assessment is in progress ──────────────
+  // ── Warn before closing/refreshing ──────────────────────────────────────────
   useEffect(()=>{
-    if(!propName) return;
     const handler = (e)=>{ e.preventDefault(); e.returnValue=""; };
     window.addEventListener("beforeunload", handler);
     return ()=>window.removeEventListener("beforeunload", handler);
-  },[propName]);
+  },[]);
 
   const loadAssessment = useCallback((saved)=>{
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
@@ -1472,7 +1475,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
     setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||9);
     setUtilities(saved.utilities||9000); setOtherCosts(saved.otherCosts||8000);
-    setRefitCost(saved.refitCost||75000); setStockCost(saved.stockCost||35000);
+    setRefitCost(saved.refitCost||110000); setStockCost(saved.stockCost||40000);
     setFinanceRate(saved.financeRate||8); setFinanceYears(saved.financeYears||5);
     setCats(CATS0.map(c=>({...c})));  // Always reset to ACS 2025 defaults on load
     if(saved.ageBands) setAgeBands(saved.ageBands);
@@ -1833,7 +1836,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               🔒 Share
             </button>
             <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}} title="Admin">⚙</button>
-            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>{propName?"Saving...":"Enter site name to save"}</div>}
+            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>"Saving..."</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
@@ -1853,7 +1856,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Cover Page"/>
 
-            <Fld l="Site name / address" h="Required — autosave won't start without this" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 5-6 Canterbury Parade, South Ockendon"/>}/>
+            <Fld l="Site name / address" ch={<input style={INP_manual} value={propName} onChange={e=>setPropName(e.target.value)} placeholder="e.g. 5-6 Canterbury Parade, South Ockendon"/>}/>
             <Fld l="Client name" ch={<input style={INP_manual} value={clientName} onChange={e=>setClientName(e.target.value)} placeholder="e.g. Mr J Smith"/>}/>
 
             {/* Saved assessments */}
