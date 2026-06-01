@@ -3435,7 +3435,71 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
             <RCommentary text={commentary.fiveYear}/>
 
-            {/* S10: SENSITIVITY TABLE */}
+            {/* S9b: MONTHLY CASHFLOW */}
+            <div className="avoid-break">
+              <RPSH c="9b. Year 1 Monthly Cash Flow"/>
+              <div style={{overflowX:"auto"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+                  <thead>
+                    <tr style={{background:"#1e3a8a"}}>
+                      <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:140}}>Item</th>
+                      {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map(m=>(
+                        <th key={m} style={{padding:"6px 4px",textAlign:"right",color:"#fff",fontWeight:700,minWidth:60}}>{m}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(()=>{
+                      const ann1 = C.upliftedAnn;
+                      const mSales = ann1/12;
+                      const mGP    = ann1*(C.blGP/100)/12;
+                      const mRent  = -rent/12;
+                      const mRates = -rates/12;
+                      const mStaff = -(ann1*staffPct/100)/12;
+                      const mUtils = -utilities/12;
+                      const mOther = -otherCosts/12;
+                      const mFin   = -C.mp;
+                      const mNet   = mGP+mRent+mRates+mStaff+mUtils+mOther+mFin;
+                      const rows = [
+                        {l:"Sales Revenue",v:mSales,bold:false},
+                        {l:"Gross Profit",v:mGP,bold:true,hi:true},
+                        {l:"Rent",v:mRent,bold:false},
+                        {l:"Business Rates",v:mRates,bold:false},
+                        {l:"Staff & Wages",v:mStaff,bold:false},
+                        {l:"Utilities",v:mUtils,bold:false},
+                        {l:"Other Costs",v:mOther,bold:false},
+                        {l:"Loan Repayment",v:mFin,bold:false},
+                        {l:"Net Cash Flow",v:mNet,bold:true,hi2:true},
+                      ];
+                      let bal=0;
+                      return (
+                        <>
+                          {rows.map((r,i)=>(
+                            <tr key={i} style={{background:r.hi?"#dde4f5":r.hi2?"#f0f4ff":"#fff",borderBottom:"1px solid #d1d9e6"}}>
+                              <td style={{padding:"6px 10px",fontSize:11,fontWeight:r.bold?700:400,color:r.hi||r.hi2?"#1e3a8a":"#1a1a2e"}}>{r.l}</td>
+                              {[...Array(12)].map((_,mi)=>(
+                                <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:r.bold?700:400,color:r.v<0?"#d62828":r.hi||r.hi2?"#1e3a8a":"#1a1a2e"}}>
+                                  {r.v<0?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                          <tr style={{background:"#1e3a8a"}}>
+                            <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:"#fff"}}>Closing Balance</td>
+                            {[...Array(12)].map((_,mi)=>{
+                              bal+=mNet;
+                              return <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?"#bbf7d0":"#fca5a5"}}>
+                                {bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}
+                              </td>;
+                            })}
+                          </tr>
+                        </>
+                      );
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <div className="avoid-break">
               <RPSH c="10. Sensitivity Analysis"/>
               <div style={{background:"#dde4f5",border:"1px solid "+"#d1d9e6",borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:"#1e3a8a"}}>
