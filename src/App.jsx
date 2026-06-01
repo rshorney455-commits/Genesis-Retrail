@@ -3428,6 +3428,29 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <RRC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
               <RRC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
               <RCommentary text={commentary.demographics}/>
+
+              {/* Food consumption profile */}
+              {foodProfile&&(
+                <div style={{marginTop:16}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>Local Food Consumption Profile</div>
+                  <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,marginBottom:12,padding:"12px 14px",background:"#f0f4ff",border:"1px solid #d1d9e6",borderRadius:8}}>{foodProfile.summary}</div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+                    {(foodProfile.topFoods||[]).slice(0,6).map((f,i)=>{
+                      const above = f.index>=100;
+                      return (
+                        <div key={i} style={{background:above?"#eef1fb":"#fef9f0",border:"1px solid "+(above?"#1e3a8a":"#d1d9e6"),borderRadius:8,padding:12}}>
+                          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                            <div style={{fontSize:12,fontWeight:700,color:"#1a1a2e"}}>{f.category}</div>
+                            <div style={{padding:"2px 6px",borderRadius:4,fontSize:10,fontWeight:800,background:above?"#1e3a8a":"#b45309",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
+                          </div>
+                          <div style={{fontSize:11,color:"#4a5568",lineHeight:1.5}}>{f.insight}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {foodProfile.keyInsight&&<div style={{fontSize:12,color:"#1e3a8a",fontWeight:600,padding:"10px 14px",background:"#f0f4ff",borderRadius:6,borderLeft:"3px solid #1e3a8a"}}>{foodProfile.keyInsight}</div>}
+                </div>
+              )}
             </div>
 
             {/* Postcode notes in report */}
