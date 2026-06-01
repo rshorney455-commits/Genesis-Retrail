@@ -3567,11 +3567,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             </div>
 
-            {/* Disclaimer */}
-            <div style={{marginTop:32,paddingTop:16,borderTop:"1px solid "+"#d1d9e6",fontSize:12,color:"#4a5568",fontStyle:"italic"}}>
-              This report has been prepared by Genesis Retail. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not be complete. Actual trading performance may differ materially from projections. This report does not constitute financial or legal advice.
-            </div>
-
             </div>{/* end pdfRef */}
 
             <div style={{display:"flex",gap:12,marginTop:16}}>
@@ -3642,8 +3637,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </div>
 
               </div>
-              <div style={{padding:"14px 24px",background:"#f8f9fd",borderTop:"1px solid "+"#d1d9e6",fontSize:11,color:"#4a5568",fontStyle:"italic"}}>
-                This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from projections. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for decisions made on the basis of this assessment without independent professional verification.
+              <div style={{padding:"18px 24px",background:"#1e3a8a",borderTop:"2px solid #1e3a8a"}}>
+                <div style={{fontSize:11,fontWeight:700,color:"#fef08a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Important Notice</div>
+                <div style={{fontSize:12,color:"#e0e8ff",lineHeight:1.8}}>
+                  This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from the projections contained herein. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification. The contents of this report are confidential and must not be reproduced or distributed without the prior written consent of Genesis Retail.
+                </div>
+                <div style={{fontSize:11,color:"#8fa8d8",marginTop:10}}>© Genesis Retail {new Date().getFullYear()} · Richard Shorney · rshorney455@gmail.com</div>
               </div>
             </div>
           </div>
