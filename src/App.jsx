@@ -193,6 +193,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
     }
 
     function initMap() {
+      try {
       if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; }
       const L = window.L;
       const map = L.map(mapRef.current).setView([lat, lng], 15);
@@ -231,7 +232,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
       });
 
       // Comparable store pins — purple
-      (comparables||[]).filter(c=>c.name&&c.lat&&c.lng).forEach((c,i)=>{
+      (comparables||[]).filter(c=>c.name&&c.lat&&c.lng&&!isNaN(c.lat)&&!isNaN(c.lng)).forEach((c,i)=>{
         const compIcon = L.divIcon({
           html: `<div style="background:#6d28d9;color:#fff;border-radius:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-weight:700">C${i+1}</div>`,
           iconSize:[28,28], iconAnchor:[14,14], className:""
@@ -242,6 +243,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
 
       // 0.5 mile radius circle
       L.circle([lat, lng], { radius: 804, color: "#1e3a8a", fillColor:"#1e3a8a", fillOpacity:0.05, weight:1.5, dashArray:"6,4" }).addTo(map);
+      } catch(mapErr) { console.error("Map init error:", mapErr); }
     }
 
     return () => { if(mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
