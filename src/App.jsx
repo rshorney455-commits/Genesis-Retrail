@@ -3080,19 +3080,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* S0b: MARKET SHARE ANALYSIS */}
             {marketShareData&&<div className="avoid-break">
               <RPSH c="Market Share & Catchment Analysis"/>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:20}}>
-                {[
-                  ["Local Weekly Market",`£${Math.round((marketShareData?.weeklyMarket||0)).toLocaleString()}`,`${Math.round(catchmentPop/(householdSz||2.3)).toLocaleString()} households × £${(marketShareData?.avgHhSpend||70)}/wk avg spend`],
-                  ["Market Share Factor",`${(marketShareData?.marketShareFactor||52).toFixed(1)}%`,"Based on competition scoring matrix"],
-                  ["Captured Weekly",`£${Math.round((marketShareData?.capturedWeekly||0)).toLocaleString()}`,`At ${(marketShareData?.marketShareFactor||52).toFixed(1)}% of local market`],
-                ].map(([l,v,s])=>(
-                  <div key={l} style={{background:"#f8f9fd",border:"1px solid "+"#d1d9e6",borderRadius:10,padding:14,textAlign:"center"}}>
-                    <div style={{fontSize:10,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>
-                    <div style={{fontSize:20,fontWeight:800,color:"#1e3a8a"}}>{v}</div>
-                    <div style={{fontSize:10,color:"#4a5568",marginTop:4}}>{s}</div>
-                  </div>
-                ))}
-              </div>
 
               {/* Competition scoring matrix */}
               <RRC t="Competition Scoring Matrix" ch={
