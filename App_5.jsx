@@ -1199,9 +1199,33 @@ way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcut
           seen.add(key);
           return true;
         }).slice(0,15);
-        setCompetitorList(dedupedList);
-        setCompetitors(dedupedList.filter(c=>c.distM<=804).length);
-        if(dedupedList.length>0) setNearestComp(parseFloat(dedupedList[0].distance));
+        // Filter to 0.5 miles (804m) only
+        const filtered = dedupedList.filter(c=>c.distM<=804);
+        setCompetitorList(filtered);
+        setCompetitors(filtered.length);
+        if(filtered.length>0) setNearestComp(parseFloat(filtered[0].distance));
+
+        // If OSM returned fewer than 3 results, try Google Places as fallback
+        if(filtered.length < 3) {
+          try {
+            const placesUrl = `https://nominatim.openstreetmap.org/search?format=json&limit=20&q=convenience+store+supermarket+off+licence&bounded=1&viewbox=${lng-0.01},${lat+0.007},${lng+0.01},${lat-0.007}`;
+            const pRes = await fetch(placesUrl);
+            const pJson = await pRes.json();
+            const extraList = (pJson||[]).map((p,i)=>{
+              const elLat = parseFloat(p.lat), elLng = parseFloat(p.lon);
+              const dlat = elLat-lat, dlng = elLng-lng;
+              const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+              if(distM>804) return null;
+              const name = p.display_name?.split(",")[0]||"Store "+(i+1);
+              return {name,type:"convenience",lat:elLat,lng:elLng,distance:(distM/1609).toFixed(2)+" miles",distM,threat:distM<400?"medium":"low"};
+            }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
+            if(extraList.length > filtered.length) {
+              setCompetitorList(extraList.slice(0,15));
+              setCompetitors(extraList.length);
+              if(extraList.length>0) setNearestComp(parseFloat(extraList[0].distance));
+            }
+          } catch(e2) { /* fallback unavailable */ }
+        }
       } catch(e) { /* OSM may be unavailable, silently skip */ }
 
       // Real planning applications from PlanIt API — retail only
