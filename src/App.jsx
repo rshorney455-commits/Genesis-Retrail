@@ -173,7 +173,7 @@ function usePostcodeLookup() {
 }
 
 // ── Competitor Map (OpenStreetMap + Leaflet via CDN) ──────────────────────────
-function CompetitorMap({ lat, lng, competitors, existingStore }) {
+function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
 
@@ -230,17 +230,27 @@ function CompetitorMap({ lat, lng, competitors, existingStore }) {
           .bindPopup(`<b>${c.name}</b><br>${c.type}<br>${c.distance}`);
       });
 
+      // Comparable store pins — purple
+      (comparables||[]).filter(c=>c.name&&c.lat&&c.lng).forEach((c,i)=>{
+        const compIcon = L.divIcon({
+          html: `<div style="background:#6d28d9;color:#fff;border-radius:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);font-weight:700">C${i+1}</div>`,
+          iconSize:[28,28], iconAnchor:[14,14], className:""
+        });
+        L.marker([c.lat, c.lng], { icon: compIcon }).addTo(map)
+          .bindPopup(`<b>Comparable ${i+1}</b><br>${c.name}${c.weeklyT>0?`<br>£${c.weeklyT.toLocaleString()}/wk`:""}`);
+      });
+
       // 0.5 mile radius circle
       L.circle([lat, lng], { radius: 804, color: "#1e3a8a", fillColor:"#1e3a8a", fillOpacity:0.05, weight:1.5, dashArray:"6,4" }).addTo(map);
     }
 
     return () => { if(mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; } };
-  }, [lat, lng, competitors, existingStore]);
+  }, [lat, lng, competitors, existingStore, comparables]);
 
   return (
     <div>
       <div ref={mapRef} style={{height:340,borderRadius:10,border:"1px solid "+G.border,overflow:"hidden"}}/>
-      <div style={{fontSize:11,color:G.light,marginTop:6,textAlign:"center"}}>Dashed circle = 0.5 mile radius · Numbers = competitor ranking by threat</div>
+      <div style={{fontSize:11,color:G.light,marginTop:6,textAlign:"center"}}>★ Subject site · 🏪 Existing store · C1/C2 Comparables · Numbers = competitors by threat · Dashed = 0.5 mile radius</div>
     </div>
   );
 }
@@ -1079,8 +1089,8 @@ export default function App(){
 
   // Comparable sites
   const [comparables,setComparables]=useState([
-    {name:"",weeklyT:0,sqft:0,location:"suburban",notes:""},
-    {name:"",weeklyT:0,sqft:0,location:"suburban",notes:""},
+    {name:"",weeklyT:0,sqft:0,location:"suburban",notes:"",lat:null,lng:null},
+    {name:"",weeklyT:0,sqft:0,location:"suburban",notes:"",lat:null,lng:null},
   ]);
 
   // Photo annotations
@@ -2426,7 +2436,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {mapLat && (
               <div style={{marginBottom:24}}>
                 <Sub c="Competitor Map — auto-generated from postcode"/>
-                <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore}/>
+                <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>
                 {competitorList.length>0&&(
                   <div style={{marginTop:12}}>
                     {competitorList.slice(0,8).map((c,i)=>(
@@ -2549,7 +2559,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {comparables.map((comp,i)=>(
               <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:10}}>
                 <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:10}}>Comparable {i+1}</div>
-                <Fld l="Store name" ch={<input style={INP_manual} value={comp.name} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} placeholder="e.g. Spar, Kings Road"/>}/>
+                <Fld l="Store name" ch={<input style={INP_manual} value={comp.name} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} onBlur={async e=>{
+                  const name = e.target.value.trim();
+                  if(!name) return;
+                  try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name)}&limit=1`);
+                    const data = await res.json();
+                    if(data[0]) setComparables(p=>p.map((x,j)=>j===i?{...x,lat:parseFloat(data[0].lat),lng:parseFloat(data[0].lon)}:x));
+                  } catch(e2){}
+                }} placeholder="e.g. Nisa, 11-13 Derwent Parade, RM15 5EF"/>}/>
                 <Row2 ch={[
                   <Fld key="a" l="Weekly turnover (£)" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.weeklyT||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,weeklyT:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                   <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
@@ -3306,7 +3324,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <>
                 <div className="avoid-break">
                   <RPSH c="4. Competitor Analysis"/>
-                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore}/>}/>
+                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>}/>
                   {competitorList.length>0&&(
                     <RRC t="Competitor List" ch={
                       <div>
