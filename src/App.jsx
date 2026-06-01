@@ -1557,8 +1557,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setCompetitors(saved.competitors||2); setNearestComp(saved.nearestComp||0.3); setParking(saved.parking||4);
     setTHP(saved.tHP||"Stable"); setTPG(saved.tPG||"Stable"); setTNH(saved.tNH||"Stable");
     setTFF(saved.tFF||"Stable"); setTRG(saved.tRG||"Stable"); setTVA(saved.tVA||"Stable");
-    setAreaNotes(saved.areaNotes||""); setStoreNote(saved.storeNote||""); setGenesisNote(saved.genesisNote||"");
-    setPostcodeNotes(saved.postcodeNotes||""); setClientName(saved.clientName||""); setRefitCommentary(saved.refitCommentary||"");
+    if(saved.areaNotes) setAreaNotes(saved.areaNotes);
+    if(saved.storeNote) setStoreNote(saved.storeNote);
+    setGenesisNote(saved.genesisNote||"Richard spent 23 years working at the sharp end of the UK independent convenience sector, first with A.F. Blakemore — the company behind the Spar fascia — where he worked directly with independent retailers on store development, ranging and commercial planning. In 2016 he moved to Nisa/Co-op Retail Ltd as a Retail Development Manager, managing 145 stores across North London with responsibility for around £14 million in annual turnover.\n\nDuring his time at Nisa he was consistently ranked in the national top three for new business, and several initiatives he introduced — including Too Good To Go and food delivery partnerships — were rolled out across the entire network. He knows the wholesale and symbol group world from the inside, which is exactly why independent retailers trust him to tell them the truth about their business.");
+    if(saved.postcodeNotes) setPostcodeNotes(saved.postcodeNotes);
+    if(saved.clientName) setClientName(saved.clientName);
+    if(saved.refitCommentary) setRefitCommentary(saved.refitCommentary);
     if(saved.foodProfile) setFoodProfile(saved.foodProfile);
     if(saved.existingStore) setExistingStore(saved.existingStore);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
