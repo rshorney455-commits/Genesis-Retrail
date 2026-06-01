@@ -2954,15 +2954,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     <div style={{fontSize:12,color:"#4a5568",textTransform:"capitalize"}}>{location.replace("-"," ")}</div>
                   </div>
 
-                  {/* About Genesis Retail */}
-                  <div style={{border:"1.5px solid #1e3a8a",borderRadius:10,padding:"16px 18px"}}>
-                    <div style={{fontSize:10,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>About Genesis Retail</div>
-                    {genesisNote ? (
-                      <p style={{fontSize:12,color:"#1a1a2e",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{genesisNote}</p>
-                    ) : (
-                      <p style={{fontSize:12,color:"#4a5568",lineHeight:1.7,fontStyle:"italic"}}>Add your Genesis Retail introduction on the Cover tab.</p>
-                    )}
-                  </div>
                 </div>
               </div>
 
