@@ -1778,21 +1778,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm"),
       ]);
       const canvas = await html2canvas(pdfRef.current, {
-        scale: 2, useCORS: true, backgroundColor: "#ffffff",
-        logging: false, windowWidth: 700,
+        scale: 3, useCORS: true, backgroundColor: "#ffffff",
+        logging: false, windowWidth: 794, // A4 width in px at 96dpi
+        imageTimeout: 0, allowTaint: false,
       });
-      const imgData = canvas.toDataURL("image/jpeg", 0.92);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const imgData = canvas.toDataURL("image/png"); // PNG = lossless, sharp text
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
       const imgH = (canvas.height * pageW) / canvas.width;
       let yOffset = 0, remaining = imgH;
       while(remaining > 0) {
         if(yOffset > 0) pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, -yOffset, pageW, imgH);
+        pdf.addImage(imgData, "PNG", 0, -yOffset, pageW, imgH, undefined, "FAST");
         yOffset += pageH; remaining -= pageH;
       }
-      const filename = (propName||"assessment").replace(/[^a-z0-9]/gi,"_").toLowerCase()+"_report.pdf";
+      const filename = (propName||"assessment").replace(/[^a-z0-9]/gi,"_").toLowerCase()+"_genesis_retail_report.pdf";
       pdf.save(filename);
     } catch(e) {
       alert("PDF generation failed: "+e.message);
@@ -1811,7 +1812,21 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         select option{background:#fff;color:#0c1024}
         textarea{resize:vertical}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
-        @media print{.no-print{display:none!important}body,html{background:#fff!important}main{padding:0 24px!important;max-width:100%!important}.page-break{page-break-before:always;padding-top:24px}.avoid-break{page-break-inside:avoid}}
+        @media print{
+          .no-print{display:none!important}
+          body,html{background:#fff!important;margin:0;padding:0}
+          main{padding:0!important;max-width:100%!important}
+          .page-break{page-break-before:always;padding-top:24px}
+          .avoid-break{page-break-inside:avoid}
+          nav,header,.nav-inner{display:none!important}
+          #root>div>div:first-child{display:none!important}
+          .pdf-wrapper{padding:0!important;margin:0!important}
+          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+          body{font-size:11pt}
+          h1,h2,h3{page-break-after:avoid}
+          table{page-break-inside:avoid}
+          img{max-width:100%!important}
+        }
         @media print{.pdf-footer{display:block!important}}
         .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
         @keyframes spin{to{transform:rotate(360deg)}}
