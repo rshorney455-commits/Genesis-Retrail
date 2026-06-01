@@ -1011,7 +1011,7 @@ export default function App(){
   const [postcodeNotes,setPostcodeNotes]=useState("");
   const [clientName,setClientName]=useState("");
   const [refitCommentary,setRefitCommentary]=useState("");
-  const [genesisNote,setGenesisNote]=useState("");
+  const [genesisNote,setGenesisNote]=useState("Richard spent 23 years working at the sharp end of the UK independent convenience sector, first with A.F. Blakemore — the company behind the Spar fascia — where he worked directly with independent retailers on store development, ranging and commercial planning. In 2016 he moved to Nisa/Co-op Retail Ltd as a Retail Development Manager, managing 145 stores across North London with responsibility for around £14 million in annual turnover.\n\nDuring his time at Nisa he was consistently ranked in the national top three for new business, and several initiatives he introduced — including Too Good To Go and food delivery partnerships — were rolled out across the entire network. He knows the wholesale and symbol group world from the inside, which is exactly why independent retailers trust him to tell them the truth about their business.");
   const [propName,setPropName]=useState("");
   const [postcode,setPostcode]=useState("");
   const [sqft,setSqft]=useState(800);
