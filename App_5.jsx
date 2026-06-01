@@ -1950,15 +1950,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{marginBottom:24}}>
                 <Sub c="Saved Assessments — tap to reload"/>
                 {savedAssessments.map((a,i)=>(
-                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
-                    <div style={{flex:1}}>
+                  <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8}}>
+                    <div style={{flex:1,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
                       <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{a.propName||"Unnamed site"}</div>
                       <div style={{fontSize:12,color:G.light}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")}</div>
                     </div>
-                    <div style={{fontSize:13,fontWeight:700,color:G.mid}}>Load →</div>
+                    <div style={{fontSize:13,fontWeight:700,color:G.mid,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>Load →</div>
+                    <button onClick={e=>{
+                      e.stopPropagation();
+                      if(!window.confirm("Delete this assessment?")) return;
+                      const updated = savedAssessments.filter((_,j)=>j!==i);
+                      localStorage.setItem("genesis_assessments", JSON.stringify(updated));
+                      setSavedAssessments(updated);
+                    }} style={{background:"transparent",border:"1px solid #d62828",borderRadius:6,color:"#d62828",cursor:"pointer",fontFamily:"inherit",fontSize:12,padding:"4px 8px",flexShrink:0}}>✕</button>
                   </div>
                 ))}
-                <button onClick={()=>{localStorage.removeItem("genesis_assessments");setSavedAssessments([]);}} style={{fontSize:12,color:"#d62828",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",padding:"4px 0"}}>Clear all saved assessments</button>
+                <button onClick={()=>{if(window.confirm("Clear all saved assessments?")) {localStorage.removeItem("genesis_assessments");setSavedAssessments([]);}}} style={{fontSize:12,color:"#d62828",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",padding:"4px 0"}}>Clear all saved assessments</button>
               </div>
             )}
             <div style={{marginBottom:20}}>
