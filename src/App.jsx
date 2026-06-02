@@ -1248,9 +1248,46 @@ way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcut
         }).slice(0,15);
         // Filter to 0.5 miles (804m) only
         const filtered = dedupedList.filter(c=>c.distM<=804);
-        setCompetitorList(filtered);
-        setCompetitors(filtered.length);
-        if(filtered.length>0) setNearestComp(parseFloat(filtered[0].distance));
+
+        // Known competitors — geocode and inject for specific postcodes where OSM is sparse
+        const knownCompetitors = {
+          "RM156NH": [
+            {name:"Best-one, 1 South Road",      type:"Best-one",      address:"1 South Road, South Ockendon, RM15 6NH"},
+            {name:"Londis, South Parade",         type:"Londis",        address:"6 South Parade, South Road, South Ockendon, RM15 6BT"},
+            {name:"Tesco Express, North Road",    type:"Tesco Express", address:"North Road, South Ockendon, RM15 6QA"},
+            {name:"Bargain Booze, Derry Avenue",  type:"Bargain Booze", address:"4-8 Derry Avenue, South Ockendon, RM15 5DZ"},
+            {name:"Nisa, Derwent Parade",         type:"Nisa",          address:"15 Derwent Parade, South Ockendon, RM15 5EF"},
+            {name:"Tesco Express, Derry Court",   type:"Tesco Express", address:"Derry Court, Derry Avenue, South Ockendon, RM15 5GN"},
+          ],
+        };
+
+        const postcodeKey = clean.replace(/\s/g,"");
+        const known = knownCompetitors[postcodeKey] || [];
+        let finalList = [...filtered];
+
+        if(known.length > 0) {
+          const geocoded = await Promise.all(known.map(async k => {
+            try {
+              const r2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(k.address)}&limit=1`);
+              const d2 = await r2.json();
+              if(!d2[0]) return null;
+              const elLat = parseFloat(d2[0].lat), elLng = parseFloat(d2[0].lon);
+              const dlat = elLat-lat, dlng = elLng-lng;
+              const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+              const isMajor = ["tesco","co-op","sainsbury","morrisons","lidl","aldi"].some(b=>k.type.toLowerCase().includes(b));
+              return {name:k.name, type:k.type, lat:elLat, lng:elLng, distance:(distM/1609).toFixed(2)+" miles", distM, threat:distM<400&&isMajor?"high":distM<400?"medium":"low"};
+            } catch(e){ return null; }
+          }));
+          const validGeocoded = geocoded.filter(Boolean);
+          // Merge — don't duplicate anything already in OSM results
+          const existingNames = new Set(finalList.map(c=>c.name.toLowerCase()));
+          validGeocoded.forEach(c=>{ if(!existingNames.has(c.name.toLowerCase())) finalList.push(c); });
+          finalList.sort((a,b)=>a.distM-b.distM);
+        }
+
+        setCompetitorList(finalList);
+        setCompetitors(finalList.length);
+        if(finalList.length>0) setNearestComp(parseFloat(finalList[0].distance));
 
         // If OSM returned fewer than 3 results, try Google Places as fallback
         if(filtered.length < 3) {
