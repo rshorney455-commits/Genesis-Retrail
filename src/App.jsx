@@ -2041,6 +2041,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     <textarea
                       value={postcodeNotes}
                       onChange={e=>setPostcodeNotes(e.target.value)}
+                      onBlur={saveAssessment}
                       placeholder="e.g. High footfall residential estate, strong commuter flow in mornings. Large Tesco 0.3 miles away but no direct convenience competition on the parade. Good parking, well-maintained environment. Local demographic appears family-oriented with a mix of ages..."
                       style={{...INP_manual,minHeight:100,lineHeight:1.7,fontSize:13,width:"100%"}}
                     />
@@ -2050,7 +2051,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <Row2 ch={[
-              <Fld key="a" l="Net selling area (sq ft)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={sqft} onFocus={e=>e.target.select()} onChange={e=>setSqft(e.target.value===""?0:+e.target.value)}/>}/>,
+              <Fld key="a" l="Net selling area (sq ft)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={sqft} onFocus={e=>e.target.select()} onChange={e=>setSqft(e.target.value===""?0:+e.target.value)} onBlur={saveAssessment}/>}/>,
               <Fld key="b" l="Trading hours / day" h="Your assessment on the visit" ch={<input style={INP_manual} type="number" value={openHours} onFocus={e=>e.target.select()} onChange={e=>setOpenHours(e.target.value===""?0:+e.target.value)}/>}/>,
             ]}/>
             <Fld l="Location type" h="Auto-populates sector averages" ch={
@@ -2066,7 +2067,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <Fld key="c" l="Est. daily transactions" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" value={footfall} onFocus={e=>e.target.select()} onChange={e=>setFootfall(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="d" l="Average basket (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" step="0.50" value={avgBasket} onFocus={e=>e.target.select()} onChange={e=>setAvgBasket(e.target.value===""?0:+e.target.value)}/>}/>,
             ]}/>
-            <Fld l="Post-refit uplift (%)" h="Expected uplift after new symbol group and refit (sector average 10-25%)" ch={<input style={INP_manual} type="number" step="1" min="0" max="50" value={uplift} onFocus={e=>e.target.select()} onChange={e=>setUplift(e.target.value===""?0:+e.target.value)}/>}/>
+            <Fld l="Post-refit uplift (%)" h="Expected uplift after new symbol group and refit (sector average 10-25%)" ch={<input style={INP_manual} type="number" step="1" min="0" max="50" value={uplift} onFocus={e=>e.target.select()} onChange={e=>setUplift(e.target.value===""?0:+e.target.value)} onBlur={saveAssessment}/>}/>
             <S3 items={[{l:"Weekly turnover (base)",v:fmt(C.wk)},{l:"Post-refit weekly",v:fmt(C.upliftedWk),hi:true},{l:"Sales/sqft/wk",v:"£"+(C.upliftedSpf||0).toFixed(2),hi:true}]}/>
           </div>
         )}
