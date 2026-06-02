@@ -3035,7 +3035,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <rect width="100%" height="100%" fill="url(#wm)"/>
               </svg>
             </div>
-            <div style={{display:"flex",flexDirection:"column",borderBottom:"2px solid "+G.mid,marginBottom:16,paddingBottom:16}}>
+            <div style={{display:"flex",flexDirection:"column",borderBottom:"2px solid "+"#1e3a8a",marginBottom:16,paddingBottom:16}}>
 
               {/* Header band */}
               <div style={{borderBottom:"3px solid #1e3a8a",paddingBottom:16,marginBottom:24,display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
@@ -3068,18 +3068,30 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 {/* Address + details */}
                 <div style={{display:"flex",flexDirection:"column",gap:16}}>
                   {/* Site name & address */}
-                  <div style={{background:"#f8f9fd",border:"1px solid "+"#d1d9e6",borderRadius:10,padding:"16px 18px"}}>
+                  {/* Site name & address */}
+                  <div style={{background:"#f8f9fd",border:"1px solid #d1d9e6",borderRadius:10,padding:"16px 18px"}}>
                     <div style={{fontSize:10,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Site Address</div>
                     <div style={{fontSize:20,fontWeight:800,color:"#1a1a2e",lineHeight:1.2,marginBottom:6}}>{propName||"Site Address"}</div>
-                    {postcode&&<div style={{fontSize:13,color:"#4a5568",marginBottom:4}}>{postcode}</div>}
-                    <div style={{fontSize:12,color:"#4a5568",textTransform:"capitalize"}}>{location.replace("-"," ")}</div>
+                    {postcode&&<div style={{fontSize:13,color:"#1e3a8a",marginBottom:6,fontWeight:600}}>{postcode}</div>}
+                    <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#f0f4ff",border:"1px solid #1e3a8a",borderRadius:4,padding:"4px 10px"}}>
+                      <span style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"capitalize"}}>{location.replace(/-/g," ")}</span>
+                    </div>
+                    {clientName&&<div style={{fontSize:13,color:"#4a5568",marginTop:10}}>Prepared for <strong style={{color:"#1a1a2e"}}>{clientName}</strong></div>}
                   </div>
-
+                  {/* Key metrics preview */}
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                    {[["Post-Refit Weekly",fmt(C.upliftedWk)],["ROI",pct(C.roi)],["Net Profit",fmt(C.nP)],["Payback",C.pb?C.pb.toFixed(1)+" yrs":"N/A"]].map(([l,v])=>(
+                      <div key={l} style={{background:"#f0f4ff",border:"1px solid #d1d9e6",borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
+                        <div style={{fontSize:9,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
+                        <div style={{fontSize:16,fontWeight:800,color:"#1e3a8a"}}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Short summary from assessor */}
-              <div style={{background:"#f8f9fd",border:"1.5px solid "+G.mid,borderRadius:12,padding:"18px 20px",flex:1}}>
+              <div style={{background:"#f8f9fd",border:"1.5px solid "+"#1e3a8a",borderRadius:12,padding:"18px 20px",flex:1}}>
                 <div style={{fontSize:10,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Assessor's Summary</div>
                 {storeNote ? (
                   <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{storeNote}</p>
@@ -3091,7 +3103,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* Refit Commentary — shown in report if filled in */}
             {refitCommentary&&(
-              <div className="avoid-break" style={{marginBottom:14,padding:"18px 20px",background:"#f8f9fd",border:"1.5px solid "+G.mid,borderRadius:12}}>
+              <div className="avoid-break" style={{marginBottom:14,padding:"18px 20px",background:"#f8f9fd",border:"1.5px solid "+"#1e3a8a",borderRadius:12}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Post-Refit Plan & Expected Benefits</div>
                 <p style={{fontSize:14,color:"#1a1a2e",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{refitCommentary}</p>
               </div>
@@ -3101,7 +3113,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="avoid-break">
               <RPSH c="Executive Summary"/>
               {/* ROI explanation box */}
-              <div style={{background:"#f8f9fd",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:16}}>
+              <div style={{background:"#f8f9fd",border:"1.5px solid "+"#1e3a8a",borderRadius:12,padding:16,marginBottom:16}}>
                 <div style={{fontSize:14,fontWeight:800,color:"#1e3a8a",marginBottom:10}}>What does {pct(C.roi)} ROI mean?</div>
                 <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,marginBottom:10}}>
                   <strong>Return on Investment (ROI)</strong> measures how much profit the business generates each year as a percentage of the total capital invested.
@@ -3163,7 +3175,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     ["Availability / Hours",18,(marketShareData?.scoring?.availabilityScore||16)],
                     ["Customer Service",10,(marketShareData?.scoring?.serviceScore||10)],
                   ].map(([l,max,score],i)=>(
-                    <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?G.card:"#fff",borderBottom:"1px solid "+"#d1d9e6"}}>
+                    <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?"#f8f9fd":"#fff",borderBottom:"1px solid "+"#d1d9e6"}}>
                       <div style={{fontSize:12,color:"#1a1a2e"}}>{l}</div>
                       <div style={{fontSize:12,color:"#4a5568",textAlign:"center"}}>{max}</div>
                       <div style={{fontSize:12,fontWeight:700,color:"#1e3a8a",textAlign:"center"}}>{score}</div>
@@ -3174,7 +3186,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       </div>
                     </div>
                   ))}
-                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"8px 12px",background:"#f0f4ff",borderRadius:"0 0 8px 8px",borderTop:"2px solid "+G.mid}}>
+                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"8px 12px",background:"#f0f4ff",borderRadius:"0 0 8px 8px",borderTop:"2px solid "+"#1e3a8a"}}>
                     <div style={{fontSize:12,fontWeight:700,color:"#1e3a8a"}}>TOTAL SCORE</div>
                     <div style={{fontSize:12,color:"#4a5568",textAlign:"center"}}>136</div>
                     <div style={{fontSize:13,fontWeight:800,color:"#1e3a8a",textAlign:"center"}}>{(marketShareData?.ourScore||118)}</div>
@@ -3286,7 +3298,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <div key={i} style={{padding:"10px 0",borderBottom:i<planningApps.length-1?"1px solid "+"#d1d9e6":"none"}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
                           <div><div style={{fontSize:13,fontWeight:700,color:"#1a1a2e"}}>{pa.desc}</div><div style={{fontSize:12,color:"#4a5568",marginTop:2}}>{pa.ref} · {pa.distance} · {pa.status}</div></div>
-                          <div style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#dde4f5",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,flexShrink:0}}>{pa.risk.toUpperCase()}</div>
+                          <div style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#dde4f5",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?"#b45309":"#1e3a8a",flexShrink:0}}>{pa.risk.toUpperCase()}</div>
                         </div>
                       </div>
                     ))}
@@ -3314,9 +3326,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <div>
                         {competitorList.slice(0,10).map((c,i)=>(
                           <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 0",borderBottom:"1px solid "+"#d1d9e6"}}>
-                            <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid,color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
+                            <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?"#b45309":"#1e3a8a",color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
                             <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:"#1a1a2e"}}>{c.name}</div><div style={{fontSize:11,color:"#4a5568"}}>{c.type}</div></div>
-                            <div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid}}>{c.distance}</div><div style={{fontSize:10,color:"#4a5568"}}>{c.threat} threat</div></div>
+                            <div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?"#b45309":"#1e3a8a"}}>{c.distance}</div><div style={{fontSize:10,color:"#4a5568"}}>{c.threat} threat</div></div>
                           </div>
                         ))}
                       </div>
@@ -3438,7 +3450,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <RPSH c="Local Food Consumption Profile"/>
                 <div style={{background:"#f8f9fd",border:"1px solid "+"#d1d9e6",borderRadius:10,padding:16,marginBottom:16}}>
                   <div style={{fontSize:14,color:"#1a1a2e",lineHeight:1.8,marginBottom:10}}>{foodProfile.summary}</div>
-                  <div style={{padding:"12px 16px",background:"#f0f4ff",borderRadius:8,borderLeft:"3px solid "+G.mid}}>
+                  <div style={{padding:"12px 16px",background:"#f0f4ff",borderRadius:8,borderLeft:"3px solid "+"#1e3a8a"}}>
                     <div style={{fontSize:12,fontWeight:700,color:"#1e3a8a",marginBottom:4}}>Key Ranging Recommendation</div>
                     <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.7}}>{foodProfile.keyInsight}</div>
                   </div>
@@ -3447,10 +3459,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {(foodProfile.topFoods||[]).map((f,i)=>{
                     const above = f.index >= 100;
                     return (
-                      <div key={i} style={{background:above?"#eef1fb":"#f8f9fc",border:"1px solid "+(above?G.mid:"#d1d9e6"),borderRadius:8,padding:12}}>
+                      <div key={i} style={{background:above?"#eef1fb":"#f8f9fc",border:"1px solid "+(above?"#1e3a8a":"#d1d9e6"),borderRadius:8,padding:12}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
                           <div style={{fontSize:12,fontWeight:700,color:"#1a1a2e"}}>{f.category}</div>
-                          <div style={{fontSize:11,fontWeight:800,padding:"2px 6px",borderRadius:4,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
+                          <div style={{fontSize:11,fontWeight:800,padding:"2px 6px",borderRadius:4,background:above?"#1e3a8a":"#c05010",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
                         </div>
                         <div style={{fontSize:10,color:"#4a5568",marginBottom:5,lineHeight:1.4}}>{f.insight}</div>
                         <div style={{fontSize:10,color:"#1e3a8a",fontWeight:600,borderTop:"1px solid "+"#d1d9e6",paddingTop:5}}>→ {f.action}</div>
@@ -3465,9 +3477,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </div>
                 }/>
                 {foodProfile.avoidCategories&&foodProfile.avoidCategories.length>0&&(
-                  <div style={{background:"#fdf8ec",border:"1px solid "+G.orange,borderRadius:8,padding:12}}>
+                  <div style={{background:"#fdf8ec",border:"1px solid "+"#b45309",borderRadius:8,padding:12}}>
                     <div style={{fontSize:11,fontWeight:700,color:"#b45309",marginBottom:6}}>DE-PRIORITISE IN RANGING</div>
-                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{foodProfile.avoidCategories.map((c,i)=><div key={i} style={{padding:"3px 10px",background:"#fff",border:"1px solid "+G.orange,borderRadius:6,fontSize:12,color:"#b45309"}}>{c}</div>)}</div>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{foodProfile.avoidCategories.map((c,i)=><div key={i} style={{padding:"3px 10px",background:"#fff",border:"1px solid "+"#b45309",borderRadius:6,fontSize:12,color:"#b45309"}}>{c}</div>)}</div>
                   </div>
                 )}
                 <div style={{fontSize:11,color:"#4a5568",marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside visit observations.</div>
@@ -3512,10 +3524,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   if(r.type==="gap") return <div key={i} style={{height:8}}/>;
                   if(r.type==="head") return <div key={i} style={{background:"#1e3a8a",padding:"6px 16px",fontSize:11,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".12em"}}>{r.l}</div>;
                   if(r.type==="kv") return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 16px",borderBottom:"1px solid "+"#d1d9e6"}}><span style={{fontSize:13,color:"#4a5568"}}>{r.l}</span><span style={{fontSize:13,fontWeight:700,color:"#1e3a8a"}}>{r.d}</span></div>;
-                  const neg=r.v<0,hiCol=r.v>=0?G.mid:"#d62828";
-                  return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:(r.type==="sub"?"10px":"7px")+" 16px",borderBottom:"1px solid "+"#d1d9e6",background:r.hi?(r.v>=0?"#dde4f5":"#fde8e8"):r.type==="sub"?G.pale:"transparent"}}>
-                    <span style={{fontSize:r.bold?14:13,color:r.bold?G.dark:G.text,fontWeight:r.bold?700:400,paddingLeft:r.type==="row"?12:0}}>{r.l}</span>
-                    <span style={{fontSize:r.bold?15:13,fontWeight:r.bold?700:400,color:r.hi?hiCol:neg?"#c05010":G.dark}}>{neg?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}</span>
+                  const neg=r.v<0,hiCol=r.v>=0?"#1e3a8a":"#d62828";
+                  return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:(r.type==="sub"?"10px":"7px")+" 16px",borderBottom:"1px solid "+"#d1d9e6",background:r.hi?(r.v>=0?"#dde4f5":"#fde8e8"):r.type==="sub"?"#f0f4ff":"transparent"}}>
+                    <span style={{fontSize:r.bold?14:13,color:r.bold?"#0c1024":"#1a1a2e",fontWeight:r.bold?700:400,paddingLeft:r.type==="row"?12:0}}>{r.l}</span>
+                    <span style={{fontSize:r.bold?15:13,fontWeight:r.bold?700:400,color:r.hi?hiCol:neg?"#c05010":"#0c1024"}}>{neg?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}</span>
                   </div>;
                 })}
               </div>
@@ -3542,14 +3554,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {l:"Finance Cost",k:"fin",neg:true},
                       {l:"Net Profit",k:"np",neg:false,hi:true},
                     ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#dde4f5":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+"#d1d9e6"}}>
-                        <td style={{padding:"8px 10px",fontSize:13,fontWeight:dr.hi?700:400,color:dr.hi?G.mid:G.text}}>{dr.l}</td>
-                        {yr5.map((r,j)=>{const val=dr.neg?-r[dr.k]:r[dr.k];const neg=val<0;return <td key={j} style={{padding:"8px",textAlign:"right",fontWeight:dr.hi?700:400,color:neg?"#d62828":dr.hi?G.mid:G.dark,fontSize:13}}>{neg?"("+fmt(Math.abs(val))+")":fmt(val)}</td>;})}
+                      <tr key={i} style={{background:dr.hi?"#dde4f5":dr.sub?"#f0f4ff":i%2===0?"#f8f9fd":"#fff",borderBottom:"1px solid "+"#d1d9e6"}}>
+                        <td style={{padding:"8px 10px",fontSize:13,fontWeight:dr.hi?700:400,color:dr.hi?"#1e3a8a":"#1a1a2e"}}>{dr.l}</td>
+                        {yr5.map((r,j)=>{const val=dr.neg?-r[dr.k]:r[dr.k];const neg=val<0;return <td key={j} style={{padding:"8px",textAlign:"right",fontWeight:dr.hi?700:400,color:neg?"#d62828":dr.hi?"#1e3a8a":"#0c1024",fontSize:13}}>{neg?"("+fmt(Math.abs(val))+")":fmt(val)}</td>;})}
                       </tr>
                     ))}
                     <tr style={{background:"#f0f4ff",borderBottom:"1px solid "+"#d1d9e6"}}>
                       <td style={{padding:"8px 10px",fontSize:13,fontWeight:700,color:"#1e3a8a"}}>Cumulative Net Profit</td>
-                      {[1,2,3,4,5].map(y=>{const cn=cumNp(y);return <td key={y} style={{padding:"8px",textAlign:"right",fontWeight:700,color:cn<0?"#d62828":G.mid,fontSize:13}}>{cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}</td>;})}
+                      {[1,2,3,4,5].map(y=>{const cn=cumNp(y);return <td key={y} style={{padding:"8px",textAlign:"right",fontWeight:700,color:cn<0?"#d62828":"#1e3a8a",fontSize:13}}>{cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}</td>;})}
                     </tr>
                   </tbody>
                 </table>
@@ -3649,9 +3661,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         {row.map((cell,ci)=>{
                           const isBase = cell.fp===0 && cell.rp===0;
                           const bg = isBase?"#dde4f5":cell.roi>=20?"#dde4f5":cell.roi>=10?"#fff4ea":"#fde8e8";
-                          const col = isBase?G.mid:cell.roi>=20?G.mid:cell.roi>=10?G.orange:"#d62828";
+                          const col = isBase?"#1e3a8a":cell.roi>=20?"#1e3a8a":cell.roi>=10?"#b45309":"#d62828";
                           return (
-                            <td key={ci} style={{padding:"8px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:12,border:isBase?"2px solid "+G.mid:"none"}}>
+                            <td key={ci} style={{padding:"8px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:12,border:isBase?"2px solid "+"#1e3a8a":"none"}}>
                               {cell.roi.toFixed(1)}%
                               {isBase&&<div style={{fontSize:9,fontWeight:400}}>BASE</div>}
                             </td>
