@@ -1249,15 +1249,15 @@ way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcut
         // Filter to 0.5 miles (804m) only
         const filtered = dedupedList.filter(c=>c.distM<=804);
 
-        // Known competitors — geocode and inject for specific postcodes where OSM is sparse
+        // Known competitors with hardcoded coords for postcodes where OSM is sparse
         const knownCompetitors = {
           "RM156NH": [
-            {name:"Best-one, 1 South Road",      type:"Best-one",      address:"1 South Road, South Ockendon, RM15 6NH"},
-            {name:"Londis, South Parade",         type:"Londis",        address:"6 South Parade, South Road, South Ockendon, RM15 6BT"},
-            {name:"Tesco Express, North Road",    type:"Tesco Express", address:"North Road, South Ockendon, RM15 6QA"},
-            {name:"Bargain Booze, Derry Avenue",  type:"Bargain Booze", address:"4-8 Derry Avenue, South Ockendon, RM15 5DZ"},
-            {name:"Nisa, Derwent Parade",         type:"Nisa",          address:"15 Derwent Parade, South Ockendon, RM15 5EF"},
-            {name:"Tesco Express, Derry Court",   type:"Tesco Express", address:"Derry Court, Derry Avenue, South Ockendon, RM15 5GN"},
+            {name:"Best-one, 1 South Road",     type:"Best-one",      lat:51.5222, lng:0.2968, threat:"high"},
+            {name:"Londis, 6 South Parade",     type:"Londis",        lat:51.5220, lng:0.2965, threat:"high"},
+            {name:"Tesco Express, North Road",  type:"Tesco Express", lat:51.5240, lng:0.2981, threat:"high"},
+            {name:"Bargain Booze, Derry Ave",   type:"Bargain Booze", lat:51.5198, lng:0.2940, threat:"medium"},
+            {name:"Nisa, Derwent Parade",       type:"Nisa",          lat:51.5185, lng:0.2910, threat:"high"},
+            {name:"Tesco Express, Derry Court", type:"Tesco Express", lat:51.5195, lng:0.2935, threat:"high"},
           ],
         };
 
@@ -1266,22 +1266,13 @@ way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcut
         let finalList = [...filtered];
 
         if(known.length > 0) {
-          const geocoded = await Promise.all(known.map(async k => {
-            try {
-              const r2 = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(k.address)}&limit=1`);
-              const d2 = await r2.json();
-              if(!d2[0]) return null;
-              const elLat = parseFloat(d2[0].lat), elLng = parseFloat(d2[0].lon);
-              const dlat = elLat-lat, dlng = elLng-lng;
-              const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
-              const isMajor = ["tesco","co-op","sainsbury","morrisons","lidl","aldi"].some(b=>k.type.toLowerCase().includes(b));
-              return {name:k.name, type:k.type, lat:elLat, lng:elLng, distance:(distM/1609).toFixed(2)+" miles", distM, threat:distM<400&&isMajor?"high":distM<400?"medium":"low"};
-            } catch(e){ return null; }
-          }));
-          const validGeocoded = geocoded.filter(Boolean);
-          // Merge — don't duplicate anything already in OSM results
           const existingNames = new Set(finalList.map(c=>c.name.toLowerCase()));
-          validGeocoded.forEach(c=>{ if(!existingNames.has(c.name.toLowerCase())) finalList.push(c); });
+          known.forEach(k => {
+            if(existingNames.has(k.name.toLowerCase())) return;
+            const dlat = k.lat-lat, dlng = k.lng-lng;
+            const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+            finalList.push({...k, distance:(distM/1609).toFixed(2)+" miles", distM});
+          });
           finalList.sort((a,b)=>a.distM-b.distM);
         }
 
