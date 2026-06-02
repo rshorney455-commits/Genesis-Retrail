@@ -1107,8 +1107,35 @@ export default function App(){
   },[location]);
 
   // ── Standalone competitor fetch — can be called manually ───────────────────
-  const fetchCompetitors = useCallback(async (lat, lng) => {
+  const fetchCompetitors = useCallback(async (lat, lng, postcode) => {
     if(!lat || !lng) return;
+
+    // Known competitors with hardcoded coords
+    const knownCompetitors = {
+      "RM156NH": [
+        {name:"Best-one, 1 South Road",     type:"Best-one",      lat:51.5222, lng:0.2968, threat:"high"},
+        {name:"Londis, 6 South Parade",     type:"Londis",        lat:51.5220, lng:0.2965, threat:"high"},
+        {name:"Tesco Express, North Road",  type:"Tesco Express", lat:51.5240, lng:0.2981, threat:"high"},
+        {name:"Bargain Booze, Derry Ave",   type:"Bargain Booze", lat:51.5198, lng:0.2940, threat:"medium"},
+        {name:"Nisa, Derwent Parade",       type:"Nisa",          lat:51.5185, lng:0.2910, threat:"high"},
+        {name:"Tesco Express, Derry Court", type:"Tesco Express", lat:51.5195, lng:0.2935, threat:"high"},
+      ],
+    };
+    const pcKey = (postcode||"").replace(/\s/g,"").toUpperCase();
+    const known = knownCompetitors[pcKey] || [];
+
+    // Always inject known competitors immediately
+    if(known.length > 0) {
+      const knownWithDist = known.map(k => {
+        const dlat = k.lat-lat, dlng = k.lng-lng;
+        const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+        return {...k, distance:(distM/1609).toFixed(2)+" miles", distM};
+      }).sort((a,b)=>a.distM-b.distM);
+      setCompetitorList(knownWithDist);
+      setCompetitors(knownWithDist.length);
+      setNearestComp(parseFloat(knownWithDist[0].distance));
+    }
+
     try {
       const overpassQuery = `[out:json][timeout:25];(
 node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
@@ -1629,6 +1656,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
     if(saved.comparables) setComparables(saved.comparables);
     setPostcodeData(saved.mapLat ? {latitude:saved.mapLat,longitude:saved.mapLng} : null);
+    // Re-inject known competitors if list is empty or missing
+    if((!saved.competitorList || saved.competitorList.length===0) && saved.mapLat && saved.postcode) {
+      setTimeout(()=>fetchCompetitors(saved.mapLat, saved.mapLng, saved.postcode), 500);
+    }
     setStep(1);
   },[]);
 
@@ -2509,7 +2540,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{marginBottom:24}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
                   <Sub c="Competitor Map — auto-generated from postcode"/>
-                  <button onClick={()=>fetchCompetitors(mapLat,mapLng)} style={{padding:"6px 12px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>↻ Refresh Competitors</button>
+                  <button onClick={()=>fetchCompetitors(mapLat,mapLng,postcode)} style={{padding:"6px 12px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>↻ Refresh Competitors</button>
                 </div>
                 <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>
                 {competitorList.length>0&&(
