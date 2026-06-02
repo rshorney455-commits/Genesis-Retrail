@@ -1106,11 +1106,11 @@ export default function App(){
     setMissions({...s.missions}); setFhour({...s.fhour});
   },[location]);
 
-  // ── Standalone competitor fetch — can be called manually ───────────────────
+  // ── Standalone competitor fetch using Google Places API ────────────────────
   const fetchCompetitors = useCallback(async (lat, lng, postcode) => {
     if(!lat || !lng) return;
 
-    // Known competitors with hardcoded coords
+    // Known competitors with hardcoded coords for specific postcodes
     const knownCompetitors = {
       "RM156NH": [
         {name:"Best-one, 1 South Road",     type:"Best-one",      lat:51.5222, lng:0.2968, threat:"high"},
@@ -1121,10 +1121,11 @@ export default function App(){
         {name:"Tesco Express, Derry Court", type:"Tesco Express", lat:51.5195, lng:0.2935, threat:"high"},
       ],
     };
+
     const pcKey = (postcode||"").replace(/\s/g,"").toUpperCase();
     const known = knownCompetitors[pcKey] || [];
 
-    // Always inject known competitors immediately
+    // Inject known competitors immediately
     if(known.length > 0) {
       const knownWithDist = known.map(k => {
         const dlat = k.lat-lat, dlng = k.lng-lng;
@@ -1136,37 +1137,46 @@ export default function App(){
       setNearestComp(parseFloat(knownWithDist[0].distance));
     }
 
+    // Google Places API — full UK coverage
     try {
-      const overpassQuery = `[out:json][timeout:25];(
-node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
-way["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
-node["amenity"~"fuel"](around:1500,${lat},${lng});
-way["amenity"~"fuel"](around:1500,${lat},${lng});
-node["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
-way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
-);out center body;`;
-      const ovRes = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`);
-      const ovJson = await ovRes.json();
-      const compList = (ovJson.elements||[]).map((el,i) => {
-        const elLat = el.lat || el.center?.lat;
-        const elLng = el.lon || el.center?.lon;
-        if(!elLat || !elLng) return null;
-        const dlat = elLat - lat, dlng = elLng - lng;
-        const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
-        const name = el.tags?.name || el.tags?.brand || el.tags?.operator || ("Competitor "+(i+1));
-        const brandLower = (name+" "+(el.tags?.brand||"")).toLowerCase();
-        const isMajor = ["tesco","co-op","coop","sainsbury","asda","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","mccoll","booker","iceland","farmfoods"].some(b=>brandLower.includes(b));
-        const shopType = el.tags?.shop || el.tags?.amenity || "store";
-        return { name, type: shopType, lat: elLat, lng: elLng, distance: (distM/1609).toFixed(2)+" miles", distM, threat: distM<400&&isMajor?"high":distM<800&&isMajor?"medium":distM<400?"medium":"low" };
-      }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
-      const seen = new Set();
-      const deduped = compList.filter(c=>{ const k=c.name.toLowerCase().replace(/\s/g,"")+Math.round(c.distM/50); if(seen.has(k)) return false; seen.add(k); return true; }).filter(c=>c.distM<=804).slice(0,15);
-      if(deduped.length>0) {
-        setCompetitorList(deduped);
-        setCompetitors(deduped.length);
-        setNearestComp(parseFloat(deduped[0].distance));
+      const GKEY = "AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s";
+      const types = ["convenience_store","supermarket","grocery_or_supermarket","liquor_store"];
+      const allPlaces = [];
+      for(const type of types) {
+        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=804&type=${type}&key=${GKEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data.results) allPlaces.push(...data.results);
       }
-    } catch(e) { console.log("Competitor fetch failed:", e); }
+      // Deduplicate by place_id
+      const seen = new Set();
+      const unique = allPlaces.filter(p=>{ if(seen.has(p.place_id)) return false; seen.add(p.place_id); return true; });
+      const compList = unique.map(p=>{
+        const elLat = p.geometry.location.lat, elLng = p.geometry.location.lng;
+        const dlat = elLat-lat, dlng = elLng-lng;
+        const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+        const name = p.name;
+        const brandLower = name.toLowerCase();
+        const isMajor = ["tesco","co-op","coop","sainsbury","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","iceland"].some(b=>brandLower.includes(b));
+        return {name, type:p.types?.[0]||"store", lat:elLat, lng:elLng, distance:(distM/1609).toFixed(2)+" miles", distM, threat:distM<400&&isMajor?"high":distM<800&&isMajor?"medium":distM<400?"medium":"low"};
+      }).sort((a,b)=>a.distM-b.distM);
+
+      if(compList.length > 0) {
+        // Merge with known — Google wins on coverage
+        const existingNames = new Set(compList.map(c=>c.name.toLowerCase()));
+        known.forEach(k=>{
+          if(!existingNames.has(k.name.toLowerCase())){
+            const dlat=k.lat-lat,dlng=k.lng-lng;
+            const distM=Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
+            compList.push({...k,distance:(distM/1609).toFixed(2)+" miles",distM});
+          }
+        });
+        compList.sort((a,b)=>a.distM-b.distM);
+        setCompetitorList(compList.slice(0,15));
+        setCompetitors(compList.length);
+        setNearestComp(parseFloat(compList[0].distance));
+      }
+    } catch(e) { console.log("Google Places fetch failed:", e); }
   },[]);
 
   // ── Postcode lookup ──────────────────────────────────────────────────────
@@ -1233,141 +1243,9 @@ way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcut
         console.log("Food profile lookup failed:", e.message);
       }
 
-      // Fetch nearby competitors via Overpass API (OSM) — nodes AND ways, 1500m radius
-      const overpassQuery = `[out:json][timeout:25];(
-node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
-way["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
-node["amenity"~"fuel"](around:1500,${lat},${lng});
-way["amenity"~"fuel"](around:1500,${lat},${lng});
-node["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
-way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
-);out center body;`;
-      try {
-        const ovRes = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`);
-        const ovJson = await ovRes.json();
-        const compList = (ovJson.elements||[]).map((el,i) => {
-          // Ways have center coords, nodes have direct lat/lng
-          const elLat = el.lat || el.center?.lat;
-          const elLng = el.lon || el.center?.lon;
-          if(!elLat || !elLng) return null;
-          const dlat = elLat - lat, dlng = elLng - lng;
-          const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
-          const distMiles = (distM/1609).toFixed(2);
-          const shopType = el.tags?.shop || el.tags?.amenity || "store";
-          const name = el.tags?.name || el.tags?.brand || el.tags?.operator || ("Competitor "+(i+1));
-          const brandLower = (name+" "+(el.tags?.brand||"")).toLowerCase();
-          const isMajor = ["tesco","co-op","coop","sainsbury","asda","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","mccoll","booker","iceland","farmfoods","poundland","heron"].some(b=>brandLower.includes(b));
-          const isLargeMultiple = ["tesco","sainsbury","asda","morrisons","lidl","aldi","iceland"].some(b=>brandLower.includes(b));
-          return {
-            name, type: shopType, lat: elLat, lng: elLng,
-            distance: distMiles+" miles",
-            distM,
-            threat: distM < 400 && (isMajor||isLargeMultiple) ? "high" : distM < 800 && isMajor ? "medium" : distM < 400 ? "medium" : "low"
-          };
-        }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
-        // Deduplicate by name+approximate location
-        const seen = new Set();
-        const dedupedList = compList.filter(c=>{
-          const key = c.name.toLowerCase().replace(/\s/g,"")+Math.round(c.distM/50);
-          if(seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        }).slice(0,15);
-        // Filter to 0.5 miles (804m) only
-        const filtered = dedupedList.filter(c=>c.distM<=804);
+      // Fetch competitors using Google Places API
+      fetchCompetitors(lat, lng, clean);
 
-        // Known competitors with hardcoded coords for postcodes where OSM is sparse
-        const knownCompetitors = {
-          "RM156NH": [
-            {name:"Best-one, 1 South Road",     type:"Best-one",      lat:51.5222, lng:0.2968, threat:"high"},
-            {name:"Londis, 6 South Parade",     type:"Londis",        lat:51.5220, lng:0.2965, threat:"high"},
-            {name:"Tesco Express, North Road",  type:"Tesco Express", lat:51.5240, lng:0.2981, threat:"high"},
-            {name:"Bargain Booze, Derry Ave",   type:"Bargain Booze", lat:51.5198, lng:0.2940, threat:"medium"},
-            {name:"Nisa, Derwent Parade",       type:"Nisa",          lat:51.5185, lng:0.2910, threat:"high"},
-            {name:"Tesco Express, Derry Court", type:"Tesco Express", lat:51.5195, lng:0.2935, threat:"high"},
-          ],
-        };
-
-        const postcodeKey = clean.replace(/\s/g,"");
-        const known = knownCompetitors[postcodeKey] || [];
-        let finalList = [...filtered];
-
-        if(known.length > 0) {
-          const existingNames = new Set(finalList.map(c=>c.name.toLowerCase()));
-          known.forEach(k => {
-            if(existingNames.has(k.name.toLowerCase())) return;
-            const dlat = k.lat-lat, dlng = k.lng-lng;
-            const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
-            finalList.push({...k, distance:(distM/1609).toFixed(2)+" miles", distM});
-          });
-          finalList.sort((a,b)=>a.distM-b.distM);
-        }
-
-        setCompetitorList(finalList);
-        setCompetitors(finalList.length);
-        if(finalList.length>0) setNearestComp(parseFloat(finalList[0].distance));
-
-        // If OSM returned fewer than 3 results, try Google Places as fallback
-        if(filtered.length < 3) {
-          try {
-            const placesUrl = `https://nominatim.openstreetmap.org/search?format=json&limit=20&q=convenience+store+supermarket+off+licence&bounded=1&viewbox=${lng-0.01},${lat+0.007},${lng+0.01},${lat-0.007}`;
-            const pRes = await fetch(placesUrl);
-            const pJson = await pRes.json();
-            const extraList = (pJson||[]).map((p,i)=>{
-              const elLat = parseFloat(p.lat), elLng = parseFloat(p.lon);
-              const dlat = elLat-lat, dlng = elLng-lng;
-              const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
-              if(distM>804) return null;
-              const name = p.display_name?.split(",")[0]||"Store "+(i+1);
-              return {name,type:"convenience",lat:elLat,lng:elLng,distance:(distM/1609).toFixed(2)+" miles",distM,threat:distM<400?"medium":"low"};
-            }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
-            if(extraList.length > filtered.length) {
-              setCompetitorList(extraList.slice(0,15));
-              setCompetitors(extraList.length);
-              if(extraList.length>0) setNearestComp(parseFloat(extraList[0].distance));
-            }
-          } catch(e2) { /* fallback unavailable */ }
-        }
-      } catch(e) { /* OSM may be unavailable, silently skip */ }
-
-      // Real planning applications from PlanIt API — retail only
-      try {
-        const retailTerms = "convenience+supermarket+retail+food+store+off+licence+newsagent+forecourt+A1+takeaway";
-        const planItUrl = `https://api.planit.org.uk/v3/applications?lng=${longitude}&lat=${latitude}&radius=800&pg_sz=50&format=json`;
-        const planRes = await fetch(planItUrl);
-        const planJson = await planRes.json();
-        const retailKeywords = ["convenience","supermarket","retail","a1","food store","forecourt","off licence","newsagent","express","local","shop","store","takeaway","restaurant","cafe","hot food","off-licence","alcohol","drinks"];
-        const allApps = planJson.records || [];
-        const filtered = allApps
-          .filter(app => {
-            const desc = (app.description || app.development_type || "").toLowerCase();
-            return retailKeywords.some(k => desc.includes(k));
-          })
-          .slice(0, 8)
-          .map(app => {
-            const desc = app.description || app.development_type || "Planning application";
-            const status = app.status || "Unknown";
-            const ref = app.uid || app.reference || "N/A";
-            // Calculate distance
-            const dlat = (app.lat||latitude) - latitude;
-            const dlng = (app.lng||longitude) - longitude;
-            const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
-            const distMiles = (distM/1609).toFixed(2);
-            const descLower = desc.toLowerCase();
-            const isHighRisk = descLower.includes("supermarket")||descLower.includes("convenience store")||descLower.includes("food store")||descLower.includes("retail unit");
-            return {
-              ref, desc: desc.length > 120 ? desc.substring(0,120)+"..." : desc,
-              status, distance: distMiles+" miles",
-              risk: isHighRisk ? "high" : "medium"
-            };
-          });
-        setPlanningApps(filtered);
-      } catch(e) {
-        // PlanIt unavailable — set empty
-        setPlanningApps([]);
-      }
-
-      // VOA rates estimate based on sqft and region
       const rateMultiplier = region.includes("london") ? 55 : region.includes("south east") ? 42 : 32;
       setRates(Math.round((sqft * rateMultiplier) / 100) * 100);
 
