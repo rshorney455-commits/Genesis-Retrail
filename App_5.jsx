@@ -1106,6 +1106,42 @@ export default function App(){
     setMissions({...s.missions}); setFhour({...s.fhour});
   },[location]);
 
+  // ── Standalone competitor fetch — can be called manually ───────────────────
+  const fetchCompetitors = useCallback(async (lat, lng) => {
+    if(!lat || !lng) return;
+    try {
+      const overpassQuery = `[out:json][timeout:25];(
+node["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
+way["shop"~"convenience|supermarket|off_licence|alcohol|newsagent|grocery|frozen_food|general"](around:1500,${lat},${lng});
+node["amenity"~"fuel"](around:1500,${lat},${lng});
+way["amenity"~"fuel"](around:1500,${lat},${lng});
+node["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
+way["brand"~"Tesco|Co-op|Sainsbury|Nisa|Spar|Morrisons|Lidl|Aldi|Premier|Costcutter|One Stop|Londis|Budgens|Bargain Booze|McColl|Booker"](around:1500,${lat},${lng});
+);out center body;`;
+      const ovRes = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`);
+      const ovJson = await ovRes.json();
+      const compList = (ovJson.elements||[]).map((el,i) => {
+        const elLat = el.lat || el.center?.lat;
+        const elLng = el.lon || el.center?.lon;
+        if(!elLat || !elLng) return null;
+        const dlat = elLat - lat, dlng = elLng - lng;
+        const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320 + dlng*dlng*103000*103000));
+        const name = el.tags?.name || el.tags?.brand || el.tags?.operator || ("Competitor "+(i+1));
+        const brandLower = (name+" "+(el.tags?.brand||"")).toLowerCase();
+        const isMajor = ["tesco","co-op","coop","sainsbury","asda","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","mccoll","booker","iceland","farmfoods"].some(b=>brandLower.includes(b));
+        const shopType = el.tags?.shop || el.tags?.amenity || "store";
+        return { name, type: shopType, lat: elLat, lng: elLng, distance: (distM/1609).toFixed(2)+" miles", distM, threat: distM<400&&isMajor?"high":distM<800&&isMajor?"medium":distM<400?"medium":"low" };
+      }).filter(Boolean).sort((a,b)=>a.distM-b.distM);
+      const seen = new Set();
+      const deduped = compList.filter(c=>{ const k=c.name.toLowerCase().replace(/\s/g,"")+Math.round(c.distM/50); if(seen.has(k)) return false; seen.add(k); return true; }).filter(c=>c.distM<=804).slice(0,15);
+      if(deduped.length>0) {
+        setCompetitorList(deduped);
+        setCompetitors(deduped.length);
+        setNearestComp(parseFloat(deduped[0].distance));
+      }
+    } catch(e) { console.log("Competitor fetch failed:", e); }
+  },[]);
+
   // ── Postcode lookup ──────────────────────────────────────────────────────
   const doPostcodeLookup = useCallback(async (pc) => {
     const clean = pc.replace(/\s/g,"").toUpperCase();
@@ -1465,6 +1501,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   });
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
+  const isLoading = useRef(false);
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1498,6 +1535,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   // ── Autosave — always fires, no propName requirement ────────────────────────
   useEffect(()=>{
     const timer = setTimeout(()=>{
+      if(isLoading.current) return; // don't overwrite during load
       try {
         const state = gatherState();
         delete state.cats;
@@ -1525,6 +1563,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[]);
 
   const loadAssessment = useCallback((saved)=>{
+    isLoading.current = true;
+    setTimeout(()=>{ isLoading.current = false; }, 4000);
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
@@ -2439,7 +2479,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Competitor Map */}
             {mapLat && (
               <div style={{marginBottom:24}}>
-                <Sub c="Competitor Map — auto-generated from postcode"/>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                  <Sub c="Competitor Map — auto-generated from postcode"/>
+                  <button onClick={()=>fetchCompetitors(mapLat,mapLng)} style={{padding:"6px 12px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>↻ Refresh Competitors</button>
+                </div>
                 <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>
                 {competitorList.length>0&&(
                   <div style={{marginTop:12}}>
