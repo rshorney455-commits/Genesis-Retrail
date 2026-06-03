@@ -281,7 +281,7 @@ function AISection({ prompt, label }) {
       setText(output);
       setDone(true);
     } catch(e) {
-      setText("Unable to generate — please try again.");
+      setText("");
       setDone(true);
     } finally {
       setLoading(false);
@@ -1325,7 +1325,7 @@ export default function App(){
       {name:"Premier",  score:5, desc:"Flexible terms, strong tobacco and impulse range"},
       {name:"Londis",   score:5, desc:"Good value, strong BWS range, flexible ordering"},
     ];
-    return {wk,ann,upliftedWk,upliftedAnn,blGP,annGP,stf,annC,ti,mp,af,eb,nP,roi,pb,spf:wk/sqft,upliftedSpf:upliftedWk/sqft,pen:(footfall*365)/catchmentPop*100,yr1Q,priceIndex,refitCost,stockCost,symGroups};
+    return {wk,ann,upliftedWk,upliftedAnn,blGP,annGP,stf,annC,ti,mp,af,eb,nP,roi,pb,spf:sqft>0?wk/sqft:0,upliftedSpf:sqft>0?upliftedWk/sqft:0,pen:catchmentPop>0?Math.min((footfall*365)/catchmentPop*100,100):0,yr1Q,priceIndex,refitCost,stockCost,symGroups};
     } catch(e) {
       console.error("C calc error:", e);
       return {wk:0,ann:0,upliftedWk:0,upliftedAnn:0,blGP:25,annGP:0,stf:0,annC:0,ti:0,mp:0,af:0,eb:0,nP:0,roi:0,pb:null,spf:0,upliftedSpf:0,pen:0,yr1Q:[],priceIndex:4,refitCost:0,stockCost:0,
@@ -2269,6 +2269,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
                 <div style={{fontSize:16,fontWeight:700,color:G.mid,marginBottom:6}}>{pct(C.pen)}</div>
+                {C.pen>=99&&<div style={{fontSize:10,color:"#b45309",background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab — this figure may reflect incomplete data.</div>}
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
                   <strong style={{color:G.mid}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
                   <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?G.orange:"#c05010"}}>{C.pen>=20?"✓ Strong — well above the 15% target":C.pen>=15?"✓ Good — meets the 15% benchmark":C.pen>=10?"⚠ Below target — aim for 15%+ with good ranging":"✗ Low — consider whether catchment is large enough"}</span>
@@ -2558,7 +2559,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
-                {comp.sqft>0&&comp.weeklyT>0&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
+                {comp.sqft>0&&comp.weeklyT>0&&comp.sqft>=100&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
               </div>
             ))}
           </div>
@@ -3352,7 +3353,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {[
                         ["Weekly Turnover",c.weeklyT>0?fmt(c.weeklyT):"Not stated"],
                         ["Store Size",c.sqft>0?c.sqft.toLocaleString()+" sq ft":"Not stated"],
-                        ["Sales Density",c.sqft>0&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2)+"/sqft/wk":"—"],
+                        ["Sales Density",c.sqft>=100&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2)+"/sqft/wk":"—"],
                       ].map(([l,v])=>(
                         <div key={l} style={{textAlign:"center",background:"#fff",border:"1px solid "+"#d1d9e6",borderRadius:8,padding:"10px 8px"}}>
                           <div style={{fontSize:10,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
@@ -3520,7 +3521,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {type:"kv",l:"Net Margin",d:pct(C.nP/C.upliftedAnn*100)},
                   {type:"kv",l:"Return on Investment",d:pct(C.roi)},
                   {type:"kv",l:"Payback Period",d:C.pb?(C.pb||0).toFixed(1)+" years":"N/A"},
-                  {type:"kv",l:"Sales per Sq Ft weekly",d:"£"+(C.spf||0).toFixed(2)},
+                  {type:"kv",l:"Sales per Sq Ft weekly (post-refit)",d:"£"+(C.upliftedSpf||0).toFixed(2)},
                 ].map((r,i)=>{
                   if(r.type==="gap") return <div key={i} style={{height:8}}/>;
                   if(r.type==="head") return <div key={i} style={{background:"#1e3a8a",padding:"6px 16px",fontSize:11,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".12em"}}>{r.l}</div>;
