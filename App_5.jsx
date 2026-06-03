@@ -3725,7 +3725,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 </div>
                 <div style={{textAlign:"right",fontSize:11,color:"#4a5568"}}>
                   <div style={{fontWeight:600,color:"#1e3a8a"}}>Richard Shorney</div>
-                  <div>rshorney455@gmail.com</div>
+                  <div>richard@genesisretail.uk</div>
                 </div>
               </div>
             </div>{/* end pdfRef */}
@@ -3796,7 +3796,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:12,color:"#e0e8ff",lineHeight:1.8}}>
                   This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from the projections contained herein. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification. The contents of this report are confidential and must not be reproduced or distributed without the prior written consent of Genesis Retail.
                 </div>
-                <div style={{fontSize:11,color:"#8fa8d8",marginTop:10}}>© Genesis Retail {new Date().getFullYear()} · Richard Shorney · rshorney455@gmail.com</div>
+                <div style={{fontSize:11,color:"#8fa8d8",marginTop:10}}>© Genesis Retail {new Date().getFullYear()} · Richard Shorney · richard@genesisretail.uk</div>
               </div>
             </div>
           </div>
