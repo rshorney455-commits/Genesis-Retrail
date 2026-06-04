@@ -1921,10 +1921,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       {/* Header nav */}
       <div className="no-print" style={{background:"#0c1024",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-          <div>
-            <div style={{fontSize:11,letterSpacing:".18em",color:"#2d55c8",textTransform:"uppercase",marginBottom:3}}>Convenience Retail</div>
-            <div style={{fontSize:21,fontWeight:700,color:"#fff",lineHeight:1.2,letterSpacing:".02em"}}>Site Viability Assessor</div>
-            {propName&&<div style={{fontSize:13,color:"#8fa8d8",marginTop:2}}>{propName}{postcode?" · "+postcode:""}</div>}
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <img src="https://genesis-retail-website.vercel.app/logo.jpg" alt="Genesis Retail" style={{height:44,width:"auto",objectFit:"contain",borderRadius:4}}/>
+            <div>
+              <div style={{fontSize:13,fontWeight:600,color:"#8fa8d8",letterSpacing:".04em"}}>Site Viability Assessor</div>
+              {propName&&<div style={{fontSize:12,color:"#5a6fa8",marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
+            </div>
           </div>
           <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4}}>
             <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
