@@ -1,3 +1,31 @@
+/**
+ * ============================================================================
+ * GENESIS RETAIL — SITE VIABILITY ASSESSMENT TOOL
+ * ============================================================================
+ * Copyright © 2026 Richard Shorney, Genesis Retail.
+ * All rights reserved.
+ *
+ * This software and its source code are the exclusive intellectual property
+ * of Richard Shorney, trading as Genesis Retail (genesisretail.uk).
+ *
+ * The financial methodology, calculation logic, sector benchmarks, commentary
+ * system, report structure and all other components of this tool are
+ * proprietary and confidential.
+ *
+ * STRICTLY PROHIBITED without prior written consent:
+ *   - Copying, reproducing or distributing this code
+ *   - Reverse engineering the methodology or calculations
+ *   - Using this tool or its outputs to develop a competing product
+ *   - Removing or altering this copyright notice
+ *
+ * Unauthorised use constitutes infringement of copyright and may result in
+ * civil and/or criminal liability under the Copyright, Designs and Patents
+ * Act 1988 and applicable law.
+ *
+ * Contact: rshorney@genesisretail.uk | www.genesisretail.uk
+ * ============================================================================
+ */
+
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 // ── Sector averages by location type ─────────────────────────────────────────
@@ -289,6 +317,22 @@ function AISection({ prompt, label }) {
   },[prompt]);
 
   useEffect(()=>{ generate(); },[]);
+
+  // ── IP Protection ────────────────────────────────────────────────────────────
+  useEffect(()=>{
+    // Console copyright notice
+    console.log('%c© Genesis Retail 2026 — Proprietary Software', 'color:#1a3c2e;font-size:16px;font-weight:bold');
+    console.log('%cUnauthorised copying, reverse engineering or reproduction of this tool is strictly prohibited.', 'color:#d62828;font-size:12px');
+    console.log('%cContact: rshorney@genesisretail.uk', 'color:#b8960c;font-size:12px');
+    // Disable right-click on report
+    const handleContext = e => {
+      if(e.target.closest('.pdf-wrapper')) e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContext);
+    return () => document.removeEventListener('contextmenu', handleContext);
+  },[]);
+
+
 
   return (
     <div style={{marginBottom:16}}>
