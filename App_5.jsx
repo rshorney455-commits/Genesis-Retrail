@@ -1478,6 +1478,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   });
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
+  const [saveStatus, setSaveStatus] = useState("saved"); // "saved" | "saving" | "error" | "offline"
+  const saveTimeoutRef = useRef();
   const isLoading = useRef(false);
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1525,9 +1527,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       setSavedAssessments(existing.slice(0,20));
       if(!navigator.onLine){
         localStorage.setItem("pendingAssessment", JSON.stringify(state));
+        setSaveStatus("offline");
         setLastSaved("📵 Offline — saved locally");
         return;
       }
+      setSaveStatus("saving");
       setLastSaved("Saving...");
       const n=encodeURIComponent(state.propName||"draft"), p=encodeURIComponent(state.postcode||"");
       const chk = await sbQ(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
@@ -1538,8 +1542,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         : await sbQ("assessments",{method:"POST",body});
       if(res.ok){
         localStorage.removeItem("pendingAssessment");
+        setSaveStatus("saved");
         setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
       } else {
+        setSaveStatus("error");
         setLastSaved("⚠ Saved locally (cloud error "+res.status+")");
       }
     } catch(e){
@@ -1551,8 +1557,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   // 4. Debounced autosave — no deps = fires after every render, 2s debounce
   useEffect(()=>{
-    const timeout = setTimeout(()=>{ saveToCloud(latestStateRef.current); }, 2000);
-    return ()=>clearTimeout(timeout);
+    clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(async()=>{
+      try {
+        await saveToCloud(latestStateRef.current);
+        setSaveStatus("saved");
+      } catch(err) {
+        setSaveStatus("error");
+        console.error("Autosave error:", err);
+      }
+    }, 2000);
+    return ()=>clearTimeout(saveTimeoutRef.current);
   });
 
   // 5. Save on tab close + sync pending on reconnect
