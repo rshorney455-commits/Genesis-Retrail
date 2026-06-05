@@ -1581,9 +1581,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
+        setLastSaved("Saving...");
         // Save to Supabase
         sbSave(state.propName, state.postcode, state).then(ok=>{
           setLastSaved((ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+        }).catch(()=>{
+          setLastSaved("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
         });
       } catch(e){ console.error("Autosave error:",e); }
     }, 1500);
@@ -1962,7 +1965,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               🔒 Share
             </button>
             <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}}>⚙</button>
-            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>Saving...</div>}
+            {lastSaved?<div style={{fontSize:10,color:lastSaved.startsWith("☁")?"#4ade80":lastSaved.startsWith("⚠")?"#f87171":"#4ade80",alignSelf:"center",flexShrink:0}}>{lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>Saving...</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
