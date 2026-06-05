@@ -37,12 +37,15 @@ const sbSave = async (propName,postcode,data) => {
   try {
     const n=encodeURIComponent(propName||"draft"), p=encodeURIComponent(postcode||"");
     const chk=await sbFetch(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+    if(!chk.ok){const t=await chk.text();console.error("SB check failed:",chk.status,t);return false;}
     const ex=await chk.json();
     const body=JSON.stringify({prop_name:propName||"draft",postcode:postcode||"",data,updated_at:new Date().toISOString()});
-    if(Array.isArray(ex)&&ex.length>0){await sbFetch(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});}
-    else{await sbFetch("assessments",{method:"POST",body});}
+    let res;
+    if(Array.isArray(ex)&&ex.length>0){res=await sbFetch(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});}
+    else{res=await sbFetch("assessments",{method:"POST",body});}
+    if(!res.ok){const t=await res.text();console.error("SB write failed:",res.status,t);return false;}
     return true;
-  } catch(e){console.error("SB save:",e);return false;}
+  } catch(e){console.error("SB save exception:",e.message);return false;}
 };
 const sbLoad = async () => {
   try {
