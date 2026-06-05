@@ -1629,14 +1629,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const saveAssessment = saveDraft;
 
 
-  // ── saveTick — increments on every render, triggers debounced save ─────────
-  const saveTick = useRef(0);
+  // ── Debounced autosave — runs after every render, 2s debounce ───────────────
+  // No deps: fires on every render. Cleanup cancels pending timeout.
+  // Each render resets the clock — only saves after 2s of inactivity.
   useEffect(()=>{
-    saveTick.current += 1;
-    const tick = saveTick.current;
     setHasUnsavedChanges(true);
     const timeout = setTimeout(()=>{
-      if(saveTick.current !== tick) return; // superseded by newer change
       saveDraft(latestStateRef.current);
       setHasUnsavedChanges(false);
     }, 2000);
