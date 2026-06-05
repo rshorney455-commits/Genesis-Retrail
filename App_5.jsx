@@ -1523,6 +1523,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[]);
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const setLastSavedRef = useRef(setLastSaved);
   useEffect(()=>{ setLastSavedRef.current = setLastSaved; },[setLastSaved]);
   const isLoading = useRef(false);
@@ -1616,7 +1617,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   // ── Debounced autosave — fires 2s after any state change ─────────────────
   useEffect(()=>{
-    const timeout = setTimeout(()=>{ saveDraft(currentAssessment); }, 2000);
+    setHasUnsavedChanges(true);
+    const timeout = setTimeout(()=>{
+      saveDraft(currentAssessment);
+      setHasUnsavedChanges(false);
+    }, 2000);
     return ()=>clearTimeout(timeout);
   },[currentAssessment]);
 
@@ -1627,12 +1632,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     return ()=>window.removeEventListener("pagehide", handler);
   },[]);
 
-  // ── Warn before closing/refreshing ──────────────────────────────────────────
+  // ── Warn before closing if unsaved changes ───────────────────────────────
   useEffect(()=>{
-    const handler = (e)=>{ e.preventDefault(); e.returnValue=""; };
+    const handler = (e)=>{
+      if(hasUnsavedChanges){
+        e.preventDefault();
+        e.returnValue="";
+      }
+    };
     window.addEventListener("beforeunload", handler);
     return ()=>window.removeEventListener("beforeunload", handler);
-  },[]);
+  },[hasUnsavedChanges]);
 
   const loadAssessment = useCallback((saved)=>{
     isLoading.current = true;
