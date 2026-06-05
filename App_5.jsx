@@ -1572,6 +1572,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   }
 
   async function saveDraft(rawState) {
+    console.log("Autosave payload", latestStateRef.current);
     if(savingRef.current) return;
     savingRef.current = true;
     try {
