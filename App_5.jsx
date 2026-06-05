@@ -35,7 +35,7 @@ const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const SB_HDR = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json","Prefer":"return=representation"};
 const sbFetch = (path, opts={}) => fetch(SB_URL+"/rest/v1/"+path, {...opts, headers:{...SB_HDR,...(opts.headers||{})}});
 
-async function sbSave(propName, postcode, data) {
+window.sbSave = async function sbSave(propName, postcode, data) {
   try {
     const name = encodeURIComponent(propName||"draft");
     const pc = encodeURIComponent(postcode||"");
@@ -51,7 +51,7 @@ async function sbSave(propName, postcode, data) {
   } catch(e) { console.error("SB save:",e); return false; }
 }
 
-async function sbLoad() {
+window.sbLoad = async function sbLoad() {
   try {
     const res = await sbFetch("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
     const rows = await res.json();
@@ -60,7 +60,7 @@ async function sbLoad() {
   } catch(e) { console.error("SB load:",e); return []; }
 }
 
-async function sbDelete(id) {
+window.sbDelete = async function sbDelete(id) {
   try { await sbFetch(`assessments?id=eq.${id}`, {method:"DELETE"}); return true; }
   catch(e) { return false; }
 }
