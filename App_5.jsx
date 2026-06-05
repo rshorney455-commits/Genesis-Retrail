@@ -1526,6 +1526,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const setLastSavedRef = useRef(setLastSaved);
   useEffect(()=>{ setLastSavedRef.current = setLastSaved; },[setLastSaved]);
   const isLoading = useRef(false);
+  const latestStateRef = useRef({});
+  // Keep latestStateRef always current — runs after every render
+  useEffect(()=>{ latestStateRef.current = gatherState(); });
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
@@ -1556,67 +1559,61 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — interval-based, fires every 3 seconds ───────────────────────
+  // ── Autosave — interval reads from latestStateRef, no stale closure ─────────
   useEffect(()=>{
-    const timer = setInterval(()=>{
+    const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
+    const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+    const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
+    const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
+
+    const timer = setInterval(async()=>{
       try {
-        // DIAGNOSTIC Q1: Does the interval fire?
-        console.log("[SB-DIAG] 1. Interval fired at", new Date().toISOString());
-
-        const state = gatherState();
-        delete state.cats;
+        // Always read fresh state from ref — no stale closure
+        const state = {...latestStateRef.current};
         if(!state.propName) state.propName = state.postcode || "draft";
+        if(!state.propName || state.propName === "draft" && !state.postcode) return;
+        delete state.cats;
 
-        // DIAGNOSTIC Q3: What data is gathered?
-        console.log("[SB-DIAG] 3. Gathered state — propName:", state.propName, "postcode:", state.postcode, "keys:", Object.keys(state).length);
-
+        // 1. localStorage backup first
         const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-        const idx = existing.findIndex(a=>
-          (state.propName && a.propName===state.propName) ||
-          (!state.propName && state.postcode && a.postcode===state.postcode)
-        );
+        const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
-        setLastSavedRef.current("Saving...");
-        (async()=>{
-          try {
-            const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
-            const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-            const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
-            const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
-            const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
-            const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
-            const ex=await chk.json();
-            // DIAGNOSTIC Q2: What ID is found?
-            console.log("[SB-DIAG] 2. Existing Supabase record:", ex);
-            const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
-            let res;
-            if(Array.isArray(ex)&&ex.length>0){
-              res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});
-            } else {
-              res=await sb("assessments",{method:"POST",body});
-            }
-            // DIAGNOSTIC Q4: Did the write succeed?
-            const resText = await res.clone().text();
-            console.log("[SB-DIAG] 4. Write status:", res.status, "ok:", res.ok, "response:", resText.substring(0,100));
-            // DIAGNOSTIC Q5 & Q6: Update indicator
-            if(res.ok){
-              console.log("[SB-DIAG] 5. Write succeeded — calling setLastSavedRef");
-              setLastSavedRef.current("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-            } else {
-              console.log("[SB-DIAG] 6. Write FAILED — status", res.status);
-              setLastSavedRef.current("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-            }
-          } catch(e){
-            console.error("[SB-DIAG] EXCEPTION in Supabase save:",e.message);
-            setLastSavedRef.current("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-          }
-        })();
-      } catch(e){ console.error("[SB-DIAG] EXCEPTION in interval:",e.message); }
-    }, 3000);
-    return ()=>clearInterval(timer);
-  },[gatherState]);
+
+        // 2. Supabase save
+        setLastSaved("Saving...");
+        const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
+        const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+        const ex=await chk.json();
+        const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+        let res;
+        if(Array.isArray(ex)&&ex.length>0){
+          res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});
+        } else {
+          res=await sb("assessments",{method:"POST",body});
+        }
+        setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } catch(e){
+        console.error("Autosave error:",e.message);
+        setLastSaved("⚠ "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      }
+    }, 5000);
+
+    // Save on tab close/refresh
+    const handleUnload = async()=>{
+      const state = {...latestStateRef.current};
+      if(!state.propName) return;
+      delete state.cats;
+      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+      const idx = existing.findIndex(a=>a.propName===state.propName);
+      if(idx>=0) existing[idx]=state; else existing.unshift(state);
+      localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+    };
+    window.addEventListener("pagehide", handleUnload);
+
+    return ()=>{ clearInterval(timer); window.removeEventListener("pagehide", handleUnload); };
+  },[]);
 
   // ── Warn before closing/refreshing ──────────────────────────────────────────
   useEffect(()=>{
