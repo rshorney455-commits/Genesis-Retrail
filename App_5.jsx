@@ -1565,6 +1565,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const saveToCloud = saveDraft;
   const saveAssessment = ()=>saveDraft(latestStateRef.current);
 
+  // Crash recovery — restore last draft on mount
+  useEffect(()=>{
+    const draft = localStorage.getItem("genesis-assessment-draft");
+    if(!draft) return;
+    try {
+      loadAssessment(JSON.parse(draft));
+    } catch(e) {
+      console.error("Draft restore failed:", e);
+    }
+  },[]);
+
 
 
 
