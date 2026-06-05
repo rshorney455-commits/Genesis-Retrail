@@ -1491,6 +1491,110 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PERSISTENCE LAYER
+  // React State → gatherState() → latestStateRef → localStorage → Supabase
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const SBU = "https://drtpeodthflxkzjgbfvu.supabase.co";
+  const SBK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+  const sbH = {"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
+  const sbQ = (path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:sbH});
+
+  // 1. latestStateRef — always holds current state, updated after every render
+  const latestStateRef = useRef(null);
+
+  // 2. After every render: capture fresh state + instant localStorage backup
+  useEffect(()=>{
+    const state = gatherState();
+    latestStateRef.current = state;
+    if(state.propName || state.postcode){
+      try { localStorage.setItem("genesisDraft", JSON.stringify(state)); } catch(e){}
+    }
+  });
+
+  // 3. Cloud save function
+  const isSavingRef = useRef(false);
+  const saveToCloud = async (state) => {
+    if(!state || (!state.propName && !state.postcode)) return;
+    if(isSavingRef.current) return;
+    isSavingRef.current = true;
+    try {
+      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+      const i = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
+      if(i>=0) existing[i]=state; else existing.unshift(state);
+      localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+      setSavedAssessments(existing.slice(0,20));
+      if(!navigator.onLine){
+        localStorage.setItem("pendingAssessment", JSON.stringify(state));
+        setLastSaved("📵 Offline — saved locally");
+        return;
+      }
+      setLastSaved("Saving...");
+      const n=encodeURIComponent(state.propName||"draft"), p=encodeURIComponent(state.postcode||"");
+      const chk = await sbQ(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+      const ex = await chk.json();
+      const body = JSON.stringify({prop_name:state.propName||"draft",postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+      const res = Array.isArray(ex)&&ex.length>0
+        ? await sbQ(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
+        : await sbQ("assessments",{method:"POST",body});
+      if(res.ok){
+        localStorage.removeItem("pendingAssessment");
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } else {
+        setLastSaved("⚠ Saved locally (cloud error "+res.status+")");
+      }
+    } catch(e){
+      setLastSaved("⚠ Saved locally ("+e.message+")");
+    } finally {
+      isSavingRef.current = false;
+    }
+  };
+
+  // 4. Debounced autosave — no deps = fires after every render, 2s debounce
+  useEffect(()=>{
+    const timeout = setTimeout(()=>{ saveToCloud(latestStateRef.current); }, 2000);
+    return ()=>clearTimeout(timeout);
+  });
+
+  // 5. Save on tab close + sync pending on reconnect
+  useEffect(()=>{
+    const onHide = ()=>saveToCloud(latestStateRef.current);
+    const onOnline = ()=>{ const p=localStorage.getItem("pendingAssessment"); if(p){try{saveToCloud(JSON.parse(p));}catch(e){}} };
+    window.addEventListener("pagehide",onHide);
+    window.addEventListener("online",onOnline);
+    return ()=>{ window.removeEventListener("pagehide",onHide); window.removeEventListener("online",onOnline); };
+  },[]);
+
+  // 6. Warn on close if mid-save
+  useEffect(()=>{
+    const handler=(e)=>{ if(lastSaved==="Saving..."){ e.preventDefault(); e.returnValue=""; } };
+    window.addEventListener("beforeunload",handler);
+    return ()=>window.removeEventListener("beforeunload",handler);
+  },[lastSaved]);
+
+  // 7. Load from Supabase on mount, merge with localStorage
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const res = await sbQ("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
+        const rows = await res.json();
+        if(!Array.isArray(rows)||!rows.length) return;
+        const remote = rows.map(r=>({...r.data,propName:r.prop_name,postcode:r.postcode,savedAt:r.updated_at,sbId:r.id}));
+        const local = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const merged = [...remote];
+        local.forEach(l=>{ if(!merged.find(r=>r.propName===l.propName&&r.postcode===l.postcode)) merged.push(l); });
+        merged.sort((a,b)=>new Date(b.savedAt||0)-new Date(a.savedAt||0));
+        setSavedAssessments(merged.slice(0,50));
+        localStorage.setItem("genesis_assessments",JSON.stringify(merged.slice(0,20)));
+      } catch(e){ console.error("Supabase load:",e.message); }
+    })();
+  },[]);
+
+  const saveAssessment = ()=>saveToCloud(latestStateRef.current);
+
+
+
 
 
   const loadAssessment = useCallback((saved)=>{
