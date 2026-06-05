@@ -1098,6 +1098,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
 export default function App(){
   const [step,setStep]=useState(0);
+  const [_saveTick,_setSaveTick]=useState(0);
   // pdfLoading removed — now using native window.print()
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
@@ -1553,9 +1554,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — always fires, no propName requirement ────────────────────────
+  // ── Autosave — interval-based, fires every 3 seconds ───────────────────────
   useEffect(()=>{
-    const timer = setTimeout(()=>{
+    const timer = setInterval(()=>{
       if(isLoading.current) return; // don't overwrite during load
       try {
         const state = gatherState();
@@ -1591,8 +1592,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           }
         })();
       } catch(e){}
-    }, 2000);
-    return ()=>clearTimeout(timer);
+    }, 3000);
+    return ()=>clearInterval(timer);
   },[gatherState]);
 
   // ── Warn before closing/refreshing ──────────────────────────────────────────
