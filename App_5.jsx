@@ -1821,8 +1821,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         .page-break{page-break-before:always;break-before:page;padding-top:24px}
         .avoid-break{page-break-inside:avoid;break-inside:avoid}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
-        .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
         .pdf-wrapper{position:relative;}
         @media print{
           @page{size:A4 portrait;margin:10mm 12mm 12mm 12mm}
@@ -1838,7 +1836,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           table{width:100%!important;page-break-inside:avoid!important;break-inside:avoid!important}
           thead{display:table-header-group!important}
           img{max-width:100%!important;page-break-inside:avoid!important}
-          .pdf-watermark{visibility:visible!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important}
           a[href]::after{content:none!important}
         }
       `}</style>
@@ -3044,18 +3041,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
             <div ref={pdfRef} className="pdf-wrapper" style={{background:"#fff",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",color:R.text}}>
-            {/* Watermark — prints via browser native print */}
-            <div className="pdf-watermark" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-                <defs>
-                  <pattern id="wm" x="0" y="0" width="320" height="200" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
-                    <text x="10" y="80" fontFamily="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" fontSize="13" fontWeight="700" fill="rgba(30,58,138,0.07)" letterSpacing="3">GENESIS RETAIL</text>
-                    <text x="10" y="100" fontFamily="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" fontSize="10" fontWeight="400" fill="rgba(30,58,138,0.06)" letterSpacing="2">CONFIDENTIAL</text>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#wm)"/>
-              </svg>
-            </div>
+            
+
             <div style={{display:"flex",flexDirection:"column",borderBottom:"2px solid "+"#1e3a8a",marginBottom:16,paddingBottom:16}}>
 
               {/* Header band */}
