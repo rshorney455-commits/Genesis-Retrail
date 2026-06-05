@@ -1588,15 +1588,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       setSavedAssessments(existing.slice(0,20));
 
       // Supabase
-      setLastSaved("Saving...");
+      setLastSaved("saving");
       await saveToSupabase(state);
-      setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      setLastSaved("saved");
     } catch(e) {
       console.error("Save failed:",e.message);
       if(e.message==="offline"){
         setLastSaved("📵 Offline — saved locally, will sync when reconnected");
       } else {
-        setLastSaved("⚠ Saved locally — cloud unavailable");
+        setLastSaved("offline");
       }
     } finally {
       savingRef.current = false;
@@ -2036,7 +2036,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               🔒 Share
             </button>
             <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}}>⚙</button>
-            {lastSaved?<div style={{fontSize:10,color:lastSaved.startsWith("☁")?"#4ade80":"#f87171",alignSelf:"center",flexShrink:0}}>{lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>Saving...</div>}
+            {(()=>{
+              const cfg = {
+                saving: {color:"#94a3b8", label:"Saving..."},
+                saved:  {color:"#4ade80", label:"Saved"},
+                offline:{color:"#f87171", label:"Offline"},
+                failed: {color:"#f87171", label:"Save Failed"},
+              }[lastSaved] || {color:"#94a3b8", label:""};
+              return lastSaved ? (
+                <div style={{display:"flex",alignItems:"center",gap:5,alignSelf:"center",flexShrink:0}}>
+                  <div style={{width:7,height:7,borderRadius:"50%",background:cfg.color,flexShrink:0}}/>
+                  <div style={{fontSize:10,color:cfg.color,fontWeight:600}}>{cfg.label}</div>
+                </div>
+              ) : null;
+            })()}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
