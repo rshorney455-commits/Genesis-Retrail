@@ -1506,11 +1506,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   // 2. After every render: capture fresh state + instant localStorage backup
   useEffect(()=>{
-    const state = gatherState();
-    latestStateRef.current = state;
-    if(state.propName || state.postcode){
-      try { localStorage.setItem("genesisDraft", JSON.stringify(state)); } catch(e){}
-    }
+    const data = gatherState();
+    latestStateRef.current = data;
+    localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
   });
 
   // 3. Cloud save function
