@@ -1542,16 +1542,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const setLastSavedRef = useRef(setLastSaved);
   useEffect(()=>{ setLastSavedRef.current = setLastSaved; },[setLastSaved]);
   const isLoading = useRef(false);
-  const latestStateRef = useRef({});
-  // Keep latestStateRef always current + immediate localStorage draft backup
-  useEffect(()=>{
-    const data = gatherState();
-    latestStateRef.current = data;
-    if(data.propName || data.postcode){
-      localStorage.setItem("genesisDraft", JSON.stringify(data));
-    }
-  });
-
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
     rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
