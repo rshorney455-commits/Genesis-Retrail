@@ -1066,7 +1066,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
 export default function App(){
   const [step,setStep]=useState(0);
-  const [pdfLoading,setPdfLoading]=useState(false);
+  const [pdfLoading,setPdfLoading]=useState(false); // kept for compatibility
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
@@ -1806,37 +1806,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     });
   },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
 
-  const generatePDF = async () => {
-    if(!pdfRef.current) return;
-    setPdfLoading(true);
-    try {
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm"),
-        import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm"),
-      ]);
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 3, useCORS: true, backgroundColor: "#ffffff",
-        logging: false, windowWidth: 794, // A4 width in px at 96dpi
-        imageTimeout: 0, allowTaint: false,
-      });
-      const imgData = canvas.toDataURL("image/png"); // PNG = lossless, sharp text
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const imgH = (canvas.height * pageW) / canvas.width;
-      let yOffset = 0, remaining = imgH;
-      while(remaining > 0) {
-        if(yOffset > 0) pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, -yOffset, pageW, imgH, undefined, "FAST");
-        yOffset += pageH; remaining -= pageH;
-      }
-      const filename = (propName||"assessment").replace(/[^a-z0-9]/gi,"_").toLowerCase()+"_genesis_retail_report.pdf";
-      pdf.save(filename);
-    } catch(e) {
-      alert("PDF generation failed: "+e.message);
-    } finally {
-      setPdfLoading(false);
-    }
+  const generatePDF = () => {
+    // Native browser Print → Save as PDF.
+    // Works on every device and browser. No external dependencies.
+    // User selects "Save as PDF" in the print dialog.
+    window.print();
   };
 
   return (
@@ -1849,27 +1823,42 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         select option{background:#fff;color:#0c1024}
         textarea{resize:vertical}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
-        @media print{
-          .no-print{display:none!important}
-          body,html{background:#fff!important;margin:0;padding:0}
-          main{padding:0!important;max-width:100%!important}
-          .page-break{page-break-before:always;padding-top:24px}
-          .avoid-break{page-break-inside:avoid}
-          nav,header,.nav-inner{display:none!important}
-          #root>div>div:first-child{display:none!important}
-          .pdf-wrapper{padding:0!important;margin:0!important}
-          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-          body{font-size:11pt}
-          h1,h2,h3{page-break-after:avoid}
-          table{page-break-inside:avoid}
-          img{max-width:100%!important}
-        }
-        @media print{.pdf-footer{display:block!important}}
-        .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
+        .page-break{page-break-before:always;break-before:page;padding-top:24px}
+        .avoid-break{page-break-inside:avoid;break-inside:avoid}
+        .no-print-screen{}
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
         .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
         .pdf-wrapper{position:relative;}
+        @media print{
+          @page{size:A4 portrait;margin:10mm 12mm 12mm 12mm}
+          /* Reset everything to white */
+          html,body{background:#fff!important;margin:0!important;padding:0!important;width:100%!important}
+          /* Hide all UI chrome — only pdf-wrapper prints */
+          .no-print{display:none!important}
+          body>*:not(#root){display:none!important}
+          /* Inside #root, hide the dark app shell, show only pdf-wrapper */
+          #root>div>*:not(.pdf-wrapper){display:none!important}
+          /* Ensure pdf-wrapper itself is visible and full-width */
+          .pdf-wrapper{display:block!important;position:static!important;padding:0!important;margin:0!important;width:100%!important;background:#fff!important;color:#1a1a2e!important;font-size:10pt!important}
+          /* Force all children to be visible */
+          .pdf-wrapper *{visibility:visible!important}
+          /* Colours must print */
+          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+          /* Page break helpers */
+          .page-break{page-break-before:always!important;break-before:page!important;padding-top:0!important}
+          .avoid-break{page-break-inside:avoid!important;break-inside:avoid!important}
+          /* Typography */
+          h1,h2,h3,h4{page-break-after:avoid;break-after:avoid}
+          p,li{orphans:3;widows:3}
+          /* Tables */
+          table{width:100%!important;page-break-inside:avoid;break-inside:avoid}
+          thead{display:table-header-group}
+          /* Images */
+          img{max-width:100%!important;page-break-inside:avoid}
+          /* Watermark */
+          .pdf-watermark{display:block!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important;opacity:1!important}
+        }
       `}</style>
       {/* Load SheetJS for Excel export */}
       {!window.XLSX&&(()=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";document.head.appendChild(s);return null;})()}
@@ -2994,10 +2983,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
-                {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
+              <button onClick={generatePDF} style={{width:"100%",padding:15,background:G.mid,border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
+                🖨 Print / Save as PDF
               </button>
-              <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
+              <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Opens print dialog → choose <strong style={{color:"#fff"}}>Save as PDF</strong> as the destination. Works on all devices.</p>
             </div>
 
             {/* ROI context note */}
@@ -3071,7 +3060,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
             <div ref={pdfRef} className="pdf-wrapper" style={{background:"#fff",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",color:R.text}}>
-            {/* Watermark — rendered into PDF via html2canvas */}
+            {/* Watermark — prints via browser native print */}
             <div className="pdf-watermark" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
                 <defs>
@@ -3863,3 +3852,4 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </ErrorBoundary>
   );
 }
+
