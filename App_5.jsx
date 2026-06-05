@@ -1546,50 +1546,53 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   
 
   // ── saveAssessment — called by interval and on unload ────────────────────────
-  const isSaving = useRef(false);
-  const saveAssessment = async (rawState) => {
-    if(isSaving.current) return; // prevent overlapping saves
-    isSaving.current = true;
+  const savingRef = useRef(false);
+
+  async function saveToSupabase(state) {
+    const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
+    const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+    const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
+    const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
+    const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
+    const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+    const ex=await chk.json();
+    const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+    const res = Array.isArray(ex)&&ex.length>0
+      ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
+      : await sb("assessments",{method:"POST",body});
+    if(!res.ok) throw new Error(`Supabase ${res.status}`);
+  }
+
+  async function saveDraft(rawState) {
+    if(savingRef.current) return;
+    savingRef.current = true;
     try {
       const state = {...rawState};
       if(!state.propName) state.propName = state.postcode || "draft";
-      if(!state.propName && !state.postcode) { isSaving.current=false; return; }
+      if(!state.propName && !state.postcode) return;
       delete state.cats;
 
-      // localStorage first — always, even if Supabase fails
+      // localStorage always first
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
       const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
       if(idx>=0) existing[idx]=state; else existing.unshift(state);
       localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
       setSavedAssessments(existing.slice(0,20));
 
-      // Supabase cloud save
+      // Supabase
       setLastSaved("Saving...");
-      const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
-      const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-      const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
-      const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
-      const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
-      const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
-      const ex=await chk.json();
-      const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
-      const res = Array.isArray(ex)&&ex.length>0
-        ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
-        : await sb("assessments",{method:"POST",body});
-      if(res.ok){
-        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-      } else {
-        const errText = await res.text();
-        console.error("Supabase save failed:",res.status,errText);
-        setLastSaved("⚠ Cloud save failed — data backed up locally");
-      }
+      await saveToSupabase(state);
+      setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
-      console.error("Save exception:",e.message);
-      setLastSaved("⚠ Offline — saved locally");
+      console.error("Save failed:",e.message);
+      setLastSaved("⚠ Saved locally — cloud unavailable");
     } finally {
-      isSaving.current = false;
+      savingRef.current = false;
     }
-  };
+  }
+
+  // Keep saveAssessment as alias for backward compatibility
+  const saveAssessment = saveDraft;
 
   // ── currentAssessment — snapshot of all state, triggers debounced save ─────
   const currentAssessment = useMemo(()=>({
@@ -1613,13 +1616,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   // ── Debounced autosave — fires 2s after any state change ─────────────────
   useEffect(()=>{
-    const timeout = setTimeout(()=>{ saveAssessment(currentAssessment); }, 2000);
+    const timeout = setTimeout(()=>{ saveDraft(currentAssessment); }, 2000);
     return ()=>clearTimeout(timeout);
   },[currentAssessment]);
 
   // ── Save on tab close ─────────────────────────────────────────────────────
   useEffect(()=>{
-    const handler = ()=>saveAssessment(latestStateRef.current);
+    const handler = ()=>saveDraft(latestStateRef.current);
     window.addEventListener("pagehide", handler);
     return ()=>window.removeEventListener("pagehide", handler);
   },[]);
