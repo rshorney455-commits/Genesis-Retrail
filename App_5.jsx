@@ -1594,11 +1594,37 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     }
   };
 
-  // ── Autosave every 30s — empty deps, reads fresh state from ref ───────────
+  // ── currentAssessment — snapshot of all state, triggers debounced save ─────
+  const currentAssessment = useMemo(()=>({
+    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,
+    clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,
+    refitCost,stockCost,financeRate,financeYears,ageBands,employment,housing,
+    popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,
+    peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,
+    fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,
+    areaNotes,storeNote,genesisNote,refitCommentary,competitorList,
+    planningApps,mapLat,mapLng,comparables,foodProfile,existingStore,
+    savedAt:new Date().toISOString()
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,
+    clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,
+    refitCost,stockCost,financeRate,financeYears,ageBands,employment,housing,
+    popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,
+    peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,
+    fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,
+    areaNotes,storeNote,genesisNote,refitCommentary,competitorList,
+    planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
+
+  // ── Debounced autosave — fires 2s after any state change ─────────────────
   useEffect(()=>{
-    const id = setInterval(()=>{ saveAssessment(latestStateRef.current); }, 30000);
-    window.addEventListener("pagehide", ()=>saveAssessment(latestStateRef.current));
-    return ()=>clearInterval(id);
+    const timeout = setTimeout(()=>{ saveAssessment(currentAssessment); }, 2000);
+    return ()=>clearTimeout(timeout);
+  },[currentAssessment]);
+
+  // ── Save on tab close ─────────────────────────────────────────────────────
+  useEffect(()=>{
+    const handler = ()=>saveAssessment(latestStateRef.current);
+    window.addEventListener("pagehide", handler);
+    return ()=>window.removeEventListener("pagehide", handler);
   },[]);
 
   // ── Warn before closing/refreshing ──────────────────────────────────────────
