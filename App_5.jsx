@@ -1554,8 +1554,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
-  // saveAssessment defined below with proper async + isSaving guard
-  
+  // ── latestStateRef — always current, defined after gatherState ──────────────
+  const latestStateRef = useRef(null);
+  useEffect(()=>{
+    latestStateRef.current = gatherState();
+    const s = latestStateRef.current;
+    if(s && (s.propName || s.postcode)){
+      localStorage.setItem("genesisDraft", JSON.stringify(s));
+    }
+  });
 
   // ── saveAssessment — called by interval and on unload ────────────────────────
   const savingRef = useRef(false);
