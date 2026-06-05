@@ -1591,7 +1591,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           }
         })();
       } catch(e){}
-    }, 1000);
+    }, 2000);
     return ()=>clearTimeout(timer);
   },[gatherState]);
 
@@ -1604,7 +1604,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   const loadAssessment = useCallback((saved)=>{
     isLoading.current = true;
-    setTimeout(()=>{ isLoading.current = false; }, 4000);
+    setTimeout(()=>{ isLoading.current = false; }, 500);
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
