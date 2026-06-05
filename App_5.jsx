@@ -2039,6 +2039,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               {saveMsg||"💾 Save"}
             </button>
+            <button onClick={()=>saveDraft(latestStateRef.current)} style={{padding:"7px 12px",background:"rgba(26,60,46,0.15)",border:"1.5px solid #1a3c2e",borderRadius:7,color:"#1a3c2e",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
+              ☁ Cloud Save
+            </button>
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
