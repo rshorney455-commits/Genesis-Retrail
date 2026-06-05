@@ -1560,9 +1560,16 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   useEffect(()=>{
     const timer = setInterval(()=>{
       try {
+        // DIAGNOSTIC Q1: Does the interval fire?
+        console.log("[SB-DIAG] 1. Interval fired at", new Date().toISOString());
+
         const state = gatherState();
         delete state.cats;
         if(!state.propName) state.propName = state.postcode || "draft";
+
+        // DIAGNOSTIC Q3: What data is gathered?
+        console.log("[SB-DIAG] 3. Gathered state — propName:", state.propName, "postcode:", state.postcode, "keys:", Object.keys(state).length);
+
         const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
         const idx = existing.findIndex(a=>
           (state.propName && a.propName===state.propName) ||
@@ -1572,7 +1579,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
         setLastSavedRef.current("Saving...");
-        // Inline Supabase save — guaranteed in scope
         (async()=>{
           try {
             const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
@@ -1582,17 +1588,32 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
             const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
             const ex=await chk.json();
+            // DIAGNOSTIC Q2: What ID is found?
+            console.log("[SB-DIAG] 2. Existing Supabase record:", ex);
             const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
             let res;
-            if(Array.isArray(ex)&&ex.length>0){res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});}
-            else{res=await sb("assessments",{method:"POST",body});}
-            setLastSavedRef.current((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+            if(Array.isArray(ex)&&ex.length>0){
+              res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});
+            } else {
+              res=await sb("assessments",{method:"POST",body});
+            }
+            // DIAGNOSTIC Q4: Did the write succeed?
+            const resText = await res.clone().text();
+            console.log("[SB-DIAG] 4. Write status:", res.status, "ok:", res.ok, "response:", resText.substring(0,100));
+            // DIAGNOSTIC Q5 & Q6: Update indicator
+            if(res.ok){
+              console.log("[SB-DIAG] 5. Write succeeded — calling setLastSavedRef");
+              setLastSavedRef.current("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+            } else {
+              console.log("[SB-DIAG] 6. Write FAILED — status", res.status);
+              setLastSavedRef.current("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+            }
           } catch(e){
-            console.error("Save error:",e);
+            console.error("[SB-DIAG] EXCEPTION in Supabase save:",e.message);
             setLastSavedRef.current("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
           }
         })();
-      } catch(e){}
+      } catch(e){ console.error("[SB-DIAG] EXCEPTION in interval:",e.message); }
     }, 3000);
     return ()=>clearInterval(timer);
   },[gatherState]);
