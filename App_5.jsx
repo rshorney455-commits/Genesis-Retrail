@@ -1570,9 +1570,26 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
         setLastSaved("Saving...");
-        sbSave(state.propName,state.postcode,state).then(ok=>{
-          setLastSaved((ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-        }).catch(()=>setLastSaved("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})));
+        // Inline Supabase save — guaranteed in scope
+        (async()=>{
+          try {
+            const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
+            const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+            const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
+            const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
+            const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
+            const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+            const ex=await chk.json();
+            const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+            let res;
+            if(Array.isArray(ex)&&ex.length>0){res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});}
+            else{res=await sb("assessments",{method:"POST",body});}
+            setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+          } catch(e){
+            console.error("Save error:",e);
+            setLastSaved("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+          }
+        })();
       } catch(e){}
     }, 1000);
     return ()=>clearTimeout(timer);
