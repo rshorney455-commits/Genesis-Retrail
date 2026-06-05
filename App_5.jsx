@@ -120,8 +120,8 @@ const TRAFFIC_F   = [
 ];
 const STEPS = ["Cover","Property","Costs","Refit","Categories","Demographics","Spend","Traffic","Spreadsheet","Results","Admin"];
 
-const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
-const pct = n => n.toFixed(1)+"%";
+const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(isNaN(n)||!isFinite(n)?0:n);
+const pct = n => (isNaN(n)||!isFinite(n)) ? "0.0%" : n.toFixed(1)+"%";
 
 const G = {
   bg:"#f5f6fa", card:"#f0f2f8", border:"#c8cfe8",
@@ -1066,7 +1066,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
 export default function App(){
   const [step,setStep]=useState(0);
-  const [pdfLoading,setPdfLoading]=useState(false); // kept for compatibility
+  // pdfLoading removed — now using native window.print()
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
@@ -1769,11 +1769,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
       sensitivity: [
         `The table models the impact on return on investment of footfall varying between -20% and +20% of the base case, and rent varying by the same range. The base case sits in the centre cell.`,
-        sensitivityData[2][2]?.roi>=20
-          ? `The base case delivers a ${sensitivityData[2][2].roi.toFixed(1)}% ROI — above the 20% Genesis Retail threshold. The investment case is sound on the central assumptions.`
-          : `The base case delivers a ${sensitivityData[2][2]?.roi.toFixed(1)}% ROI, which is below the 20% Genesis Retail threshold. The investment is viable but does not meet the target return on the central assumptions — the operator and any financier should understand the basis for the projections carefully.`,
+        sensitivityData[2]?.[2]?.roi>=20
+          ? `The base case delivers a ${(sensitivityData[2]?.[2]?.roi||0).toFixed(1)}% ROI — above the 20% Genesis Retail threshold. The investment case is sound on the central assumptions.`
+          : `The base case delivers a ${(sensitivityData[2]?.[2]?.roi||0).toFixed(1)}% ROI, which is below the 20% Genesis Retail threshold. The investment is viable but does not meet the target return on the central assumptions — the operator and any financier should understand the basis for the projections carefully.`,
         sensitivityData[0]?.[0]?.roi>=10
-          ? `Even in the most adverse scenario modelled — footfall 20% below forecast and rent 20% above — the store still returns ${sensitivityData[0][0].roi.toFixed(1)}% ROI. This is a resilient investment with meaningful downside protection.`
+          ? `Even in the most adverse scenario modelled — footfall 20% below forecast and rent 20% above — the store still returns ${(sensitivityData[0]?.[0]?.roi||0).toFixed(1)}% ROI. This is a resilient investment with meaningful downside protection.`
           : `In the most adverse scenario modelled, the store drops to ${sensitivityData[0]?.[0]?.roi.toFixed(1)||0}% ROI. This limited downside protection means the investment is sensitive to trading performance — the operator needs to be confident in the footfall projections, and the rent negotiation should prioritise locking in a level that keeps the base case well clear of the break-even line.`,
         `${sensitivityData.flat().filter(c=>c.roi>=20).length} of the 25 scenarios modelled produce a return of 20% or above. ${sensitivityData.flat().filter(c=>c.roi>=20).length>=20?"The investment is robust across the vast majority of scenarios. A lender reviewing this table should be comfortable with the risk profile.":sensitivityData.flat().filter(c=>c.roi>=20).length>=12?"The investment meets the target return across the majority of scenarios. It is sensitive to a combination of footfall underperformance and cost pressure, but is not fragile.":"The investment only meets the target return in a minority of scenarios. This should be discussed openly with any financier — the projections need to be stress-tested and the key assumptions clearly documented."}`
       ].join(" "),
@@ -1832,32 +1832,29 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         .pdf-wrapper{position:relative;}
         @media print{
           @page{size:A4 portrait;margin:10mm 12mm 12mm 12mm}
-          /* Reset everything to white */
-          html,body{background:#fff!important;margin:0!important;padding:0!important;width:100%!important}
-          /* Hide all UI chrome — only pdf-wrapper prints */
-          .no-print{display:none!important}
-          body>*:not(#root){display:none!important}
-          /* Inside #root, hide the dark app shell, show only pdf-wrapper */
-          #root>div>*:not(.pdf-wrapper){display:none!important}
-          /* Ensure pdf-wrapper itself is visible and full-width */
-          .pdf-wrapper{display:block!important;position:static!important;padding:0!important;margin:0!important;width:100%!important;background:#fff!important;color:#1a1a2e!important;font-size:10pt!important}
-          /* Force all children to be visible */
-          .pdf-wrapper *{visibility:visible!important}
-          /* Colours must print */
+          /* Step 1: hide EVERYTHING via visibility — preserves layout flow */
+          body{visibility:hidden!important;background:#fff!important;margin:0!important;padding:0!important}
+          /* Step 2: show ONLY the pdf-wrapper and ALL its descendants */
+          .pdf-wrapper,.pdf-wrapper *{visibility:visible!important}
+          /* Step 3: pull pdf-wrapper to top-left of page */
+          .pdf-wrapper{position:fixed!important;top:0!important;left:0!important;width:100%!important;background:#fff!important;color:#1a1a2e!important;font-size:10pt!important;padding:0!important;margin:0!important;z-index:9999!important}
+          /* Colours, backgrounds and borders must all print */
           *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
           /* Page break helpers */
-          .page-break{page-break-before:always!important;break-before:page!important;padding-top:0!important}
+          .page-break{page-break-before:always!important;break-before:page!important}
           .avoid-break{page-break-inside:avoid!important;break-inside:avoid!important}
           /* Typography */
-          h1,h2,h3,h4{page-break-after:avoid;break-after:avoid}
+          h1,h2,h3,h4{page-break-after:avoid!important;break-after:avoid!important}
           p,li{orphans:3;widows:3}
-          /* Tables */
-          table{width:100%!important;page-break-inside:avoid;break-inside:avoid}
-          thead{display:table-header-group}
+          /* Tables must not split mid-row */
+          table{width:100%!important;page-break-inside:avoid!important;break-inside:avoid!important}
+          thead{display:table-header-group!important}
           /* Images */
-          img{max-width:100%!important;page-break-inside:avoid}
+          img{max-width:100%!important;page-break-inside:avoid!important}
           /* Watermark */
-          .pdf-watermark{display:block!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important;opacity:1!important}
+          .pdf-watermark{visibility:visible!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important}
+          /* Links: don't show href in print */
+          a[href]::after{content:none!important}
         }
       `}</style>
       {/* Load SheetJS for Excel export */}
@@ -1924,8 +1921,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
-            <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}} title="Admin">⚙</button>
-            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>"Saving..."</div>}
+            <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}}>⚙</button>
+            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>Saving...</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
