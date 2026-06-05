@@ -1599,7 +1599,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     try {
       const state = {...rawState};
       if(!state.propName) state.propName = state.postcode || "draft";
-      if(!state.propName && !state.postcode) return;
+      if(!state.propName && !state.postcode) { savingRef.current=false; return; }
       delete state.cats;
 
       // localStorage always first
