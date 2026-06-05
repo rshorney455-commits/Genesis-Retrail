@@ -1806,12 +1806,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     });
   },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
 
-  const generatePDF = () => {
-    // Native browser Print → Save as PDF.
-    // Works on every device and browser. No external dependencies.
-    // User selects "Save as PDF" in the print dialog.
-    window.print();
-  };
+  const generatePDF = () => { window.print(); };
 
   return (
     <ErrorBoundary>
@@ -1825,35 +1820,25 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
         .page-break{page-break-before:always;break-before:page;padding-top:24px}
         .avoid-break{page-break-inside:avoid;break-inside:avoid}
-        .no-print-screen{}
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
         .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
         .pdf-wrapper{position:relative;}
         @media print{
           @page{size:A4 portrait;margin:10mm 12mm 12mm 12mm}
-          /* Step 1: hide EVERYTHING via visibility — preserves layout flow */
           body{visibility:hidden!important;background:#fff!important;margin:0!important;padding:0!important}
-          /* Step 2: show ONLY the pdf-wrapper and ALL its descendants */
           .pdf-wrapper,.pdf-wrapper *{visibility:visible!important}
-          /* Step 3: pull pdf-wrapper to top-left of page */
           .pdf-wrapper{position:fixed!important;top:0!important;left:0!important;width:100%!important;background:#fff!important;color:#1a1a2e!important;font-size:10pt!important;padding:0!important;margin:0!important;z-index:9999!important}
-          /* Colours, backgrounds and borders must all print */
           *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-          /* Page break helpers */
+          .no-print{display:none!important}
           .page-break{page-break-before:always!important;break-before:page!important}
           .avoid-break{page-break-inside:avoid!important;break-inside:avoid!important}
-          /* Typography */
           h1,h2,h3,h4{page-break-after:avoid!important;break-after:avoid!important}
           p,li{orphans:3;widows:3}
-          /* Tables must not split mid-row */
           table{width:100%!important;page-break-inside:avoid!important;break-inside:avoid!important}
           thead{display:table-header-group!important}
-          /* Images */
           img{max-width:100%!important;page-break-inside:avoid!important}
-          /* Watermark */
           .pdf-watermark{visibility:visible!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important}
-          /* Links: don't show href in print */
           a[href]::after{content:none!important}
         }
       `}</style>
@@ -2145,7 +2130,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             <div style={{marginTop:20}}>
               <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
-              {refitCommentary&&<div style={{background:"#fff4ea",border:"1.5px solid "+G.orange,borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:13,fontWeight:600,color:G.orange}}>⚠ This field contains text — make sure it is specific to THIS site before generating the report.</div>}
+              {refitCommentary&&<div style={{background:"#fff4ea",border:"1.5px solid "+G.orange,borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:13,fontWeight:600,color:G.orange}}>⚠ This field has content — confirm it is specific to THIS site before generating the report.</div>}
               <div style={{fontSize:12,color:G.light,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
               <textarea
                 value={refitCommentary}
@@ -2981,11 +2966,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              {refitCommentary&&<div className="no-print" style={{background:"#d62828",borderRadius:8,padding:"12px 16px",marginBottom:10,fontSize:13,fontWeight:700,color:"#fff"}}>⚠ STOP — The Post-Refit Commentary field has content. Confirm it is specific to {propName||"this site"} before printing.</div>}
+              {refitCommentary&&<div className="no-print" style={{background:"#d62828",borderRadius:8,padding:"12px 16px",marginBottom:10,fontSize:13,fontWeight:700,color:"#fff"}}>⚠ STOP — Post-Refit Commentary has content. Confirm it is specific to {propName||"this site"} before printing.</div>}
               <button onClick={generatePDF} style={{width:"100%",padding:15,background:G.mid,border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 🖨 Print / Save as PDF
               </button>
-              <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Opens print dialog → choose <strong style={{color:"#fff"}}>Save as PDF</strong> as the destination. Works on all devices.</p>
+              <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Opens print dialog → choose <strong style={{color:"#fff"}}>Save as PDF</strong> as the destination.</p>
             </div>
 
             {/* ROI context note */}
@@ -3103,12 +3088,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
                 {/* Address + details */}
                 <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                  {/* Site name & address */}
-                  {/* Site name & address */}
                   <div style={{background:"#f8f9fd",border:"1px solid #d1d9e6",borderRadius:10,padding:"16px 18px"}}>
                     <div style={{fontSize:10,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Site Address</div>
-                    <div style={{fontSize:20,fontWeight:800,color:"#1a1a2e",lineHeight:1.2,marginBottom:6}}>{propName||"Site Address"}</div>
-                    {postcode&&<div style={{fontSize:13,color:"#1e3a8a",marginBottom:6,fontWeight:600}}>{postcode}</div>}
+                    <div style={{fontSize:20,fontWeight:800,color:"#1a1a2e",lineHeight:1.2,marginBottom:4}}>
+                      {propName && propName!==postcode ? propName : (postcode||"Site not named")}
+                    </div>
+                    {postcode && propName!==postcode && <div style={{fontSize:13,color:"#1e3a8a",marginBottom:6,fontWeight:600}}>{postcode}</div>}
                     <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#f0f4ff",border:"1px solid #1e3a8a",borderRadius:4,padding:"4px 10px"}}>
                       <span style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"capitalize"}}>{location.replace(/-/g," ")}</span>
                     </div>
