@@ -31,48 +31,37 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 // ── Supabase config ───────────────────────────────────────────────────────────
 const SB_URL = "https://drtpeodthflxkzjgbfvu.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-
-// Lazy-load the official Supabase JS client — bypasses host allowlist
-let _sb = null;
-async function getSB() {
-  if(_sb) return _sb;
-  const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
-  _sb = createClient(SB_URL, SB_KEY);
-  return _sb;
-}
+const SB_HDR = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json","Prefer":"return=representation"};
+const SB = (path,opts={}) => fetch(SB_URL+"/rest/v1/"+path, {...opts, headers:{...SB_HDR,...(opts.headers||{})}});
 
 async function sbSave(propName, postcode, data) {
   try {
-    const sb = await getSB();
-    const { data: existing } = await sb.from("assessments")
-      .select("id")
-      .eq("prop_name", propName||"draft")
-      .eq("postcode", postcode||"")
-      .limit(1);
-    if(existing && existing.length > 0) {
-      await sb.from("assessments").update({prop_name: propName||"draft", postcode: postcode||"", data, updated_at: new Date().toISOString()}).eq("id", existing[0].id);
+    const name = propName||"draft";
+    const pc = postcode||"";
+    const chk = await SB(`assessments?prop_name=eq.${encodeURIComponent(name)}&postcode=eq.${encodeURIComponent(pc)}&select=id`);
+    const existing = await chk.json();
+    const body = JSON.stringify({prop_name:name, postcode:pc, data, updated_at:new Date().toISOString()});
+    if(Array.isArray(existing) && existing.length > 0) {
+      await SB(`assessments?id=eq.${existing[0].id}`, {method:"PATCH", body});
     } else {
-      await sb.from("assessments").insert({prop_name: propName||"draft", postcode: postcode||"", data});
+      await SB("assessments", {method:"POST", body});
     }
     return true;
-  } catch(e) { console.error("Supabase save failed:", e); return false; }
+  } catch(e) { console.error("SB save:",e); return false; }
 }
 
 async function sbLoad() {
   try {
-    const sb = await getSB();
-    const { data: rows } = await sb.from("assessments").select("id,prop_name,postcode,data,updated_at").order("updated_at", {ascending: false}).limit(50);
+    const res = await SB("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
+    const rows = await res.json();
     if(!Array.isArray(rows)) return [];
-    return rows.map(r => ({...r.data, propName: r.prop_name, postcode: r.postcode, savedAt: r.updated_at, sbId: r.id}));
-  } catch(e) { console.error("Supabase load failed:", e); return []; }
+    return rows.map(r=>({...r.data, propName:r.prop_name, postcode:r.postcode, savedAt:r.updated_at, sbId:r.id}));
+  } catch(e) { console.error("SB load:",e); return []; }
 }
 
 async function sbDelete(id) {
-  try {
-    const sb = await getSB();
-    await sb.from("assessments").delete().eq("id", id);
-    return true;
-  } catch(e) { return false; }
+  try { await SB(`assessments?id=eq.${id}`, {method:"DELETE"}); return true; }
+  catch(e) { return false; }
 }
 
 
