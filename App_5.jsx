@@ -1557,7 +1557,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   // ── Autosave — interval-based, fires every 3 seconds ───────────────────────
   useEffect(()=>{
     const timer = setInterval(()=>{
-      if(isLoading.current) return; // don't overwrite during load
       try {
         const state = gatherState();
         delete state.cats;
