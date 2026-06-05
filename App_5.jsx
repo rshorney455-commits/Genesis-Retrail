@@ -1542,39 +1542,28 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
-  const saveAssessment = useCallback(()=>{
-    try {
-      const state = gatherState();
-      // Don't save cats - always use ACS defaults on load
-      delete state.cats;
-      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-      const idx = existing.findIndex(a=>a.propName===state.propName);
-      if(idx>=0) existing[idx]=state; else existing.unshift(state);
-      const trimmed = existing.slice(0,20);
-      localStorage.setItem("genesis_assessments", JSON.stringify(trimmed));
-      setSavedAssessments(trimmed);
-      setSaveMsg("✓ Saved");
-      setTimeout(()=>setSaveMsg(""),2500);
-    } catch(e){ setSaveMsg("Save failed"); }
-  },[gatherState]);
-
+  // saveAssessment defined below with proper async + isSaving guard
+  
 
   // ── saveAssessment — called by interval and on unload ────────────────────────
+  const isSaving = useRef(false);
   const saveAssessment = async (rawState) => {
+    if(isSaving.current) return; // prevent overlapping saves
+    isSaving.current = true;
     try {
       const state = {...rawState};
       if(!state.propName) state.propName = state.postcode || "draft";
-      if(!state.propName && !state.postcode) return;
+      if(!state.propName && !state.postcode) { isSaving.current=false; return; }
       delete state.cats;
 
-      // localStorage first — always
+      // localStorage first — always, even if Supabase fails
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
       const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
       if(idx>=0) existing[idx]=state; else existing.unshift(state);
       localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
       setSavedAssessments(existing.slice(0,20));
 
-      // Supabase
+      // Supabase cloud save
       setLastSaved("Saving...");
       const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
       const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
@@ -1587,10 +1576,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       const res = Array.isArray(ex)&&ex.length>0
         ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
         : await sb("assessments",{method:"POST",body});
-      setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      if(res.ok){
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } else {
+        const errText = await res.text();
+        console.error("Supabase save failed:",res.status,errText);
+        setLastSaved("⚠ Cloud save failed — data backed up locally");
+      }
     } catch(e) {
-      console.error("Save failed:",e.message);
-      setLastSaved("⚠ "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      console.error("Save exception:",e.message);
+      setLastSaved("⚠ Offline — saved locally");
+    } finally {
+      isSaving.current = false;
     }
   };
 
