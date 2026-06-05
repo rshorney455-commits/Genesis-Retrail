@@ -1550,6 +1550,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const savingRef = useRef(false);
 
   async function saveToSupabase(state) {
+    // Offline — queue for later
+    if(!navigator.onLine){
+      localStorage.setItem("pendingAssessment", JSON.stringify(state));
+      throw new Error("offline");
+    }
     const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
     const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
     const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
@@ -1562,6 +1567,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
       : await sb("assessments",{method:"POST",body});
     if(!res.ok) throw new Error(`Supabase ${res.status}`);
+    // Clear pending queue on successful save
+    localStorage.removeItem("pendingAssessment");
   }
 
   async function saveDraft(rawState) {
@@ -1586,7 +1593,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
     } catch(e) {
       console.error("Save failed:",e.message);
-      setLastSaved("⚠ Saved locally — cloud unavailable");
+      if(e.message==="offline"){
+        setLastSaved("📵 Offline — saved locally, will sync when reconnected");
+      } else {
+        setLastSaved("⚠ Saved locally — cloud unavailable");
+      }
     } finally {
       savingRef.current = false;
     }
@@ -1625,11 +1636,24 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     return ()=>clearTimeout(timeout);
   },[currentAssessment]);
 
-  // ── Save on tab close ─────────────────────────────────────────────────────
+  // ── Save on tab close + flush pending on reconnect ───────────────────────
   useEffect(()=>{
-    const handler = ()=>saveDraft(latestStateRef.current);
-    window.addEventListener("pagehide", handler);
-    return ()=>window.removeEventListener("pagehide", handler);
+    const onPageHide = ()=>saveDraft(latestStateRef.current);
+    const onOnline = ()=>{
+      const pending = localStorage.getItem("pendingAssessment");
+      if(pending){
+        try {
+          const state = JSON.parse(pending);
+          saveDraft(state);
+        } catch(e){}
+      }
+    };
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("online", onOnline);
+    return ()=>{
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("online", onOnline);
+    };
   },[]);
 
   // ── Warn before closing if unsaved changes ───────────────────────────────
