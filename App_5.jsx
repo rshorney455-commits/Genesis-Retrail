@@ -1554,89 +1554,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
-  // ── latestStateRef — always current, defined after gatherState ──────────────
+  // ── Autosave — runs after every render, 2s debounce, no stale closure ──────
   const latestStateRef = useRef(null);
   useEffect(()=>{
     latestStateRef.current = gatherState();
-    const s = latestStateRef.current;
-    if(s && (s.propName || s.postcode)){
-      localStorage.setItem("genesisDraft", JSON.stringify(s));
-    }
-  });
-
-  // ── saveAssessment — called by interval and on unload ────────────────────────
-  const savingRef = useRef(false);
-
-  async function saveToSupabase(state) {
-    // Offline — queue for later
-    if(!navigator.onLine){
-      localStorage.setItem("pendingAssessment", JSON.stringify(state));
-      throw new Error("offline");
-    }
-    const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
-    const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-    const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
-    const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
-    const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
-    const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
-    const ex=await chk.json();
-    const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
-    const res = Array.isArray(ex)&&ex.length>0
-      ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
-      : await sb("assessments",{method:"POST",body});
-    if(!res.ok) throw new Error(`Supabase ${res.status}`);
-    // Clear pending queue on successful save
-    localStorage.removeItem("pendingAssessment");
-  }
-
-  async function saveDraft(rawState) {
-    console.log("Autosave payload", latestStateRef.current);
-    if(savingRef.current) return;
-    savingRef.current = true;
-    try {
-      const state = {...rawState};
-      if(!state.propName) state.propName = state.postcode || "draft";
-      if(!state.propName && !state.postcode) { savingRef.current=false; return; }
-      delete state.cats;
-
-      // localStorage always first
-      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-      const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
-      if(idx>=0) existing[idx]=state; else existing.unshift(state);
-      localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
-      setSavedAssessments(existing.slice(0,20));
-
-      // Supabase
-      setLastSaved("saving");
-      await saveToSupabase(state);
-      setLastSaved("saved");
-    } catch(e) {
-      console.error("Save failed:",e.message);
-      if(e.message==="offline"){
-        setLastSaved("📵 Offline — saved locally, will sync when reconnected");
-      } else {
-        setLastSaved("offline");
-      }
-    } finally {
-      savingRef.current = false;
-    }
-  }
-
-  // Keep saveAssessment as alias for backward compatibility
-  const saveAssessment = saveDraft;
-
-
-  // ── Debounced autosave — runs after every render, 2s debounce ───────────────
-  // No deps: fires on every render. Cleanup cancels pending timeout.
-  // Each render resets the clock — only saves after 2s of inactivity.
-  useEffect(()=>{
     setHasUnsavedChanges(true);
     const timeout = setTimeout(()=>{
-      saveDraft(latestStateRef.current);
+      saveToSupabase(latestStateRef.current);
       setHasUnsavedChanges(false);
     }, 2000);
     return ()=>clearTimeout(timeout);
   });
+
 
   // ── Save on tab close + flush pending on reconnect ───────────────────────
   useEffect(()=>{
