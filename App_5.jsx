@@ -1098,7 +1098,6 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
 export default function App(){
   const [step,setStep]=useState(0);
-  const [_saveTick,_setSaveTick]=useState(0);
   // pdfLoading removed — now using native window.print()
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
