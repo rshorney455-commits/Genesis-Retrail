@@ -28,6 +28,52 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
+// ── Supabase config ───────────────────────────────────────────────────────────
+const SB_URL = "https://drtpeodthflxkzjgbfvu.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+const sbHeaders = {"apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=representation"};
+
+async function sbSave(propName, postcode, data) {
+  try {
+    // Check if assessment exists for this postcode/propName
+    const checkRes = await fetch(`${SB_URL}/rest/v1/assessments?postcode=eq.${encodeURIComponent(postcode||"")}&prop_name=eq.${encodeURIComponent(propName||"draft")}&select=id`, {headers: sbHeaders});
+    const existing = await checkRes.json();
+    if(existing && existing.length > 0) {
+      // Update
+      await fetch(`${SB_URL}/rest/v1/assessments?id=eq.${existing[0].id}`, {
+        method: "PATCH",
+        headers: sbHeaders,
+        body: JSON.stringify({prop_name: propName||"draft", postcode: postcode||"", data, updated_at: new Date().toISOString()})
+      });
+    } else {
+      // Insert
+      await fetch(`${SB_URL}/rest/v1/assessments`, {
+        method: "POST",
+        headers: sbHeaders,
+        body: JSON.stringify({prop_name: propName||"draft", postcode: postcode||"", data})
+      });
+    }
+    return true;
+  } catch(e) { console.error("Supabase save failed:", e); return false; }
+}
+
+async function sbLoad() {
+  try {
+    const res = await fetch(`${SB_URL}/rest/v1/assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50`, {headers: sbHeaders});
+    const rows = await res.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(r => ({...r.data, propName: r.prop_name, postcode: r.postcode, savedAt: r.updated_at, sbId: r.id}));
+  } catch(e) { console.error("Supabase load failed:", e); return []; }
+}
+
+async function sbDelete(id) {
+  try {
+    await fetch(`${SB_URL}/rest/v1/assessments?id=eq.${id}`, {method: "DELETE", headers: sbHeaders});
+    return true;
+  } catch(e) { return false; }
+}
+
+
 // ── Sector averages by location type ─────────────────────────────────────────
 const SECTOR = {
   "city-centre": {
@@ -1476,6 +1522,24 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const [savedAssessments, setSavedAssessments] = useState(()=>{
     try { return JSON.parse(localStorage.getItem("genesis_assessments")||"[]"); } catch{ return []; }
   });
+  const [sbLoading, setSbLoading] = useState(false);
+
+  // Load from Supabase on mount and merge with localStorage
+  useEffect(()=>{
+    setSbLoading(true);
+    sbLoad().then(rows=>{
+      if(rows.length > 0){
+        // Merge Supabase records with localStorage — Supabase wins on conflicts
+        const local = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const merged = [...rows];
+        local.forEach(l=>{ if(!merged.find(r=>r.propName===l.propName && r.postcode===l.postcode)) merged.push(l); });
+        merged.sort((a,b)=>new Date(b.savedAt||0)-new Date(a.savedAt||0));
+        setSavedAssessments(merged.slice(0,50));
+        localStorage.setItem("genesis_assessments", JSON.stringify(merged.slice(0,20)));
+      }
+      setSbLoading(false);
+    }).catch(()=>setSbLoading(false));
+  },[]);
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
   const isLoading = useRef(false);
@@ -1509,26 +1573,29 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — always fires, no propName requirement ────────────────────────
+  // ── Autosave — localStorage + Supabase ──────────────────────────────────────
   useEffect(()=>{
     const timer = setTimeout(()=>{
-      if(isLoading.current) return; // don't overwrite during load
+      if(isLoading.current) return;
       try {
         const state = gatherState();
         delete state.cats;
+        if(!state.propName) state.propName = state.postcode || "draft";
+        // Save to localStorage
         const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
         const idx = existing.findIndex(a=>
           (state.propName && a.propName===state.propName) ||
-          (!state.propName && state.postcode && a.postcode===state.postcode) ||
-          (!state.propName && !state.postcode && a.propName==="draft")
+          (!state.propName && state.postcode && a.postcode===state.postcode)
         );
-        if(!state.propName) state.propName = state.postcode || "draft";
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
-        setLastSaved("Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
         setSavedAssessments(existing.slice(0,20));
-      } catch(e){}
-    }, 1000);
+        // Save to Supabase
+        sbSave(state.propName, state.postcode, state).then(ok=>{
+          setLastSaved((ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+        });
+      } catch(e){ console.error("Autosave error:",e); }
+    }, 1500);
     return ()=>clearTimeout(timer);
   },[gatherState]);
 
@@ -1930,7 +1997,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Saved assessments */}
             {savedAssessments.length>0&&(
               <div style={{marginBottom:24}}>
-                <Sub c="Saved Assessments — tap to reload"/>
+                <Sub c={sbLoading ? "Loading saved assessments..." : "Saved Assessments — tap to reload"}/>
                 {savedAssessments.map((a,i)=>(
                   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8}}>
                     <div style={{flex:1,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
@@ -1944,6 +2011,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       const updated = savedAssessments.filter((_,j)=>j!==i);
                       localStorage.setItem("genesis_assessments", JSON.stringify(updated));
                       setSavedAssessments(updated);
+                      if(a.sbId) sbDelete(a.sbId);
                     }} style={{background:"transparent",border:"1px solid #d62828",borderRadius:6,color:"#d62828",cursor:"pointer",fontFamily:"inherit",fontSize:12,padding:"4px 8px",flexShrink:0}}>✕</button>
                   </div>
                 ))}
