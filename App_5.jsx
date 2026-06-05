@@ -1570,7 +1570,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setGenesisNote(saved.genesisNote||"Richard spent 23 years working at the sharp end of the UK independent convenience sector, first with A.F. Blakemore — the company behind the Spar fascia — where he worked directly with independent retailers on store development, ranging and commercial planning. In 2016 he moved to Nisa/Co-op Retail Ltd as a Retail Development Manager, managing 145 stores across North London with responsibility for around £14 million in annual turnover.\n\nDuring his time at Nisa he was consistently ranked in the national top three for new business, and several initiatives he introduced — including Too Good To Go and food delivery partnerships — were rolled out across the entire network. He knows the wholesale and symbol group world from the inside, which is exactly why independent retailers trust him to tell them the truth about their business.");
     if(saved.postcodeNotes) setPostcodeNotes(saved.postcodeNotes);
     if(saved.clientName) setClientName(saved.clientName);
-    if(saved.refitCommentary) setRefitCommentary(saved.refitCommentary);
+    setRefitCommentary(saved.refitCommentary||""); // always reset — never carry over from another assessment
     if(saved.foodProfile) setFoodProfile(saved.foodProfile);
     if(saved.existingStore) setExistingStore(saved.existingStore);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
@@ -2145,6 +2145,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             <div style={{marginTop:20}}>
               <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
+              {refitCommentary&&<div style={{background:"#fff4ea",border:"1.5px solid "+G.orange,borderRadius:8,padding:"10px 14px",marginBottom:10,fontSize:13,fontWeight:600,color:G.orange}}>⚠ This field contains text — make sure it is specific to THIS site before generating the report.</div>}
               <div style={{fontSize:12,color:G.light,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
               <textarea
                 value={refitCommentary}
@@ -2980,6 +2981,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
+              {refitCommentary&&<div className="no-print" style={{background:"#d62828",borderRadius:8,padding:"12px 16px",marginBottom:10,fontSize:13,fontWeight:700,color:"#fff"}}>⚠ STOP — The Post-Refit Commentary field has content. Confirm it is specific to {propName||"this site"} before printing.</div>}
               <button onClick={generatePDF} style={{width:"100%",padding:15,background:G.mid,border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 🖨 Print / Save as PDF
               </button>
