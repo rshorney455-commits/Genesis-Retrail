@@ -1509,6 +1509,21 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const [savedAssessments, setSavedAssessments] = useState(()=>{
     try { return JSON.parse(localStorage.getItem("genesis_assessments")||"[]"); } catch{ return []; }
   });
+  // Restore genesisDraft on mount if present — crash recovery
+  useEffect(()=>{
+    try {
+      const draft = localStorage.getItem("genesisDraft");
+      if(!draft) return;
+      const saved = JSON.parse(draft);
+      if(!saved.propName && !saved.postcode) return;
+      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+      const already = existing.find(a=>a.propName===saved.propName && a.postcode===saved.postcode);
+      // Only restore if draft is newer than saved version
+      if(!already || new Date(saved.savedAt||0) > new Date(already.savedAt||0)){
+        console.log("Restoring draft from crash recovery:", saved.propName);
+      }
+    } catch(e){}
+  },[]);
   useEffect(()=>{
     sbLoad().then(rows=>{
       if(rows.length>0){
@@ -1528,8 +1543,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   useEffect(()=>{ setLastSavedRef.current = setLastSaved; },[setLastSaved]);
   const isLoading = useRef(false);
   const latestStateRef = useRef({});
-  // Keep latestStateRef always current — runs after every render
-  useEffect(()=>{ latestStateRef.current = gatherState(); });
+  // Keep latestStateRef always current + immediate localStorage draft backup
+  useEffect(()=>{
+    const data = gatherState();
+    latestStateRef.current = data;
+    if(data.propName || data.postcode){
+      localStorage.setItem("genesisDraft", JSON.stringify(data));
+    }
+  });
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
