@@ -1607,35 +1607,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   // Keep saveAssessment as alias for backward compatibility
   const saveAssessment = saveDraft;
 
-  // ── currentAssessment — snapshot of all state, triggers debounced save ─────
-  const currentAssessment = useMemo(()=>({
-    propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,
-    clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,
-    refitCost,stockCost,financeRate,financeYears,ageBands,employment,housing,
-    popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,
-    peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,
-    fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,
-    areaNotes,storeNote,genesisNote,refitCommentary,competitorList,
-    planningApps,mapLat,mapLng,comparables,foodProfile,existingStore,
-    savedAt:new Date().toISOString()
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,
-    clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,
-    refitCost,stockCost,financeRate,financeYears,ageBands,employment,housing,
-    popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,
-    peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,
-    fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,
-    areaNotes,storeNote,genesisNote,refitCommentary,competitorList,
-    planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
 
-  // ── Debounced autosave — fires 2s after any state change ─────────────────
+  // ── saveTick — increments on every render, triggers debounced save ─────────
+  const saveTick = useRef(0);
   useEffect(()=>{
+    saveTick.current += 1;
+    const tick = saveTick.current;
     setHasUnsavedChanges(true);
     const timeout = setTimeout(()=>{
-      saveDraft(currentAssessment);
+      if(saveTick.current !== tick) return; // superseded by newer change
+      saveDraft(latestStateRef.current);
       setHasUnsavedChanges(false);
     }, 2000);
     return ()=>clearTimeout(timeout);
-  },[currentAssessment]);
+  });
 
   // ── Save on tab close + flush pending on reconnect ───────────────────────
   useEffect(()=>{
