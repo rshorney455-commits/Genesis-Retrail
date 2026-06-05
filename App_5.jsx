@@ -1554,6 +1554,60 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
+  // ── Supabase save functions ───────────────────────────────────────────────
+  const SB_URL = "https://drtpeodthflxkzjgbfvu.supabase.co";
+  const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+  const sbHdr = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json","Prefer":"return=representation"};
+  const sbFetch = (path,opts={})=>fetch(SB_URL+"/rest/v1/"+path,{...opts,headers:sbHdr});
+
+  async function saveToSupabase(rawState) {
+    if(!rawState) return;
+    const state = {...rawState};
+    if(!state.propName) state.propName = state.postcode || "draft";
+    if(!state.propName && !state.postcode) return;
+    delete state.cats;
+
+    // localStorage always first — never lose data
+    try {
+      const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+      const li = existing.findIndex(a=>a.propName===state.propName&&a.postcode===state.postcode);
+      if(li>=0) existing[li]=state; else existing.unshift(state);
+      localStorage.setItem("genesis_assessments",JSON.stringify(existing.slice(0,20)));
+      setSavedAssessments(existing.slice(0,20));
+      localStorage.setItem("genesisDraft",JSON.stringify(state));
+    } catch(e){}
+
+    // Offline — queue and bail
+    if(!navigator.onLine){
+      localStorage.setItem("pendingAssessment",JSON.stringify(state));
+      setLastSaved("📵 Offline — saved locally");
+      return;
+    }
+
+    setLastSaved("Saving...");
+    try {
+      const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
+      const chk=await sbFetch(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+      const ex=await chk.json();
+      const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+      const res = Array.isArray(ex)&&ex.length>0
+        ? await sbFetch(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
+        : await sbFetch("assessments",{method:"POST",body});
+      if(res.ok){
+        localStorage.removeItem("pendingAssessment");
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } else {
+        setLastSaved("⚠ Saved locally — cloud error "+res.status);
+      }
+    } catch(e){
+      console.error("Supabase save failed:",e.message);
+      setLastSaved("⚠ Saved locally — "+e.message);
+    }
+  }
+
+  const saveDraft = saveToSupabase;
+  const saveAssessment = saveToSupabase;
+
   // ── Autosave — runs after every render, 2s debounce, no stale closure ──────
   const latestStateRef = useRef(null);
   useEffect(()=>{
@@ -1569,13 +1623,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   // ── Save on tab close + flush pending on reconnect ───────────────────────
   useEffect(()=>{
-    const onPageHide = ()=>saveDraft(latestStateRef.current);
+    const onPageHide = ()=>saveToSupabase(latestStateRef.current);
     const onOnline = ()=>{
       const pending = localStorage.getItem("pendingAssessment");
       if(pending){
         try {
           const state = JSON.parse(pending);
-          saveDraft(state);
+          saveToSupabase(state);
         } catch(e){}
       }
     };
