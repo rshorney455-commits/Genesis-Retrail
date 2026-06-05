@@ -32,31 +32,20 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 const SB_URL = "https://drtpeodthflxkzjgbfvu.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
 
-let _sbClient = null;
-async function getSB() {
-  if (_sbClient) return _sbClient;
-  if (!window._supabaseLoaded) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
-      s.onload = () => { window._supabaseLoaded = true; resolve(); };
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-  }
-  _sbClient = window.supabase.createClient(SB_URL, SB_KEY);
-  return _sbClient;
-}
+const SB_HDR = {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json","Prefer":"return=representation"};
+const sbFetch = (path, opts={}) => fetch(SB_URL+"/rest/v1/"+path, {...opts, headers:{...SB_HDR,...(opts.headers||{})}});
 
 async function sbSave(propName, postcode, data) {
   try {
-    const sb = await getSB();
-    const name = propName||"draft", pc = postcode||"";
-    const { data: existing } = await sb.from("assessments").select("id").eq("prop_name", name).eq("postcode", pc).limit(1);
-    if (existing && existing.length > 0) {
-      await sb.from("assessments").update({prop_name:name, postcode:pc, data, updated_at:new Date().toISOString()}).eq("id", existing[0].id);
+    const name = encodeURIComponent(propName||"draft");
+    const pc = encodeURIComponent(postcode||"");
+    const chk = await sbFetch(`assessments?prop_name=eq.${name}&postcode=eq.${pc}&select=id`);
+    const existing = await chk.json();
+    const body = JSON.stringify({prop_name:propName||"draft", postcode:postcode||"", data, updated_at:new Date().toISOString()});
+    if(Array.isArray(existing) && existing.length > 0) {
+      await sbFetch(`assessments?id=eq.${existing[0].id}`, {method:"PATCH", body});
     } else {
-      await sb.from("assessments").insert({prop_name:name, postcode:pc, data});
+      await sbFetch("assessments", {method:"POST", body});
     }
     return true;
   } catch(e) { console.error("SB save:",e); return false; }
@@ -64,15 +53,15 @@ async function sbSave(propName, postcode, data) {
 
 async function sbLoad() {
   try {
-    const sb = await getSB();
-    const { data: rows } = await sb.from("assessments").select("id,prop_name,postcode,data,updated_at").order("updated_at", {ascending:false}).limit(50);
-    if (!Array.isArray(rows)) return [];
-    return rows.map(r => ({...r.data, propName:r.prop_name, postcode:r.postcode, savedAt:r.updated_at, sbId:r.id}));
+    const res = await sbFetch("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
+    const rows = await res.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(r=>({...r.data, propName:r.prop_name, postcode:r.postcode, savedAt:r.updated_at, sbId:r.id}));
   } catch(e) { console.error("SB load:",e); return []; }
 }
 
 async function sbDelete(id) {
-  try { const sb = await getSB(); await sb.from("assessments").delete().eq("id", id); return true; }
+  try { await sbFetch(`assessments?id=eq.${id}`, {method:"DELETE"}); return true; }
   catch(e) { return false; }
 }
 
