@@ -1523,6 +1523,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[]);
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
+  const setLastSavedRef = useRef(setLastSaved);
+  useEffect(()=>{ setLastSavedRef.current = setLastSaved; },[setLastSaved]);
   const isLoading = useRef(false);
 
   const gatherState = useCallback(()=>({
@@ -1569,7 +1571,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         if(idx>=0) existing[idx]=state; else existing.unshift(state);
         localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
         setSavedAssessments(existing.slice(0,20));
-        setLastSaved("Saving...");
+        setLastSavedRef.current("Saving...");
         // Inline Supabase save — guaranteed in scope
         (async()=>{
           try {
@@ -1584,10 +1586,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             let res;
             if(Array.isArray(ex)&&ex.length>0){res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});}
             else{res=await sb("assessments",{method:"POST",body});}
-            setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+            setLastSavedRef.current((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
           } catch(e){
             console.error("Save error:",e);
-            setLastSaved("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+            setLastSavedRef.current("⚠ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
           }
         })();
       } catch(e){}
