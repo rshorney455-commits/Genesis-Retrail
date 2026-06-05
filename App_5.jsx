@@ -1502,6 +1502,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
+
   // ═══════════════════════════════════════════════════════════════════════════
   // PERSISTENCE LAYER
   // React State → gatherState() → latestStateRef → localStorage → Supabase
@@ -1509,42 +1510,36 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   const SBU = "https://drtpeodthflxkzjgbfvu.supabase.co";
   const SBK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-  const sbH = {"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
-  const sbQ = (path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:sbH});
+  const sbH = {"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json"};
+  const sbQ = (path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:{...sbH,...(opts.headers||{})}});
 
-  // 1. latestStateRef — always holds current state, updated after every render
+  // Step 1: latestStateRef — updated after every render via no-dep useEffect
   const latestStateRef = useRef(null);
-
-  // 2. After every render: capture fresh state + instant localStorage backup
   useEffect(()=>{
     const data = gatherState();
     latestStateRef.current = data;
     localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
   });
 
-  // 3. Cloud save — upsert by stable assessmentId
+  // Step 2: saveDraft — localStorage first, then Supabase upsert
   const isSavingRef = useRef(false);
-
   async function saveDraft(data) {
     if(!data) return;
     if(!data.propName && !data.postcode) return;
-
-    // localStorage first — always
+    // localStorage always
     try {
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-      const i = existing.findIndex(a=>a.propName===data.propName && a.postcode===data.postcode);
+      const i = existing.findIndex(a=>a.propName===data.propName&&a.postcode===data.postcode);
       if(i>=0) existing[i]=data; else existing.unshift(data);
       localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
       setSavedAssessments(existing.slice(0,20));
     } catch(e){}
-
+    // Offline queue
     if(!navigator.onLine){
       localStorage.setItem("pendingAssessment", JSON.stringify(data));
-      setSaveStatus("offline");
-      setLastSaved("📵 Offline — saved locally");
-      return;
+      throw new Error("offline");
     }
-
+    // Supabase upsert
     const body = JSON.stringify({
       id: assessmentId,
       prop_name: data.propName||"draft",
@@ -1552,29 +1547,91 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       data: data,
       updated_at: new Date().toISOString()
     });
-    const res = await sbQ("assessments", {method:"POST", body,
-      headers:{...sbH, "Prefer":"resolution=merge-duplicates,return=representation"}
+    const res = await sbQ("assessments", {
+      method:"POST", body,
+      headers:{...sbH,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}
     });
     if(!res.ok){
       const errText = await res.text();
-      throw new Error(`Supabase ${res.status}: ${errText}`);
+      throw new Error(`${res.status}: ${errText.slice(0,100)}`);
     }
     localStorage.removeItem("pendingAssessment");
   }
 
-  const saveToCloud = saveDraft;
-  const saveAssessment = ()=>saveDraft(latestStateRef.current);
+  // Step 3: Debounced autosave — saveTimeoutRef pattern, fires after every render
+  const saveTimeoutRef = useRef();
+  useEffect(()=>{
+    clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(async()=>{
+      setSaveStatus("saving");
+      setLastSaved("Saving...");
+      try {
+        await saveDraft(latestStateRef.current);
+        setSaveStatus("saved");
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } catch(err){
+        if(err.message==="offline"){
+          setSaveStatus("offline");
+          setLastSaved("📵 Offline — saved locally");
+        } else {
+          setSaveStatus("error");
+          setLastSaved("⚠ Saved locally");
+          console.error("Autosave:", err.message);
+        }
+      }
+    }, 2000);
+    return ()=>clearTimeout(saveTimeoutRef.current);
+  });
 
-  // Crash recovery — restore last draft on mount
+  // Step 4: Save on tab close + sync pending on reconnect
+  useEffect(()=>{
+    const onHide = ()=>{ try { saveDraft(latestStateRef.current); } catch(e){} };
+    const onOnline = ()=>{
+      const p = localStorage.getItem("pendingAssessment");
+      if(p){ try { saveDraft(JSON.parse(p)); } catch(e){} }
+    };
+    window.addEventListener("pagehide", onHide);
+    window.addEventListener("online", onOnline);
+    return ()=>{
+      window.removeEventListener("pagehide", onHide);
+      window.removeEventListener("online", onOnline);
+    };
+  },[]);
+
+  // Step 5: Warn on close if mid-save
+  useEffect(()=>{
+    const handler=(e)=>{ if(saveStatus==="saving"){ e.preventDefault(); e.returnValue=""; } };
+    window.addEventListener("beforeunload", handler);
+    return ()=>window.removeEventListener("beforeunload", handler);
+  },[saveStatus]);
+
+  // Step 6: Load from Supabase on mount, merge with localStorage
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const res = await sbQ("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
+        const rows = await res.json();
+        if(!Array.isArray(rows)||!rows.length) return;
+        const remote = rows.map(r=>({...r.data,propName:r.prop_name,postcode:r.postcode,savedAt:r.updated_at,sbId:r.id}));
+        const local = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const merged = [...remote];
+        local.forEach(l=>{ if(!merged.find(r=>r.propName===l.propName&&r.postcode===l.postcode)) merged.push(l); });
+        merged.sort((a,b)=>new Date(b.savedAt||0)-new Date(a.savedAt||0));
+        setSavedAssessments(merged.slice(0,50));
+        localStorage.setItem("genesis_assessments",JSON.stringify(merged.slice(0,20)));
+      } catch(e){ console.error("Supabase load:", e.message); }
+    })();
+  },[]);
+
+  // Step 7: Crash recovery — restore draft on mount
   useEffect(()=>{
     const draft = localStorage.getItem("genesis-assessment-draft");
     if(!draft) return;
-    try {
-      loadAssessment(JSON.parse(draft));
-    } catch(e) {
-      console.error("Draft restore failed:", e);
-    }
+    try { loadAssessment(JSON.parse(draft)); } catch(e){ console.error("Draft restore:", e); }
   },[]);
+
+  const saveAssessment = ()=>saveDraft(latestStateRef.current);
+
 
 
 
