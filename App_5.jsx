@@ -1478,6 +1478,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   });
   const [saveMsg, setSaveMsg] = useState("");
   const [lastSaved, setLastSaved] = useState("");
+  const [assessmentId] = useState(()=>{
+    // Stable ID per session — persists in sessionStorage so refresh keeps same record
+    const key = "genesis-assessment-id";
+    const existing = sessionStorage.getItem(key);
+    if(existing) return existing;
+    const newId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36);
+    sessionStorage.setItem(key, newId);
+    return newId;
+  });
   const [saveStatus, setSaveStatus] = useState("saved"); // "saved" | "saving" | "error" | "offline"
   const saveTimeoutRef = useRef();
   const isLoading = useRef(false);
@@ -1559,11 +1568,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   useEffect(()=>{
     clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(async()=>{
+      setSaveStatus("saving");
+      setLastSaved("Saving...");
       try {
-        await saveToCloud(latestStateRef.current);
+        await saveDraft(latestStateRef.current);
         setSaveStatus("saved");
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
       } catch(err) {
         setSaveStatus("error");
+        setLastSaved("⚠ Saved locally");
         console.error("Autosave error:", err);
       }
     }, 2000);
