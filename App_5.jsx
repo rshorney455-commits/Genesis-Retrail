@@ -1559,60 +1559,46 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState]);
 
 
-  // ── Autosave — interval reads from latestStateRef, no stale closure ─────────
-  useEffect(()=>{
-    const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
-    const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
-    const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
-    const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
-
-    const timer = setInterval(async()=>{
-      try {
-        // Always read fresh state from ref — no stale closure
-        const state = {...latestStateRef.current};
-        if(!state.propName) state.propName = state.postcode || "draft";
-        if(!state.propName || state.propName === "draft" && !state.postcode) return;
-        delete state.cats;
-
-        // 1. localStorage backup first
-        const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-        const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
-        if(idx>=0) existing[idx]=state; else existing.unshift(state);
-        localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
-        setSavedAssessments(existing.slice(0,20));
-
-        // 2. Supabase save
-        setLastSaved("Saving...");
-        const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
-        const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
-        const ex=await chk.json();
-        const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
-        let res;
-        if(Array.isArray(ex)&&ex.length>0){
-          res=await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body});
-        } else {
-          res=await sb("assessments",{method:"POST",body});
-        }
-        setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-      } catch(e){
-        console.error("Autosave error:",e.message);
-        setLastSaved("⚠ "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-      }
-    }, 5000);
-
-    // Save on tab close/refresh
-    const handleUnload = async()=>{
-      const state = {...latestStateRef.current};
-      if(!state.propName) return;
+  // ── saveAssessment — called by interval and on unload ────────────────────────
+  const saveAssessment = async (rawState) => {
+    try {
+      const state = {...rawState};
+      if(!state.propName) state.propName = state.postcode || "draft";
+      if(!state.propName && !state.postcode) return;
       delete state.cats;
+
+      // localStorage first — always
       const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
-      const idx = existing.findIndex(a=>a.propName===state.propName);
+      const idx = existing.findIndex(a=>a.propName===state.propName && a.postcode===state.postcode);
       if(idx>=0) existing[idx]=state; else existing.unshift(state);
       localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
-    };
-    window.addEventListener("pagehide", handleUnload);
+      setSavedAssessments(existing.slice(0,20));
 
-    return ()=>{ clearInterval(timer); window.removeEventListener("pagehide", handleUnload); };
+      // Supabase
+      setLastSaved("Saving...");
+      const SBU="https://drtpeodthflxkzjgbfvu.supabase.co";
+      const SBK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+      const hdrs={"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json","Prefer":"return=representation"};
+      const sb=(path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:hdrs});
+      const n=encodeURIComponent(state.propName), p=encodeURIComponent(state.postcode||"");
+      const chk=await sb(`assessments?prop_name=eq.${n}&postcode=eq.${p}&select=id`);
+      const ex=await chk.json();
+      const body=JSON.stringify({prop_name:state.propName,postcode:state.postcode||"",data:state,updated_at:new Date().toISOString()});
+      const res = Array.isArray(ex)&&ex.length>0
+        ? await sb(`assessments?id=eq.${ex[0].id}`,{method:"PATCH",body})
+        : await sb("assessments",{method:"POST",body});
+      setLastSaved((res.ok?"☁ ":"⚠ ")+"Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+    } catch(e) {
+      console.error("Save failed:",e.message);
+      setLastSaved("⚠ "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+    }
+  };
+
+  // ── Autosave every 30s — empty deps, reads fresh state from ref ───────────
+  useEffect(()=>{
+    const id = setInterval(()=>{ saveAssessment(latestStateRef.current); }, 30000);
+    window.addEventListener("pagehide", ()=>saveAssessment(latestStateRef.current));
+    return ()=>clearInterval(id);
   },[]);
 
   // ── Warn before closing/refreshing ──────────────────────────────────────────
