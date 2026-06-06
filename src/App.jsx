@@ -290,7 +290,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
   return (
     <div>
       <div ref={mapRef} style={{height:340,borderRadius:10,border:"1px solid "+G.border,overflow:"hidden"}}/>
-      <div style={{fontSize:11,color:G.light,marginTop:6,textAlign:"center"}}>★ Subject site · 🏪 Existing store · C1/C2 Comparables · Numbers = competitors by threat · Dashed = 0.5 mile radius</div>
+      <div style={{fontSize:11,color:"#FFFFFF",marginTop:6,textAlign:"center"}}>★ Subject site · 🏪 Existing store · C1/C2 Comparables · Numbers = competitors by threat · Dashed = 0.5 mile radius</div>
     </div>
   );
 }
@@ -369,7 +369,7 @@ function RiskRegister({ risks }) {
           <div style={{width:10,height:10,borderRadius:50,background:cols[r.rag],flexShrink:0,marginTop:4}}/>
           <div style={{flex:1}}>
             <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{r.title}</div>
-            <div style={{fontSize:12,color:G.val,marginTop:2}}>{r.detail}</div>
+            <div style={{fontSize:12,color:"#FFFFFF",marginTop:2}}>{r.detail}</div>
           </div>
           <div style={{fontSize:11,fontWeight:700,color:cols[r.rag],padding:"3px 8px",borderRadius:4,background:cols[r.rag]+"18",border:"1px solid "+cols[r.rag]+"44",flexShrink:0,whiteSpace:"nowrap"}}>{r.rag.toUpperCase()}</div>
         </div>
@@ -403,7 +403,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
             <div style={{height:6,background:"#1E293B",borderRadius:3}}>
               <div style={{height:"100%",background:i===0?G.mid:G.light,borderRadius:3,width:(sg.score/8*100)+"%"}}/>
             </div>
-            <div style={{fontSize:11,color:G.light,marginTop:3}}>{sg.desc}</div>
+            <div style={{fontSize:11,color:"#FFFFFF",marginTop:3}}>{sg.desc}</div>
           </div>
           <div style={{fontSize:13,fontWeight:700,color:i===0?"#ffffff":G.light,minWidth:30,textAlign:"right"}}>{sg.score}/8</div>
         </div>
@@ -532,7 +532,7 @@ function Explainer({term, children}){
     <div style={{marginBottom:8}}>
       <button onClick={()=>setOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",background:"#fdf8ec",border:"1px solid #1e3a8a",borderRadius:8,cursor:"pointer",fontFamily:"inherit",width:"100%",textAlign:"left"}}>
         <span style={{fontSize:14,color:G.val,fontWeight:700}}>? What is {term}?</span>
-        <span style={{marginLeft:"auto",fontSize:14,color:G.val}}>{open?"▲":"▼"}</span>
+        <span style={{marginLeft:"auto",fontSize:14,color:"#FFFFFF"}}>{open?"▲":"▼"}</span>
       </button>
       {open&&(
         <div style={{padding:"14px 16px",background:"#1a2216",border:"1px solid #e07020",borderTop:"none",borderRadius:"0 0 8px 8px",fontSize:13,color:G.text,lineHeight:1.8}}>
@@ -928,8 +928,8 @@ class ErrorBoundary extends React.Component {
     if (this.state.error) return (
       <div style={{padding:32,textAlign:"center",fontFamily:"inherit"}}>
         <div style={{fontSize:32,marginBottom:12}}>⚠️</div>
-        <div style={{fontSize:18,fontWeight:700,color:G.val,marginBottom:8}}>Something went wrong</div>
-        <div style={{fontSize:13,color:G.val,marginBottom:20}}>{this.state.error.message}</div>
+        <div style={{fontSize:18,fontWeight:700,color:"#FFFFFF",marginBottom:8}}>Something went wrong</div>
+        <div style={{fontSize:13,color:"#FFFFFF",marginBottom:20}}>{this.state.error.message}</div>
         <button onClick={()=>this.setState({error:null})}
           style={{padding:"10px 24px",background:"#1e3a8a",border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>
           Try Again
@@ -1037,7 +1037,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
       {tab==="agent"&&(
         <div>
-          <div style={{fontSize:13,color:G.val,marginBottom:16,lineHeight:1.7}}>Ask anything about the app, the current assessment, the calculations or what to fix. The agent has full context of the current assessment state.</div>
+          <div style={{fontSize:13,color:"#FFFFFF",marginBottom:16,lineHeight:1.7}}>Ask anything about the app, the current assessment, the calculations or what to fix. The agent has full context of the current assessment state.</div>
           <textarea
             value={agentMsg}
             onChange={e=>setAgentMsg(e.target.value)}
@@ -1058,7 +1058,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
       {tab==="audit"&&(
         <div>
-          <div style={{fontSize:13,color:G.val,marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
+          <div style={{fontSize:13,color:"#FFFFFF",marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
           <button onClick={runAudit} disabled={auditLoading} style={{width:"100%",padding:13,background:auditLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:auditLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
             {auditLoading?"Running audit...":"Run Full Audit →"}
           </button>
@@ -1945,7 +1945,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       {showShare&&(
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",zIndex:999,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
           <div style={{background:"#fff",borderRadius:16,padding:24,maxWidth:420,width:"100%",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
-            <div style={{fontSize:18,fontWeight:800,color:G.mid,marginBottom:6}}>🔒 Share Locked Report</div>
+            <div style={{fontSize:18,fontWeight:800,color:"#FFFFFF",marginBottom:6}}>🔒 Share Locked Report</div>
             <div style={{fontSize:13,color:G.text,marginBottom:16,lineHeight:1.7}}>
               Generate a share token for this assessment. Recipients see all results but cannot edit fields or reverse-engineer the model. Set a PIN they'll need to unlock it.
             </div>
@@ -1961,9 +1961,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </>
             ):(
               <>
-                <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:8}}>✓ Share token generated</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#FFFFFF",marginBottom:8}}>✓ Share token generated</div>
                 <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,marginBottom:12,fontSize:11,wordBreak:"break-all",color:G.text,lineHeight:1.6,maxHeight:120,overflowY:"auto"}}>{sharePayload}</div>
-                <div style={{fontSize:12,color:G.val,marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
+                <div style={{fontSize:12,color:"#FFFFFF",marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={()=>{navigator.clipboard?.writeText(sharePayload);setSaveMsg("Token copied!");setTimeout(()=>setSaveMsg(""),2000);}} style={{flex:2,padding:12,background:G.mid,border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>📋 Copy Token</button>
                   <button onClick={()=>{setShowShare(false);setSharePayload(null);setSharePin("");}} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>Close</button>
@@ -1971,7 +1971,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </>
             )}
             <div style={{marginTop:20,paddingTop:16,borderTop:"1px solid "+G.border}}>
-              <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:8}}>Load a shared token</div>
+              <div style={{fontSize:13,fontWeight:700,color:"#FFFFFF",marginBottom:8}}>Load a shared token</div>
               <Fld l="Paste token" ch={<textarea style={{...INP_manual,minHeight:60,fontSize:12}} value={loadToken} onChange={e=>setLoadToken(e.target.value.trim())} placeholder="Paste GENESIS-SHARE::... token here"/>}/>
               <Fld l="Enter PIN" ch={<input style={INP_manual} type="password" value={loadPin} onChange={e=>setLoadPin(e.target.value)} placeholder="PIN"/>}/>
               {loadError&&<div style={{color:"#d62828",fontSize:13,marginBottom:8}}>{loadError}</div>}
@@ -1992,7 +1992,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <img src="https://genesis-retail-website.vercel.app/logo.jpg" alt="Genesis Retail" style={{height:44,width:"auto",objectFit:"contain",borderRadius:4}}/>
             <div>
               <div style={{fontSize:13,fontWeight:600,color:G.val,letterSpacing:".04em"}}>Site Viability Assessor</div>
-              {propName&&<div style={{fontSize:12,color:G.val,marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
+              {propName&&<div style={{fontSize:12,color:"#FFFFFF",marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
             </div>
           </div>
           <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4}}>
@@ -2103,7 +2103,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* Postcode lookup */}
             <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
-              <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:8}}>✦ Auto-populate from postcode</div>
+              <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:8}}>✦ Auto-populate from postcode</div>
               <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>Enter the site postcode to automatically pull: competitor data, local demographics, VOA rates estimate, planning applications, and more.</div>
               <div style={{display:"flex",gap:10}}>
                 <input
@@ -2124,7 +2124,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {postcodeError&&<div style={{marginTop:8,fontSize:13,color:"#d62828",fontWeight:600}}>⚠ {postcodeError}</div>}
               {postcodeData&&!postcodeLoading&&(
                 <div style={{marginTop:12,padding:"10px 14px",background:"#fff",borderRadius:8,border:"1px solid "+G.border}}>
-                  <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:6}}>✓ Postcode found — data auto-populated</div>
+                  <div style={{fontSize:13,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>✓ Postcode found — data auto-populated</div>
                   <div style={{fontSize:12,color:G.text}}>District: {postcodeData.admin_district} · Region: {postcodeData.region}</div>
                   {competitorList.length>0&&<div style={{fontSize:12,color:G.text,marginTop:3}}>{competitorList.length} nearby competitors found on map</div>}
                   {planningApps.length>0&&<div style={{fontSize:12,color:planningApps.some(p=>p.risk==="high")?"#d62828":G.orange,marginTop:3,fontWeight:600}}>{planningApps.length} retail planning application(s) detected nearby</div>}
@@ -2150,7 +2150,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {/* Postcode commentary box */}
                   <div style={{marginTop:14,borderTop:"1px solid "+G.border,paddingTop:12}}>
                     <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Postcode Notes</div>
-                    <div style={{fontSize:11,color:G.light,marginBottom:6}}>Record your observations about this location — what you noticed on the visit, the feel of the area, footfall patterns, anything relevant.</div>
+                    <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6}}>Record your observations about this location — what you noticed on the visit, the feel of the area, footfall patterns, anything relevant.</div>
                     <textarea
                       value={postcodeNotes}
                       onChange={e=>setPostcodeNotes(e.target.value)}
@@ -2209,7 +2209,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {REFITS.map(p=>(
                 <button key={p.label} onClick={()=>{setRefitCost(p.value);setCustomRefit(false);}} style={{padding:"14px 12px",textAlign:"left",cursor:"pointer",background:refitCost===p.value&&!customRefit?G.pale:G.card,border:(refitCost===p.value&&!customRefit?"2px":"1px")+" solid "+(refitCost===p.value&&!customRefit?G.mid:G.border),borderRadius:10,fontFamily:"inherit"}}>
                   <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.mid:G.light,marginBottom:4}}>{p.label}</div>
-                  <div style={{fontSize:20,fontWeight:700,color:G.val,marginBottom:3}}>{fmt(p.value)}</div>
+                  <div style={{fontSize:20,fontWeight:700,color:"#FFFFFF",marginBottom:3}}>{fmt(p.value)}</div>
                   <div style={{fontSize:12,color:G.val,lineHeight:1.4}}>{p.desc}</div>
                 </button>
               ))}
@@ -2226,7 +2226,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             <div style={{marginTop:20}}>
               <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
-              <div style={{fontSize:12,color:G.val,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
+              <div style={{fontSize:12,color:"#FFFFFF",marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
               <textarea
                 value={refitCommentary}
                 onChange={e=>setRefitCommentary(e.target.value)}
@@ -2265,7 +2265,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       </div>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual GP</div>
-                        <div style={{fontSize:15,fontWeight:700,color:G.val}}>{fmt(annGP)}</div>
+                        <div style={{fontSize:15,fontWeight:700,color:"#FFFFFF"}}>{fmt(annGP)}</div>
                       </div>
                     </div>
                   </div>
@@ -2275,7 +2275,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
                     <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>ACS Benchmark</div>
-                      <div style={{fontSize:22,fontWeight:800,color:G.val}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
+                      <div style={{fontSize:22,fontWeight:800,color:"#FFFFFF"}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
                       {acsMix !== null && Math.abs(mixDiff)>=0.5 && (
                         <div style={{fontSize:10,marginTop:4,fontWeight:700,color:mixDiff>0?"#ffffff":"#c05010"}}>
                           {mixDiff>0?"▲ ":"▼ "}{Math.abs(mixDiff).toFixed(1)}% vs ACS
@@ -2318,12 +2318,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </div>
                 ))}
               </div>
-              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:G.val,marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
+              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:"#FFFFFF",marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
             </div>
 
                         {/* GP margin context */}
             <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:8}}>
-              <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:10}}>ACS 2025 Average GP Margins by Category</div>
+              <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:10}}>ACS 2025 Average GP Margins by Category</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {[
                   {cat:"Hot Food & Drinks",gp:55,note:"Highest margin"},
@@ -2381,7 +2381,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Penetration Rate - with annotation */}
               <div style={{background:"#1a2a20",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
-                <div style={{fontSize:16,fontWeight:700,color:G.val,marginBottom:6}}>{pct(C.pen)}</div>
+                <div style={{fontSize:16,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>{pct(C.pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab — this figure may reflect incomplete data.</div>}
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
                   <strong style={{color:G.mid}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
@@ -2406,7 +2406,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{marginTop:8,marginBottom:16,padding:"12px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:10}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,flexWrap:"wrap"}}>
                 <div style={{flex:1,minWidth:200}}>
-                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:4}}>Deprivation Index: {deprivation}/10</div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:4}}>Deprivation Index: {deprivation}/10</div>
                   <div style={{fontSize:11,color:G.light,lineHeight:1.6}}>
                     <strong style={{color:G.dark}}>What this means:</strong> Measures how deprived the area is. <strong>1 = most deprived, 10 = least deprived.</strong> Based on the government's Index of Multiple Deprivation (IMD) covering income, employment, health, education and crime.
                   </div>
@@ -2435,7 +2435,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <Sub c="Local Food Consumption Profile — auto-generated from postcode"/>
                 <div style={{background:G.card,border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:16}}>
                   <div style={{fontSize:13,color:G.text,lineHeight:1.8,marginBottom:10}}>{foodProfile.summary}</div>
-                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:4}}>Key insight</div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:4}}>Key insight</div>
                   <div style={{fontSize:13,color:G.text,lineHeight:1.7,padding:"10px 14px",background:G.pale,borderRadius:8,borderLeft:"3px solid "+G.mid}}>{foodProfile.keyInsight}</div>
                 </div>
 
@@ -2449,7 +2449,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{f.category}</div>
                           <div style={{padding:"3px 8px",borderRadius:6,fontSize:11,fontWeight:800,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index >= 100?"+":"-"}{diff}%</div>
                         </div>
-                        <div style={{fontSize:11,color:G.light,marginBottom:6,lineHeight:1.5}}>{f.insight}</div>
+                        <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6,lineHeight:1.5}}>{f.insight}</div>
                         <div style={{fontSize:11,color:G.val,fontWeight:600,borderTop:"1px solid "+G.border,paddingTop:6}}>→ {f.action}</div>
                       </div>
                     );
@@ -2477,7 +2477,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     </div>
                   </div>
                 )}
-                <div style={{fontSize:11,color:G.light,marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside your visit observations.</div>
+                <div style={{fontSize:11,color:"#FFFFFF",marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside your visit observations.</div>
               </div>
             )}
             {!foodProfile&&postcodeData&&(
@@ -2494,7 +2494,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Sub c="Basket size distribution (%)"/>
             {SBANDS.map(b=>(
               <div key={b.key} style={{marginBottom:14}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:14,color:G.text}}><span>{b.label}</span><span style={{fontWeight:700,color:G.mid}}>{spendBands[b.key]}%</span></div>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:14,color:G.text}}><span>{b.label}</span><span style={{fontWeight:700,color:"#FFFFFF"}}>{spendBands[b.key]}%</span></div>
                 <div style={{display:"flex",gap:10,alignItems:"center"}}>
                   <div style={{flex:1,height:8,background:G.pale,borderRadius:4}}><div style={{height:"100%",background:G.mid,borderRadius:4,width:spendBands[b.key]+"%"}}/></div>
                   <input style={{...INP_auto,width:70,padding:"8px 10px",textAlign:"center"}} type="number" step="1" value={spendBands[b.key]} onFocus={e=>e.target.select()} onChange={e=>setSpendBands(p=>({...p,[b.key]:e.target.value===""?0:+e.target.value}))}/>
@@ -2550,7 +2550,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 )}
                 {/* Manual competitor add */}
                 <div style={{marginTop:12,padding:"14px 16px",background:G.pale,border:"1px solid "+G.border,borderRadius:10}}>
-                  <div style={{fontSize:12,fontWeight:700,color:G.mid,marginBottom:10}}>Add competitor manually</div>
+                  <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:10}}>Add competitor manually</div>
                   <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:8,alignItems:"end"}}>
                     <input id="mc-name" style={{...INP_manual,fontSize:13}} placeholder="Store name e.g. Nisa, Derwent Parade"/>
                     <input id="mc-type" style={{...INP_manual,fontSize:13}} placeholder="Type e.g. Nisa"/>
@@ -2586,22 +2586,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     <div key={i} style={{padding:"10px 0",borderBottom:i<planningApps.length-1?"1px solid "+G.border:"none"}}>
                       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
                         <div>
-                          <div style={{fontSize:12,fontWeight:700,color:G.orange,marginBottom:2}}>{pa.ref}</div>
+                          <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:2}}>{pa.ref}</div>
                           <div style={{fontSize:13,color:G.dark}}>{pa.desc}</div>
-                          <div style={{fontSize:11,color:G.light,marginTop:2}}>{pa.distance} · {pa.status}</div>
+                          <div style={{fontSize:11,color:"#FFFFFF",marginTop:2}}>{pa.distance} · {pa.status}</div>
                         </div>
                         <div style={{padding:"3px 8px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#dde4f5",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,border:"1px solid "+(pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid)+"44",flexShrink:0,whiteSpace:"nowrap"}}>{pa.risk.toUpperCase()} RISK</div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div style={{fontSize:12,color:G.val,marginTop:8}}>⚠ Planning data is indicative. Always verify with the Local Planning Authority before committing.</div>
+                <div style={{fontSize:12,color:"#FFFFFF",marginTop:8}}>⚠ Planning data is indicative. Always verify with the Local Planning Authority before committing.</div>
               </div>
             )}
 
             {TRAFFIC_F.map(f=>(
               <div key={f.k} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:10,display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-                <div style={{flex:1}}><div style={{fontSize:15,color:G.text,fontWeight:500}}>{f.l}</div>{f.h&&<div style={{fontSize:12,color:G.val,marginTop:2}}>{f.h}</div>}</div>
+                <div style={{flex:1}}><div style={{fontSize:15,color:G.text,fontWeight:500}}>{f.l}</div>{f.h&&<div style={{fontSize:12,color:"#FFFFFF",marginTop:2}}>{f.h}</div>}</div>
                 {f.num?(
                   <input style={{...INP_manual,width:110,flexShrink:0,textAlign:"right"}} type="number" value={traffic[f.k]} onFocus={e=>e.target.select()} onChange={e=>setTraffic(p=>({...p,[f.k]:e.target.value===""?0:+e.target.value}))}/>
                 ):(
@@ -2635,7 +2635,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
               {FHOURS.map(h=>(
                 <div key={h} style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"10px 8px"}}>
-                  <div style={{fontSize:11,color:G.light,marginBottom:6,textAlign:"center"}}>{h}</div>
+                  <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6,textAlign:"center"}}>{h}</div>
                   <input style={{...INP_auto,textAlign:"center",padding:"8px 6px"}} type="number" step="1" value={fhour[h]} onFocus={e=>e.target.select()} onChange={e=>setFhour(p=>({...p,[h]:e.target.value===""?0:+e.target.value}))}/>
                 </div>
               ))}
@@ -2657,7 +2657,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Sub c="Comparable sites — Genesis Retail benchmarks"/>
             {comparables.map((comp,i)=>(
               <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:10}}>
-                <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:10}}>Comparable {i+1}</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#FFFFFF",marginBottom:10}}>Comparable {i+1}</div>
                 <Fld l="Store name" ch={<input style={INP_manual} value={comp.name} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} onBlur={async e=>{
                   const name = e.target.value.trim();
                   if(!name) return;
@@ -2672,7 +2672,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
-                {comp.sqft>0&&comp.weeklyT>0&&comp.sqft>=100&&<div style={{fontSize:13,color:G.val,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
+                {comp.sqft>0&&comp.weeklyT>0&&comp.sqft>=100&&<div style={{fontSize:13,color:"#FFFFFF",fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
               </div>
             ))}
           </div>
@@ -2687,7 +2687,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
               {/* Excel export */}
               <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
-                <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:6}}>📥 Export Excel</div>
+                <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>📥 Export Excel</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>Fully populated workbook — P&L, 5-year, cashflow, sensitivity and glossary.</div>
                 <button
                   onClick={()=>{
@@ -2785,7 +2785,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
               {/* PowerPoint export */}
               <div style={{background:"#1a2216",border:"1.5px solid "+G.orange,borderRadius:12,padding:16}}>
-                <div style={{fontSize:14,fontWeight:700,color:G.orange,marginBottom:6}}>📊 Export PowerPoint</div>
+                <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>📊 Export PowerPoint</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>12-slide bank-grade deck — cover, financials, P&L, 5-year, investment, categories, demographics, site, risks, symbol groups and recommendation.</div>
                 <PPTXExportButton
                   propName={propName} postcode={postcode} location={location}
@@ -2975,7 +2975,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     {/* ── Sensitivity Sheet ── */}
                     {sheet==="sens"&&(
                       <div style={{padding:16}}>
-                        <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>ROI % across 25 scenarios — footfall and rent varying ±10/20% from base. <strong style={{color:G.mid}}>Green ≥20%</strong> · <strong style={{color:G.orange}}>Amber 10–20%</strong> · <strong style={{color:"#d62828"}}>Red &lt;10%</strong></div>
+                        <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>ROI % across 25 scenarios — footfall and rent varying ±10/20% from base. <strong style={{color:"#FFFFFF"}}>Green ≥20%</strong> · <strong style={{color:"#FFFFFF"}}>Amber 10–20%</strong> · <strong style={{color:"#d62828"}}>Red &lt;10%</strong></div>
                         <table style={{width:"100%",borderCollapse:"collapse"}}>
                           <thead>
                             <tr>
@@ -2990,14 +2990,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                                 {row.map((cell,ci)=>{
                                   const isBase=cell.fp===0&&cell.rp===0;
                                   const bg=isBase?"#dde4f5":cell.roi>=20?"#dde4f5":cell.roi>=10?"#fff4ea":"#fde8e8";
-                                  const col=isBase?G.mid:cell.roi>=20?G.mid:cell.roi>=10?G.orange:"#d62828";
+                                  const col=isBase?"#FFFFFF":cell.roi>=20?"#22C55E":cell.roi>=10?"#F59E0B":"#EF4444";
                                   return <td key={ci} style={{padding:"10px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:13,border:isBase?"2px solid "+G.mid:"1px solid "+G.border}}>{cell.roi.toFixed(1)}%{isBase&&<div style={{fontSize:9,fontWeight:400,color:G.mid}}>BASE</div>}</td>;
                                 })}
                               </tr>
                             ))}
                           </tbody>
                         </table>
-                        <div style={{fontSize:11,color:G.val,marginTop:10}}>Base: {footfall} transactions/day · {fmt(rent)}/yr rent · {uplift}% uplift · {fmt(C.ti)} investment</div>
+                        <div style={{fontSize:11,color:"#FFFFFF",marginTop:10}}>Base: {footfall} transactions/day · {fmt(rent)}/yr rent · {uplift}% uplift · {fmt(C.ti)} investment</div>
                       </div>
                     )}
 
@@ -3018,13 +3018,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val,fontWeight:600}}>{cat.mix}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val}}>{cat.gp}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:"#FFFFFF",fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
                                     <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix*4,100)+"%"}}/>
                                   </div>
-                                  <span style={{color:G.val,minWidth:30}}>{pct(C.ann*cat.mix/100*cat.gp/100/C.annGP*100)}</span>
+                                  <span style={{color:"#FFFFFF",minWidth:30}}>{pct(C.ann*cat.mix/100*cat.gp/100/C.annGP*100)}</span>
                                 </div>
                               </td>
                             </tr>
@@ -3032,9 +3032,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <tr style={{background:G.pale,borderTop:"2px solid "+G.mid}}>
                             <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.mid}}>TOTAL</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.val}}>{pct(C.blGP)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.val}}>{fmt(C.upliftedAnn)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.val}}>{fmt(C.annGP)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{pct(C.blGP)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{fmt(C.upliftedAnn)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{fmt(C.annGP)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>100%</td>
                           </tr>
                         </tbody>
@@ -3064,7 +3064,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
               </button>
-              <p style={{fontSize:12,color:G.val,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
+              <p style={{fontSize:12,color:"#FFFFFF",marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
             {/* ROI context note */}
@@ -3074,10 +3074,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:13,color:G.val,lineHeight:1.9}}>
                   {`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}
                 </div>
-                <div style={{fontSize:13,color:G.val,lineHeight:1.9,marginTop:10}}>
+                <div style={{fontSize:13,color:"#FFFFFF",lineHeight:1.9,marginTop:10}}>
                   {`The total investment of ${fmt(C.ti)} — comprising a ${fmt(refitCost)} refit and ${fmt(stockCost)} opening stock — should be supported by shopfitter quotes and a stock valuation from the chosen symbol group wholesaler before submission to any lender. The post-refit uplift of ${uplift}% is based on the increased store footprint, extended chilled capacity, symbol group conversion and the introduction of a dedicated world foods range. Comparable store evidence is provided in Section 4b of this report.`}
                 </div>
-                <div style={{fontSize:12,color:G.val,marginTop:10,fontStyle:"italic"}}>
+                <div style={{fontSize:12,color:"#FFFFFF",marginTop:10,fontStyle:"italic"}}>
                   Genesis Retail recommends this figure is presented alongside 12 months of till data or bank statements from the existing store to evidence the base turnover assumption.
                 </div>
               </div>
