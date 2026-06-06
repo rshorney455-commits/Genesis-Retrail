@@ -3415,6 +3415,31 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </div>
   </div>
 
+  {/* Site photo in PDF */}
+  {storePhoto&&(
+    <div style={{marginBottom:16}}>
+      <img src={storePhoto} alt="Site" style={{width:"100%",maxHeight:200,objectFit:"cover",borderRadius:6,border:"1px solid #e2e8f0",display:"block"}}/>
+      <div style={{fontSize:9,color:"#999",textAlign:"center",marginTop:4}}>Site photograph — {propName||postcode}</div>
+    </div>
+  )}
+
+  {/* Site visit scores */}
+  {siteVisit&&Object.values(siteVisit).some(v=>v)&&(
+    <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:6,padding:"14px 16px",marginBottom:16}}>
+      <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Site Visit Assessment</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:10}}>
+        {[["Visibility",siteVisit.visibility],["Access",siteVisit.access],["Parking",siteVisit.parking],["Fascia",siteVisit.fascia],["Competition",siteVisit.competition]].filter(([,v])=>v).map(([l,v])=>(
+          <div key={l} style={{textAlign:"center",padding:"8px",border:"1px solid #e2e8f0",borderRadius:4}}>
+            <div style={{fontSize:9,color:"#666",textTransform:"uppercase",letterSpacing:".08em",marginBottom:3}}>{l}</div>
+            <div style={{fontSize:12,fontWeight:700,color:v==="Excellent"?"#166534":v==="Good"?"#1a3c2e":v==="Poor"?"#991b1b":"#444"}}>{v}</div>
+          </div>
+        ))}
+      </div>
+      {siteVisit.strengths&&<div style={{marginBottom:6}}><span style={{fontSize:9,fontWeight:700,color:"#166534",textTransform:"uppercase",letterSpacing:".08em"}}>Strengths: </span><span style={{fontSize:11,color:"#333"}}>{siteVisit.strengths}</span></div>}
+      {siteVisit.weaknesses&&<div><span style={{fontSize:9,fontWeight:700,color:"#991b1b",textTransform:"uppercase",letterSpacing:".08em"}}>Weaknesses: </span><span style={{fontSize:11,color:"#333"}}>{siteVisit.weaknesses}</span></div>}
+    </div>
+  )}
+
   {(storeNote||postcodeNotes)&&(
     <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderLeft:"4px solid #1a3c2e",borderRadius:"0 6px 6px 0",padding:"16px 20px",marginBottom:16}}>
       <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Site Observations</div>
