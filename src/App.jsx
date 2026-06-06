@@ -1514,6 +1514,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     try {
       const data = gatherState();
       delete data.cats;
+      // Embed stable assessmentId so cloud upsert targets the same row always
+      data.assessmentId = assessmentIdRef.current;
       if(data.propName || data.postcode){
         localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
       }
@@ -1524,21 +1526,26 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const [cloudStatus, setCloudStatus] = useState("");
   const cloudSaveTimerRef = useRef();
   const assessmentIdRef = useRef(
-    sessionStorage.getItem("genesis-assessment-id") || (()=>{
+    // Stable ID — persists in localStorage so rename doesn't create new row
+    (()=>{
+      const stored = localStorage.getItem("genesis-assessment-id");
+      if(stored) return stored;
       const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36);
-      sessionStorage.setItem("genesis-assessment-id", id);
+      localStorage.setItem("genesis-assessment-id", id);
       return id;
     })()
   );
   const SBU2 = "https://drtpeodthflxkzjgbfvu.supabase.co";
   const SBK2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
 
-  // saveDraftToCloud — fire-and-forget, never blocks localStorage
+  // saveDraftToCloud — fire-and-forget upsert by stable assessmentId
   const saveDraftToCloud = async (data) => {
     if(!data || (!data.propName && !data.postcode)) return;
+    const id = data.assessmentId || assessmentIdRef.current;
     const hdrs = {"apikey":SBK2,"Authorization":"Bearer "+SBK2,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"};
+    // Upsert by id — same row forever regardless of prop_name changes
     const body = JSON.stringify({
-      id: assessmentIdRef.current,
+      id: id,
       prop_name: data.propName||"draft",
       postcode: data.postcode||"",
       data: data,
