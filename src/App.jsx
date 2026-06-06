@@ -105,7 +105,7 @@ const AGE_BANDS   = ["Under 18","18-24","25-34","35-44","45-54","55-64","65+"];
 const EMPLOYMENTS = ["Employed Full-Time","Employed Part-Time","Self-Employed","Unemployed","Retired","Student"];
 const HOUSINGS    = ["Owner Occupied","Private Rented","Social / Council","Other"];
 const TRENDS      = ["Rising Rapidly","Rising Steadily","Stable","Declining Slightly","Declining Rapidly"];
-const TCOLORS     = {"Rising Rapidly":"#1a3c2e","Rising Steadily":"#c9971c","Stable":"#6b83c9","Declining Slightly":"#c9971c","Declining Rapidly":"#d62828"};
+const TCOLORS     = {"Rising Rapidly":"#1a3c2e","Rising Steadily":"#c9971c","Stable":"#f0ede8","Declining Slightly":"#c9971c","Declining Rapidly":"#d62828"};
 const FHOURS      = ["6-8am","8-10am","10-12pm","12-2pm","2-4pm","4-6pm","6-8pm","8-10pm"];
 const SBANDS      = [{label:"Under £5",key:"u5"},{label:"£5-£9.99",key:"s5"},{label:"£10-£14.99",key:"s10"},{label:"£15-£19.99",key:"s15"},{label:"£20+",key:"s20"}];
 const MISSIONS    = ["Top-up","Grab and Go","Treat or Impulse","Food to Go","Big Shop Supplement"];
@@ -129,7 +129,7 @@ const G = {
   orange:"#c9971c", obg:"#1e3c2a",
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #c9971c",borderRadius:8,color:"#1a2e6b",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #c9971c",borderRadius:8,color:"#f0ede8",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 const INP_auto   = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #1e3a8a",borderRadius:8,color:"#1a3c2e",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
@@ -250,7 +250,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
 
       // Competitor markers
       (competitors || []).forEach((c, i) => {
-        const col = c.threat === "high" ? "#d62828" : c.threat === "medium" ? "#e07020" : "#c9971c";
+        const col = c.threat === "high" ? "#d62828" : c.threat === "medium" ? "#c9971c" : "#c9971c";
         const icon = L.divIcon({
           html: `<div style="background:${col};color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)">${i+1}</div>`,
           iconSize:[26,26], iconAnchor:[13,13], className:""
@@ -351,7 +351,7 @@ function AISection({ prompt, label }) {
 
 // ── Risk Register ─────────────────────────────────────────────────────────────
 function RiskRegister({ risks }) {
-  const cols = { red:"#d62828", amber:"#e07020", green:"#1a3c2e" };
+  const cols = { red:"#d62828", amber:"#c9971c", green:"#1a3c2e" };
   return (
     <div>
       {risks.map((r, i) => (
@@ -442,7 +442,7 @@ function HBar({data}){
 
 function Donut({data}){
   const total=data.reduce((s,d)=>s+d.v,0)||1;
-  const COLS=["#1a3c2e","#c9971c","#c9971c","#c9971c","#4a6fd4","#b8e0e8","#0a0e0c","#0a0e0c","#e07020","#f4a04a","#ffd166","#c9971c","#118ab2"];
+  const COLS=["#1a3c2e","#c9971c","#c9971c","#c9971c","#f0ede8","#b8e0e8","#0a0e0c","#0a0e0c","#c9971c","#c9971c","#ffd166","#c9971c","#f0ede8"];
   let cum=0;
   const cx=80,cy=80,r=60,ir=36;
   const slices=data.map((d,i)=>{
@@ -1034,7 +1034,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
             placeholder="e.g. Why is the net profit lower than expected? / Check the 5-year forecast logic / What's missing from the report for a bank submission?"
             style={{...INP_manual,minHeight:100,width:"100%",lineHeight:1.7,fontSize:14,marginBottom:10}}
           />
-          <button onClick={runAgent} disabled={agentLoading||!agentMsg.trim()} style={{width:"100%",padding:13,background:agentLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:agentLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
+          <button onClick={runAgent} disabled={agentLoading||!agentMsg.trim()} style={{width:"100%",padding:13,background:agentLoading?"#f0ede8":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:agentLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
             {agentLoading?"Thinking...":"Ask Agent →"}
           </button>
           {agentRes&&(
@@ -1049,7 +1049,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
       {tab==="audit"&&(
         <div>
           <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
-          <button onClick={runAudit} disabled={auditLoading} style={{width:"100%",padding:13,background:auditLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:auditLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
+          <button onClick={runAudit} disabled={auditLoading} style={{width:"100%",padding:13,background:auditLoading?"#f0ede8":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:auditLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
             {auditLoading?"Running audit...":"Run Full Audit →"}
           </button>
           {auditRes&&(
@@ -2353,7 +2353,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {cat:"Fresh Milk",       gp:18,note:"Traffic driver"},
                   {cat:"Tobacco & Vaping", gp:8, note:"Low margin, high traffic"},
                 ].map(({cat,gp,note})=>(
-                  <div key={cat} style={{padding:"6px 8px",background:gp>=35?"#1e3c2a":gp>=25?G.card:"#f8f9fc",borderRadius:6,border:"1px solid "+G.border}}>
+                  <div key={cat} style={{padding:"6px 8px",background:gp>=35?"#1e3c2a":gp>=25?G.card:"#111a14",borderRadius:6,border:"1px solid "+G.border}}>
                     <div style={{fontSize:10,color:G.dark,fontWeight:600,lineHeight:1.3}}>{cat}</div>
                     <div style={{fontSize:14,fontWeight:800,color:gp>=35?G.mid:gp>=25?G.dark:G.light}}>{gp}%</div>
                     <div style={{fontSize:9,color:G.light}}>{note}</div>
@@ -2456,7 +2456,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     const above = f.index >= 100;
                     const diff = Math.abs(f.index - 100);
                     return (
-                      <div key={i} style={{background:above?"#1e3c2a":"#f8f9fc",border:"1px solid "+(above?G.mid:G.border),borderRadius:10,padding:14}}>
+                      <div key={i} style={{background:above?"#1e3c2a":"#111a14",border:"1px solid "+(above?G.mid:G.border),borderRadius:10,padding:14}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
                           <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{f.category}</div>
                           <div style={{padding:"3px 8px",borderRadius:6,fontSize:11,fontWeight:800,background:above?G.mid:"#c9971c",color:"#fff"}}>{f.index >= 100?"+":"-"}{diff}%</div>
@@ -3073,7 +3073,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
+              <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#f0ede8":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
               </button>
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
@@ -3586,7 +3586,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {(foodProfile.topFoods||[]).map((f,i)=>{
                     const above = f.index >= 100;
                     return (
-                      <div key={i} style={{background:above?"#1e3c2a":"#f8f9fc",border:"1px solid "+(above?"#1a3c2e":"rgba(255,255,255,0.12)"),borderRadius:8,padding:12}}>
+                      <div key={i} style={{background:above?"#1e3c2a":"#111a14",border:"1px solid "+(above?"#1a3c2e":"rgba(255,255,255,0.12)"),borderRadius:8,padding:12}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
                           <div style={{fontSize:12,fontWeight:700,color:"#f0ede8"}}>{f.category}</div>
                           <div style={{fontSize:11,fontWeight:800,padding:"2px 6px",borderRadius:4,background:above?"#1a3c2e":"#c9971c",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
