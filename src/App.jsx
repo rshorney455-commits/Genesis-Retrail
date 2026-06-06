@@ -396,7 +396,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
             </div>
             <div style={{fontSize:11,color:G.light,marginTop:3}}>{sg.desc}</div>
           </div>
-          <div style={{fontSize:13,fontWeight:700,color:i===0?G.mid:G.light,minWidth:30,textAlign:"right"}}>{sg.score}/8</div>
+          <div style={{fontSize:13,fontWeight:700,color:i===0?"#ffffff":G.light,minWidth:30,textAlign:"right"}}>{sg.score}/8</div>
         </div>
       ))}
     </div>
@@ -540,7 +540,7 @@ function DemoSec({label,keys,values,setter}){
     <div style={{marginTop:20,marginBottom:6}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
         <Sub c={label}/>
-        <span style={{fontSize:12,fontWeight:700,color:Math.abs(total-100)<1?G.mid:G.orange}}>{total.toFixed(0)}%</span>
+        <span style={{fontSize:12,fontWeight:700,color:Math.abs(total-100)<1?"#ffffff":G.orange}}>{total.toFixed(0)}%</span>
       </div>
       {keys.map(k=>(
         <div key={k} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
@@ -2200,7 +2200,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {REFITS.map(p=>(
                 <button key={p.label} onClick={()=>{setRefitCost(p.value);setCustomRefit(false);}} style={{padding:"14px 12px",textAlign:"left",cursor:"pointer",background:refitCost===p.value&&!customRefit?G.pale:G.card,border:(refitCost===p.value&&!customRefit?"2px":"1px")+" solid "+(refitCost===p.value&&!customRefit?G.mid:G.border),borderRadius:10,fontFamily:"inherit"}}>
                   <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.mid:G.light,marginBottom:4}}>{p.label}</div>
-                  <div style={{fontSize:20,fontWeight:700,color:G.orange,marginBottom:3}}>{fmt(p.value)}</div>
+                  <div style={{fontSize:20,fontWeight:700,color:"#ffffff",marginBottom:3}}>{fmt(p.value)}</div>
                   <div style={{fontSize:12,color:G.val,lineHeight:1.4}}>{p.desc}</div>
                 </button>
               ))}
@@ -2256,7 +2256,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       </div>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual GP</div>
-                        <div style={{fontSize:15,fontWeight:700,color:G.mid}}>{fmt(annGP)}</div>
+                        <div style={{fontSize:15,fontWeight:700,color:"#ffffff"}}>{fmt(annGP)}</div>
                       </div>
                     </div>
                   </div>
@@ -2266,9 +2266,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
                     <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>ACS Benchmark</div>
-                      <div style={{fontSize:22,fontWeight:800,color:G.light}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
+                      <div style={{fontSize:22,fontWeight:800,color:"#ffffff"}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
                       {acsMix !== null && Math.abs(mixDiff)>=0.5 && (
-                        <div style={{fontSize:10,marginTop:4,fontWeight:700,color:mixDiff>0?G.mid:"#c05010"}}>
+                        <div style={{fontSize:10,marginTop:4,fontWeight:700,color:mixDiff>0?"#ffffff":"#c05010"}}>
                           {mixDiff>0?"▲ ":"▼ "}{Math.abs(mixDiff).toFixed(1)}% vs ACS
                         </div>
                       )}
@@ -2300,9 +2300,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{background:G.pale,border:"2px solid "+G.mid,borderRadius:12,padding:18,marginBottom:16}}>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,textAlign:"center"}}>
                 {[["Total Mix",totalMix.toFixed(1)+"%",Math.abs(totalMix-100)<0.1?G.mid:G.orange],
-                  ["Blended GP",(C.blGP||0).toFixed(1)+"%",G.mid],
+                  ["Blended GP",(C.blGP||0).toFixed(1)+"%","#ffffff"],
                   ["Total Sales",fmt(C.ann),G.dark],
-                  ["Total GP",fmt(C.annGP),G.mid]].map(([l,v,col])=>(
+                  ["Total GP",fmt(C.annGP),"#ffffff"]].map(([l,v,col])=>(
                   <div key={l}>
                     <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
                     <div style={{fontSize:18,fontWeight:800,color:col}}>{v}</div>
@@ -2334,7 +2334,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 ].map(({cat,gp,note})=>(
                   <div key={cat} style={{padding:"6px 8px",background:gp>=35?"#eef1fb":gp>=25?G.card:"#f8f9fc",borderRadius:6,border:"1px solid "+G.border}}>
                     <div style={{fontSize:10,color:G.dark,fontWeight:600,lineHeight:1.3}}>{cat}</div>
-                    <div style={{fontSize:14,fontWeight:800,color:gp>=35?G.mid:gp>=25?G.dark:G.light}}>{gp}%</div>
+                    <div style={{fontSize:14,fontWeight:800,color:gp>=35?"#ffffff":gp>=25?G.dark:G.light}}>{gp}%</div>
                     <div style={{fontSize:9,color:G.light}}>{note}</div>
                   </div>
                 ))}
@@ -2372,11 +2372,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Penetration Rate - with annotation */}
               <div style={{background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
-                <div style={{fontSize:16,fontWeight:700,color:G.mid,marginBottom:6}}>{pct(C.pen)}</div>
+                <div style={{fontSize:16,fontWeight:700,color:"#ffffff",marginBottom:6}}>{pct(C.pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:"#ffffff",background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab — this figure may reflect incomplete data.</div>}
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
                   <strong style={{color:G.mid}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
-                  <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?G.orange:"#c05010"}}>{C.pen>=20?"✓ Strong — well above the 15% target":C.pen>=15?"✓ Good — meets the 15% benchmark":C.pen>=10?"⚠ Below target — aim for 15%+ with good ranging":"✗ Low — consider whether catchment is large enough"}</span>
+                  <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?"#ffffff":"#c05010"}}>{C.pen>=20?"✓ Strong — well above the 15% target":C.pen>=15?"✓ Good — meets the 15% benchmark":C.pen>=10?"⚠ Below target — aim for 15%+ with good ranging":"✗ Low — consider whether catchment is large enough"}</span>
                   <br/><span style={{fontSize:9,color:G.light}}>Benchmark: 15–25% for a well-run convenience store</span>
                 </div>
               </div>
@@ -2384,10 +2384,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Demographic Score - with annotation */}
               <div style={{background:DS>=6?"#eef1fb":DS>=4?G.card:"#fdf8ec",border:"1.5px solid "+(DS>=6?G.mid:DS>=4?G.border:G.orange),borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Demographic Score</div>
-                <div style={{fontSize:16,fontWeight:700,color:DS>=6?G.mid:DS>=4?G.dark:G.orange,marginBottom:6}}>{DS}/9</div>
+                <div style={{fontSize:16,fontWeight:700,color:DS>=6?"#ffffff":DS>=4?G.dark:G.orange,marginBottom:6}}>{DS}/9</div>
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
                   <strong style={{color:G.mid}}>What this means:</strong> A composite score (out of 9) based on income, population size, density, deprivation and working-age proportion.
-                  <br/><span style={{color:DS>=6?G.mid:DS>=4?G.orange:"#c05010"}}>{DS>=7?"✓ Excellent catchment — high demand indicators":DS>=5?"✓ Good catchment — solid trading base":DS>=3?"⚠ Average — manageable but limited upside":"✗ Weak catchment — review assumptions carefully"}</span>
+                  <br/><span style={{color:DS>=6?G.mid:DS>=4?"#ffffff":"#c05010"}}>{DS>=7?"✓ Excellent catchment — high demand indicators":DS>=5?"✓ Good catchment — solid trading base":DS>=3?"⚠ Average — manageable but limited upside":"✗ Weak catchment — review assumptions carefully"}</span>
                   <br/><span style={{fontSize:9,color:G.light}}>6+ = strong · 4–5 = average · below 4 = weak</span>
                 </div>
               </div>
@@ -2988,7 +2988,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             ))}
                           </tbody>
                         </table>
-                        <div style={{fontSize:11,color:G.light,marginTop:10}}>Base: {footfall} transactions/day · {fmt(rent)}/yr rent · {uplift}% uplift · {fmt(C.ti)} investment</div>
+                        <div style={{fontSize:11,color:"#ffffff",marginTop:10}}>Base: {footfall} transactions/day · {fmt(rent)}/yr rent · {uplift}% uplift · {fmt(C.ti)} investment</div>
                       </div>
                     )}
 
@@ -3015,7 +3015,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
                                     <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix*4,100)+"%"}}/>
                                   </div>
-                                  <span style={{color:G.light,minWidth:30}}>{pct(C.ann*cat.mix/100*cat.gp/100/C.annGP*100)}</span>
+                                  <span style={{color:"#ffffff",minWidth:30}}>{pct(C.ann*cat.mix/100*cat.gp/100/C.annGP*100)}</span>
                                 </div>
                               </td>
                             </tr>
@@ -3023,9 +3023,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <tr style={{background:G.pale,borderTop:"2px solid "+G.mid}}>
                             <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.mid}}>TOTAL</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{pct(C.blGP)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.upliftedAnn)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{fmt(C.annGP)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#ffffff"}}>{pct(C.blGP)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#ffffff"}}>{fmt(C.upliftedAnn)}</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#ffffff"}}>{fmt(C.annGP)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>100%</td>
                           </tr>
                         </tbody>
