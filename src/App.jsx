@@ -1509,6 +1509,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   },[gatherState])
 
   // Phase 1: Write draft to localStorage after every render (no deps = runs always)
+  // Phase 2: Debounced Supabase cloud save added below — localStorage always runs first
   useEffect(()=>{
     try {
       const data = gatherState();
@@ -1517,6 +1518,52 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
       }
     } catch(e){}
+  });
+
+  // Phase 2: Standalone Supabase save — isolated, never affects localStorage
+  const [cloudStatus, setCloudStatus] = useState("");
+  const cloudSaveTimerRef = useRef();
+  const SBU2 = "https://drtpeodthflxkzjgbfvu.supabase.co";
+  const SBK2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+
+  useEffect(()=>{
+    clearTimeout(cloudSaveTimerRef.current);
+    cloudSaveTimerRef.current = setTimeout(async()=>{
+      const draft = localStorage.getItem("genesis-assessment-draft");
+      if(!draft) return;
+      let data;
+      try { data = JSON.parse(draft); } catch(e){ return; }
+      if(!data.propName && !data.postcode) return;
+      setCloudStatus("Saving...");
+      try {
+        const hdrs = {"apikey":SBK2,"Authorization":"Bearer "+SBK2,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"};
+        const body = JSON.stringify({
+          prop_name: data.propName||"draft",
+          postcode: data.postcode||"",
+          data: data,
+          updated_at: new Date().toISOString()
+        });
+        // Check for existing record first
+        const chk = await fetch(`${SBU2}/rest/v1/assessments?prop_name=eq.${encodeURIComponent(data.propName||"draft")}&postcode=eq.${encodeURIComponent(data.postcode||"")}&select=id`, {headers:{"apikey":SBK2,"Authorization":"Bearer "+SBK2}});
+        const existing = await chk.json();
+        let res;
+        if(Array.isArray(existing) && existing.length > 0){
+          res = await fetch(`${SBU2}/rest/v1/assessments?id=eq.${existing[0].id}`, {method:"PATCH", headers:hdrs, body});
+        } else {
+          res = await fetch(`${SBU2}/rest/v1/assessments`, {method:"POST", headers:hdrs, body});
+        }
+        if(res.ok){
+          setCloudStatus("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+        } else {
+          setCloudStatus("⚠ Local only");
+          console.error("Supabase save failed:", res.status);
+        }
+      } catch(e){
+        setCloudStatus("⚠ Local only");
+        console.error("Cloud save error:", e.message);
+      }
+    }, 5000);
+    return ()=>clearTimeout(cloudSaveTimerRef.current);
   });
 
 ;
@@ -1957,6 +2004,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               {saveMsg||"💾 Save"}
             </button>
+            {cloudStatus && <div style={{fontSize:10,color:cloudStatus.startsWith("☁")?"#4ade80":"#f59e0b",alignSelf:"center",marginLeft:8,flexShrink:0}}>{cloudStatus}</div>}
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
