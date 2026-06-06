@@ -127,6 +127,7 @@ const G = {
   bg:"#f5f6fa", card:"#f0f2f8", border:"#c8cfe8",
   text:"#ffffff", dark:"#0c1024", mid:"#1e3a8a", light:"#2d55c8", pale:"#dde4f5",
   orange:"#2d55c8", obg:"#eef1fb",
+  val:"#ffffff",
 };
 
 const INP_manual = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"2px solid #2d55c8",borderRadius:8,color:"#ffffff",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
@@ -337,7 +338,7 @@ function AISection({ prompt, label }) {
   return (
     <div style={{marginBottom:16}}>
       {loading && (
-        <div style={{padding:"12px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:13,color:G.light,fontStyle:"italic"}}>✦ Generating executive summary...</div>
+        <div style={{padding:"12px 16px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:13,color:G.val,fontStyle:"italic"}}>✦ Generating executive summary...</div>
       )}
       {text && (
         <div style={{fontSize:14,color:G.text,lineHeight:1.9,background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"14px 16px",whiteSpace:"pre-wrap"}}>
@@ -359,7 +360,7 @@ function RiskRegister({ risks }) {
           <div style={{width:10,height:10,borderRadius:50,background:cols[r.rag],flexShrink:0,marginTop:4}}/>
           <div style={{flex:1}}>
             <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{r.title}</div>
-            <div style={{fontSize:12,color:G.light,marginTop:2}}>{r.detail}</div>
+            <div style={{fontSize:12,color:G.val,marginTop:2}}>{r.detail}</div>
           </div>
           <div style={{fontSize:11,fontWeight:700,color:cols[r.rag],padding:"3px 8px",borderRadius:4,background:cols[r.rag]+"18",border:"1px solid "+cols[r.rag]+"44",flexShrink:0,whiteSpace:"nowrap"}}>{r.rag.toUpperCase()}</div>
         </div>
@@ -433,7 +434,7 @@ function HBar({data}){
           <div style={{flex:1,height:14,background:G.pale,borderRadius:3,overflow:"hidden"}}>
             <div style={{height:"100%",background:d.v<0?"#d62828":G.mid,width:Math.min((Math.abs(d.v)/max)*100,100)+"%"}}/>
           </div>
-          <div style={{fontSize:11,fontWeight:700,color:d.v<0?"#d62828":G.mid,width:80,textAlign:"right",flexShrink:0}}>{d.v<0?"("+fmt(Math.abs(d.v))+")":fmt(d.v)}</div>
+          <div style={{fontSize:11,fontWeight:700,color:d.v<0?"#d62828":G.val,width:80,textAlign:"right",flexShrink:0}}>{d.v<0?"("+fmt(Math.abs(d.v))+")":fmt(d.v)}</div>
         </div>
       ))}
     </div>
@@ -511,7 +512,7 @@ const SH  = ({c})=><div style={{fontSize:20,fontWeight:700,color:G.dark,marginBo
 const PSH = ({c})=><div style={{fontSize:18,fontWeight:800,color:G.mid,marginBottom:16,paddingBottom:8,borderBottom:"3px solid "+G.mid}}>{c}</div>;
 const Sub = ({c})=><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:12,marginTop:4}}>{c}</div>;
 const Row2= ({ch,st})=><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,...(st||{})}}>{ch}</div>;
-const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.light,marginBottom:5}}>{h}</div>}{ch}</div>;
+const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.val,marginBottom:5}}>{h}</div>}{ch}</div>;
 const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#dde4f5":G.card,border:"1.5px solid "+(hi?"#2d55c8":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.mid:G.dark}}>{v}</div></div>)}</div>;
 const RC  = ({t,ch})=><div className="avoid-break" style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:16,marginBottom:20}}><div style={{fontSize:15,fontWeight:700,color:G.dark,marginBottom:14,paddingBottom:8,borderBottom:"1px solid "+G.border}}>{t}</div>{ch}</div>;
 
@@ -543,7 +544,7 @@ function DemoSec({label,keys,values,setter}){
       </div>
       {keys.map(k=>(
         <div key={k} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-          <div style={{fontSize:14,color:G.mid,flex:1,minWidth:0}}>{k}</div>
+          <div style={{fontSize:14,color:G.val,flex:1,minWidth:0}}>{k}</div>
           <div style={{width:60,height:6,background:G.pale,borderRadius:3,flexShrink:0}}><div style={{height:"100%",background:G.mid,borderRadius:3,width:values[k]+"%"}}/></div>
           <input style={{...INP_manual,width:60,flexShrink:0,padding:8,textAlign:"center"}} type="number" step="0.5" value={values[k]} onFocus={e=>e.target.select()} onChange={e=>setter(p=>({...p,[k]:e.target.value===""?0:parseFloat(e.target.value)||0}))}/>
         </div>
@@ -1027,7 +1028,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
       {tab==="agent"&&(
         <div>
-          <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>Ask anything about the app, the current assessment, the calculations or what to fix. The agent has full context of the current assessment state.</div>
+          <div style={{fontSize:13,color:G.val,marginBottom:16,lineHeight:1.7}}>Ask anything about the app, the current assessment, the calculations or what to fix. The agent has full context of the current assessment state.</div>
           <textarea
             value={agentMsg}
             onChange={e=>setAgentMsg(e.target.value)}
@@ -1048,7 +1049,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
       {tab==="audit"&&(
         <div>
-          <div style={{fontSize:13,color:G.light,marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
+          <div style={{fontSize:13,color:G.val,marginBottom:16,lineHeight:1.7}}>Runs a full automated audit of the app — calculations, save/load integrity, report completeness, data quality and UX. Results are flagged 🔴 Critical · 🟡 Warning · 🟢 OK.</div>
           <button onClick={runAudit} disabled={auditLoading} style={{width:"100%",padding:13,background:auditLoading?"#8fa3d6":G.mid,border:"none",borderRadius:9,color:"#fff",cursor:auditLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,marginBottom:16}}>
             {auditLoading?"Running audit...":"Run Full Audit →"}
           </button>
@@ -1953,7 +1954,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <>
                 <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:8}}>✓ Share token generated</div>
                 <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,marginBottom:12,fontSize:11,wordBreak:"break-all",color:G.text,lineHeight:1.6,maxHeight:120,overflowY:"auto"}}>{sharePayload}</div>
-                <div style={{fontSize:12,color:G.orange,marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
+                <div style={{fontSize:12,color:G.val,marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={()=>{navigator.clipboard?.writeText(sharePayload);setSaveMsg("Token copied!");setTimeout(()=>setSaveMsg(""),2000);}} style={{flex:2,padding:12,background:G.mid,border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>📋 Copy Token</button>
                   <button onClick={()=>{setShowShare(false);setSharePayload(null);setSharePin("");}} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>Close</button>
@@ -2024,7 +2025,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8}}>
                     <div style={{flex:1,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
                       <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{a.propName||"Unnamed site"}</div>
-                      <div style={{fontSize:12,color:G.light}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")} {new Date(a.savedAt).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div>
+                      <div style={{fontSize:12,color:G.val}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")} {new Date(a.savedAt).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div>
                     </div>
                     <div style={{fontSize:13,fontWeight:700,color:G.mid,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>Load →</div>
                     <button onClick={e=>{
@@ -2044,13 +2045,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {storePhoto?(
                 <div style={{position:"relative"}}>
                   <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/>
-                  <button onClick={()=>setStorePhoto(null)} style={{position:"absolute",top:10,right:10,background:"#fff",border:"1px solid "+G.border,borderRadius:6,padding:"5px 12px",fontSize:12,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Remove</button>
+                  <button onClick={()=>setStorePhoto(null)} style={{position:"absolute",top:10,right:10,background:"#fff",border:"1px solid "+G.border,borderRadius:6,padding:"5px 12px",fontSize:12,color:G.val,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Remove</button>
                 </div>
               ):(
                 <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,aspectRatio:"1/1",background:G.card,border:"2px dashed "+G.border,borderRadius:12,cursor:"pointer",textAlign:"center"}}>
                   <div style={{fontSize:40}}>📷</div>
                   <div style={{fontSize:15,fontWeight:700,color:G.mid}}>Tap to add a store photo</div>
-                  <div style={{fontSize:13,color:G.light}}>JPG or PNG from your camera roll</div>
+                  <div style={{fontSize:13,color:G.val}}>JPG or PNG from your camera roll</div>
                   <input type="file" accept="image/*" onChange={handlePhoto} style={{display:"none"}}/>
                 </label>
               )}
@@ -2075,7 +2076,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
               <label style={{display:"flex",alignItems:"center",gap:10,padding:"12px 16px",background:G.card,border:"1.5px dashed "+G.border,borderRadius:10,cursor:"pointer"}}>
                 <span style={{fontSize:20}}>📸</span>
-                <span style={{fontSize:14,color:G.mid,fontWeight:600}}>Add visit photos</span>
+                <span style={{fontSize:14,color:G.val,fontWeight:600}}>Add visit photos</span>
                 <input type="file" accept="image/*" multiple onChange={handleAnnotatedPhoto} style={{display:"none"}}/>
               </label>
             </div>
@@ -2130,7 +2131,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <a
                         href={`https://searchplan.co.uk/?postcode=${encodeURIComponent(postcode.trim())}`}
                         target="_blank" rel="noopener noreferrer"
-                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:7,color:G.mid,fontSize:13,fontWeight:600,textDecoration:"none"}}
+                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:7,color:G.val,fontSize:13,fontWeight:600,textDecoration:"none"}}
                       >
                         Local council portal →
                       </a>
@@ -2180,7 +2181,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Operating Costs"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
+            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
             <Fld l="Annual rent (£)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={rent} onFocus={e=>e.target.select()} onChange={e=>setRent(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Business rates (£)" h={postcodeData?"Auto-estimated from VOA — override with actual figure":"Check VOA website or ask the agent"} ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Staff / wages (% of sales)" h={"Sector average = "+fmt(C.stf)+" per year"} ch={<input style={INP_auto} type="number" step="0.5" value={staffPct} onFocus={e=>e.target.select()} onChange={e=>setStaffPct(e.target.value===""?0:+e.target.value)}/>}/>
@@ -2200,7 +2201,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <button key={p.label} onClick={()=>{setRefitCost(p.value);setCustomRefit(false);}} style={{padding:"14px 12px",textAlign:"left",cursor:"pointer",background:refitCost===p.value&&!customRefit?G.pale:G.card,border:(refitCost===p.value&&!customRefit?"2px":"1px")+" solid "+(refitCost===p.value&&!customRefit?G.mid:G.border),borderRadius:10,fontFamily:"inherit"}}>
                   <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.mid:G.light,marginBottom:4}}>{p.label}</div>
                   <div style={{fontSize:20,fontWeight:700,color:G.orange,marginBottom:3}}>{fmt(p.value)}</div>
-                  <div style={{fontSize:12,color:G.light,lineHeight:1.4}}>{p.desc}</div>
+                  <div style={{fontSize:12,color:G.val,lineHeight:1.4}}>{p.desc}</div>
                 </button>
               ))}
             </div>
@@ -2216,7 +2217,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             <div style={{marginTop:20}}>
               <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
-              <div style={{fontSize:12,color:G.light,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
+              <div style={{fontSize:12,color:G.val,marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
               <textarea
                 value={refitCommentary}
                 onChange={e=>setRefitCommentary(e.target.value)}
@@ -2308,7 +2309,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </div>
                 ))}
               </div>
-              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:G.orange,marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
+              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:G.val,marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% — adjust to reach 100%</div>}
             </div>
 
                         {/* GP margin context */}
@@ -2347,7 +2348,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Catchment Demographics"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
+            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
             <Row2 ch={[
               <Fld key="a" l="Catchment population (1 mile)" h="ONS census or Google Maps" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={catchmentPop} onFocus={e=>e.target.select()} onChange={e=>setCatchmentPop(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="b" l="Population density" ch={<select style={postcodeData?INP_auto:INP_manual} value={popDensity} onChange={e=>setPopDensity(e.target.value)}><option value="high">High - urban</option><option value="medium">Medium - suburban</option><option value="low">Low - rural</option></select>}/>,
@@ -2440,7 +2441,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <div style={{padding:"3px 8px",borderRadius:6,fontSize:11,fontWeight:800,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index >= 100?"+":"-"}{diff}%</div>
                         </div>
                         <div style={{fontSize:11,color:G.light,marginBottom:6,lineHeight:1.5}}>{f.insight}</div>
-                        <div style={{fontSize:11,color:G.mid,fontWeight:600,borderTop:"1px solid "+G.border,paddingTop:6}}>→ {f.action}</div>
+                        <div style={{fontSize:11,color:G.val,fontWeight:600,borderTop:"1px solid "+G.border,paddingTop:6}}>→ {f.action}</div>
                       </div>
                     );
                   })}
@@ -2462,7 +2463,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     <div style={{fontSize:11,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>De-prioritise in ranging</div>
                     <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                       {foodProfile.avoidCategories.map((c,i)=>(
-                        <div key={i} style={{padding:"4px 10px",background:"#fff",border:"1px solid "+G.orange,borderRadius:6,fontSize:12,color:G.orange,fontWeight:600}}>{c}</div>
+                        <div key={i} style={{padding:"4px 10px",background:"#fff",border:"1px solid "+G.orange,borderRadius:6,fontSize:12,color:G.val,fontWeight:600}}>{c}</div>
                       ))}
                     </div>
                   </div>
@@ -2471,7 +2472,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
             {!foodProfile&&postcodeData&&(
-              <div style={{marginTop:16,padding:"10px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:12,color:G.light}}>Food consumption profile generating... (enter postcode on Property tab first)</div>
+              <div style={{marginTop:16,padding:"10px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,fontSize:12,color:G.val}}>Food consumption profile generating... (enter postcode on Property tab first)</div>
             )}
           </div>
         )}
@@ -2585,13 +2586,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     </div>
                   ))}
                 </div>
-                <div style={{fontSize:12,color:G.light,marginTop:8}}>⚠ Planning data is indicative. Always verify with the Local Planning Authority before committing.</div>
+                <div style={{fontSize:12,color:G.val,marginTop:8}}>⚠ Planning data is indicative. Always verify with the Local Planning Authority before committing.</div>
               </div>
             )}
 
             {TRAFFIC_F.map(f=>(
               <div key={f.k} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:10,display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-                <div style={{flex:1}}><div style={{fontSize:15,color:G.text,fontWeight:500}}>{f.l}</div>{f.h&&<div style={{fontSize:12,color:G.light,marginTop:2}}>{f.h}</div>}</div>
+                <div style={{flex:1}}><div style={{fontSize:15,color:G.text,fontWeight:500}}>{f.l}</div>{f.h&&<div style={{fontSize:12,color:G.val,marginTop:2}}>{f.h}</div>}</div>
                 {f.num?(
                   <input style={{...INP_manual,width:110,flexShrink:0,textAlign:"right"}} type="number" value={traffic[f.k]} onFocus={e=>e.target.select()} onChange={e=>setTraffic(p=>({...p,[f.k]:e.target.value===""?0:+e.target.value}))}/>
                 ):(
@@ -2619,7 +2620,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   else alert("Address not found — try adding the postcode");
                 } catch(e) { alert("Lookup failed"); }
               }} style={{padding:"8px 14px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600,flexShrink:0}}>Locate</button>
-              {existingStore&&<button onClick={()=>setExistingStore(null)} style={{padding:"8px 10px",background:"transparent",border:"1px solid "+G.border,borderRadius:7,cursor:"pointer",color:G.light,fontSize:13}}>✕</button>}
+              {existingStore&&<button onClick={()=>setExistingStore(null)} style={{padding:"8px 10px",background:"transparent",border:"1px solid "+G.border,borderRadius:7,cursor:"pointer",color:G.val,fontSize:13}}>✕</button>}
             </div>}/>
             <Sub c="Footfall by hour — sector average, override if needed"/>
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
@@ -2662,7 +2663,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <Fld key="b" l="Sq ft" ch={<input style={{...INP_manual,textAlign:"left",paddingLeft:14}} type="number" value={comp.sqft||""} placeholder="0" onFocus={e=>e.target.select()} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,sqft:e.target.value===""?0:+e.target.value}:x))}/>}/>,
                 ]}/>
                 <Fld l="Notes" ch={<input style={INP_manual} value={comp.notes} onChange={e=>setComparables(p=>p.map((x,j)=>j===i?{...x,notes:e.target.value}:x))} placeholder="Key observations..."/>}/>
-                {comp.sqft>0&&comp.weeklyT>0&&comp.sqft>=100&&<div style={{fontSize:13,color:G.mid,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
+                {comp.sqft>0&&comp.weeklyT>0&&comp.sqft>=100&&<div style={{fontSize:13,color:G.val,fontWeight:600,marginTop:4}}>Sales density: £{(comp.weeklyT/comp.sqft).toFixed(2)}/sqft/wk vs this site: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk</div>}
               </div>
             ))}
           </div>
@@ -2872,10 +2873,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <tr>{TDL("Loan Repayment",false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:"#ffffff",borderBottom:"1px solid "+G.border}}>({fmt(r.fin)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:"#ffffff",borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.fin,0))})</td></tr>
                           {SectionRow("Net Profit")}
                           <tr style={{background:"#b8e0e8"}}>{TDL("NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:r.np>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.np<0?"("+fmt(Math.abs(r.np))+")":fmt(r.np)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:yr5x.reduce((a,r)=>a+r.np,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.np,0))}</td></tr>
-                          <tr style={{background:"#b8e0e8"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.light,borderBottom:"1px solid "+G.border}}>—</td></tr>
+                          <tr style={{background:"#b8e0e8"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
                           {SectionRow("Key Ratios")}
                           {[["Gross Margin %",r=>r.gm],["EBITDA Margin %",r=>r.em],["Net Margin %",r=>r.nm],["ROI %",r=>r.roi_]].map(([l,fn])=>(
-                            <tr key={l} style={{background:G.card}}>{TDL(l,false,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:fn(r)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{pct(fn(r))}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.light,borderBottom:"1px solid "+G.border}}>—</td></tr>
+                            <tr key={l} style={{background:G.card}}>{TDL(l,false,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:fn(r)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{pct(fn(r))}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
                           ))}
                         </tbody>
                       </table>
@@ -3005,10 +3006,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           {[...cats].sort((a,b)=>b.mix-a.mix).map((cat,i)=>(
                             <tr key={i} style={{background:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
                               <td style={{padding:"8px 10px",fontSize:12,color:G.text}}>{cat.icon} {cat.name}</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{cat.mix}%</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.light}}>{cat.gp}%</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val,fontWeight:600}}>{cat.mix}%</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val}}>{cat.gp}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.mid,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
@@ -3054,7 +3055,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
               </button>
-              <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
+              <p style={{fontSize:12,color:G.val,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
             {/* ROI context note */}
