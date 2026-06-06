@@ -124,19 +124,28 @@ const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",
 const pct = n => n.toFixed(1)+"%";
 
 const G = {
-  bg:"#f5f7fa", card:"#ffffff", border:"#d1d9e6",
-  text:"#1a2144", dark:"#1a2144", mid:"#1e3a8a", light:"#2d55c8", pale:"#eef1fb",
-  orange:"#c05010", obg:"#fff4ea",
-  val:"#1e3a8a",
+  bg:"#0B1418",      // main background
+  card:"#1E293B",    // card / row highlight
+  border:"#2a3a42",  // subtle borders
+  text:"#FFFFFF",    // main figures — white
+  dark:"#0B1418",    // deep background
+  mid:"#123A2D",     // section headers
+  light:"#C7D0D5",   // labels
+  pale:"#1E293B",    // highlight rows
+  orange:"#F59E0B",  // amber accent
+  obg:"#1a2a20",     // subtle green tint bg
+  val:"#FFFFFF",     // all figures white
+  pos:"#22C55E",     // positive variance
+  neg:"#EF4444",     // negative variance
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#eef1fb",border:"2px solid #2d55c8",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
-const INP_auto   = {width:"100%",padding:"12px 14px",background:"#dde4f5",border:"2px solid #1e3a8a",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#1a2a20",border:"2px solid #2d55c8",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_auto   = {width:"100%",padding:"12px 14px",background:"#1E293B",border:"2px solid #1e3a8a",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
   if(!text) return null;
   return (
-    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#eef1fb",border:"1px solid #2d55c8",borderLeft:"4px solid #1e3a8a",borderRadius:"0 8px 8px 0",fontSize:13,color:G.val,lineHeight:1.9}}>
+    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#1a2a20",border:"1px solid #2d55c8",borderLeft:"4px solid #1e3a8a",borderRadius:"0 8px 8px 0",fontSize:13,color:G.val,lineHeight:1.9}}>
       {text}
     </div>
   );
@@ -150,7 +159,7 @@ function Legend(){
         <span style={{fontSize:12,color:G.text}}>You fill in on the visit</span>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:7}}>
-        <div style={{width:14,height:14,borderRadius:3,background:"#eef1fb",border:"1.5px solid #2d55c8",flexShrink:0}}/>
+        <div style={{width:14,height:14,borderRadius:3,background:"#1a2a20",border:"1.5px solid #2d55c8",flexShrink:0}}/>
         <span style={{fontSize:12,color:G.text}}>Auto-filled / sector average — override if needed</span>
       </div>
     </div>
@@ -391,7 +400,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
         <div key={sg.name} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",marginBottom:8,background:i===0?G.pale:G.card,border:"1px solid "+(i===0?G.mid:G.border),borderRadius:10}}>
           <div style={{fontSize:13,fontWeight:i===0?800:600,color:i===0?G.mid:G.text,minWidth:110}}>{i===0?"⭐ ":""}{sg.name}</div>
           <div style={{flex:1}}>
-            <div style={{height:6,background:"#dde4f5",borderRadius:3}}>
+            <div style={{height:6,background:"#1E293B",borderRadius:3}}>
               <div style={{height:"100%",background:i===0?G.mid:G.light,borderRadius:3,width:(sg.score/8*100)+"%"}}/>
             </div>
             <div style={{fontSize:11,color:G.light,marginTop:3}}>{sg.desc}</div>
@@ -434,7 +443,7 @@ function HBar({data}){
           <div style={{flex:1,height:14,background:G.pale,borderRadius:3,overflow:"hidden"}}>
             <div style={{height:"100%",background:d.v<0?"#d62828":G.mid,width:Math.min((Math.abs(d.v)/max)*100,100)+"%"}}/>
           </div>
-          <div style={{fontSize:11,fontWeight:700,color:d.v<0?"#d62828":G.val,width:80,textAlign:"right",flexShrink:0}}>{d.v<0?"("+fmt(Math.abs(d.v))+")":fmt(d.v)}</div>
+          <div style={{fontSize:11,fontWeight:700,color:d.v<0?G.neg:G.pos,width:80,textAlign:"right",flexShrink:0}}>{d.v<0?"("+fmt(Math.abs(d.v))+")":fmt(d.v)}</div>
         </div>
       ))}
     </div>
@@ -526,7 +535,7 @@ function Explainer({term, children}){
         <span style={{marginLeft:"auto",fontSize:14,color:G.val}}>{open?"▲":"▼"}</span>
       </button>
       {open&&(
-        <div style={{padding:"14px 16px",background:"#fff4ea",border:"1px solid #e07020",borderTop:"none",borderRadius:"0 0 8px 8px",fontSize:13,color:G.text,lineHeight:1.8}}>
+        <div style={{padding:"14px 16px",background:"#1a2216",border:"1px solid #e07020",borderTop:"none",borderRadius:"0 0 8px 8px",fontSize:13,color:G.text,lineHeight:1.8}}>
           {children}
         </div>
       )}
@@ -1977,7 +1986,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       )}
 
       {/* Header nav */}
-      <div className="no-print" style={{background:"#f5f7fa",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
+      <div className="no-print" style={{background:"#0B1418",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
             <img src="https://genesis-retail-website.vercel.app/logo.jpg" alt="Genesis Retail" style={{height:44,width:"auto",objectFit:"contain",borderRadius:4}}/>
@@ -2093,7 +2102,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Legend/>
 
             {/* Postcode lookup */}
-            <div style={{background:"#dde4f5",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
+            <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
               <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:8}}>✦ Auto-populate from postcode</div>
               <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>Enter the site postcode to automatically pull: competitor data, local demographics, VOA rates estimate, planning applications, and more.</div>
               <div style={{display:"flex",gap:10}}>
@@ -2181,7 +2190,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Operating Costs"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
+            {postcodeData&&<div style={{background:"#1E293B",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
             <Fld l="Annual rent (£)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={rent} onFocus={e=>e.target.select()} onChange={e=>setRent(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Business rates (£)" h={postcodeData?"Auto-estimated from VOA — override with actual figure":"Check VOA website or ask the agent"} ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Staff / wages (% of sales)" h={"Sector average = "+fmt(C.stf)+" per year"} ch={<input style={INP_auto} type="number" step="0.5" value={staffPct} onFocus={e=>e.target.select()} onChange={e=>setStaffPct(e.target.value===""?0:+e.target.value)}/>}/>
@@ -2348,7 +2357,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Catchment Demographics"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
+            {postcodeData&&<div style={{background:"#1E293B",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
             <Row2 ch={[
               <Fld key="a" l="Catchment population (1 mile)" h="ONS census or Google Maps" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={catchmentPop} onFocus={e=>e.target.select()} onChange={e=>setCatchmentPop(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="b" l="Population density" ch={<select style={postcodeData?INP_auto:INP_manual} value={popDensity} onChange={e=>setPopDensity(e.target.value)}><option value="high">High - urban</option><option value="medium">Medium - suburban</option><option value="low">Low - rural</option></select>}/>,
@@ -2370,7 +2379,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
 
               {/* Penetration Rate - with annotation */}
-              <div style={{background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
+              <div style={{background:"#1a2a20",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
                 <div style={{fontSize:16,fontWeight:700,color:G.val,marginBottom:6}}>{pct(C.pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab — this figure may reflect incomplete data.</div>}
@@ -2572,7 +2581,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {planningApps.length>0&&(
               <div style={{marginBottom:20}}>
                 <Sub c="Planning Applications Detected Nearby"/>
-                <div style={{background:"#fff4ea",border:"1px solid "+G.orange,borderRadius:10,padding:14}}>
+                <div style={{background:"#1a2216",border:"1px solid "+G.orange,borderRadius:10,padding:14}}>
                   {planningApps.map((pa,i)=>(
                     <div key={i} style={{padding:"10px 0",borderBottom:i<planningApps.length-1?"1px solid "+G.border:"none"}}>
                       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
@@ -2677,7 +2686,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Export buttons */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
               {/* Excel export */}
-              <div style={{background:"#dde4f5",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
+              <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
                 <div style={{fontSize:14,fontWeight:700,color:G.mid,marginBottom:6}}>📥 Export Excel</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>Fully populated workbook — P&L, 5-year, cashflow, sensitivity and glossary.</div>
                 <button
@@ -2775,7 +2784,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
 
               {/* PowerPoint export */}
-              <div style={{background:"#fff4ea",border:"1.5px solid "+G.orange,borderRadius:12,padding:16}}>
+              <div style={{background:"#1a2216",border:"1.5px solid "+G.orange,borderRadius:12,padding:16}}>
                 <div style={{fontSize:14,fontWeight:700,color:G.orange,marginBottom:6}}>📊 Export PowerPoint</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>12-slide bank-grade deck — cover, financials, P&L, 5-year, investment, categories, demographics, site, risks, symbol groups and recommendation.</div>
                 <PPTXExportButton
@@ -2868,15 +2877,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           ))}
                           <tr style={{background:G.pale}}>{TDL("TOTAL OP COSTS",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(r.tc)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.tc,0))})</td></tr>
                           {SectionRow("EBITDA")}
-                          <tr style={{background:"#dde4f5"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
+                          <tr style={{background:"#1E293B"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
                           {SectionRow("Finance")}
                           <tr>{TDL("Loan Repayment",false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(r.fin)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.fin,0))})</td></tr>
                           {SectionRow("Net Profit")}
-                          <tr style={{background:"#b8e0e8"}}>{TDL("NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:r.np>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.np<0?"("+fmt(Math.abs(r.np))+")":fmt(r.np)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:yr5x.reduce((a,r)=>a+r.np,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.np,0))}</td></tr>
-                          <tr style={{background:"#b8e0e8"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
+                          <tr style={{background:"#b8e0e8"}}>{TDL("NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:r.np>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{r.np<0?"("+fmt(Math.abs(r.np))+")":fmt(r.np)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:13,fontWeight:800,color:yr5x.reduce((a,r)=>a+r.np,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.np,0))}</td></tr>
+                          <tr style={{background:"#b8e0e8"}}>{TDL("CUMULATIVE NET PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.cum>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{r.cum<0?"("+fmt(Math.abs(r.cum))+")":fmt(r.cum)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
                           {SectionRow("Key Ratios")}
                           {[["Gross Margin %",r=>r.gm],["EBITDA Margin %",r=>r.em],["Net Margin %",r=>r.nm],["ROI %",r=>r.roi_]].map(([l,fn])=>(
-                            <tr key={l} style={{background:G.card}}>{TDL(l,false,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:fn(r)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{pct(fn(r))}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
+                            <tr key={l} style={{background:G.card}}>{TDL(l,false,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:fn(r)>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{pct(fn(r))}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>—</td></tr>
                           ))}
                         </tbody>
                       </table>
@@ -2953,9 +2962,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                                 <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:G.mid,borderBottom:"1px solid "+G.border}}>Closing Cash Balance</td>
                                 {months.map((_,mi)=>{
                                   bal+=mNet;
-                                  return <td key={mi} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}</td>;
+                                  return <td key={mi} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}</td>;
                                 })}
-                                <td style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}</td>
+                                <td style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}</td>
                               </tr>
                             );
                           })()}
@@ -3060,7 +3069,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* ROI context note */}
             {C.roi>50&&(
-              <div style={{background:"#f0f4ff",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
+              <div style={{background:"#1E293B",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
                 <div style={{fontSize:11,fontWeight:700,color:G.val,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
                 <div style={{fontSize:13,color:G.val,lineHeight:1.9}}>
                   {`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}
@@ -3108,7 +3117,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         })}
                       </tr>
                     ))}
-                    <tr style={{background:"#f0f4ff",borderTop:"2px solid #1e3a8a"}}>
+                    <tr style={{background:"#1E293B",borderTop:"2px solid #1e3a8a"}}>
                       <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:G.val}}>Cumulative Net Profit</td>
                       {[1,2,3,4,5].map(y=>{
                         const cn=cumNp(y);
