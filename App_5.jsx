@@ -1500,7 +1500,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     competitorList,planningApps,mapLat,mapLng,
     comparables,foodProfile,existingStore,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
 
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1518,7 +1518,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   useEffect(()=>{
     const data = gatherState();
     latestStateRef.current = data;
-    localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
+    try {
+      localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
+      console.log("[SAVE] draft written, propName:", data.propName, "postcode:", data.postcode);
+    } catch(e){ console.error("[SAVE] localStorage write failed:", e); }
   });
 
   // Step 2: saveDraft — localStorage first, then Supabase upsert
