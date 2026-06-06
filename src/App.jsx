@@ -3390,13 +3390,103 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
 </div>
 
+
+{/* ════════════════════════════════════════════════════════════════
+    PAGE 4 — LOCAL FOOD PROFILE
+════════════════════════════════════════════════════════════════ */}
+{foodProfile&&(
+<div className="slide" style={{padding:"40px 48px 32px",minHeight:"277mm",pageBreakAfter:"always",position:"relative"}}>
+  <div style={{borderBottom:"2px solid #1a3c2e",paddingBottom:10,marginBottom:24}}>
+    <div style={{fontSize:9,letterSpacing:".2em",color:"#1a3c2e",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
+    <div style={{fontSize:20,fontWeight:700,color:"#111"}}>Local Food & Drink Profile</div>
+    <div style={{fontSize:11,color:"#666",marginTop:2}}>What this catchment buys — and what to stock</div>
+  </div>
+
+  {/* Summary & Key Insight */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:20}}>
+    {foodProfile.summary&&(
+      <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderLeft:"4px solid #1a3c2e",borderRadius:"0 6px 6px 0",padding:"14px 18px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Catchment Profile</div>
+        <div style={{fontSize:12,color:"#333",lineHeight:1.8}}>{foodProfile.summary}</div>
+      </div>
+    )}
+    {foodProfile.keyInsight&&(
+      <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderLeft:"4px solid #b8960c",borderRadius:"0 6px 6px 0",padding:"14px 18px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:"#b8960c",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Key Ranging Insight</div>
+        <div style={{fontSize:12,color:"#333",lineHeight:1.8}}>{foodProfile.keyInsight}</div>
+      </div>
+    )}
+  </div>
+
+  {/* Top food categories */}
+  {foodProfile.topFoods&&foodProfile.topFoods.length>0&&(
+    <div style={{marginBottom:20}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>Category Priorities — Ranked by Opportunity</div>
+      <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+        <thead>
+          <tr style={{background:"#1a3c2e",color:"#fff"}}>
+            {["Category","Index","Insight","Recommended Action"].map(h=>(
+              <th key={h} style={{padding:"9px 12px",textAlign:"left",fontWeight:600}}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {foodProfile.topFoods.map((f,i)=>(
+            <tr key={i} style={{background:i%2===0?"#fff":"#f8fafc",borderBottom:"1px solid #e2e8f0"}}>
+              <td style={{padding:"8px 12px",fontWeight:600,color:"#111"}}>{f.category}</td>
+              <td style={{padding:"8px 12px",textAlign:"center"}}>
+                <span style={{padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:700,
+                  background:f.index>=110?"#f0fdf4":f.index>=100?"#fffbeb":"#f8fafc",
+                  color:f.index>=110?"#166534":f.index>=100?"#92400e":"#444"}}>
+                  {f.index}
+                </span>
+              </td>
+              <td style={{padding:"8px 12px",color:"#444",fontSize:10,maxWidth:180}}>{f.insight}</td>
+              <td style={{padding:"8px 12px",color:"#333",fontSize:10}}>{f.action}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {/* Specialist notes */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
+    {foodProfile.ethnicFoodNote&&(
+      <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:6,padding:"14px 16px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>World Foods Opportunity</div>
+        <div style={{fontSize:11,color:"#333",lineHeight:1.7}}>{foodProfile.ethnicFoodNote}</div>
+      </div>
+    )}
+    {foodProfile.healthTrend&&(
+      <div style={{background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:6,padding:"14px 16px"}}>
+        <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Health & Wellness Trend</div>
+        <div style={{fontSize:11,color:"#333",lineHeight:1.7}}>{foodProfile.healthTrend}</div>
+      </div>
+    )}
+  </div>
+
+  {foodProfile.avoidCategories&&foodProfile.avoidCategories.length>0&&(
+    <div style={{marginTop:14,background:"#fef2f2",border:"1px solid #fecaca",borderLeft:"4px solid #991b1b",borderRadius:"0 6px 6px 0",padding:"12px 16px"}}>
+      <div style={{fontSize:10,fontWeight:700,color:"#991b1b",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Avoid or Minimise</div>
+      <div style={{fontSize:11,color:"#333"}}>{foodProfile.avoidCategories.join(" · ")}</div>
+    </div>
+  )}
+
+  <div className="pdf-footer" style={{position:"absolute",bottom:32,left:48,right:48,borderTop:"1px solid #e2e8f0",paddingTop:10,display:"flex",justifyContent:"space-between"}}>
+    <div style={{fontSize:9,color:"#999"}}>Genesis Retail · Confidential</div>
+    <div style={{fontSize:9,color:"#999"}}>Local Food Profile · Page 4</div>
+  </div>
+</div>
+)}
+
 {/* ════════════════════════════════════════════════════════════════
     PAGE 4 — COMPETITOR ANALYSIS
 ════════════════════════════════════════════════════════════════ */}
 {competitorList&&competitorList.length>0&&(
 <div className="slide" style={{padding:"40px 48px 32px",minHeight:"277mm",pageBreakAfter:"always",position:"relative"}}>
   <div style={{borderBottom:"2px solid #1a3c2e",paddingBottom:10,marginBottom:24}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:"#1a3c2e",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
+    <div style={{fontSize:9,letterSpacing:".2em",color:"#1a3c2e",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:20,fontWeight:700,color:"#111"}}>Competitor Analysis</div>
   </div>
 
