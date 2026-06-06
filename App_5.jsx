@@ -1558,15 +1558,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     localStorage.removeItem("pendingAssessment");
   }
 
-  // Step 3: Debounced autosave — saveTimeoutRef pattern, fires after every render
+  // Step 3: Debounced autosave — saveDraftRef ensures no stale closure
   const saveTimeoutRef = useRef();
+  const saveDraftRef = useRef(saveDraft);
+  saveDraftRef.current = saveDraft; // always current
   useEffect(()=>{
     clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(async()=>{
       setSaveStatus("saving");
       setLastSaved("Saving...");
       try {
-        await saveDraft(latestStateRef.current);
+        await saveDraftRef.current(latestStateRef.current);
         setSaveStatus("saved");
         setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
       } catch(err){
@@ -1623,13 +1625,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     })();
   },[]);
 
-  // Step 7: Crash recovery — restore draft on mount
-  useEffect(()=>{
-    const draft = localStorage.getItem("genesis-assessment-draft");
-    if(!draft) return;
-    try { loadAssessment(JSON.parse(draft)); } catch(e){ console.error("Draft restore:", e); }
-  },[]);
-
   const saveAssessment = ()=>saveDraft(latestStateRef.current);
 
 
@@ -1681,6 +1676,19 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     }
     setStep(1);
   },[]);
+
+  // Crash recovery — after loadAssessment is defined, safe to call on mount
+  useEffect(()=>{
+    const draft = localStorage.getItem("genesis-assessment-draft");
+    if(!draft) return;
+    try {
+      const saved = JSON.parse(draft);
+      if(saved && (saved.propName || saved.postcode)){
+        loadAssessment(saved);
+        console.log("Draft restored:", saved.propName || saved.postcode);
+      }
+    } catch(e){ console.error("Draft restore failed:", e); }
+  },[loadAssessment]);;
 
   // ── Share / Lock ─────────────────────────────────────────────────────────────
   const [shareMode,  setShareMode]  = useState(false);
