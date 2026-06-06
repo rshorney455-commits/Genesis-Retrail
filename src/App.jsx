@@ -1884,38 +1884,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     });
   },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
 
-  const generatePDF = async () => {
-    if(!pdfRef.current) return;
-    setPdfLoading(true);
-    try {
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import("https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm"),
-        import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm"),
-      ]);
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 3, useCORS: true, backgroundColor: "#ffffff",
-        logging: false, windowWidth: 794, // A4 width in px at 96dpi
-        imageTimeout: 0, allowTaint: false,
-      });
-      const imgData = canvas.toDataURL("image/png"); // PNG = lossless, sharp text
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const imgH = (canvas.height * pageW) / canvas.width;
-      let yOffset = 0, remaining = imgH;
-      while(remaining > 0) {
-        if(yOffset > 0) pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, -yOffset, pageW, imgH, undefined, "FAST");
-        yOffset += pageH; remaining -= pageH;
-      }
-      const filename = (propName||"assessment").replace(/[^a-z0-9]/gi,"_").toLowerCase()+"_genesis_retail_report.pdf";
-      pdf.save(filename);
-    } catch(e) {
-      alert("PDF generation failed: "+e.message);
-    } finally {
-      setPdfLoading(false);
-    }
-  };
+  // PDF uses window.print()
+
 
   return (
     <ErrorBoundary>
@@ -1929,6 +1899,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
         @media print{
           .no-print{display:none!important}
+          body{background:#fff!important;color:#000!important}
+          .pdf-wrapper{background:#fff!important;color:#000!important;padding:0!important}
+          .pdf-wrapper *{background:transparent!important;color:#000!important;border-color:#ccc!important;box-shadow:none!important}
+          .pdf-wrapper h1,.pdf-wrapper h2,.pdf-wrapper h3{color:#1a3c2e!important}
+          .pdf-wrapper .metric-value,.pdf-wrapper .big-number{color:#1a3c2e!important}
+          .pdf-wrapper table{border-collapse:collapse}
+          .pdf-wrapper td,.pdf-wrapper th{border:1px solid #ccc!important;padding:4px 8px}
+          .pdf-wrapper .pdf-footer{background:#1a3c2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
           body,html{background:#fff!important;margin:0;padding:0}
           main{padding:0!important;max-width:100%!important}
           .page-break{page-break-before:always;padding-top:24px}
@@ -1936,14 +1914,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           nav,header,.nav-inner{display:none!important}
           #root>div>div:first-child{display:none!important}
           .pdf-wrapper{padding:0!important;margin:0!important}
-          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+          *{-webkit-print-color-adjust:economy;print-color-adjust:economy;color-adjust:economy;mportant}
           body{font-size:11pt}
           h1,h2,h3{page-break-after:avoid}
           table{page-break-inside:avoid}
           img{max-width:100%!important}
         }
         @media print{.pdf-footer{display:block!important}}
-        .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
+        .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1a3c2e;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
         .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
@@ -3073,8 +3051,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#f0ede8":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
-                {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
+              <button onClick={()=>window.print()} style={{width:"100%",padding:15,background:"#1a3c2e",color:"#f0ede8",border:"none",borderRadius:8,fontSize:15,fontWeight:700,cursor:"pointer",letterSpacing:".04em"}}>
+                🖨 Print / Save as PDF
               </button>
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
