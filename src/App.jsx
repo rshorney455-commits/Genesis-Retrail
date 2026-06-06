@@ -3292,491 +3292,523 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
-            <div ref={pdfRef} className="pdf-wrapper" style={{background:R.bg,fontFamily:"'Georgia','Times New Roman',serif",color:R.text,lineHeight:1.6}}>
+            <div ref={pdfRef} className="pdf-wrapper" style={{background:"#fff",fontFamily:"'Helvetica Neue',Arial,sans-serif",color:"#111827",lineHeight:1.6,fontSize:12}}>
 
-<div className="pdf-watermark" aria-hidden="true">
-  <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle"
-      fontSize="60" fontWeight="700" fill="rgba(21,128,61,0.04)"
-      transform="rotate(-35,200,200)" fontFamily="Georgia,serif">GENESIS RETAIL</text>
-  </svg>
-</div>
-
-{/* ── PAGE 1: EXECUTIVE SUMMARY ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 1 — EXECUTIVE SUMMARY
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
 
   {/* Masthead */}
-  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:16,borderBottom:`3px solid ${R.acc}`,marginBottom:24}}>
+  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:14,borderBottom:"3px solid #15803D",marginBottom:22}}>
     <div>
-      <div style={{fontSize:9,letterSpacing:".3em",color:R.acc,textTransform:"uppercase",fontWeight:700,marginBottom:3,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Genesis Retail — Site Viability Assessment</div>
-      <div style={{fontSize:24,fontWeight:700,color:R.text,letterSpacing:"-.3px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{propName||"Site Assessment"}</div>
-      <div style={{fontSize:13,color:R.muted,marginTop:2,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{postcode}{location?` · ${location}`:""}</div>
+      <div style={{fontSize:8,letterSpacing:".3em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:3}}>Genesis Retail — Site Viability Assessment</div>
+      <div style={{fontSize:22,fontWeight:700,color:"#111827",letterSpacing:"-.3px"}}>{propName||"Site Assessment"}</div>
+      <div style={{fontSize:12,color:"#64748B",marginTop:2}}>{postcode}{location?` · ${location}`:""}</div>
     </div>
-    <div style={{textAlign:"right",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:10,color:R.muted}}>Date: {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-      <div style={{fontSize:10,color:R.muted,marginTop:1}}>Consultant: Richard Shorney</div>
-      {clientName&&<div style={{fontSize:10,color:R.muted,marginTop:1}}>Prepared for: <strong style={{color:R.text}}>{clientName}</strong></div>}
-      <div style={{fontSize:10,color:R.muted,marginTop:1}}>Ref: {postcode||propName||"GR-"+new Date().getFullYear()}</div>
+    <div style={{textAlign:"right",fontSize:10,color:"#64748B"}}>
+      <div>Date: {new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+      <div style={{marginTop:1}}>Consultant: Richard Shorney</div>
+      {clientName&&<div style={{marginTop:1}}>Prepared for: <strong style={{color:"#111827"}}>{clientName}</strong></div>}
     </div>
   </div>
 
-  {/* VERDICT — dominant element */}
-  <div style={{
-    background: VRD.col==="#16A34A"||C.roi>=20?"#F0FDF4":VRD.col==="#DC2626"||C.roi<10?"#FEF2F2":"#FFFBEB",
-    border:`2.5px solid ${VRD.col||R.acc}`,
-    borderRadius:8,padding:"22px 28px",marginBottom:24,
-    display:"flex",alignItems:"center",gap:24
-  }}>
-    <div style={{flex:1}}>
-      <div style={{fontSize:9,letterSpacing:".2em",color:VRD.col||R.acc,textTransform:"uppercase",fontWeight:700,marginBottom:6,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Genesis Retail — Assessment Verdict</div>
-      <div style={{fontSize:40,fontWeight:900,color:VRD.col||R.acc,letterSpacing:"-1px",lineHeight:1,fontFamily:"'Helvetica Neue',Arial,sans-serif",marginBottom:10}}>{VRD.label||"ASSESSMENT PENDING"}</div>
-      <div style={{fontSize:13,color:R.text,lineHeight:1.7,fontFamily:"'Helvetica Neue',Arial,sans-serif",maxWidth:500}}>{VRD.summary}</div>
-    </div>
-    <div style={{fontSize:72,lineHeight:1,opacity:.85}}>{VRD.icon}</div>
-  </div>
-
-  {/* Investment Snapshot KPI strip */}
-  <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:10,marginBottom:20}}>
-    {[
-      {l:"ROI",v:pct(C.roi),bg:C.roi>=20?"#F0FDF4":C.roi>=10?"#FFFBEB":"#FEF2F2",c:C.roi>=20?R.pos:C.roi>=10?R.orange:R.neg,border:C.roi>=20?"#BBF7D0":C.roi>=10?"#FDE68A":"#FECACA"},
-      {l:"Net Profit (Yr 1)",v:fmt(C.np),bg:C.np>0?"#F0FDF4":"#FEF2F2",c:C.np>0?R.pos:R.neg,border:C.np>0?"#BBF7D0":"#FECACA"},
-      {l:"Investment Required",v:fmt(C.ti),bg:R.kpi,c:R.acc,border:"#BBF7D0"},
-      {l:"Payback Period",v:C.np>0?(C.ti/C.np).toFixed(1)+" yrs":"N/A",bg:R.card,c:R.text,border:R.border},
-      {l:"Risk Rating",v:riskItems?riskItems.filter(r=>r.rag==="red").length>2?"HIGH":riskItems.filter(r=>r.rag==="red").length>0?"MEDIUM":"LOW":"—",
-       bg:riskItems?.filter(r=>r.rag==="red").length>2?"#FEF2F2":riskItems?.filter(r=>r.rag==="red").length>0?"#FFFBEB":"#F0FDF4",
-       c:riskItems?.filter(r=>r.rag==="red").length>2?R.neg:riskItems?.filter(r=>r.rag==="red").length>0?R.orange:R.pos,
-       border:riskItems?.filter(r=>r.rag==="red").length>2?"#FECACA":riskItems?.filter(r=>r.rag==="red").length>0?"#FDE68A":"#BBF7D0"},
-    ].map(({l,v,bg,c,border})=>(
-      <div key={l} style={{background:bg,border:`1px solid ${border}`,borderRadius:6,padding:"13px 12px"}}>
-        <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:R.muted,fontWeight:600,marginBottom:5,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{l}</div>
-        <div style={{fontSize:22,fontWeight:800,color:c,lineHeight:1,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{v}</div>
-      </div>
-    ))}
-  </div>
-
-  {/* Secondary metrics */}
-  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,paddingBottom:18,marginBottom:18,borderBottom:`1px solid ${R.border}`}}>
-    {[
-      {l:"Year 1 Turnover",v:fmt(C.ann)},
-      {l:"EBITDA",v:fmt(C.ebitda)},
-      {l:"Gross Margin",v:pct(C.blGP)},
-      {l:"Sales / sq ft",v:sqft>0?`£${(C.ann/sqft).toFixed(0)}`:"—"},
-    ].map(({l,v})=>(
-      <div key={l} style={{borderLeft:`3px solid ${R.acc}`,paddingLeft:10}}>
-        <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:R.muted,fontWeight:600,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{l}</div>
-        <div style={{fontSize:17,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{v}</div>
-      </div>
-    ))}
-  </div>
-
-  {/* Assessment Confidence */}
+  {/* VERDICT — dominant */}
   {(()=>{
-    const filled=[propName,postcode,sqft,catchmentPop,rent,rates,refitCost].filter(Boolean).length;
-    const conf=Math.round((filled/7)*100);
+    const isPass=C.roi>=20, isCaution=C.roi>=10&&C.roi<20, isFail=C.roi<10;
+    const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+    const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
+    const border=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
+    const col=border;
+    const icon=isPass?"✅":isCaution?"⚠️":"❌";
     return (
-      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:18,padding:"10px 14px",background:R.card,borderRadius:6,border:`1px solid ${R.border}`}}>
+      <div style={{background:bg,border:`2.5px solid ${border}`,borderRadius:8,padding:"20px 26px",marginBottom:20,display:"flex",alignItems:"center",gap:20}}>
         <div style={{flex:1}}>
-          <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:R.muted,fontWeight:600,marginBottom:3,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Assessment Confidence</div>
-          <div style={{height:6,background:R.fill,borderRadius:3}}>
-            <div style={{height:"100%",background:conf>=80?R.pos:conf>=60?R.orange:R.neg,borderRadius:3,width:conf+"%"}}/>
-          </div>
+          <div style={{fontSize:8,letterSpacing:".2em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:5}}>Genesis Retail Assessment Verdict</div>
+          <div style={{fontSize:36,fontWeight:900,color:col,letterSpacing:"-1px",lineHeight:1,marginBottom:8}}>{label}</div>
+          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}>{isPass?`This site demonstrates strong commercial viability. A ${pct(C.roi)} ROI with a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meets Genesis Retail's investment threshold.`:isCaution?`This site shows moderate viability. ROI of ${pct(C.roi)} is below the preferred 20% threshold. Proceed subject to cost reduction or revised trading assumptions.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum threshold.`}</div>
         </div>
-        <div style={{fontSize:20,fontWeight:800,color:conf>=80?R.pos:conf>=60?R.orange:R.neg,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{conf}%</div>
+        <div style={{fontSize:56,lineHeight:1}}>{icon}</div>
       </div>
     );
   })()}
 
-  {/* Executive narrative */}
-  <div style={{fontSize:13,color:R.text,lineHeight:1.85,marginBottom:18,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <strong style={{color:R.acc}}>Executive Summary. </strong>
-    {storeNote||`This assessment covers the proposed convenience retail operation at ${propName||"the subject site"}${postcode?`, ${postcode}`:""}. ${refitCommentary?refitCommentary.split(".")[0]+".":""}`}
+  {/* Investment Snapshot */}
+  <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8,marginBottom:16}}>
+    {(()=>{
+      const rr=risks?.filter(r=>r.rag==="red").length||0;
+      return [
+        {l:"ROI",v:pct(C.roi),bg:C.roi>=20?"#F0FDF4":C.roi>=10?"#FFFBEB":"#FEF2F2",c:C.roi>=20?"#15803D":C.roi>=10?"#B45309":"#DC2626",bd:C.roi>=20?"#BBF7D0":C.roi>=10?"#FDE68A":"#FECACA"},
+        {l:"Net Profit (Yr 1)",v:fmt(C.nP),bg:C.nP>0?"#F0FDF4":"#FEF2F2",c:C.nP>0?"#15803D":"#DC2626",bd:C.nP>0?"#BBF7D0":"#FECACA"},
+        {l:"Investment Required",v:fmt(C.ti),bg:"#F0FDF4",c:"#15803D",bd:"#BBF7D0"},
+        {l:"Payback Period",v:C.pb?C.pb.toFixed(1)+" yrs":"N/A",bg:"#F8FAFC",c:"#111827",bd:"#CBD5E1"},
+        {l:"Risk Rating",v:rr>2?"HIGH":rr>0?"MEDIUM":"LOW",bg:rr>2?"#FEF2F2":rr>0?"#FFFBEB":"#F0FDF4",c:rr>2?"#DC2626":rr>0?"#B45309":"#15803D",bd:rr>2?"#FECACA":rr>0?"#FDE68A":"#BBF7D0"},
+      ];
+    })().map(({l,v,bg,c,bd})=>(
+      <div key={l} style={{background:bg,border:`1px solid ${bd}`,borderRadius:6,padding:"11px 10px"}}>
+        <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:4}}>{l}</div>
+        <div style={{fontSize:20,fontWeight:800,color:c,lineHeight:1}}>{v}</div>
+      </div>
+    ))}
   </div>
 
-  {/* What this means */}
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>
-      {C.roi>=20?`This site demonstrates strong commercial viability. A ${pct(C.roi)} return on investment with a ${C.np>0?(C.ti/C.np).toFixed(1)+" year":""} payback period meets Genesis Retail's investment threshold. Subject to lease terms and refit execution, this represents a sound commercial proposition.`
-      :C.roi>=10?`This site shows moderate viability. The ${pct(C.roi)} ROI is below Genesis Retail's preferred 20% threshold. Proceed with caution — focus on reducing occupancy costs or increasing turnover assumptions before committing.`
-      :`The financial model does not currently support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum threshold. Review rent, rates and sales assumptions before resubmitting.`}
-    </div>
+  {/* Secondary KPIs */}
+  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,paddingBottom:14,marginBottom:14,borderBottom:"1px solid #CBD5E1"}}>
+    {[[fmt(C.upliftedAnn),"Annual Turnover"],[fmt(C.eb),"EBITDA"],[pct(C.blGP),"Gross Margin"],[sqft>0?`£${(C.upliftedWk/sqft).toFixed(2)}/wk`:"—","Sales / sq ft / wk"]].map(([v,l])=>(
+      <div key={l} style={{borderLeft:"3px solid #15803D",paddingLeft:9}}>
+        <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600}}>{l}</div>
+        <div style={{fontSize:16,fontWeight:700,color:"#111827"}}>{v}</div>
+      </div>
+    ))}
   </div>
 
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · rshorney@genesisretail.uk · genesisretail.uk</div>
-    <div style={{fontSize:9,color:R.muted}}>Confidential — {clientName||"Client Copy"} · Page 1 of 9</div>
+  {/* Assessment confidence */}
+  {(()=>{
+    const fields=[propName,postcode,sqft,catchmentPop,rent,rates,refitCost,footfall,avgBasket].filter(Boolean);
+    const conf=Math.round((fields.length/9)*100);
+    return(
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14,padding:"9px 12px",background:"#F8FAFC",borderRadius:6,border:"1px solid #CBD5E1"}}>
+        <div style={{flex:1}}>
+          <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>Assessment Confidence</div>
+          <div style={{height:5,background:"#E2E8F0",borderRadius:3}}>
+            <div style={{height:"100%",background:conf>=80?"#15803D":conf>=60?"#B45309":"#DC2626",borderRadius:3,width:conf+"%"}}/>
+          </div>
+        </div>
+        <div style={{fontSize:18,fontWeight:800,color:conf>=80?"#15803D":conf>=60?"#B45309":"#DC2626"}}>{conf}%</div>
+      </div>
+    );
+  })()}
+
+  {/* Executive summary */}
+  <div style={{fontSize:11,color:"#374151",lineHeight:1.8,marginBottom:14}}>
+    <strong style={{color:"#15803D"}}>Executive Summary. </strong>
+    {storeNote||`This assessment covers the proposed convenience retail operation at ${propName||"the subject site"}${postcode?`, ${postcode}`:""}.`}{" "}{commentary?.financial?.split(".")[0]}.
+  </div>
+
+  {/* What This Means */}
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{C.roi>=20?`This site exceeds Genesis Retail's 20% investment threshold. ROI of ${pct(C.roi)} and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback represent a strong commercial proposition. Subject to lease terms, this is a site worth proceeding with.`:C.roi>=10?`ROI of ${pct(C.roi)} is below the preferred 20% threshold. The site is financially viable but tight. Rent negotiation and confirmed trading uplift data are required before commitment.`:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold of 10%. The current assumptions do not support a lending or investment decision. Review occupancy costs and trading projections before resubmitting.`}</div>
+  </div>
+
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · rshorney@genesisretail.uk · genesisretail.uk</span>
+    <span>Confidential — {clientName||"Client Copy"} · Page 1</span>
   </div>
 </div>
 
-{/* ── PAGE 2: SITE OVERVIEW ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 2</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Site Overview</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 2 — SITE OVERVIEW
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 2</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Site Overview</div>
   </div>
 
-  {storePhoto&&<img src={storePhoto} alt="Site" style={{width:"100%",maxHeight:180,objectFit:"cover",borderRadius:6,border:`1px solid ${R.border}`,display:"block",marginBottom:16}}/>}
+  {storePhoto&&<img src={storePhoto} alt="Site" style={{width:"100%",maxHeight:170,objectFit:"cover",borderRadius:5,border:"1px solid #CBD5E1",display:"block",marginBottom:14}}/>}
 
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
     <div>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Property Details</div>
-      {[[propName,"Site Address"],[postcode,"Postcode"],[location||"—","Location Type"],[sqft?sqft.toLocaleString()+" sq ft":"—","Net Sales Area"],[openHours?openHours+" hrs/day":"—","Opening Hours"],[uplift?uplift+"%":"—","Post-Refit Uplift"]].filter(([v])=>v&&v!=="—").map(([v,l])=>(
-        <div key={l} style={{display:"flex",borderBottom:`1px solid ${R.fill}`,padding:"6px 0",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-          <div style={{width:150,fontSize:11,color:R.muted,flexShrink:0}}>{l}</div>
-          <div style={{fontSize:11,fontWeight:600,color:R.text}}>{v}</div>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Property Details</div>
+      {[[propName,"Address"],[postcode,"Postcode"],[location||"—","Location Type"],[sqft?sqft.toLocaleString()+" sq ft":"—","Net Sales Area"],[openHours?openHours+" hrs/day":"—","Opening Hours"],[uplift?uplift+"%":"—","Post-Refit Uplift"]].filter(([v])=>v&&v!=="—").map(([v,l])=>(
+        <div key={l} style={{display:"flex",borderBottom:"1px solid #F1F5F9",padding:"5px 0"}}>
+          <div style={{width:140,fontSize:10,color:"#64748B",flexShrink:0}}>{l}</div>
+          <div style={{fontSize:10,fontWeight:600,color:"#111827"}}>{v}</div>
         </div>
       ))}
     </div>
     <div>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Cost Assumptions</div>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Cost Assumptions</div>
       {[[fmt(rent),"Annual Rent"],[fmt(rates),"Business Rates"],[staffPct+"%","Staff Cost %"],[fmt(utilities),"Utilities"],[fmt(otherCosts),"Other Costs"],[fmt(refitCost),"Refit Budget"],[fmt(stockCost),"Opening Stock"]].map(([v,l])=>(
-        <div key={l} style={{display:"flex",borderBottom:`1px solid ${R.fill}`,padding:"6px 0",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-          <div style={{width:150,fontSize:11,color:R.muted,flexShrink:0}}>{l}</div>
-          <div style={{fontSize:11,fontWeight:600,color:R.text}}>{v}</div>
+        <div key={l} style={{display:"flex",borderBottom:"1px solid #F1F5F9",padding:"5px 0"}}>
+          <div style={{width:140,fontSize:10,color:"#64748B",flexShrink:0}}>{l}</div>
+          <div style={{fontSize:10,fontWeight:600,color:"#111827"}}>{v}</div>
         </div>
       ))}
     </div>
   </div>
 
   {siteVisit&&Object.values(siteVisit).some(v=>v)&&(
-    <div style={{background:R.card,border:`1px solid ${R.border}`,borderRadius:6,padding:"14px 16px",marginBottom:16,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Site Visit Assessment</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8,marginBottom:10}}>
+    <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:6,padding:"12px 14px",marginBottom:12}}>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Site Visit Assessment</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginBottom:9}}>
         {[["Visibility",siteVisit.visibility],["Access",siteVisit.access],["Parking",siteVisit.parking],["Fascia",siteVisit.fascia],["Competition",siteVisit.competition]].filter(([,v])=>v).map(([l,v])=>(
-          <div key={l} style={{textAlign:"center",padding:"7px 4px",background:R.fill,borderRadius:4}}>
-            <div style={{fontSize:9,color:R.muted,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>{l}</div>
-            <div style={{fontSize:11,fontWeight:700,color:v==="Excellent"?R.pos:v==="Good"?R.acc:v==="Poor"?R.neg:R.text}}>{v}</div>
+          <div key={l} style={{textAlign:"center",padding:"6px 4px",background:"#F1F5F9",borderRadius:4}}>
+            <div style={{fontSize:8,color:"#64748B",textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>{l}</div>
+            <div style={{fontSize:10,fontWeight:700,color:v==="Excellent"?"#15803D":v==="Good"?"#166534":v==="Poor"?"#DC2626":"#374151"}}>{v}</div>
           </div>
         ))}
       </div>
-      {siteVisit.strengths&&<div style={{marginBottom:4,fontSize:11,color:R.text}}><strong style={{color:R.pos}}>Strengths:</strong> {siteVisit.strengths}</div>}
-      {siteVisit.weaknesses&&<div style={{fontSize:11,color:R.text}}><strong style={{color:R.neg}}>Weaknesses:</strong> {siteVisit.weaknesses}</div>}
+      {siteVisit.strengths&&<div style={{fontSize:10,color:"#374151",marginBottom:3}}><strong style={{color:"#15803D"}}>Strengths: </strong>{siteVisit.strengths}</div>}
+      {siteVisit.weaknesses&&<div style={{fontSize:10,color:"#374151"}}><strong style={{color:"#DC2626"}}>Weaknesses: </strong>{siteVisit.weaknesses}</div>}
     </div>
   )}
 
   {(storeNote||postcodeNotes)&&(
-    <div style={{background:R.card,border:`1px solid ${R.border}`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"14px 18px",marginBottom:14,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Site Observations</div>
-      <div style={{fontSize:12,color:R.text,lineHeight:1.8,whiteSpace:"pre-wrap"}}>{storeNote||postcodeNotes}</div>
+    <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"12px 14px",marginBottom:10}}>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:5}}>Site Observations</div>
+      <div style={{fontSize:11,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{storeNote||postcodeNotes}</div>
     </div>
   )}
 
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>{`A ${location||"convenience"} format of ${sqft||"—"} sq ft ${sqft>=1500?"provides strong category depth and range breadth for a symbol group conversion":sqft>=800?"is a viable convenience format, capable of supporting a full symbol group range":"is a compact format — category prioritisation will be critical to maximise sales density"}. ${rent?`At an annual rent of ${fmt(rent)}, the occupancy cost represents ${C.ann>0?pct(rent/C.ann*100)+" of projected turnover":""}.`:""}`}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{`A ${location||"convenience"} format of ${sqft||"—"} sq ft${sqft>=1500?" provides strong category depth and range breadth for a symbol group conversion":sqft>=800?" is a viable convenience format, capable of supporting a full symbol group range":" is a compact format requiring disciplined category prioritisation"}. ${rent?`At ${fmt(rent)} annual rent, occupancy costs represent ${C.upliftedAnn>0?pct(rent/C.upliftedAnn*100)+" of projected post-refit turnover.":""}`:""}${postcodeNotes?" "+postcodeNotes:""}`}</div>
   </div>
 
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Site Overview · Page 2</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Site Overview · Page 2</span>
   </div>
 </div>
 
-{/* ── PAGE 3: MARKET & DEMOGRAPHICS ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 3</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Market & Catchment Demographics</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 3 — MARKET & DEMOGRAPHICS
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 3</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Market & Catchment Demographics</div>
   </div>
 
-  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:20}}>
-    {[{l:"Catchment Pop",(catchmentPop||0).toLocaleString()},{l:"Median Income",v:`£${(medianIncome||0).toLocaleString()}`},{l:"Deprivation",v:`${deprivation||0}/10`},{l:"Demographic Score",v:`${DS}/9`}].map &&
-    [[`${(catchmentPop||0).toLocaleString()}`,"Catchment Pop"],[`£${(medianIncome||0).toLocaleString()}`,"Median Income"],[`${deprivation||0}/10`,"Deprivation"],[`${DS}/9`,"Demographic Score"]].map(([v,l])=>(
-      <div key={l} style={{background:R.kpi,border:`1px solid #BBF7D0`,borderRadius:6,padding:"14px 12px",textAlign:"center"}}>
-        <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:R.muted,fontWeight:600,marginBottom:5,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{l}</div>
-        <div style={{fontSize:26,fontWeight:800,color:R.acc,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{v}</div>
+  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:9,marginBottom:18}}>
+    {[[(catchmentPop||0).toLocaleString(),"Catchment Pop"],[`£${(medianIncome||0).toLocaleString()}`,"Median Income"],[`${deprivation||0}/10`,"Deprivation"],[`${DS}/9`,"Demographic Score"]].map(([v,l])=>(
+      <div key={l} style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:6,padding:"12px",textAlign:"center"}}>
+        <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:4}}>{l}</div>
+        <div style={{fontSize:24,fontWeight:800,color:"#15803D"}}>{v}</div>
       </div>
     ))}
   </div>
 
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:18}}>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
     <div>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Age Profile</div>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Age Profile</div>
       {Object.entries(ageBands||{}).map(([band,p])=>(
-        <div key={band} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-          <div style={{width:70,fontSize:10,color:R.muted,flexShrink:0}}>{band}</div>
-          <div style={{flex:1,height:10,background:R.fill,borderRadius:4}}><div style={{height:"100%",background:R.acc,borderRadius:4,width:p+"%"}}/></div>
-          <div style={{width:28,fontSize:10,fontWeight:700,color:R.text,textAlign:"right"}}>{p}%</div>
+        <div key={band} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+          <div style={{width:65,fontSize:9,color:"#64748B",flexShrink:0}}>{band}</div>
+          <div style={{flex:1,height:9,background:"#F1F5F9",borderRadius:3}}><div style={{height:"100%",background:"#15803D",borderRadius:3,width:p+"%"}}/></div>
+          <div style={{width:26,fontSize:9,fontWeight:700,color:"#374151",textAlign:"right"}}>{p}%</div>
         </div>
       ))}
     </div>
     <div>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Housing Tenure</div>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Housing Tenure</div>
       {Object.entries(housing||{}).map(([k,v])=>(
-        <div key={k} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-          <div style={{width:120,fontSize:10,color:R.muted,flexShrink:0}}>{k}</div>
-          <div style={{flex:1,height:10,background:R.fill,borderRadius:4}}><div style={{height:"100%",background:"#15803D",borderRadius:4,width:v+"%"}}/></div>
-          <div style={{width:28,fontSize:10,fontWeight:700,color:R.text,textAlign:"right"}}>{v}%</div>
+        <div key={k} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+          <div style={{width:110,fontSize:9,color:"#64748B",flexShrink:0}}>{k}</div>
+          <div style={{flex:1,height:9,background:"#F1F5F9",borderRadius:3}}><div style={{height:"100%",background:"#15803D",borderRadius:3,width:v+"%"}}/></div>
+          <div style={{width:26,fontSize:9,fontWeight:700,color:"#374151",textAlign:"right"}}>{v}%</div>
         </div>
       ))}
+      <div style={{marginTop:12}}>
+        <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Employment Status</div>
+        {Object.entries(employment||{}).slice(0,4).map(([k,v])=>(
+          <div key={k} style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
+            <div style={{width:110,fontSize:9,color:"#64748B",flexShrink:0}}>{k}</div>
+            <div style={{flex:1,height:9,background:"#F1F5F9",borderRadius:3}}><div style={{height:"100%",background:"#B45309",borderRadius:3,width:v+"%"}}/></div>
+            <div style={{width:26,fontSize:9,fontWeight:700,color:"#374151",textAlign:"right"}}>{v}%</div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>
-      {areaNotes||`A catchment population of ${(catchmentPop||0).toLocaleString()} within one mile supports this format. ${deprivation>=7?"High deprivation — PMPs, value lines and essential grocery will over-index. Tobacco, carbonates, BWS and household are priority categories.":deprivation>=4?"Mixed catchment — balance value credentials with quality fresh and chilled. Symbol group affiliation is important for consumer trust.":"Lower deprivation — quality, fresh and premium convenience will perform well. Invest in chilled, food to go and hot beverages."}`}
-    </div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.demographics||areaNotes||`A catchment population of ${(catchmentPop||0).toLocaleString()} and deprivation score of ${deprivation||0}/10 indicate ${deprivation>=7?"a high-deprivation area where value, PMPs and essential grocery will over-index":deprivation>=4?"a mixed catchment requiring balanced ranging":"a lower-deprivation catchment supporting quality and premium ranging"}.`}</div>
   </div>
 
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Market & Demographics · Page 3</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Market & Demographics · Page 3</span>
   </div>
 </div>
 
-{/* ── PAGE 4: LOCAL FOOD PROFILE ── */}
+{/*──────────────────────────────────────────────────────────────
+   PAGE 4 — LOCAL FOOD PROFILE
+──────────────────────────────────────────────────────────────*/}
 {foodProfile&&(
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 4</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Local Food & Drink Profile</div>
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Local Food & Drink Profile</div>
   </div>
-
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:18}}>
-    {foodProfile.summary&&<div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:5}}>Catchment Profile</div>
-      <div style={{fontSize:11,color:R.text,lineHeight:1.7}}>{foodProfile.summary}</div>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+    {foodProfile.summary&&<div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Catchment Food Profile</div>
+      <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{foodProfile.summary}</div>
     </div>}
-    {foodProfile.keyInsight&&<div style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderLeft:`4px solid ${R.orange}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:9,fontWeight:700,color:R.orange,textTransform:"uppercase",letterSpacing:".1em",marginBottom:5}}>Key Ranging Insight</div>
-      <div style={{fontSize:11,color:R.text,lineHeight:1.7}}>{foodProfile.keyInsight}</div>
+    {foodProfile.keyInsight&&<div style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderLeft:"4px solid #B45309",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+      <div style={{fontSize:9,fontWeight:700,color:"#B45309",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Key Ranging Insight</div>
+      <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{foodProfile.keyInsight}</div>
     </div>}
   </div>
-
   {foodProfile.topFoods&&foodProfile.topFoods.length>0&&(
-    <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,marginBottom:16,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <thead>
-        <tr style={{background:R.fill}}>
-          {["Category","Index","Insight","Action"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",fontWeight:700,color:R.text,fontSize:10,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}
-        </tr>
-      </thead>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:14}}>
+      <thead><tr style={{background:"#F1F5F9"}}>{["Category","Index","Insight","Action"].map(h=><th key={h} style={{padding:"8px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
       <tbody>
         {foodProfile.topFoods.map((f,i)=>(
-          <tr key={i} style={{background:i%2===0?R.bg:R.pale,borderBottom:`1px solid ${R.border}`}}>
-            <td style={{padding:"8px 12px",fontWeight:600,color:R.text}}>{f.category}</td>
-            <td style={{padding:"8px 12px",textAlign:"center"}}><span style={{padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:700,background:f.index>=110?R.kpi:f.index>=100?"#FFFBEB":R.fill,color:f.index>=110?R.pos:f.index>=100?R.orange:R.muted}}>{f.index}</span></td>
-            <td style={{padding:"8px 12px",color:R.muted,fontSize:10}}>{f.insight}</td>
-            <td style={{padding:"8px 12px",color:R.text,fontSize:10}}>{f.action}</td>
+          <tr key={i} style={{background:i%2===0?"#fff":"#F8FAFC",borderBottom:"1px solid #CBD5E1"}}>
+            <td style={{padding:"7px 10px",fontWeight:600,color:"#111827"}}>{f.category}</td>
+            <td style={{padding:"7px 10px",textAlign:"center"}}><span style={{padding:"1px 7px",borderRadius:3,fontSize:9,fontWeight:700,background:f.index>=110?"#F0FDF4":f.index>=100?"#FFFBEB":"#F8FAFC",color:f.index>=110?"#15803D":f.index>=100?"#B45309":"#64748B"}}>{f.index}</span></td>
+            <td style={{padding:"7px 10px",color:"#64748B",fontSize:9,maxWidth:170}}>{f.insight}</td>
+            <td style={{padding:"7px 10px",color:"#374151",fontSize:9}}>{f.action}</td>
           </tr>
         ))}
       </tbody>
     </table>
   )}
-
-  {foodProfile.avoidCategories?.length>0&&<div style={{background:"#FEF2F2",border:"1px solid #FECACA",borderLeft:`4px solid ${R.neg}`,borderRadius:"0 6px 6px 0",padding:"10px 14px",marginBottom:14,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.neg,textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Avoid or Minimise</div>
-    <div style={{fontSize:11,color:R.text}}>{foodProfile.avoidCategories.join(" · ")}</div>
+  {foodProfile.avoidCategories?.length>0&&<div style={{background:"#FEF2F2",border:"1px solid #FECACA",borderLeft:"4px solid #DC2626",borderRadius:"0 6px 6px 0",padding:"9px 12px",marginBottom:10}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#DC2626",textTransform:"uppercase",letterSpacing:".1em",marginBottom:3}}>Avoid or Minimise</div>
+    <div style={{fontSize:10,color:"#374151"}}>{foodProfile.avoidCategories.join(" · ")}</div>
   </div>}
-
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>{foodProfile.keyInsight||"Range to the catchment, not the national average. Prioritise the categories that over-index in this postcode and give them fixture space proportional to demand."}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.categories||"Range to this catchment, not the national average. Prioritise the categories that over-index here."}</div>
   </div>
-
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Food Profile · Page 4</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Local Food Profile · Page 4</span>
   </div>
 </div>
 )}
 
-{/* ── PAGE 5: COMPETITOR ANALYSIS ── */}
+{/*──────────────────────────────────────────────────────────────
+   PAGE 5 — COMPETITOR ANALYSIS
+──────────────────────────────────────────────────────────────*/}
 {competitorList&&competitorList.length>0&&(
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 5</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Competitor Analysis</div>
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
   </div>
-  <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,marginBottom:18,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <thead>
-      <tr style={{background:R.fill}}>
-        {["Operator","Format","Distance","Threat"].map(h=><th key={h} style={{padding:"10px 12px",textAlign:"left",fontWeight:700,color:R.text,fontSize:10,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}
-      </tr>
-    </thead>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
+    <thead><tr style={{background:"#F1F5F9"}}>{["Operator","Format","Distance","Threat","Notes"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
       {competitorList.map((c,i)=>(
-        <tr key={i} style={{background:i%2===0?R.bg:R.pale,borderBottom:`1px solid ${R.border}`}}>
-          <td style={{padding:"9px 12px",fontWeight:600,color:R.text}}>{c.name}</td>
-          <td style={{padding:"9px 12px",color:R.muted}}>{c.type}</td>
-          <td style={{padding:"9px 12px",color:R.muted}}>{c.distance||"—"}</td>
-          <td style={{padding:"9px 12px"}}><span style={{padding:"2px 10px",borderRadius:4,fontSize:10,fontWeight:700,background:c.threat==="high"?"#FEF2F2":c.threat==="medium"?"#FFFBEB":R.kpi,color:c.threat==="high"?R.neg:c.threat==="medium"?R.orange:R.pos}}>{(c.threat||"low").toUpperCase()}</span></td>
+        <tr key={i} style={{background:i%2===0?"#fff":"#F8FAFC",borderBottom:"1px solid #CBD5E1"}}>
+          <td style={{padding:"8px 10px",fontWeight:600,color:"#111827"}}>{c.name}</td>
+          <td style={{padding:"8px 10px",color:"#64748B"}}>{c.type}</td>
+          <td style={{padding:"8px 10px",color:"#64748B"}}>{c.distance||"—"}</td>
+          <td style={{padding:"8px 10px"}}><span style={{padding:"2px 8px",borderRadius:3,fontSize:9,fontWeight:700,background:c.threat==="high"?"#FEF2F2":c.threat==="medium"?"#FFFBEB":"#F0FDF4",color:c.threat==="high"?"#DC2626":c.threat==="medium"?"#B45309":"#15803D"}}>{(c.threat||"low").toUpperCase()}</span></td>
+          <td style={{padding:"8px 10px",color:"#64748B",fontSize:9}}>{c.notes||"—"}</td>
         </tr>
       ))}
     </tbody>
   </table>
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>{`${competitorList.length} operator${competitorList.length!==1?"s":""} identified. ${competitorList.filter(c=>c.threat==="high").length} high-threat${competitorList.filter(c=>c.threat==="high").length!==1?"s":""}. A symbol group conversion at this location will need to differentiate on range depth, fresh credentials and customer service to compete effectively.`}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.competitors||`${competitorList.length} operator${competitorList.length!==1?"s":""} identified. ${competitorList.filter(c=>c.threat==="high").length} high-threat. A symbol group conversion will need to differentiate on range, fresh credentials and service.`}</div>
   </div>
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Competitor Analysis · Page 5</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Competitor Analysis · Page 5</span>
   </div>
 </div>
 )}
 
-{/* ── PAGE 6: FINANCIAL PERFORMANCE ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 6</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Financial Performance — Year 1</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 6 — SYMBOL GROUP RECOMMENDATION
+──────────────────────────────────────────────────────────────*/}
+{C.symGroups&&C.symGroups.length>0&&(
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 6</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Recommended Symbol Group</div>
   </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:22,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    {[[fmt(C.wt),"Weekly Turnover","post-refit"],[fmt(C.ann),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",pct(C.blGP)+" margin"],[fmt(C.ebitda),"EBITDA",pct(C.ebitdaM)+" of sales"],[fmt(C.np),"Net Profit",pct(C.npm)+" net margin"],[pct(C.roi),"ROI",C.np>0?(C.ti/C.np).toFixed(1)+" yr payback":""]].map(([v,l,s])=>(
-      <div key={l} style={{border:`1px solid ${R.border}`,borderRadius:6,padding:"14px 16px",borderTop:`3px solid ${R.acc}`}}>
-        <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:R.muted,fontWeight:600,marginBottom:3}}>{l}</div>
-        <div style={{fontSize:26,fontWeight:900,color:R.text,lineHeight:1}}>{v}</div>
-        {s&&<div style={{fontSize:10,color:R.muted,marginTop:3}}>{s}</div>}
+  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:18}}>
+    {C.symGroups.slice(0,3).map((sg,i)=>(
+      <div key={sg.name} style={{border:`2px solid ${i===0?"#15803D":"#CBD5E1"}`,borderRadius:7,padding:"14px 14px",background:i===0?"#F0FDF4":"#fff"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
+          <div style={{fontSize:14,fontWeight:800,color:i===0?"#15803D":"#374151"}}>{sg.name}</div>
+          <div style={{fontSize:10,fontWeight:700,color:i===0?"#15803D":"#64748B"}}>{sg.score}/10</div>
+        </div>
+        {i===0&&<div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:5}}>★ Recommended</div>}
+        <div style={{height:5,background:"#E2E8F0",borderRadius:2,marginBottom:7}}><div style={{height:"100%",background:i===0?"#15803D":"#94A3B8",borderRadius:2,width:(sg.score/10*100)+"%"}}/></div>
+        <div style={{fontSize:10,color:"#64748B",lineHeight:1.5}}>{sg.desc}</div>
       </div>
     ))}
   </div>
-  <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,marginBottom:18,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <thead><tr style={{background:R.fill}}>{["","Year 1","% Sales"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:h==="Year 1"||h==="% Sales"?"right":"left",fontWeight:700,color:R.text,fontSize:10,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.symbolGroup||`The scoring model has ranked these options based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria. The final decision should involve a formal conversation with the wholesaler about terms, ranging support and refit contribution.`}</div>
+  </div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Symbol Group · Page 6</span>
+  </div>
+</div>
+)}
+
+{/*──────────────────────────────────────────────────────────────
+   PAGE 7 — FINANCIAL PERFORMANCE
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance — Year 1</div>
+  </div>
+  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
+    {[[fmt(C.upliftedWk),"Weekly Turnover","post-refit"],[fmt(C.upliftedAnn),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",pct(C.blGP)+" margin"],[fmt(C.eb),"EBITDA",pct(C.eb/C.upliftedAnn*100)+" of sales"],[fmt(C.nP),"Net Profit",pct(C.nP/C.upliftedAnn*100)+" net margin"],[pct(C.roi),"ROI",C.pb?C.pb.toFixed(1)+" yr payback":""]].map(([v,l,s])=>(
+      <div key={l} style={{border:"1px solid #CBD5E1",borderRadius:6,padding:"13px 14px",borderTop:"3px solid #15803D"}}>
+        <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
+        <div style={{fontSize:24,fontWeight:900,color:"#111827",lineHeight:1}}>{v}</div>
+        {s&&<div style={{fontSize:9,color:"#64748B",marginTop:3}}>{s}</div>}
+      </div>
+    ))}
+  </div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
+    <thead><tr style={{background:"#F1F5F9"}}>{["","Year 1","% Sales"].map(h=><th key={h} style={{padding:"8px 10px",textAlign:h==="Year 1"||h==="% Sales"?"right":"left",fontWeight:700,color:"#374151",fontSize:9}}>{h}</th>)}</tr></thead>
     <tbody>
       {[
-        {l:"Gross Sales",v:C.ann,bold:true},
-        {l:"Cost of Goods",v:-C.cogs,sub:true},
-        {l:"Gross Profit",v:C.annGP,bold:true,hi:true,p:C.blGP},
-        {l:"Staff Wages",v:-C.staffCost,sub:true},
+        {l:"Gross Sales",v:C.upliftedAnn,b:true},
+        {l:"Cost of Goods",v:-(C.upliftedAnn-C.annGP),sub:true},
+        {l:"Gross Profit",v:C.annGP,b:true,hi:true,p:C.blGP},
+        {l:"Staff Wages",v:-C.stf,sub:true},
         {l:"Rent",v:-rent,sub:true},
         {l:"Business Rates",v:-rates,sub:true},
         {l:"Utilities",v:-utilities,sub:true},
         {l:"Other Costs",v:-otherCosts,sub:true},
-        {l:"EBITDA",v:C.ebitda,bold:true,p:C.ebitdaM},
-        {l:"Finance Charge",v:-C.finCharge,sub:true},
-        {l:"Net Profit",v:C.np,bold:true,hi:true,p:C.npm,pos:C.np>0,neg:C.np<=0},
-      ].map(({l,v,bold,sub,hi,p,pos,neg},i)=>(
-        <tr key={i} style={{background:hi?(v>0?"#F0FDF4":"#FEF2F2"):bold?R.pale:R.bg,borderBottom:`1px solid ${R.border}`}}>
-          <td style={{padding:"8px 12px",fontWeight:bold?700:400,color:sub?R.muted:R.text,paddingLeft:sub?24:12}}>{l}</td>
-          <td style={{padding:"8px 12px",textAlign:"right",fontWeight:bold?700:400,color:pos?R.pos:neg?R.neg:v<0?R.neg:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>{v<0?`(${fmt(Math.abs(v))})`:fmt(v)}</td>
-          <td style={{padding:"8px 12px",textAlign:"right",fontSize:10,color:R.muted}}>{p?pct(p):""}</td>
+        {l:"EBITDA",v:C.eb,b:true,p:C.eb/C.upliftedAnn*100},
+        {l:"Finance Charge",v:-C.af,sub:true},
+        {l:"Net Profit",v:C.nP,b:true,hi:true,p:C.nP/C.upliftedAnn*100,pos:C.nP>0,neg:C.nP<=0},
+      ].map(({l,v,b,sub,hi,p,pos,neg},i)=>(
+        <tr key={i} style={{background:hi?(v>0?"#F0FDF4":"#FEF2F2"):b?"#F8FAFC":"#fff",borderBottom:"1px solid #CBD5E1"}}>
+          <td style={{padding:"7px 10px",fontWeight:b?700:400,color:sub?"#64748B":"#374151",paddingLeft:sub?22:10,fontSize:b?10:10}}>{l}</td>
+          <td style={{padding:"7px 10px",textAlign:"right",fontWeight:b?700:400,color:pos?"#15803D":neg?"#DC2626":v<0?"#DC2626":"#111827"}}>{v<0?`(${fmt(Math.abs(v))})`:fmt(v)}</td>
+          <td style={{padding:"7px 10px",textAlign:"right",fontSize:9,color:"#64748B"}}>{p?pct(p):""}</td>
         </tr>
       ))}
     </tbody>
   </table>
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>{`The model returns a ${pct(C.roi)} ROI on a total investment of ${fmt(C.ti)}. ${C.roi>=20?"This exceeds Genesis Retail's 20% investment threshold and represents a strong commercial proposition.":C.roi>=10?"This is below the preferred 20% threshold — consider whether rent or rates can be reduced before proceeding.":"This does not meet the minimum investment threshold. Do not proceed on current assumptions."} Net profit of ${fmt(C.np)} gives a payback of ${C.np>0?(C.ti/C.np).toFixed(1)+" years":"N/A"}.`}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.pl||`ROI of ${pct(C.roi)} on a total investment of ${fmt(C.ti)}. Net profit of ${fmt(C.nP)} gives a payback of ${C.pb?C.pb.toFixed(1)+" years":"N/A"}.`}</div>
   </div>
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Financial Performance · Page 6</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Financial Performance · Page 7</span>
   </div>
 </div>
 
-{/* ── PAGE 7: 5-YEAR FORECAST ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 7</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>5-Year Financial Forecast</div>
-    <div style={{fontSize:11,color:R.muted,marginTop:2,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>3% annual sales growth · 2% cost inflation</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 8 — 5-YEAR FORECAST
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 8</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>5-Year Financial Forecast</div>
+    <div style={{fontSize:10,color:"#64748B",marginTop:2}}>3% annual sales growth · 2% cost inflation</div>
   </div>
-  <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,marginBottom:20,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <thead>
-      <tr style={{background:R.fill}}>
-        <th style={{padding:"10px 12px",textAlign:"left",fontWeight:700,color:R.text,fontSize:10}}>Metric</th>
-        {["Year 1","Year 2","Year 3","Year 4","Year 5"].map(y=><th key={y} style={{padding:"10px 12px",textAlign:"right",fontWeight:700,color:R.text,fontSize:10}}>{y}</th>)}
-      </tr>
-    </thead>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
+    <thead><tr style={{background:"#F1F5F9"}}>
+      <th style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9}}>Metric</th>
+      {["Year 1","Year 2","Year 3","Year 4","Year 5"].map(y=><th key={y} style={{padding:"9px 10px",textAlign:"right",fontWeight:700,color:"#374151",fontSize:9}}>{y}</th>)}
+    </tr></thead>
     <tbody>
-      {yr5x.map((row,ri)=>{
-        const hl=["GROSS PROFIT","EBITDA","NET PROFIT","CUMULATIVE NET PROFIT"].includes(row.label);
+      {[
+        {l:"Gross Sales",key:"s"},
+        {l:"Gross Profit",key:"gp",hl:true},
+        {l:"Total Costs",key:"tc",neg:true},
+        {l:"EBITDA",key:"eb",hl:true},
+        {l:"Net Profit",key:"np",hl:true},
+        {l:"Cumulative Profit",key:"cum",hl:true},
+      ].map(({l,key,hl,neg},ri)=>{
+        const vals=key==="cum"?[1,2,3,4,5].map(n=>cumNp(n)):yr5.map(r=>r[key]);
         return(
-          <tr key={ri} style={{background:hl?"#F0FDF4":ri%2===0?R.bg:R.pale,borderBottom:`1px solid ${R.border}`}}>
-            <td style={{padding:"8px 12px",fontWeight:hl?700:400,color:hl?R.acc:ri%2===0?R.text:R.muted,paddingLeft:hl?12:20,fontSize:hl?11:10}}>{row.label}</td>
-            {row.values.map((v,vi)=>(
-              <td key={vi} style={{padding:"8px 12px",textAlign:"right",fontWeight:hl?700:400,fontFamily:"'Helvetica Neue',Arial,sans-serif",fontSize:hl?11:10,color:hl?(v<0?R.neg:R.pos):v<0?R.neg:R.text}}>{v<0?`(${fmt(Math.abs(v))})`:fmt(v)}</td>
-            ))}
+          <tr key={l} style={{background:hl?"#F0FDF4":ri%2===0?"#fff":"#F8FAFC",borderBottom:"1px solid #CBD5E1"}}>
+            <td style={{padding:"7px 10px",fontWeight:hl?700:400,color:hl?"#15803D":"#374151",paddingLeft:hl?10:18,fontSize:hl?10:9}}>{l}</td>
+            {vals.map((v,vi)=><td key={vi} style={{padding:"7px 10px",textAlign:"right",fontWeight:hl?700:400,color:hl?(v<0?"#DC2626":"#15803D"):neg?"#DC2626":"#374151",fontSize:hl?10:9}}>{v<0?`(${fmt(Math.abs(v))})`:fmt(v)}</td>)}
           </tr>
         );
       })}
     </tbody>
   </table>
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",marginBottom:14,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>Sensitivity Analysis — ROI across 25 scenarios</div>
-    <table style={{width:"100%",borderCollapse:"collapse",fontSize:10}}>
-      <thead><tr style={{background:R.fill}}><th style={{padding:"5px 8px",textAlign:"left",fontWeight:700,color:R.muted}}>Footfall\Rent</th>{[-20,-10,0,10,20].map(r=><th key={r} style={{padding:"5px 8px",textAlign:"center",fontWeight:700,color:R.muted}}>{r>0?"+":""}{r}%</th>)}</tr></thead>
-      <tbody>
-        {sensitivityData&&sensitivityData.map((row,ri)=>(
-          <tr key={ri} style={{borderBottom:`1px solid ${R.border}`}}>
-            <td style={{padding:"5px 8px",fontWeight:700,color:R.muted,fontSize:9}}>{[-20,-10,0,10,20][ri]>0?"+":""}{[-20,-10,0,10,20][ri]}%</td>
-            {row.map((cell,ci)=>(
-              <td key={ci} style={{padding:"5px 8px",textAlign:"center",fontWeight:ri===2&&ci===2?800:600,
-                background:ri===2&&ci===2?"#DCFCE7":cell.roi>=20?R.kpi:cell.roi>=10?"#FFFBEB":"#FEF2F2",
-                color:ri===2&&ci===2?R.pos:cell.roi>=20?R.pos:cell.roi>=10?R.orange:R.neg,borderRadius:3}}>{pct(cell.roi)}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
+  <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:6,padding:"12px 14px",marginBottom:14}}>
+    <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Sensitivity — ROI at footfall ±20% / rent ±20%</div>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:9}}>
+      <thead><tr style={{background:"#E2E8F0"}}><th style={{padding:"5px 7px",textAlign:"left",fontWeight:700,color:"#64748B",fontSize:8}}>Ftfall\Rent</th>{[-20,-10,0,10,20].map(r=><th key={r} style={{padding:"5px 7px",textAlign:"center",fontWeight:700,color:"#64748B",fontSize:8}}>{r>0?"+":""}{r}%</th>)}</tr></thead>
+      <tbody>{sensitivityData&&sensitivityData.map((row,ri)=>(
+        <tr key={ri} style={{borderBottom:"1px solid #E2E8F0"}}>
+          <td style={{padding:"5px 7px",fontWeight:700,color:"#64748B",fontSize:8}}>{[-20,-10,0,10,20][ri]>0?"+":""}{[-20,-10,0,10,20][ri]}%</td>
+          {row.map((cell,ci)=><td key={ci} style={{padding:"5px 7px",textAlign:"center",fontWeight:ri===2&&ci===2?800:600,background:ri===2&&ci===2?"#DCFCE7":cell.roi>=20?"#F0FDF4":cell.roi>=10?"#FFFBEB":"#FEF2F2",color:ri===2&&ci===2?"#15803D":cell.roi>=20?"#15803D":cell.roi>=10?"#B45309":"#DC2626",borderRadius:2,fontSize:9}}>{pct(cell.roi)}</td>)}
+        </tr>
+      ))}</tbody>
     </table>
   </div>
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>5-Year Forecast · Page 7</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.fiveYear?.split(".").slice(0,2).join(".")||`The model returns ${fmt(cumNp(5))} cumulative net profit over five years on an initial investment of ${fmt(C.ti)}.`}</div>
+  </div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>5-Year Forecast · Page 8</span>
   </div>
 </div>
 
-{/* ── PAGE 8: RISK REGISTER ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:22}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 8</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Risk Register</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 9 — RISK REGISTER
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 9</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Risk Register</div>
   </div>
-  <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,marginBottom:18,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <thead><tr style={{background:R.fill}}>{["Risk Factor","Rating","Impact","Mitigation"].map(h=><th key={h} style={{padding:"10px 12px",textAlign:"left",fontWeight:700,color:R.text,fontSize:10,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
+    <thead><tr style={{background:"#F1F5F9"}}>{["Risk Factor","Rating","Detail"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
-      {riskItems&&riskItems.map((r,i)=>(
-        <tr key={i} style={{background:i%2===0?R.bg:R.pale,borderBottom:`1px solid ${R.border}`}}>
-          <td style={{padding:"9px 12px",fontWeight:600,color:R.text}}>{r.label}</td>
-          <td style={{padding:"9px 12px"}}><span style={{padding:"2px 10px",borderRadius:4,fontSize:10,fontWeight:700,background:r.rag==="red"?"#FEF2F2":r.rag==="amber"?"#FFFBEB":R.kpi,color:r.rag==="red"?R.neg:r.rag==="amber"?R.orange:R.pos}}>{(r.rag||"green").toUpperCase()}</span></td>
-          <td style={{padding:"9px 12px",color:R.muted,fontSize:10}}>{r.impact||"—"}</td>
-          <td style={{padding:"9px 12px",color:R.text,fontSize:10}}>{r.mitigation||"—"}</td>
+      {risks&&[...risks].sort((a,b)=>a.rag==="red"?-1:b.rag==="red"?1:a.rag==="amber"?-1:1).map((r,i)=>(
+        <tr key={i} style={{background:i%2===0?"#fff":"#F8FAFC",borderBottom:"1px solid #CBD5E1"}}>
+          <td style={{padding:"8px 10px",fontWeight:600,color:"#111827",width:180}}>{r.title}</td>
+          <td style={{padding:"8px 10px",width:80}}><span style={{padding:"2px 9px",borderRadius:3,fontSize:9,fontWeight:700,background:r.rag==="red"?"#FEF2F2":r.rag==="amber"?"#FFFBEB":"#F0FDF4",color:r.rag==="red"?"#DC2626":r.rag==="amber"?"#B45309":"#15803D"}}>{(r.rag||"green").toUpperCase()}</span></td>
+          <td style={{padding:"8px 10px",color:"#64748B",fontSize:10,lineHeight:1.5}}>{r.detail}</td>
         </tr>
       ))}
     </tbody>
   </table>
-  <div style={{background:R.kpi,border:`1px solid #BBF7D0`,borderLeft:`4px solid ${R.acc}`,borderRadius:"0 6px 6px 0",padding:"12px 16px",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".12em",marginBottom:5}}>What This Means</div>
-    <div style={{fontSize:12,color:R.text,lineHeight:1.7}}>{`${riskItems?.filter(r=>r.rag==="red").length||0} red risk${riskItems?.filter(r=>r.rag==="red").length!==1?"s":""} and ${riskItems?.filter(r=>r.rag==="amber").length||0} amber. ${riskItems?.filter(r=>r.rag==="red").length>2?"Material risks identified — these must be addressed before proceeding.":riskItems?.filter(r=>r.rag==="red").length>0?"One or more significant risks require attention before or at lease execution.":"Risk profile is manageable. Standard commercial due diligence applies."}`}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.risks||`${risks?.filter(r=>r.rag==="red").length||0} red risk${risks?.filter(r=>r.rag==="red").length!==1?"s":""} and ${risks?.filter(r=>r.rag==="amber").length||0} amber identified. ${risks?.filter(r=>r.rag==="red").length>2?"Material risks must be addressed before proceeding.":risks?.filter(r=>r.rag==="red").length>0?"One or more significant risks require attention before lease execution.":"Risk profile is manageable."}`}</div>
   </div>
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Risk Register · Page 8</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Risk Register · Page 9</span>
   </div>
 </div>
 
-{/* ── PAGE 9: INVESTMENT DECISION ── */}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",position:"relative",background:R.bg}}>
-  <div style={{borderBottom:`2px solid ${R.acc}`,paddingBottom:10,marginBottom:24}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:R.acc,textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Section 9</div>
-    <div style={{fontSize:20,fontWeight:700,color:R.text,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Investment Decision</div>
+{/*──────────────────────────────────────────────────────────────
+   PAGE 10 — INVESTMENT DECISION
+──────────────────────────────────────────────────────────────*/}
+<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",position:"relative",background:"#fff"}}>
+  <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:22}}>
+    <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 10</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Investment Decision</div>
   </div>
-  <div style={{background:VRD.col==="#16A34A"||C.roi>=20?"#F0FDF4":C.roi<10?"#FEF2F2":"#FFFBEB",border:`2.5px solid ${VRD.col||R.acc}`,borderRadius:8,padding:"28px 32px",marginBottom:24,textAlign:"center",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:10,letterSpacing:".25em",color:VRD.col||R.acc,textTransform:"uppercase",fontWeight:700,marginBottom:8}}>Genesis Retail Recommendation</div>
-    <div style={{fontSize:52,fontWeight:900,color:VRD.col||R.acc,letterSpacing:"-1.5px",lineHeight:1,marginBottom:12}}>{VRD.label||"ASSESSMENT PENDING"}</div>
-    <div style={{fontSize:13,color:R.text,maxWidth:520,margin:"0 auto",lineHeight:1.75}}>{VRD.summary}</div>
-  </div>
+  {(()=>{
+    const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
+    const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+    const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
+    const col=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
+    return(
+      <div style={{background:bg,border:`2.5px solid ${col}`,borderRadius:8,padding:"26px 30px",marginBottom:22,textAlign:"center"}}>
+        <div style={{fontSize:9,letterSpacing:".22em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:7}}>Genesis Retail Recommendation</div>
+        <div style={{fontSize:44,fontWeight:900,color:col,letterSpacing:"-1.5px",lineHeight:1,marginBottom:10}}>{label}</div>
+        <div style={{fontSize:12,color:"#374151",maxWidth:500,margin:"0 auto",lineHeight:1.7}}>{isPass?`This site demonstrates strong commercial viability. A ${pct(C.roi)} return on investment and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meet Genesis Retail's investment threshold. Subject to lease terms and refit execution, this is a sound commercial proposition.`:isCaution?`This site shows financial viability on current assumptions but sits below the preferred 20% ROI threshold. We recommend proceeding subject to a reduction in occupancy costs or confirmation of the trading uplift assumptions through recent till data.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum 10% threshold required for convenience retail investment. Review rent, rates and trading assumptions before resubmitting.`}</div>
+      </div>
+    );
+  })()}
   {refitCommentary&&(
-    <div style={{marginBottom:20,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-      <div style={{fontSize:10,fontWeight:700,color:R.acc,textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Consultant Rationale</div>
-      <div style={{fontSize:12,color:R.text,lineHeight:1.85,whiteSpace:"pre-wrap"}}>{refitCommentary}</div>
+    <div style={{marginBottom:18}}>
+      <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Consultant Rationale</div>
+      <div style={{fontSize:11,color:"#374151",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{refitCommentary}</div>
     </div>
   )}
-  <div style={{borderTop:`1px solid ${R.border}`,paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"flex-end",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+  <div style={{borderTop:"1px solid #CBD5E1",paddingTop:18,display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginTop:16}}>
     <div>
-      <div style={{fontSize:14,fontWeight:700,color:R.text}}>Richard Shorney</div>
-      <div style={{fontSize:11,color:R.muted}}>Genesis Retail Consultancy</div>
-      <div style={{fontSize:11,color:R.muted}}>rshorney@genesisretail.uk · genesisretail.uk</div>
+      <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>Richard Shorney</div>
+      <div style={{fontSize:10,color:"#64748B"}}>Genesis Retail Consultancy</div>
+      <div style={{fontSize:10,color:"#64748B"}}>rshorney@genesisretail.uk · genesisretail.uk · 07551 827907</div>
     </div>
-    <div style={{textAlign:"right",maxWidth:300}}>
-      <div style={{fontSize:11,color:R.muted}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-      <div style={{fontSize:9,color:R.muted,marginTop:4,lineHeight:1.5}}>This report is prepared on the basis of information provided by the client and publicly available data. Genesis Retail accepts no liability for decisions made solely on the basis of this assessment.</div>
+    <div style={{textAlign:"right",maxWidth:280}}>
+      <div style={{fontSize:10,color:"#64748B"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+      <div style={{fontSize:8,color:"#94A3B8",marginTop:4,lineHeight:1.5}}>This report is prepared on the basis of information provided by the client and publicly available data. Genesis Retail Consultancy accepts no liability for decisions made solely on the basis of this assessment without independent professional advice.</div>
     </div>
   </div>
-  <div style={{position:"absolute",bottom:28,left:48,right:48,borderTop:`1px solid ${R.border}`,paddingTop:8,display:"flex",justifyContent:"space-between",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:9,color:R.muted}}>Genesis Retail · Confidential</div>
-    <div style={{fontSize:9,color:R.muted}}>Investment Decision · Page 9</div>
+  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+    <span>Genesis Retail · Confidential</span><span>Investment Decision · Page 10</span>
   </div>
 </div>
 
