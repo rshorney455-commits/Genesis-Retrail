@@ -1066,6 +1066,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
 }
 
 export default function App(){
+  console.log("[APP] render fired");
   const [step,setStep]=useState(0);
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
@@ -1516,12 +1517,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   // Step 1: latestStateRef — updated after every render via no-dep useEffect
   const latestStateRef = useRef(null);
   useEffect(()=>{
-    const data = gatherState();
-    latestStateRef.current = data;
+    console.log("[EFFECT] save effect running");
     try {
+      const data = gatherState();
+      latestStateRef.current = data;
       localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
       console.log("[SAVE] draft written, propName:", data.propName, "postcode:", data.postcode);
-    } catch(e){ console.error("[SAVE] localStorage write failed:", e); }
+    } catch(e){ console.error("[SAVE] effect threw:", e); }
   });
 
   // Step 2: saveDraft — localStorage first, then Supabase upsert
