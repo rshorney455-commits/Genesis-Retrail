@@ -473,15 +473,15 @@ function Donut({data}){
 // ── Report colour palette (print-friendly) ───────────────────────────────────
 const R = {
   bg:     "#ffffff",
-  text:   "#1a1a2e",
-  mid:    "#1e3a8a",
-  light:  "#4a5568",
-  border: "#d1d9e6",
-  rule:   "#1e3a8a",
-  accent: "#f0f4ff",
-  orange: "#b45309",
-  hi:     "#1e3a8a",
-  pale:   "#f8f9fd",
+  text:   "#111111",
+  mid:    "#1a3c2e",
+  light:  "#444444",
+  border: "#cccccc",
+  rule:   "#1a3c2e",
+  accent: "#f5f5f5",
+  orange: "#b8960c",
+  hi:     "#1a3c2e",
+  pale:   "#fafafa",
 };
 
 // ── Report UI components ──────────────────────────────────────────────────────
