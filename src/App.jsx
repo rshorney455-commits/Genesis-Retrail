@@ -368,7 +368,7 @@ function RiskRegister({ risks }) {
         <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"10px 0",borderBottom:"1px solid "+G.border}}>
           <div style={{width:10,height:10,borderRadius:50,background:cols[r.rag],flexShrink:0,marginTop:4}}/>
           <div style={{flex:1}}>
-            <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{r.title}</div>
+            <div style={{fontSize:13,fontWeight:700,color:G.text}}>{r.title}</div>
             <div style={{fontSize:12,color:"#FFFFFF",marginTop:2}}>{r.detail}</div>
           </div>
           <div style={{fontSize:11,fontWeight:700,color:cols[r.rag],padding:"3px 8px",borderRadius:4,background:cols[r.rag]+"18",border:"1px solid "+cols[r.rag]+"44",flexShrink:0,whiteSpace:"nowrap"}}>{r.rag.toUpperCase()}</div>
@@ -398,7 +398,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
     <div>
       {scores.map((sg, i) => (
         <div key={sg.name} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",marginBottom:8,background:i===0?G.pale:G.card,border:"1px solid "+(i===0?G.mid:G.border),borderRadius:10}}>
-          <div style={{fontSize:13,fontWeight:i===0?800:600,color:i===0?G.mid:G.text,minWidth:110}}>{i===0?"⭐ ":""}{sg.name}</div>
+          <div style={{fontSize:13,fontWeight:i===0?800:600,color:i===0?G.text:G.text,minWidth:110}}>{i===0?"⭐ ":""}{sg.name}</div>
           <div style={{flex:1}}>
             <div style={{height:6,background:"#1E293B",borderRadius:3}}>
               <div style={{height:"100%",background:i===0?G.mid:G.light,borderRadius:3,width:(sg.score/8*100)+"%"}}/>
@@ -421,7 +421,7 @@ function BarChart({data,color,height,fv}){
       <div style={{display:"flex",alignItems:"flex-end",gap:4,height:height,borderBottom:"2px solid "+G.border,borderLeft:"2px solid "+G.border,padding:"0 4px"}}>
         {data.map((d,i)=>(
           <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2,height:"100%",justifyContent:"flex-end"}}>
-            <div style={{fontSize:9,color:G.mid,fontWeight:600,textAlign:"center",lineHeight:1.2}}>{fv?fv(d.v):d.v}</div>
+            <div style={{fontSize:9,color:G.light,fontWeight:600,textAlign:"center",lineHeight:1.2}}>{fv?fv(d.v):d.v}</div>
             <div style={{width:"100%",background:typeof color==="function"?color(d,i):color,borderRadius:"3px 3px 0 0",height:Math.max((d.v/max)*100,2)+"%"}}/>
           </div>
         ))}
@@ -472,7 +472,7 @@ function Donut({data}){
           <div key={i} style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}>
             <div style={{width:10,height:10,borderRadius:2,background:s.color,flexShrink:0}}/>
             <div style={{fontSize:11,color:G.text,flex:1,lineHeight:1.2}}>{s.label}</div>
-            <div style={{fontSize:11,fontWeight:700,color:G.mid}}>{s.pct}%</div>
+            <div style={{fontSize:11,fontWeight:700,color:G.text}}>{s.pct}%</div>
           </div>
         ))}
       </div>
@@ -517,13 +517,13 @@ function RCommentary({text}){
 }
 
 
-const SH  = ({c})=><div style={{fontSize:20,fontWeight:700,color:G.dark,marginBottom:18,paddingBottom:10,borderBottom:"2px solid "+G.border}}>{c}</div>;
-const PSH = ({c})=><div style={{fontSize:18,fontWeight:800,color:G.mid,marginBottom:16,paddingBottom:8,borderBottom:"3px solid "+G.mid}}>{c}</div>;
+const SH  = ({c})=><div style={{fontSize:20,fontWeight:700,color:G.text,marginBottom:18,paddingBottom:10,borderBottom:"2px solid "+G.border}}>{c}</div>;
+const PSH = ({c})=><div style={{fontSize:18,fontWeight:800,color:G.text,marginBottom:16,paddingBottom:8,borderBottom:"3px solid "+G.mid}}>{c}</div>;
 const Sub = ({c})=><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:12,marginTop:4}}>{c}</div>;
 const Row2= ({ch,st})=><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,...(st||{})}}>{ch}</div>;
-const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.val,marginBottom:5}}>{h}</div>}{ch}</div>;
-const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#dde4f5":G.card,border:"1.5px solid "+(hi?"#2d55c8":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.mid:G.dark}}>{v}</div></div>)}</div>;
-const RC  = ({t,ch})=><div className="avoid-break" style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:16,marginBottom:20}}><div style={{fontSize:15,fontWeight:700,color:G.dark,marginBottom:14,paddingBottom:8,borderBottom:"1px solid "+G.border}}>{t}</div>{ch}</div>;
+const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.val,marginBottom:5}}>{h}</div>}{ch}</div>;
+const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#dde4f5":G.card,border:"1.5px solid "+(hi?"#2d55c8":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.text:G.light}}>{v}</div></div>)}</div>;
+const RC  = ({t,ch})=><div className="avoid-break" style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:16,marginBottom:20}}><div style={{fontSize:15,fontWeight:700,color:G.text,marginBottom:14,paddingBottom:8,borderBottom:"1px solid "+G.border}}>{t}</div>{ch}</div>;
 
 // ── Plain-English explainer boxes ─────────────────────────────────────────────
 function Explainer({term, children}){
@@ -911,7 +911,7 @@ ${slides.join("\n")}
     <button
       onClick={generate}
       disabled={status==="generating"}
-      style={{width:"100%",padding:12,background:status==="generating"?"#dde4f5":G.orange,border:"none",borderRadius:8,color:status==="generating"?G.mid:"#fff",cursor:status==="generating"?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
+      style={{width:"100%",padding:12,background:status==="generating"?"#dde4f5":G.orange,border:"none",borderRadius:8,color:status==="generating"?G.text:"#fff",cursor:status==="generating"?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
     >
       {status==="generating"?"⟳ Generating..." : status==="done" ? "✓ " + msg : status==="error" ? "✗ Failed — retry" : "📊 Download Presentation"}
       {status==="done"&&<div style={{fontSize:10,fontWeight:400,marginTop:4,color:"#fff",lineHeight:1.4}}>{msg}</div>}
@@ -1020,10 +1020,10 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
   return (
     <div>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,paddingBottom:14,borderBottom:"2px solid "+G.mid}}>
-        <button onClick={onBack} style={{padding:"6px 12px",background:"transparent",border:"1.5px solid "+G.border,borderRadius:7,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>← Back</button>
+        <button onClick={onBack} style={{padding:"6px 12px",background:"transparent",border:"1.5px solid "+G.border,borderRadius:7,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>← Back</button>
         <div>
           <div style={{fontSize:9,letterSpacing:".2em",color:G.orange,textTransform:"uppercase",fontWeight:700}}>Genesis Retail</div>
-          <div style={{fontSize:16,fontWeight:800,color:G.dark}}>Admin & AI Tools</div>
+          <div style={{fontSize:16,fontWeight:800,color:G.text}}>Admin & AI Tools</div>
         </div>
       </div>
 
@@ -1955,7 +1955,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <input style={INP_manual} type="password" value={sharePin} onChange={e=>setSharePin(e.target.value.replace(/\D/g,"").slice(0,8))} placeholder="e.g. 2468"/>
                 }/>
                 <div style={{display:"flex",gap:10,marginTop:8}}>
-                  <button onClick={()=>setShowShare(false)} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:600}}>Cancel</button>
+                  <button onClick={()=>setShowShare(false)} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:600}}>Cancel</button>
                   <button onClick={()=>{if(sharePin.length>=4){setSharePayload(generateShareURL());}}} disabled={sharePin.length<4} style={{flex:2,padding:12,background:sharePin.length>=4?G.mid:"#aaa",border:"none",borderRadius:8,color:"#fff",cursor:sharePin.length>=4?"pointer":"default",fontFamily:"inherit",fontSize:14,fontWeight:700}}>Generate Share Token</button>
                 </div>
               </>
@@ -1966,7 +1966,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:12,color:"#FFFFFF",marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
                 <div style={{display:"flex",gap:8}}>
                   <button onClick={()=>{navigator.clipboard?.writeText(sharePayload);setSaveMsg("Token copied!");setTimeout(()=>setSaveMsg(""),2000);}} style={{flex:2,padding:12,background:G.mid,border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>📋 Copy Token</button>
-                  <button onClick={()=>{setShowShare(false);setSharePayload(null);setSharePin("");}} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.mid,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>Close</button>
+                  <button onClick={()=>{setShowShare(false);setSharePayload(null);setSharePin("");}} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>Close</button>
                 </div>
               </>
             )}
@@ -2009,7 +2009,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
             i===10 ? null :
-            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:"#fff",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
+            <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.text:"#fff",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
           ))}
@@ -2033,10 +2033,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 {savedAssessments.map((a,i)=>(
                   <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:10,marginBottom:8}}>
                     <div style={{flex:1,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>
-                      <div style={{fontSize:14,fontWeight:700,color:G.mid}}>{a.propName||"Unnamed site"}</div>
+                      <div style={{fontSize:14,fontWeight:700,color:G.text}}>{a.propName||"Unnamed site"}</div>
                       <div style={{fontSize:12,color:G.val}}>{a.postcode||"No postcode"} · {a.location||""} · Saved {new Date(a.savedAt).toLocaleDateString("en-GB")} {new Date(a.savedAt).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</div>
                     </div>
-                    <div style={{fontSize:13,fontWeight:700,color:G.mid,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>Load →</div>
+                    <div style={{fontSize:13,fontWeight:700,color:G.text,cursor:"pointer"}} onClick={()=>loadAssessment(a)}>Load →</div>
                     <button onClick={e=>{
                       e.stopPropagation();
                       if(!window.confirm("Delete this assessment?")) return;
@@ -2050,7 +2050,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
             <div style={{marginBottom:20}}>
-              <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Store Photo</div>
+              <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Store Photo</div>
               {storePhoto?(
                 <div style={{position:"relative"}}>
                   <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/>
@@ -2059,7 +2059,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               ):(
                 <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,aspectRatio:"1/1",background:G.card,border:"2px dashed "+G.border,borderRadius:12,cursor:"pointer",textAlign:"center"}}>
                   <div style={{fontSize:40}}>📷</div>
-                  <div style={{fontSize:15,fontWeight:700,color:G.mid}}>Tap to add a store photo</div>
+                  <div style={{fontSize:15,fontWeight:700,color:G.text}}>Tap to add a store photo</div>
                   <div style={{fontSize:13,color:G.val}}>JPG or PNG from your camera roll</div>
                   <input type="file" accept="image/*" onChange={handlePhoto} style={{display:"none"}}/>
                 </label>
@@ -2068,7 +2068,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
             {/* Annotated photos */}
             <div style={{marginBottom:20}}>
-              <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Visit Photos (annotated)</div>
+              <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Visit Photos (annotated)</div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                 {photos.map((ph,i)=>(
                   <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,overflow:"hidden"}}>
@@ -2116,7 +2116,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <button
                   onClick={()=>doPostcodeLookup(postcode)}
                   disabled={postcodeLoading}
-                  style={{padding:"12px 20px",background:postcodeLoading?G.pale:G.mid,border:"none",borderRadius:8,color:postcodeLoading?G.mid:"#fff",cursor:postcodeLoading?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,flexShrink:0,minWidth:90}}
+                  style={{padding:"12px 20px",background:postcodeLoading?G.pale:G.text,border:"none",borderRadius:8,color:postcodeLoading?G.text:"#fff",cursor:postcodeLoading?"default":"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700,flexShrink:0,minWidth:90}}
                 >
                   {postcodeLoading ? <span style={{display:"inline-block",animation:"spin 1s linear infinite"}}>⟳</span> : "Look up"}
                 </button>
@@ -2149,7 +2149,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
                   {/* Postcode commentary box */}
                   <div style={{marginTop:14,borderTop:"1px solid "+G.border,paddingTop:12}}>
-                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Postcode Notes</div>
+                    <div style={{fontSize:11,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Postcode Notes</div>
                     <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6}}>Record your observations about this location — what you noticed on the visit, the feel of the area, footfall patterns, anything relevant.</div>
                     <textarea
                       value={postcodeNotes}
@@ -2208,7 +2208,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
               {REFITS.map(p=>(
                 <button key={p.label} onClick={()=>{setRefitCost(p.value);setCustomRefit(false);}} style={{padding:"14px 12px",textAlign:"left",cursor:"pointer",background:refitCost===p.value&&!customRefit?G.pale:G.card,border:(refitCost===p.value&&!customRefit?"2px":"1px")+" solid "+(refitCost===p.value&&!customRefit?G.mid:G.border),borderRadius:10,fontFamily:"inherit"}}>
-                  <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.mid:G.light,marginBottom:4}}>{p.label}</div>
+                  <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.text:G.light,marginBottom:4}}>{p.label}</div>
                   <div style={{fontSize:20,fontWeight:700,color:"#FFFFFF",marginBottom:3}}>{fmt(p.value)}</div>
                   <div style={{fontSize:12,color:G.val,lineHeight:1.4}}>{p.desc}</div>
                 </button>
@@ -2225,7 +2225,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <S3 items={[{l:"Total investment",v:fmt(C.ti),hi:true},{l:"Monthly payment",v:fmt(Math.round(C.mp))},{l:"Annual finance",v:fmt(Math.round(C.af))}]}/>
 
             <div style={{marginTop:20}}>
-              <div style={{fontSize:13,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
+              <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".07em",marginBottom:8}}>Post-Refit Commentary</div>
               <div style={{fontSize:12,color:"#FFFFFF",marginBottom:8}}>Describe what will be achieved by the refit — new layout, symbol group changes, ranging improvements, customer experience upgrades and the expected impact on trade.</div>
               <textarea
                 value={refitCommentary}
@@ -2243,7 +2243,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Category Sales Mix"/>
             <Legend/>
-            <div style={{padding:"12px 14px",borderRadius:8,marginBottom:16,background:totalMix===100?"#dde4f5":"#fff4ea",border:"1px solid "+(totalMix===100?"#2d55c8":G.orange),fontSize:14,color:totalMix===100?G.mid:G.orange,fontWeight:600}}>
+            <div style={{padding:"12px 14px",borderRadius:8,marginBottom:16,background:totalMix===100?"#dde4f5":"#fff4ea",border:"1px solid "+(totalMix===100?"#2d55c8":G.orange),fontSize:14,color:totalMix===100?G.text:G.orange,fontWeight:600}}>
               {totalMix===100?"✓ Mix totals 100%":"Currently "+totalMix.toFixed(1)+"% — adjust to reach 100%"}
             </div>
             {/* Category cards */}
@@ -2257,11 +2257,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               return (
                 <div key={cat.name} style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:18,marginBottom:14}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-                    <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{cat.icon} {cat.name}</div>
+                    <div style={{fontSize:16,fontWeight:700,color:G.text}}>{cat.icon} {cat.name}</div>
                     <div style={{display:"flex",gap:20}}>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual Sales</div>
-                        <div style={{fontSize:15,fontWeight:700,color:G.dark}}>{fmt(annSales)}</div>
+                        <div style={{fontSize:15,fontWeight:700,color:G.text}}>{fmt(annSales)}</div>
                       </div>
                       <div style={{textAlign:"right"}}>
                         <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>Annual GP</div>
@@ -2342,8 +2342,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {cat:"Tobacco & Vaping", gp:8, note:"Low margin, high traffic"},
                 ].map(({cat,gp,note})=>(
                   <div key={cat} style={{padding:"6px 8px",background:gp>=35?"#eef1fb":gp>=25?G.card:"#f8f9fc",borderRadius:6,border:"1px solid "+G.border}}>
-                    <div style={{fontSize:10,color:G.dark,fontWeight:600,lineHeight:1.3}}>{cat}</div>
-                    <div style={{fontSize:14,fontWeight:800,color:gp>=35?"#ffffff":gp>=25?G.dark:G.light}}>{gp}%</div>
+                    <div style={{fontSize:10,color:G.text,fontWeight:600,lineHeight:1.3}}>{cat}</div>
+                    <div style={{fontSize:14,fontWeight:800,color:gp>=35?"#ffffff":gp>=25?G.light:G.light}}>{gp}%</div>
                     <div style={{fontSize:9,color:G.light}}>{note}</div>
                   </div>
                 ))}
@@ -2375,7 +2375,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Catchment Pop */}
               <div style={{background:G.card,border:"1.5px solid "+G.border,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Catchment Pop</div>
-                <div style={{fontSize:16,fontWeight:700,color:G.dark}}>{catchmentPop.toLocaleString()}</div>
+                <div style={{fontSize:16,fontWeight:700,color:G.text}}>{catchmentPop.toLocaleString()}</div>
               </div>
 
               {/* Penetration Rate - with annotation */}
@@ -2384,7 +2384,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:16,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>{pct(C.pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab — this figure may reflect incomplete data.</div>}
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
-                  <strong style={{color:G.mid}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
+                  <strong style={{color:G.light}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
                   <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?"#ffffff":"#c05010"}}>{C.pen>=20?"✓ Strong — well above the 15% target":C.pen>=15?"✓ Good — meets the 15% benchmark":C.pen>=10?"⚠ Below target — aim for 15%+ with good ranging":"✗ Low — consider whether catchment is large enough"}</span>
                   <br/><span style={{fontSize:9,color:G.light}}>Benchmark: 15–25% for a well-run convenience store</span>
                 </div>
@@ -2393,10 +2393,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Demographic Score - with annotation */}
               <div style={{background:DS>=6?"#eef1fb":DS>=4?G.card:"#fdf8ec",border:"1.5px solid "+(DS>=6?G.mid:DS>=4?G.border:G.orange),borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Demographic Score</div>
-                <div style={{fontSize:16,fontWeight:700,color:DS>=6?"#ffffff":DS>=4?G.dark:G.orange,marginBottom:6}}>{DS}/9</div>
+                <div style={{fontSize:16,fontWeight:700,color:DS>=6?"#ffffff":DS>=4?G.light:G.orange,marginBottom:6}}>{DS}/9</div>
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
-                  <strong style={{color:G.mid}}>What this means:</strong> A composite score (out of 9) based on income, population size, density, deprivation and working-age proportion.
-                  <br/><span style={{color:DS>=6?G.mid:DS>=4?"#ffffff":"#c05010"}}>{DS>=7?"✓ Excellent catchment — high demand indicators":DS>=5?"✓ Good catchment — solid trading base":DS>=3?"⚠ Average — manageable but limited upside":"✗ Weak catchment — review assumptions carefully"}</span>
+                  <strong style={{color:G.light}}>What this means:</strong> A composite score (out of 9) based on income, population size, density, deprivation and working-age proportion.
+                  <br/><span style={{color:DS>=6?G.text:DS>=4?"#ffffff":"#c05010"}}>{DS>=7?"✓ Excellent catchment — high demand indicators":DS>=5?"✓ Good catchment — solid trading base":DS>=3?"⚠ Average — manageable but limited upside":"✗ Weak catchment — review assumptions carefully"}</span>
                   <br/><span style={{fontSize:9,color:G.light}}>6+ = strong · 4–5 = average · below 4 = weak</span>
                 </div>
               </div>
@@ -2408,7 +2408,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{flex:1,minWidth:200}}>
                   <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:4}}>Deprivation Index: {deprivation}/10</div>
                   <div style={{fontSize:11,color:G.light,lineHeight:1.6}}>
-                    <strong style={{color:G.dark}}>What this means:</strong> Measures how deprived the area is. <strong>1 = most deprived, 10 = least deprived.</strong> Based on the government's Index of Multiple Deprivation (IMD) covering income, employment, health, education and crime.
+                    <strong style={{color:G.text}}>What this means:</strong> Measures how deprived the area is. <strong>1 = most deprived, 10 = least deprived.</strong> Based on the government's Index of Multiple Deprivation (IMD) covering income, employment, health, education and crime.
                   </div>
                 </div>
                 <div style={{minWidth:200,flex:1}}>
@@ -2419,7 +2419,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{display:"flex",justifyContent:"space-between",fontSize:9,color:G.light}}>
                     <span>1 Most deprived</span><span>10 Least deprived</span>
                   </div>
-                  <div style={{marginTop:6,fontSize:11,fontWeight:600,color:deprivation>=7?G.mid:deprivation>=5?G.orange:"#d62828"}}>
+                  <div style={{marginTop:6,fontSize:11,fontWeight:600,color:deprivation>=7?G.text:deprivation>=5?G.orange:"#d62828"}}>
                     {deprivation>=8?"Premium catchment — full range appropriate, invest in quality and fresh":
                      deprivation>=6?"Mainstream catchment — balance quality with value, PMPs important":
                      deprivation>=4?"Value-led catchment — PMPs essential, strong BWS and tobacco":
@@ -2446,7 +2446,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     return (
                       <div key={i} style={{background:above?"#eef1fb":"#f8f9fc",border:"1px solid "+(above?G.mid:G.border),borderRadius:10,padding:14}}>
                         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-                          <div style={{fontSize:13,fontWeight:700,color:G.dark}}>{f.category}</div>
+                          <div style={{fontSize:13,fontWeight:700,color:G.text}}>{f.category}</div>
                           <div style={{padding:"3px 8px",borderRadius:6,fontSize:11,fontWeight:800,background:above?G.mid:"#c05010",color:"#fff"}}>{f.index >= 100?"+":"-"}{diff}%</div>
                         </div>
                         <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6,lineHeight:1.5}}>{f.insight}</div>
@@ -2458,11 +2458,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                   <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14}}>
-                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Ethnic Food Preferences</div>
+                    <div style={{fontSize:11,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Ethnic Food Preferences</div>
                     <div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.ethnicFoodNote}</div>
                   </div>
                   <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14}}>
-                    <div style={{fontSize:11,fontWeight:700,color:G.mid,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Health Trends</div>
+                    <div style={{fontSize:11,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Health Trends</div>
                     <div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.healthTrend}</div>
                   </div>
                 </div>
@@ -2508,7 +2508,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Sub c="Trade peaks"/>
             <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:20}}>
               {[["Morning commute",morningTrade,setMorningTrade],["Lunch trade",lunchTrade,setLunchTrade],["Evening / teatime",eveningTrade,setEveningTrade]].map(([l,v,s])=>(
-                <button key={l} onClick={()=>s(x=>!x)} style={{padding:"10px 16px",borderRadius:8,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(v?G.mid:G.border),background:v?G.pale:G.bg,color:v?G.mid:G.light,fontWeight:v?700:400}}>{v?"✓ ":""}{l}</button>
+                <button key={l} onClick={()=>s(x=>!x)} style={{padding:"10px 16px",borderRadius:8,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(v?G.text:G.border),background:v?G.pale:G.bg,color:v?G.text:G.light,fontWeight:v?700:400}}>{v?"✓ ":""}{l}</button>
               ))}
             </div>
             <Sub c="Shopping mission mix %"/>
@@ -2541,7 +2541,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     {competitorList.slice(0,8).map((c,i)=>(
                       <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:"1px solid "+G.border}}>
                         <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid,color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
-                        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:G.dark}}>{c.name}</div><div style={{fontSize:11,color:G.light}}>{c.type}</div></div>
+                        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:G.text}}>{c.name}</div><div style={{fontSize:11,color:G.light}}>{c.type}</div></div>
                         <div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?G.orange:G.mid}}>{c.distance}</div>
                         <button onClick={()=>setCompetitorList(p=>p.filter((_,j)=>j!==i))} style={{background:"transparent",border:"none",color:G.light,cursor:"pointer",fontSize:16,padding:"0 4px"}}>×</button>
                       </div>
@@ -2587,7 +2587,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
                         <div>
                           <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:2}}>{pa.ref}</div>
-                          <div style={{fontSize:13,color:G.dark}}>{pa.desc}</div>
+                          <div style={{fontSize:13,color:G.text}}>{pa.desc}</div>
                           <div style={{fontSize:11,color:"#FFFFFF",marginTop:2}}>{pa.distance} · {pa.status}</div>
                         </div>
                         <div style={{padding:"3px 8px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#dde4f5",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid,border:"1px solid "+(pa.risk==="high"?"#d62828":pa.risk==="medium"?G.orange:G.mid)+"44",flexShrink:0,whiteSpace:"nowrap"}}>{pa.risk.toUpperCase()} RISK</div>
@@ -2606,8 +2606,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <input style={{...INP_manual,width:110,flexShrink:0,textAlign:"right"}} type="number" value={traffic[f.k]} onFocus={e=>e.target.select()} onChange={e=>setTraffic(p=>({...p,[f.k]:e.target.value===""?0:+e.target.value}))}/>
                 ):(
                   <div style={{display:"flex",gap:8,flexShrink:0}}>
-                    <button onClick={()=>setTraffic(p=>({...p,[f.k]:true}))} style={{padding:"8px 16px",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(traffic[f.k]?G.mid:G.border),background:traffic[f.k]?G.pale:G.bg,color:traffic[f.k]?G.mid:G.light,fontWeight:traffic[f.k]?700:400}}>Yes</button>
-                    <button onClick={()=>setTraffic(p=>({...p,[f.k]:false}))} style={{padding:"8px 16px",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(!traffic[f.k]?G.mid:G.border),background:!traffic[f.k]?G.pale:G.bg,color:!traffic[f.k]?G.mid:G.light,fontWeight:!traffic[f.k]?700:400}}>No</button>
+                    <button onClick={()=>setTraffic(p=>({...p,[f.k]:true}))} style={{padding:"8px 16px",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(traffic[f.k]?G.text:G.border),background:traffic[f.k]?G.pale:G.bg,color:traffic[f.k]?G.text:G.light,fontWeight:traffic[f.k]?700:400}}>Yes</button>
+                    <button onClick={()=>setTraffic(p=>({...p,[f.k]:false}))} style={{padding:"8px 16px",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:14,border:"1.5px solid "+(!traffic[f.k]?G.text:G.border),background:!traffic[f.k]?G.pale:G.bg,color:!traffic[f.k]?G.text:G.light,fontWeight:!traffic[f.k]?700:400}}>No</button>
                   </div>
                 )}
               </div>
@@ -2832,12 +2832,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <th style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:right?"right":"left",whiteSpace:"nowrap",position:"sticky",top:0}}>{t}</th>
               );
               const TD = (v,bold,neg,hi,pctFmt)=>(
-                <td style={{padding:"7px 10px",fontSize:12,textAlign:"right",fontWeight:bold?700:400,color:neg?"#d62828":hi?G.mid:G.dark,background:hi?"#dde4f5":"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
+                <td style={{padding:"7px 10px",fontSize:12,textAlign:"right",fontWeight:bold?700:400,color:neg?"#d62828":hi?G.text:G.light,background:hi?"#dde4f5":"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
                   {v===null||v===undefined?"":pctFmt?pct(v):typeof v==="number"?fmt(v):v}
                 </td>
               );
               const TDL = (v,bold,indent,hi)=>(
-                <td style={{padding:"7px 10px",fontSize:12,fontWeight:bold?700:400,color:hi?G.mid:G.text,paddingLeft:indent?22:10,background:hi?G.pale:"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{v}</td>
+                <td style={{padding:"7px 10px",fontSize:12,fontWeight:bold?700:400,color:hi?G.text:G.light,paddingLeft:indent?22:10,background:hi?G.pale:"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{v}</td>
               );
               const SectionRow = (label)=>(
                 <tr><td colSpan={10} style={{background:G.mid,padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{label}</td></tr>
@@ -2848,7 +2848,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   {/* Sheet tabs */}
                   <div style={{display:"flex",gap:2,marginBottom:0,borderBottom:"2px solid "+G.mid,overflowX:"auto"}}>
                     {sheets.map(s=>(
-                      <button key={s.id} onClick={()=>setSheet(s.id)} style={{padding:"8px 14px",background:sheet===s.id?"#fff":G.card,border:"1px solid "+G.border,borderBottom:sheet===s.id?"2px solid #fff":"none",borderRadius:"6px 6px 0 0",color:sheet===s.id?G.mid:G.light,fontSize:12,fontWeight:sheet===s.id?700:400,cursor:"pointer",fontFamily:"inherit",flexShrink:0,marginBottom:sheet===s.id?-2:0}}>
+                      <button key={s.id} onClick={()=>setSheet(s.id)} style={{padding:"8px 14px",background:sheet===s.id?"#fff":G.card,border:"1px solid "+G.border,borderBottom:sheet===s.id?"2px solid #fff":"none",borderRadius:"6px 6px 0 0",color:sheet===s.id?G.text:G.light,fontSize:12,fontWeight:sheet===s.id?700:400,cursor:"pointer",fontFamily:"inherit",flexShrink:0,marginBottom:sheet===s.id?-2:0}}>
                         {s.label}
                       </button>
                     ))}
@@ -2868,9 +2868,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         </thead>
                         <tbody>
                           {SectionRow("Income")}
-                          <tr>{TDL("Sales Revenue",true,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.dark,borderBottom:"1px solid "+G.border}}>{fmt(r.s)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.dark,borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.s,0))}</td></tr>
+                          <tr>{TDL("Sales Revenue",true,false,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.text,borderBottom:"1px solid "+G.border}}>{fmt(r.s)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.text,borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.s,0))}</td></tr>
                           <tr>{TDL("Cost of Goods",false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(r.cogs)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.cogs,0))})</td></tr>
-                          <tr style={{background:G.pale}}>{TDL("GROSS PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.mid,borderBottom:"1px solid "+G.border}}>{fmt(r.gp)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.mid,borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.gp,0))}</td></tr>
+                          <tr style={{background:G.pale}}>{TDL("GROSS PROFIT",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.text,borderBottom:"1px solid "+G.border}}>{fmt(r.gp)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.text,borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.gp,0))}</td></tr>
                           {SectionRow("Operating Costs")}
                           {[["Rent",       r=>r.rent_],["Business Rates",r=>r.rates_],["Staff & Wages",r=>r.stf2],["Utilities",r=>r.utils_],["Other Costs",r=>r.other_]].map(([l,fn])=>(
                             <tr key={l}>{TDL(l,false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(fn(r))})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+fn(r),0))})</td></tr>
@@ -2939,7 +2939,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               const col = item.v<0?"#c05010":item.hi||item.hi2?G.mid:G.dark;
                               return (
                                 <tr key={idx} style={{background:bg}}>
-                                  <td style={{padding:"6px 10px",fontSize:11,fontWeight:item.bold?700:400,color:item.bold?G.mid:G.text,borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{item.l}</td>
+                                  <td style={{padding:"6px 10px",fontSize:11,fontWeight:item.bold?700:400,color:item.bold?G.text:G.text,borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{item.l}</td>
                                   {months.map((_,mi)=>(
                                     <td key={mi} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:item.bold?700:400,color:col,borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
                                       {item.v<0?"("+fmt(Math.abs(item.v))+")":fmt(item.v)}
@@ -2959,7 +2959,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             let bal=0;
                             return (
                               <tr style={{background:"#b8e0e8"}}>
-                                <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:G.mid,borderBottom:"1px solid "+G.border}}>Closing Cash Balance</td>
+                                <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:G.text,borderBottom:"1px solid "+G.border}}>Closing Cash Balance</td>
                                 {months.map((_,mi)=>{
                                   bal+=mNet;
                                   return <td key={mi} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}</td>;
@@ -2986,12 +2986,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           <tbody>
                             {sensitivityData.map((row,ri)=>(
                               <tr key={ri}>
-                                <td style={{padding:"10px 12px",fontSize:12,fontWeight:700,color:G.mid,background:G.card,borderBottom:"1px solid "+G.border}}>Footfall {row[0].fp>0?"+":""}{row[0].fp}%</td>
+                                <td style={{padding:"10px 12px",fontSize:12,fontWeight:700,color:G.text,background:G.card,borderBottom:"1px solid "+G.border}}>Footfall {row[0].fp>0?"+":""}{row[0].fp}%</td>
                                 {row.map((cell,ci)=>{
                                   const isBase=cell.fp===0&&cell.rp===0;
                                   const bg=isBase?"#dde4f5":cell.roi>=20?"#dde4f5":cell.roi>=10?"#fff4ea":"#fde8e8";
                                   const col=isBase?"#FFFFFF":cell.roi>=20?"#22C55E":cell.roi>=10?"#F59E0B":"#EF4444";
-                                  return <td key={ci} style={{padding:"10px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:13,border:isBase?"2px solid "+G.mid:"1px solid "+G.border}}>{cell.roi.toFixed(1)}%{isBase&&<div style={{fontSize:9,fontWeight:400,color:G.mid}}>BASE</div>}</td>;
+                                  return <td key={ci} style={{padding:"10px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:13,border:isBase?"2px solid "+G.mid:"1px solid "+G.border}}>{cell.roi.toFixed(1)}%{isBase&&<div style={{fontSize:9,fontWeight:400,color:G.light}}>BASE</div>}</td>;
                                 })}
                               </tr>
                             ))}
@@ -3017,7 +3017,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               <td style={{padding:"8px 10px",fontSize:12,color:G.text}}>{cat.icon} {cat.name}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val,fontWeight:600}}>{cat.mix}%</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.val}}>{cat.gp}%</td>
-                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.dark,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
+                              <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:G.text,fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12,color:"#FFFFFF",fontWeight:600}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
@@ -3030,12 +3030,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             </tr>
                           ))}
                           <tr style={{background:G.pale,borderTop:"2px solid "+G.mid}}>
-                            <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.mid}}>TOTAL</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
+                            <td style={{padding:"9px 10px",fontSize:13,fontWeight:700,color:G.text}}>TOTAL</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.text}}>{cats.reduce((s,c)=>s+c.mix,0)}%</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{pct(C.blGP)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{fmt(C.upliftedAnn)}</td>
                             <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:"#FFFFFF"}}>{fmt(C.annGP)}</td>
-                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.mid}}>100%</td>
+                            <td style={{padding:"9px 10px",textAlign:"right",fontSize:13,fontWeight:700,color:G.text}}>100%</td>
                           </tr>
                         </tbody>
                       </table>
@@ -3093,8 +3093,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
                   <thead>
                     <tr style={{background:G.pale}}>
-                      <th style={{padding:"10px 12px",textAlign:"left",color:G.mid,fontWeight:700,minWidth:160}}>£</th>
-                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:G.mid,fontWeight:700,minWidth:90}}>Year {y}</th>)}
+                      <th style={{padding:"10px 12px",textAlign:"left",color:G.text,fontWeight:700,minWidth:160}}>£</th>
+                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:G.text,fontWeight:700,minWidth:90}}>Year {y}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -3107,11 +3107,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {l:"Net Profit",          k:"np",  neg:false, hi:true,  sub:true},
                     ].map((dr,i)=>(
                       <tr key={i} style={{background:dr.hi?"#eef1fb":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
-                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?G.mid:G.text}}>{dr.l}</td>
+                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?G.text:G.light}}>{dr.l}</td>
                         {yr5.map((r,j)=>{
                           const val=dr.neg?-r[dr.k]:r[dr.k];
                           const neg=val<0;
-                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#d62828":dr.hi?G.mid:G.dark,fontSize:13}}>
+                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#d62828":dr.hi?G.text:G.light,fontSize:13}}>
                             {neg?"("+fmt(Math.abs(val))+")":fmt(val)}
                           </td>;
                         })}
