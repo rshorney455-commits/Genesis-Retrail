@@ -6,17 +6,7 @@
  * All rights reserved.
  *
  * This software and its source code are the exclusive intellectual property
- * of Richard Shorney, trading as Genesis Retail (genesisretail.uk)
-
-  // Phase 1: Restore draft on mount
-  useEffect(()=>{
-    const draft = localStorage.getItem("genesis-assessment-draft");
-    if(!draft) return;
-    try {
-      const saved = JSON.parse(draft);
-      if(saved && (saved.propName || saved.postcode)) loadAssessment(saved);
-    } catch(e){ console.error("Draft restore failed:", e); }
-  },[loadAssessment]);.
+ * of Richard Shorney, trading as Genesis Retail (genesisretail.uk).
  *
  * The financial methodology, calculation logic, sector benchmarks, commentary
  * system, report structure and all other components of this tool are
@@ -1518,16 +1508,195 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     } catch(e){ setSaveMsg("Save failed"); }
   },[gatherState])
 
-  // Phase 1: Write draft to localStorage after every render
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PERSISTENCE LAYER — localStorage + Supabase autosave
+  // ═══════════════════════════════════════════════════════════════════════════
+  const SBU = "https://drtpeodthflxkzjgbfvu.supabase.co";
+  const SBK = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
+  const sbH = {"apikey":SBK,"Authorization":"Bearer "+SBK,"Content-Type":"application/json"};
+  const sbQ = (path,opts={})=>fetch(SBU+"/rest/v1/"+path,{...opts,headers:{...sbH,...(opts.headers||{})}});
+
+  const [assessmentId] = useState(()=>{
+    const k="genesis-assessment-id";
+    const e=sessionStorage.getItem(k);
+    if(e) return e;
+    const n=crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36);
+    sessionStorage.setItem(k,n);
+    return n;
+  });
+  const [saveStatus, setSaveStatus] = useState("saved");
+  const [lastSaved, setLastSaved] = useState("");
+  const saveTimeoutRef = useRef();
+  const latestStateRef = useRef(null);
+
+  // Always-current ref — runs after every render
   useEffect(()=>{
-    try {
-      const data = gatherState();
-      delete data.cats;
-      localStorage.setItem("genesis-assessment-draft", JSON.stringify(data));
-    } catch(e){}
+    const data = gatherState();
+    latestStateRef.current = data;
+    try { localStorage.setItem("genesis-assessment-draft", JSON.stringify(data)); } catch(e){}
   });
 
+  // saveDraft — localStorage first, then Supabase upsert
+  const isSavingRef = useRef(false);
+  async function saveDraft(data) {
+    if(!data||(!data.propName&&!data.postcode)) return;
+    // localStorage
+    try {
+      const ex=JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+      const i=ex.findIndex(a=>a.propName===data.propName&&a.postcode===data.postcode);
+      if(i>=0) ex[i]=data; else ex.unshift(data);
+      localStorage.setItem("genesis_assessments",JSON.stringify(ex.slice(0,20)));
+      setSavedAssessments(ex.slice(0,20));
+    } catch(e){}
+    if(!navigator.onLine){ localStorage.setItem("pendingAssessment",JSON.stringify(data)); throw new Error("offline"); }
+    // Supabase upsert
+    const body=JSON.stringify({id:assessmentId,prop_name:data.propName||"draft",postcode:data.postcode||"",data,updated_at:new Date().toISOString()});
+    const res=await sbQ("assessments",{method:"POST",body,headers:{...sbH,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"}});
+    if(!res.ok){const t=await res.text();throw new Error(`${res.status}: ${t.slice(0,80)}`);}
+    localStorage.removeItem("pendingAssessment");
+  }
+
+  // Debounced autosave — fires 2s after every render
+  useEffect(()=>{
+    clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current=setTimeout(async()=>{
+      const state=latestStateRef.current;
+      if(!state||(!state.propName&&!state.postcode)) return;
+      setSaveStatus("saving"); setLastSaved("Saving...");
+      try {
+        await saveDraft(state);
+        setSaveStatus("saved");
+        setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+      } catch(err){
+        if(err.message==="offline"){ setSaveStatus("offline"); setLastSaved("📵 Offline — saved locally"); }
+        else { setSaveStatus("error"); setLastSaved("⚠ Saved locally"); console.error("Autosave:",err.message); }
+      }
+    },2000);
+    return ()=>clearTimeout(saveTimeoutRef.current);
+  });
+
+  // Save on tab close + sync pending on reconnect
+  useEffect(()=>{
+    const onHide=()=>saveDraft(latestStateRef.current).catch(()=>{});
+    const onOnline=()=>{const p=localStorage.getItem("pendingAssessment");if(p){try{saveDraft(JSON.parse(p));}catch(e){}}};
+    window.addEventListener("pagehide",onHide);
+    window.addEventListener("online",onOnline);
+    return()=>{window.removeEventListener("pagehide",onHide);window.removeEventListener("online",onOnline);};
+  },[]);
+
+  // Warn on close if mid-save
+  useEffect(()=>{
+    const h=(e)=>{if(saveStatus==="saving"){e.preventDefault();e.returnValue="";}};
+    window.addEventListener("beforeunload",h);
+    return()=>window.removeEventListener("beforeunload",h);
+  },[saveStatus]);
+
+  // Load from Supabase on mount
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const res=await sbQ("assessments?select=id,prop_name,postcode,data,updated_at&order=updated_at.desc&limit=50");
+        const rows=await res.json();
+        if(!Array.isArray(rows)||!rows.length) return;
+        const remote=rows.map(r=>({...r.data,propName:r.prop_name,postcode:r.postcode,savedAt:r.updated_at,sbId:r.id}));
+        const local=JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const merged=[...remote];
+        local.forEach(l=>{if(!merged.find(r=>r.propName===l.propName&&r.postcode===l.postcode))merged.push(l);});
+        merged.sort((a,b)=>new Date(b.savedAt||0)-new Date(a.savedAt||0));
+        setSavedAssessments(merged.slice(0,50));
+        localStorage.setItem("genesis_assessments",JSON.stringify(merged.slice(0,20)));
+      } catch(e){console.error("Supabase load:",e.message);}
+    })();
+  },[]);
+
 ;
+
+
+  // ── Autosave — always fires, no propName requirement ────────────────────────
+  useEffect(()=>{
+    const timer = setTimeout(()=>{
+      if(isLoading.current) return; // don't overwrite during load
+      try {
+        const state = gatherState();
+        delete state.cats;
+        const existing = JSON.parse(localStorage.getItem("genesis_assessments")||"[]");
+        const idx = existing.findIndex(a=>
+          (state.propName && a.propName===state.propName) ||
+          (!state.propName && state.postcode && a.postcode===state.postcode) ||
+          (!state.propName && !state.postcode && a.propName==="draft")
+        );
+        if(!state.propName) state.propName = state.postcode || "draft";
+        if(idx>=0) existing[idx]=state; else existing.unshift(state);
+        localStorage.setItem("genesis_assessments", JSON.stringify(existing.slice(0,20)));
+        setLastSaved("Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
+        setSavedAssessments(existing.slice(0,20));
+      } catch(e){}
+    }, 1000);
+    return ()=>clearTimeout(timer);
+  },[gatherState]);
+
+  // ── Warn before closing/refreshing ──────────────────────────────────────────
+  useEffect(()=>{
+    const handler = (e)=>{ e.preventDefault(); e.returnValue=""; };
+    window.addEventListener("beforeunload", handler);
+    return ()=>window.removeEventListener("beforeunload", handler);
+  },[]);
+
+  const loadAssessment = useCallback((saved)=>{
+    isLoading.current = true;
+    setTimeout(()=>{ isLoading.current = false; }, 4000);
+    setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
+    setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
+    setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
+    setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||9);
+    setUtilities(saved.utilities||9000); setOtherCosts(saved.otherCosts||8000);
+    setRefitCost(saved.refitCost||110000); setStockCost(saved.stockCost||40000);
+    setFinanceRate(saved.financeRate||8); setFinanceYears(saved.financeYears||5);
+    setCats(CATS0.map(c=>({...c})));  // Always reset to ACS 2025 defaults on load
+    if(saved.ageBands) setAgeBands(saved.ageBands);
+    if(saved.employment) setEmployment(saved.employment);
+    if(saved.housing) setHousing(saved.housing);
+    setPopDensity(saved.popDensity||"medium"); setCatchmentPop(saved.catchmentPop||8500);
+    setMedianIncome(saved.medianIncome||31000); setDeprivation(saved.deprivation||5);
+    setHouseholdSz(saved.householdSz||2.4);
+    if(saved.spendBands) setSpendBands(saved.spendBands);
+    setPeakDay(saved.peakDay||"Friday"); setPeakHour(saved.peakHour||"12-2pm");
+    setMorningTrade(!!saved.morningTrade); setLunchTrade(!!saved.lunchTrade); setEveningTrade(!!saved.eveningTrade);
+    if(saved.missions) setMissions(saved.missions);
+    if(saved.traffic) setTraffic(saved.traffic);
+    if(saved.fhour) setFhour(saved.fhour);
+    setCompetitors(saved.competitors||2); setNearestComp(saved.nearestComp||0.3); setParking(saved.parking||4);
+    setTHP(saved.tHP||"Stable"); setTPG(saved.tPG||"Stable"); setTNH(saved.tNH||"Stable");
+    setTFF(saved.tFF||"Stable"); setTRG(saved.tRG||"Stable"); setTVA(saved.tVA||"Stable");
+    if(saved.areaNotes) setAreaNotes(saved.areaNotes);
+    if(saved.storeNote) setStoreNote(saved.storeNote);
+    setGenesisNote(saved.genesisNote||"Richard spent 23 years working at the sharp end of the UK independent convenience sector, first with A.F. Blakemore — the company behind the Spar fascia — where he worked directly with independent retailers on store development, ranging and commercial planning. In 2016 he moved to Nisa/Co-op Retail Ltd as a Retail Development Manager, managing 145 stores across North London with responsibility for around £14 million in annual turnover.\n\nDuring his time at Nisa he was consistently ranked in the national top three for new business, and several initiatives he introduced — including Too Good To Go and food delivery partnerships — were rolled out across the entire network. He knows the wholesale and symbol group world from the inside, which is exactly why independent retailers trust him to tell them the truth about their business.");
+    if(saved.postcodeNotes) setPostcodeNotes(saved.postcodeNotes);
+    if(saved.clientName) setClientName(saved.clientName);
+    if(saved.refitCommentary) setRefitCommentary(saved.refitCommentary);
+    if(saved.foodProfile) setFoodProfile(saved.foodProfile);
+    if(saved.existingStore) setExistingStore(saved.existingStore);
+    if(saved.competitorList) setCompetitorList(saved.competitorList);
+    if(saved.planningApps) setPlanningApps(saved.planningApps);
+    if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
+    if(saved.comparables) setComparables(saved.comparables);
+    setPostcodeData(saved.mapLat ? {latitude:saved.mapLat,longitude:saved.mapLng} : null);
+    // Re-inject known competitors if list is empty or missing
+    if((!saved.competitorList || saved.competitorList.length===0) && saved.mapLat && saved.postcode) {
+      setTimeout(()=>fetchCompetitors(saved.mapLat, saved.mapLng, saved.postcode), 500);
+    }
+    setStep(1);
+  },[]);
+
+  // Crash recovery — restore draft on mount (after loadAssessment defined)
+  useEffect(()=>{
+    const draft=localStorage.getItem("genesis-assessment-draft");
+    if(!draft) return;
+    try {
+      const saved=JSON.parse(draft);
+      if(saved&&(saved.propName||saved.postcode)) loadAssessment(saved);
+    } catch(e){console.error("Draft restore:",e);}
+  },[loadAssessment]);;
 
   // ── Share / Lock ─────────────────────────────────────────────────────────────
   const [shareMode,  setShareMode]  = useState(false);
