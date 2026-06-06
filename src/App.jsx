@@ -1083,6 +1083,7 @@ export default function App(){
   const pdfRef=useRef(null);
   const [sheet,setSheet]=useState("pl");
   const [storePhoto,setStorePhoto]=useState(null);
+  const [siteVisit,setSiteVisit]=useState({visibility:"",access:"",parking:"",fascia:"",competition:"",strengths:"",weaknesses:""});
   const [storeNote,setStoreNote]=useState("");
   const [postcodeNotes,setPostcodeNotes]=useState("");
   const [clientName,setClientName]=useState("");
@@ -1501,7 +1502,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     traffic,fhour,competitors,nearestComp,parking,
     tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,
     competitorList,planningApps,mapLat,mapLng,
-    comparables,foodProfile,existingStore,
+    comparables,foodProfile,existingStore,siteVisit,
     savedAt: new Date().toISOString(),
   }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
@@ -1631,6 +1632,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     if(saved.refitCommentary) setRefitCommentary(saved.refitCommentary);
     if(saved.foodProfile) setFoodProfile(saved.foodProfile);
     if(saved.existingStore) setExistingStore(saved.existingStore);
+    if(saved.siteVisit) setSiteVisit(saved.siteVisit);
     if(saved.competitorList) setCompetitorList(saved.competitorList);
     if(saved.planningApps) setPlanningApps(saved.planningApps);
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
@@ -2052,21 +2054,64 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <button onClick={()=>{if(window.confirm("Clear all saved assessments?")) {localStorage.removeItem("genesis_assessments");setSavedAssessments([]);}}} style={{fontSize:12,color:"#d62828",background:"none",border:"none",cursor:"pointer",fontFamily:"inherit",padding:"4px 0"}}>Clear all saved assessments</button>
               </div>
             )}
-            <div style={{marginBottom:20}}>
-              <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Store Photo</div>
+            {/* Site Visit Evidence */}
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Site Visit Evidence</div>
+
               {storePhoto?(
-                <div style={{position:"relative"}}>
-                  <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"1.5px solid "+G.border,display:"block"}}/>
-                  <button onClick={()=>setStorePhoto(null)} style={{position:"absolute",top:10,right:10,background:"#fff",border:"1px solid "+G.border,borderRadius:6,padding:"5px 12px",fontSize:12,color:G.val,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>Remove</button>
+                <div style={{position:"relative",marginBottom:12}}>
+                  <img src={storePhoto} alt="Store" style={{width:"100%",maxHeight:220,objectFit:"cover",borderRadius:8,border:"1px solid "+G.border,display:"block"}}/>
+                  <button onClick={()=>setStorePhoto(null)} style={{position:"absolute",top:8,right:8,background:"rgba(0,0,0,0.7)",border:"none",borderRadius:4,padding:"4px 10px",fontSize:11,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>✕ Remove</button>
                 </div>
               ):(
-                <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:10,aspectRatio:"1/1",background:G.card,border:"2px dashed "+G.border,borderRadius:12,cursor:"pointer",textAlign:"center"}}>
-                  <div style={{fontSize:40}}>📷</div>
-                  <div style={{fontSize:15,fontWeight:700,color:G.text}}>Tap to add a store photo</div>
-                  <div style={{fontSize:13,color:G.val}}>JPG or PNG from your camera roll</div>
+                <label style={{display:"flex",alignItems:"center",gap:12,padding:"12px 16px",background:G.card,border:"1.5px dashed "+G.border,borderRadius:8,cursor:"pointer",marginBottom:12}}>
+                  <span style={{fontSize:24}}>📷</span>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:700,color:G.text}}>Add site photo</div>
+                    <div style={{fontSize:11,color:G.light}}>JPG or PNG — appears in final PDF report</div>
+                  </div>
                   <input type="file" accept="image/*" onChange={handlePhoto} style={{display:"none"}}/>
                 </label>
               )}
+
+              {/* Site Visit Review Panel */}
+              <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"14px 16px",marginBottom:12}}>
+                <div style={{fontSize:10,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".12em",marginBottom:12}}>Site Visit Assessment</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                  {[
+                    {k:"visibility",l:"Visibility from road"},
+                    {k:"access",l:"Customer access"},
+                    {k:"parking",l:"Parking"},
+                    {k:"fascia",l:"Fascia / signage"},
+                    {k:"competition",l:"Competition nearby"},
+                  ].map(({k,l})=>(
+                    <div key={k}>
+                      <div style={{fontSize:9,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".1em",marginBottom:3}}>{l}</div>
+                      <select value={siteVisit[k]||""} onChange={e=>setSiteVisit(v=>({...v,[k]:e.target.value}))}
+                        style={{...INP_manual,padding:"6px 8px",fontSize:12}}>
+                        <option value="">— select —</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Average">Average</option>
+                        <option value="Poor">Poor</option>
+                        <option value="N/A">N/A</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
+                <div style={{marginTop:10}}>
+                  <div style={{fontSize:9,fontWeight:700,color:"#22C55E",textTransform:"uppercase",letterSpacing:".1em",marginBottom:3}}>Site Strengths</div>
+                  <input value={siteVisit.strengths||""} onChange={e=>setSiteVisit(v=>({...v,strengths:e.target.value}))}
+                    placeholder="e.g. corner position, high pedestrian flow, strong parking..."
+                    style={{...INP_manual,padding:"7px 10px",fontSize:12}}/>
+                </div>
+                <div style={{marginTop:8}}>
+                  <div style={{fontSize:9,fontWeight:700,color:"#EF4444",textTransform:"uppercase",letterSpacing:".1em",marginBottom:3}}>Site Weaknesses</div>
+                  <input value={siteVisit.weaknesses||""} onChange={e=>setSiteVisit(v=>({...v,weaknesses:e.target.value}))}
+                    placeholder="e.g. restricted access, limited parking, heavy competition..."
+                    style={{...INP_manual,padding:"7px 10px",fontSize:12}}/>
+                </div>
+              </div>
             </div>
 
             {/* Annotated photos */}
