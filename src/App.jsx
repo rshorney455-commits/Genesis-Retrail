@@ -1520,48 +1520,47 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     } catch(e){}
   });
 
-  // Phase 2: Standalone Supabase save — isolated, never affects localStorage
+  // Phase 2: Supabase cloud save — isolated, fire-and-forget, stable ID per session
   const [cloudStatus, setCloudStatus] = useState("");
   const cloudSaveTimerRef = useRef();
+  const assessmentIdRef = useRef(
+    sessionStorage.getItem("genesis-assessment-id") || (()=>{
+      const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)+Date.now().toString(36);
+      sessionStorage.setItem("genesis-assessment-id", id);
+      return id;
+    })()
+  );
   const SBU2 = "https://drtpeodthflxkzjgbfvu.supabase.co";
   const SBK2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRydHBlb2R0aGZseGt6amdiZnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NDk5OTUsImV4cCI6MjA5NjIyNTk5NX0.HMr2i61gILTiVD7uPFBJP8ek_ImLgTxQj6tiBUkNzlc";
 
+  // saveDraftToCloud — fire-and-forget, never blocks localStorage
+  const saveDraftToCloud = async (data) => {
+    if(!data || (!data.propName && !data.postcode)) return;
+    const hdrs = {"apikey":SBK2,"Authorization":"Bearer "+SBK2,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"};
+    const body = JSON.stringify({
+      id: assessmentIdRef.current,
+      prop_name: data.propName||"draft",
+      postcode: data.postcode||"",
+      data: data,
+      updated_at: new Date().toISOString()
+    });
+    const res = await fetch(`${SBU2}/rest/v1/assessments`, {method:"POST", headers:hdrs, body});
+    if(!res.ok){ const t=await res.text(); throw new Error(`${res.status}: ${t.slice(0,80)}`); }
+  };
+
   useEffect(()=>{
     clearTimeout(cloudSaveTimerRef.current);
-    cloudSaveTimerRef.current = setTimeout(async()=>{
+    cloudSaveTimerRef.current = setTimeout(()=>{
       const draft = localStorage.getItem("genesis-assessment-draft");
       if(!draft) return;
       let data;
       try { data = JSON.parse(draft); } catch(e){ return; }
       if(!data.propName && !data.postcode) return;
       setCloudStatus("Saving...");
-      try {
-        const hdrs = {"apikey":SBK2,"Authorization":"Bearer "+SBK2,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"};
-        const body = JSON.stringify({
-          prop_name: data.propName||"draft",
-          postcode: data.postcode||"",
-          data: data,
-          updated_at: new Date().toISOString()
-        });
-        // Check for existing record first
-        const chk = await fetch(`${SBU2}/rest/v1/assessments?prop_name=eq.${encodeURIComponent(data.propName||"draft")}&postcode=eq.${encodeURIComponent(data.postcode||"")}&select=id`, {headers:{"apikey":SBK2,"Authorization":"Bearer "+SBK2}});
-        const existing = await chk.json();
-        let res;
-        if(Array.isArray(existing) && existing.length > 0){
-          res = await fetch(`${SBU2}/rest/v1/assessments?id=eq.${existing[0].id}`, {method:"PATCH", headers:hdrs, body});
-        } else {
-          res = await fetch(`${SBU2}/rest/v1/assessments`, {method:"POST", headers:hdrs, body});
-        }
-        if(res.ok){
-          setCloudStatus("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
-        } else {
-          setCloudStatus("⚠ Local only");
-          console.error("Supabase save failed:", res.status);
-        }
-      } catch(e){
-        setCloudStatus("⚠ Local only");
-        console.error("Cloud save error:", e.message);
-      }
+      // Fire-and-forget — localStorage already saved, cloud is secondary
+      saveDraftToCloud(data)
+        .then(()=>setCloudStatus("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})))
+        .catch(e=>{ setCloudStatus("⚠ Local only"); console.error("Cloud save:", e.message); });
     }, 5000);
     return ()=>clearTimeout(cloudSaveTimerRef.current);
   });
