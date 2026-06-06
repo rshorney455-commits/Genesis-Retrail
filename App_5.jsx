@@ -1517,7 +1517,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   // Step 1: latestStateRef — updated after every render via no-dep useEffect
   const latestStateRef = useRef(null);
   useEffect(()=>{
-    console.log("[EFFECT] save effect running");
+    console.log("[SAVE EFFECT ENTERED]");
     try {
       const data = gatherState();
       latestStateRef.current = data;
