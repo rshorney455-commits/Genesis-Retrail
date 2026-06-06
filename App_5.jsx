@@ -1561,17 +1561,17 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     localStorage.removeItem("pendingAssessment");
   }
 
-  // Step 3: Debounced autosave — saveDraftRef ensures no stale closure
+  // Step 3: Debounced autosave — no deps, fires after every render, 2s debounce
   const saveTimeoutRef = useRef();
-  const saveDraftRef = useRef(saveDraft);
-  saveDraftRef.current = saveDraft; // always current
   useEffect(()=>{
     clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(async()=>{
+      const state = latestStateRef.current;
+      if(!state || (!state.propName && !state.postcode)) return;
       setSaveStatus("saving");
       setLastSaved("Saving...");
       try {
-        await saveDraftRef.current(latestStateRef.current);
+        await saveDraft(state);
         setSaveStatus("saved");
         setLastSaved("☁ Saved "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}));
       } catch(err){
