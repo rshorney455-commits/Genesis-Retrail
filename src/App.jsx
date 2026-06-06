@@ -129,7 +129,7 @@ const G = {
   orange:"#c9971c", obg:"#1e3c2a",
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #c9971c",borderRadius:8,color:"#f0ede8",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #c9971c",borderRadius:8,color:"#f0ede8",fontWeight:600,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 const INP_auto   = {width:"100%",padding:"12px 14px",background:"#1e3c2a",border:"2px solid #1e3a8a",borderRadius:8,color:"#1a3c2e",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
