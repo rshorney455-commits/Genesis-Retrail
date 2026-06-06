@@ -2191,15 +2191,92 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {/* ── COSTS ── */}
         {step===2&&(
           <div>
+            {/* Live financial summary strip */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16,padding:"12px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
+              {[
+                {l:"Projected Sales",v:fmt(C.ann)},
+                {l:"EBITDA",v:fmt(C.ebitda),c:C.ebitda>0?G.pos:G.neg},
+                {l:"Net Profit",v:fmt(C.np),c:C.np>0?G.pos:G.neg},
+                {l:"ROI",v:pct(C.roi),c:C.roi>=20?G.pos:C.roi>=10?"#F59E0B":G.neg},
+              ].map(({l,v,c})=>(
+                <div key={l} style={{textAlign:"center"}}>
+                  <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:G.light,fontWeight:600,marginBottom:3}}>{l}</div>
+                  <div style={{fontSize:18,fontWeight:800,color:c||G.text,fontFamily:"monospace"}}>{v}</div>
+                </div>
+              ))}
+            </div>
+
             <SH c="Operating Costs"/>
-            <Legend/>
-            {postcodeData&&<div style={{background:"#1E293B",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
-            <Fld l="Annual rent (£)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={rent} onFocus={e=>e.target.select()} onChange={e=>setRent(e.target.value===""?0:+e.target.value)}/>}/>
-            <Fld l="Business rates (£)" h={postcodeData?"Auto-estimated from VOA — override with actual figure":"Check VOA website or ask the agent"} ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>}/>
-            <Fld l="Staff / wages (% of sales)" h={"Sector average = "+fmt(C.stf)+" per year"} ch={<input style={INP_auto} type="number" step="0.5" value={staffPct} onFocus={e=>e.target.select()} onChange={e=>setStaffPct(e.target.value===""?0:+e.target.value)}/>}/>
-            <Fld l="Utilities (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" value={utilities} onFocus={e=>e.target.select()} onChange={e=>setUtilities(e.target.value===""?0:+e.target.value)}/>}/>
-            <Fld l="Other costs (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" value={otherCosts} onFocus={e=>e.target.select()} onChange={e=>setOtherCosts(e.target.value===""?0:+e.target.value)}/>}/>
-            <S3 items={[{l:"Total annual costs",v:fmt(C.annC),hi:true},{l:"Weekly burden",v:fmt(Math.round(C.annC/52))},{l:"Cost : sales",v:pct(C.annC/C.ann*100)}]}/>
+
+            {postcodeData&&<div style={{background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.3)",borderRadius:6,padding:"8px 12px",marginBottom:12,fontSize:11,color:G.pos}}>✓ Business rates auto-estimated from VOA data for {postcode} — override with actual figure if known.</div>}
+
+            {/* KEY DRIVER fields — 2 column grid */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+
+              {/* Annual Rent — KEY DRIVER */}
+              <div style={{borderLeft:"3px solid #F59E0B",background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Annual Rent</div>
+                  <span style={{fontSize:8,background:"rgba(245,158,11,0.2)",color:"#F59E0B",padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>KEY DRIVER</span>
+                </div>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={rent} onFocus={e=>e.target.select()} onChange={e=>setRent(e.target.value===""?0:+e.target.value)}/>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(rent/C.ann*100)+" of projected sales":""} · Ask landlord or agent</div>
+              </div>
+
+              {/* Business Rates — KEY DRIVER */}
+              <div style={{borderLeft:"3px solid #F59E0B",background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Business Rates</div>
+                  <span style={{fontSize:8,background:postcodeData?"rgba(34,197,94,0.15)":"rgba(255,255,255,0.1)",color:postcodeData?G.pos:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>{postcodeData?"AUTO ESTIMATE":"KEY DRIVER"}</span>
+                </div>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(rates/C.ann*100)+" of projected sales":""} · {postcodeData?"VOA estimate — override if known":"Check VOA or ask agent"}</div>
+              </div>
+
+              {/* Staff Costs — KEY DRIVER */}
+              <div style={{borderLeft:"3px solid #F59E0B",background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Staff / Wages (% of sales)</div>
+                  <span style={{fontSize:8,background:"rgba(199,208,213,0.15)",color:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>MODEL ASSUMPTION</span>
+                </div>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" step="0.5" value={staffPct} onFocus={e=>e.target.select()} onChange={e=>setStaffPct(e.target.value===""?0:+e.target.value)}/>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{fmt(C.stf)} per year · {C.ann>0?pct(C.stf/C.ann*100)+" of turnover":""}</div>
+              </div>
+
+              {/* Utilities */}
+              <div style={{borderLeft:"3px solid "+G.border,background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Utilities (£)</div>
+                  <span style={{fontSize:8,background:"rgba(199,208,213,0.15)",color:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>MODEL ASSUMPTION</span>
+                </div>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={utilities} onFocus={e=>e.target.select()} onChange={e=>setUtilities(e.target.value===""?0:+e.target.value)}/>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(utilities/C.ann*100)+" of projected sales":""} · Sector average</div>
+              </div>
+
+              {/* Other Costs */}
+              <div style={{borderLeft:"3px solid "+G.border,background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px",gridColumn:"1/-1"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Other Costs (£)</div>
+                  <span style={{fontSize:8,background:"rgba(199,208,213,0.15)",color:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>USER INPUT</span>
+                </div>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={otherCosts} onFocus={e=>e.target.select()} onChange={e=>setOtherCosts(e.target.value===""?0:+e.target.value)}/>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(otherCosts/C.ann*100)+" of projected sales":""} · Insurance, sundries, waste etc.</div>
+              </div>
+            </div>
+
+            {/* Cost summary row */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,padding:"12px 14px",background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:6}}>
+              {[
+                {l:"Total Annual Costs",v:fmt(C.annC),hi:true},
+                {l:"Weekly Cost Burden",v:fmt(Math.round(C.annC/52))},
+                {l:"Cost : Sales Ratio",v:pct(C.ann>0?C.annC/C.ann*100:0)},
+              ].map(({l,v,hi})=>(
+                <div key={l} style={{textAlign:"center"}}>
+                  <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:G.light,fontWeight:600,marginBottom:2}}>{l}</div>
+                  <div style={{fontSize:hi?20:16,fontWeight:hi?800:700,color:hi?G.text:G.light,fontFamily:"monospace"}}>{v}</div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
