@@ -127,12 +127,15 @@ const G = {
   bg:"#0B1418",      // main background
   card:"#1E293B",    // card / row highlight
   border:"#2a3a42",  // subtle borders
-  text:"#FFFFFF",    // main figures — white
+  text:"#FFFFFF",    // primary text / figures
   dark:"#0B1418",    // deep background
-  mid:"#123A2D",     // section headers
-  light:"#C7D0D5",   // labels
+  mid:"#123A2D",     // section header fills
+  light:"#C7D0D5",   // secondary labels
   pale:"#1E293B",    // highlight rows
-  orange:"#F59E0B",  // amber accent
+  orange:"#F59E0B",  // accent
+  pos:"#22C55E",     // positive values
+  neg:"#EF4444",     // negative values
+  val:"#FFFFFF",     // all KPI figures  // amber accent
   obg:"#1a2a20",     // subtle green tint bg
   val:"#FFFFFF",     // all figures white
   pos:"#22C55E",     // positive variance
@@ -2003,7 +2006,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               🔒 Share
             </button>
             <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:G.val,cursor:"pointer",fontSize:16,opacity:0.4}} title="Admin">⚙</button>
-            {lastSaved?<div style={{fontSize:10,color:"#4ade80",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#f87171",alignSelf:"center",flexShrink:0}}>"Saving..."</div>}
+            {lastSaved?<div style={{fontSize:10,color:"#22C55E",alignSelf:"center",flexShrink:0}}>✓ {lastSaved}</div>:<div style={{fontSize:10,color:"#EF4444",alignSelf:"center",flexShrink:0}}>"Saving..."</div>}
           </div>
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
