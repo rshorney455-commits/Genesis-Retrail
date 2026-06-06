@@ -3063,6 +3063,30 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {!clientName&&<div style={{fontSize:12,color:G.val,fontStyle:"italic"}}>Add client name on the Cover tab</div>}
             </div>
 
+            {/* ── VERDICT HERO BLOCK ── */}
+            <div style={{background:"#0B1418",border:"1px solid #2a3a42",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
+              <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
+                {[
+                  ["ROI",pct(C.roi),C.roi>=20?"#22C55E":C.roi>=10?"#F59E0B":"#EF4444"],
+                  ["Net Profit (Yr 1)",fmt(C.np),"#FFFFFF"],
+                  ["Payback",C.np>0?(C.ti/C.np).toFixed(1)+" yrs":"—","#FFFFFF"],
+                  ["Investment",fmt(C.ti),"#FFFFFF"],
+                  ["Turnover (Yr 1)",fmt(C.ann),"#FFFFFF"],
+                  ["EBITDA",fmt(C.ebitda),"#FFFFFF"],
+                ].map(([label,value,col])=>(
+                  <div key={label} style={{background:"#1E293B",borderRadius:8,padding:"12px 14px"}}>
+                    <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#C7D0D5",marginBottom:4,fontWeight:600}}>{label}</div>
+                    <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{borderTop:"1px solid #2a3a42",paddingTop:12,fontSize:13,color:"#C7D0D5",lineHeight:1.7}}>
+                <strong style={{color:VRD?.col||"#FFFFFF"}}>{VRD?.label||"Assessment incomplete"}</strong>
+                {VRD?.summary&&<span> — {VRD.summary}</span>}
+              </div>
+            </div>
+
             <div style={{marginBottom:16}}>
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
