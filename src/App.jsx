@@ -3821,7 +3821,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 </div>
 
 </div>{/* end pdfRef */}
-            <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
+            <div style={{marginTop:32,background:"#fff",border:"2px solid #15803D",borderRadius:14,overflow:"hidden"}}>
               <div style={{background:"#1e3a8a",padding:"18px 24px"}}>
                 <div style={{fontSize:9,letterSpacing:".25em",color:"#b45309",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
                 <div style={{fontSize:18,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
@@ -3830,52 +3830,52 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{padding:"24px 24px 8px"}}>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.financial}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.risks}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.competitors}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.categories}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.footfall}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.demographics}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.pl}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.fiveYear}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.sensitivity}</div>
                 </div>
 
-                <div style={{marginBottom:24,padding:"16px 20px",background:"#eef1fb",border:"1.5px solid "+G.mid,borderRadius:10}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1e3a8a",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
+                <div style={{marginBottom:24,padding:"16px 20px",background:"#F0FDF4",border:"1px solid #15803D",borderRadius:10}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
                   <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
                   <div style={{fontSize:14,color:"#ffffff",lineHeight:1.9}}>
                     {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed — in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
