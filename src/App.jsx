@@ -3626,6 +3626,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.competitors||`${competitorList.length} operator${competitorList.length!==1?"s":""} identified. ${competitorList.filter(c=>c.threat==="high").length} high-threat. A symbol group conversion will need to differentiate on range, fresh credentials and service.`}</div>
   </div>
+  <div style={{background:"#FFFBEB",border:"1px solid #FDE68A",borderLeft:"4px solid #B45309",borderRadius:"0 6px 6px 0",padding:"11px 14px",marginTop:10}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#B45309",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>Footfall & Spend Profile</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.footfall||`Daily footfall of ${(footfall||0).toLocaleString()} customers supports the trading projections. Average basket of £${avgBasket} is consistent with the assessed shopping mission profile.`}</div>
+  </div>
   <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Competitor Analysis · Page 5</span>
   </div>
@@ -3759,9 +3763,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       ))}</tbody>
     </table>
   </div>
-  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
-    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
-    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.fiveYear?.split(".").slice(0,2).join(".")||`The model returns ${fmt(cumNp(5))} cumulative net profit over five years on an initial investment of ${fmt(C.ti)}.`}</div>
+  <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px",marginBottom:10}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means — Forecast</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.fiveYear||`The model returns ${fmt(cumNp(5))} cumulative net profit over five years on an initial investment of ${fmt(C.ti)}.`}</div>
+  </div>
+  <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderLeft:"4px solid #64748B",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
+    <div style={{fontSize:8,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means — Sensitivity</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.sensitivity||`The sensitivity matrix models ${sensitivityData?.flat().filter(c=>c.roi>=20).length||0} of 25 scenarios returning 20%+ ROI. ${(sensitivityData?.[2]?.[2]?.roi||0)>=20?"The base case exceeds the target threshold — the investment is robust across a wide range of trading scenarios.":"The base case is below the 20% target. The investment is sensitive to footfall and rent assumptions."}`}</div>
   </div>
   <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>5-Year Forecast · Page 8</span>
