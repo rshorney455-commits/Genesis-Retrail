@@ -3239,9 +3239,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </div>
                 ))}
               </div>
-              <div style={{borderTop:"1px solid #2a3a42",paddingTop:12,fontSize:13,color:"#C7D0D5",lineHeight:1.7}}>
-                <strong style={{color:VRD?.col||"#FFFFFF"}}>{VRD?.label||"Assessment incomplete"}</strong>
-                {VRD?.summary&&<span> — {VRD.summary}</span>}
+              <div style={{borderTop:"1px solid #CBD5E1",paddingTop:12,fontSize:13,color:"#374151",lineHeight:1.7}}>
+                <strong style={{color:VRD?.col||"#15803D"}}>{VRD?.label||"Assessment incomplete"}</strong>
+                {VRD?.summary&&<span style={{color:"#374151"}}> — {VRD.summary}</span>}
               </div>
             </div>
 
