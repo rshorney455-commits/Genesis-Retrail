@@ -120,8 +120,8 @@ const TRAFFIC_F   = [
 ];
 const STEPS = ["Cover","Property","Costs","Refit","Categories","Demographics","Spend","Traffic","Spreadsheet","Results","Admin"];
 
-const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(n);
-const pct = n => n.toFixed(1)+"%";
+const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(isNaN(n)||n==null?0:n);
+const pct = n => (isNaN(n)||n==null?0:n).toFixed(1)+"%";
 
 const G = {
   bg:"#0B1418",      // main background
@@ -2274,7 +2274,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16,padding:"12px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
               {[
                 {l:"Projected Sales",v:fmt(C.ann)},
-                {l:"EBITDA",v:fmt(C.ebitda),c:C.ebitda>0?G.pos:G.neg},
+                {l:"EBITDA",v:fmt(C.eb),c:C.eb>0?G.pos:G.neg},
                 {l:"Net Profit",v:fmt(C.np),c:C.np>0?G.pos:G.neg},
                 {l:"ROI",v:pct(C.roi),c:C.roi>=20?G.pos:C.roi>=10?"#F59E0B":G.neg},
               ].map(({l,v,c})=>(
@@ -3229,7 +3229,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#FFFFFF"],
                   ["Investment",fmt(C.ti),"#FFFFFF"],
                   ["Turnover (Yr 1)",fmt(C.ann),"#FFFFFF"],
-                  ["EBITDA",fmt(C.ebitda),"#FFFFFF"],
+                  ["EBITDA",fmt(C.eb),"#FFFFFF"],
                 ].map(([label,value,col])=>(
                   <div key={label} style={{background:"#F8FAFC",borderRadius:8,padding:"12px 14px"}}>
                     <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#C7D0D5",marginBottom:4,fontWeight:600}}>{label}</div>
