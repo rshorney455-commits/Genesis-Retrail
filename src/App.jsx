@@ -1579,7 +1579,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       data: data,
       updated_at: new Date().toISOString()
     });
-;
+    const res = await fetch(`${SBU2}/rest/v1/assessments`, {method:"POST", headers:hdrs, body});
+    if(!res.ok){ const t=await res.text(); throw new Error(`${res.status}: ${t.slice(0,80)}`); }
+  };
 
 
   // ── Autosave — always fires, no propName requirement ────────────────────────
