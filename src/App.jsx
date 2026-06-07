@@ -3670,8 +3670,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 {/*──────────────────────────────────────────────────────────────
    PAGE 7 — FINANCIAL PERFORMANCE
-            <div style={{color:"#ff0000",fontWeight:800,fontSize:14,marginBottom:8}}>TEST BUILD 2026-06-08 11:00</div>
 ──────────────────────────────────────────────────────────────*/}
+<div style={{color:"#ff0000",fontWeight:800,fontSize:16,padding:"8px 12px",marginBottom:8}}>TEST BUILD 2026-06-08 11:00</div>
 <div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
