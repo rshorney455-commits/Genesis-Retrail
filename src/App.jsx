@@ -3261,12 +3261,12 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {l:"Finance Cost",        k:"fin", neg:true,  hi:false, sub:false},
                       {l:"Net Profit",          k:"np",  neg:false, hi:true,  sub:true},
                     ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#F0FDF4":dr.sub?"#F8FAFC":i%2===0?"#F8FAFC":"#ffffff",borderBottom:"1px solid "+G.border}}>
-                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?"#111827":G.light}}>{dr.l}</td>
+                      <tr key={i} style={{background:dr.hi?"#F0FDF4":dr.sub?"#F8FAFC":i%2===0?"#F8FAFC":"#ffffff",borderBottom:"1px solid #CBD5E1"}}>
+                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:"#374151"}}>{dr.l}</td>
                         {yr5.map((r,j)=>{
                           const val=dr.neg?-r[dr.k]:r[dr.k];
                           const neg=val<0;
-                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#DC2626":dr.hi?G.text:G.light,fontSize:13}}>
+                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#DC2626":dr.hi?"#111827":"#374151",fontSize:13}}>
                             {neg?"("+fmt(Math.abs(val))+")":fmt(val)}
                           </td>;
                         })}
@@ -3276,7 +3276,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:"#374151"}}>Cumulative Net Profit</td>
                       {[1,2,3,4,5].map(y=>{
                         const cn=cumNp(y);
-                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#DC2626":"#1e3a8a",fontSize:13}}>
+                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#DC2626":"#16A34A",fontSize:13}}>
                           {cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}
                         </td>;
                       })}
