@@ -658,8 +658,8 @@ Reply with ONLY this exact JSON and nothing else:
       URL.revokeObjectURL(url);
       setMsg("✓ Downloaded — open in browser, then Print → Save as PDF for a full presentation");
     } catch(e) {
-      setStatus("error");
-      setMsg("Generation failed: "+e.message);
+      setStatus("unavailable");
+      setMsg("AI analysis currently unavailable. This feature will be enabled in a future update.");
     }
   };
 
