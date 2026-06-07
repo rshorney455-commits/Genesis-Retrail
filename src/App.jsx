@@ -3325,7 +3325,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 1 — EXECUTIVE SUMMARY
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
 
   {/* Masthead */}
   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:14,borderBottom:"3px solid #15803D",marginBottom:22}}>
@@ -3428,7 +3428,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 2 — SITE OVERVIEW
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 2</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Site Overview</div>
@@ -3493,7 +3493,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 3 — MARKET & DEMOGRAPHICS
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 3</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Market & Catchment Demographics</div>
@@ -3555,7 +3555,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 4 — LOCAL FOOD PROFILE
 ──────────────────────────────────────────────────────────────*/}
 {foodProfile&&(
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Local Food & Drink Profile</div>
@@ -3603,7 +3603,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 5 — COMPETITOR ANALYSIS
 ──────────────────────────────────────────────────────────────*/}
 {competitorList&&competitorList.length>0&&(
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
@@ -3640,7 +3640,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 6 — SYMBOL GROUP RECOMMENDATION
 ──────────────────────────────────────────────────────────────*/}
 {C.symGroups&&C.symGroups.length>0&&(
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 6</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Recommended Symbol Group</div>
@@ -3671,7 +3671,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 7 — FINANCIAL PERFORMANCE
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance — Year 1</div>
@@ -3721,7 +3721,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 8 — 5-YEAR FORECAST
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 8</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>5-Year Financial Forecast</div>
@@ -3779,7 +3779,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 9 — RISK REGISTER
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",pageBreakAfter:"always",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 9</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Risk Register</div>
@@ -3808,7 +3808,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 10 — INVESTMENT DECISION
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",minHeight:"277mm",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:22}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 10</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Investment Decision</div>
@@ -3850,7 +3850,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 </div>{/* end pdfRef */}
             <div style={{marginTop:32,background:"#fff",border:"2px solid #15803D",borderRadius:14,overflow:"hidden"}}>
-              <div style={{background:"#1e3a8a",padding:"18px 24px"}}>
+              <div style={{background:"#1a3c2e",padding:"18px 24px"}}>
                 <div style={{fontSize:9,letterSpacing:".25em",color:"#b45309",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
                 <div style={{fontSize:18,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
                 <div style={{fontSize:12,color:"#4a5568",marginTop:6}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · Prepared by Richard Shorney, Genesis Retail</div>
@@ -3859,59 +3859,59 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.financial}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.financial}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.risks}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.risks}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.competitors}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.competitors}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.categories}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.categories}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.footfall}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.footfall}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.demographics}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.demographics}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.pl}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.pl}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.fiveYear}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.fiveYear}</div>
                 </div>
 
                 <div style={{marginBottom:24}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.95}}>{commentary.sensitivity}</div>
+                  <div style={{fontSize:14,color:"#374151",lineHeight:1.95}}>{commentary.sensitivity}</div>
                 </div>
 
                 <div style={{marginBottom:24,padding:"16px 20px",background:"#F0FDF4",border:"1px solid #15803D",borderRadius:10}}>
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
                   <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
-                  <div style={{fontSize:14,color:"#ffffff",lineHeight:1.9}}>
+                  <div style={{fontSize:13,color:"#374151",lineHeight:1.85}}>
                     {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed — in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
                   </div>
                 </div>
 
               </div>
-              <div style={{padding:"18px 24px",background:"#1e3a8a",borderTop:"2px solid #1e3a8a"}}>
+              <div style={{padding:"18px 24px",background:"#F8FAFC",borderTop:"1px solid #CBD5E1"}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#fef08a",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Important Notice</div>
                 <div style={{fontSize:12,color:"#e0e8ff",lineHeight:1.8}}>
                   This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from the projections contained herein. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification. The contents of this report are confidential and must not be reproduced or distributed without the prior written consent of Genesis Retail.
@@ -3925,7 +3925,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {step<9&&(
           <div style={{display:"flex",gap:12,marginTop:16}}>
             {step>0&&<button onClick={()=>setStep(s=>s-1)} style={{flex:1,padding:14,background:"#ffffff",border:"1.5px solid "+"#d1d9e6",borderRadius:10,color:"#1e3a8a",cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:600}}>Back</button>}
-            <button onClick={()=>setStep(s=>s+1)} style={{flex:2,padding:14,background:"#1e3a8a",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>{step===8?"View Full Report →":"Continue"}</button>
+            <button onClick={()=>setStep(s=>s+1)} style={{flex:2,padding:14,background:"#1a3c2e",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>{step===8?"View Full Report →":"Continue"}</button>
           </div>
         )}
 
