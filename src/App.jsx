@@ -3251,7 +3251,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             {/* ROI context note */}
-            {C.roi>50&&(
+            {(
               <div style={{background:"#F8FAFC",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
                 <div style={{fontSize:13,color:"#374151",lineHeight:1.9}}>
