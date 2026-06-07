@@ -1929,7 +1929,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   return (
     <>
-    <div style={{position:"fixed",top:0,left:0,right:0,height:60,background:"#ff0000",color:"#fff",zIndex:999999,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:900}}>BUILD TEST 12345</div>
     <ErrorBoundary>
     <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:step===9?"#ffffff":G.bg,minHeight:"100vh",color:G.text}}>
       <style>{`
@@ -3705,7 +3704,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 7 — FINANCIAL PERFORMANCE
 ──────────────────────────────────────────────────────────────*/}
-<div style={{color:"#ff0000",fontWeight:800,fontSize:16,padding:"8px 12px",marginBottom:8}}>TEST BUILD 2026-06-08 11:00</div>
 <div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
