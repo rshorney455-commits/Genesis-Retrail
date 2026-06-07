@@ -1406,10 +1406,10 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"Strong Opportunity",col:"#1e3a8a"};
-    if(C.roi>=10) return {l:"Viable - Proceed with Care",col:"#1e3a8a"};
-    if(C.roi>=0)  return {l:"Marginal - Review Costs",col:"#c05010"};
-    return              {l:"Not Viable",col:"#d62828"};
+    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:"Strong commercial viability. ROI meets the Genesis Retail investment threshold."};
+    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:"Viable but below the preferred 20% threshold. Address occupancy costs before committing."};
+    if(C.roi>=0)  return {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"ROI below minimum threshold. Review rent, rates and trading assumptions."};
+    return              {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
   },[C.roi]);
 
   const DS=useMemo(()=>{
