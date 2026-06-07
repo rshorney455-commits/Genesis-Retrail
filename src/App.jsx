@@ -1952,31 +1952,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         }
         @media print{.pdf-footer{display:block!important}}
 
-        /* ── MOBILE RESPONSIVE ─────────────────────────────── */
-        @media(max-width:600px){
-          /* Content wrapper */
-          .mobile-wrap{padding:16px 12px!important;max-width:100%!important}
-          /* All grids collapse to 1 column on mobile */
-          .rg-2,.rg-3,.rg-4,.rg-5{grid-template-columns:1fr!important}
-          /* 2-col grids stay 2-col on mobile if they fit */
-          .rg-2{grid-template-columns:1fr 1fr!important}
-          /* Tables scroll horizontally */
-          .tbl-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
-          /* Inputs full width, prevent iOS zoom (font-size>=16px) */
-          input,select,textarea{font-size:16px!important;max-width:100%!important}
-          /* KPI cards wrap */
-          .kpi-strip{flex-wrap:wrap!important;gap:8px!important}
-          .kpi-strip>*{flex:1 1 calc(50% - 4px)!important;min-width:0!important}
-          /* PDF slides scale down */
-          .slide{padding:16px!important;min-height:auto!important}
-          .pdf-wrapper{font-size:10px!important}
-          /* Buttons full width on mobile */
-          .btn-full-mobile{width:100%!important;margin-bottom:6px!important}
-          /* No horizontal overflow on page */
-          body,#root{overflow-x:hidden!important;max-width:100vw!important}
+        /* ── MOBILE HARDENING ── */
+        @media (max-width: 768px) {
+          body, #root, #root > div { overflow-x: hidden !important; max-width: 100vw !important; }
+          .rg-2, .rg-3, .rg-4, .rg-5 { grid-template-columns: 1fr !important; }
+          .kpi-strip { flex-direction: column !important; }
+          .kpi-strip > * { width: 100% !important; }
+          .tbl-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+          .tbl-wrap > table { min-width: 500px; }
+          .slide { padding: 16px !important; min-height: auto !important; }
+          .pdf-wrapper { overflow-x: hidden !important; }
+          img { width: 100% !important; height: auto !important; }
+          input, select, textarea { font-size: 16px !important; max-width: 100% !important; }
+          .btn-full-mobile { width: 100% !important; }
         }
-        @media(max-width:430px){
-          .rg-2{grid-template-columns:1fr!important}
+        @media (max-width: 430px) {
+          .rg-2 { grid-template-columns: 1fr !important; }
         }
         .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
         @keyframes spin{to{transform:rotate(360deg)}}
