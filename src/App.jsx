@@ -3227,15 +3227,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
                 {[
                   ["ROI",pct(C.roi),C.roi>=20?"#22C55E":C.roi>=10?"#F59E0B":"#EF4444"],
-                  ["Net Profit (Yr 1)",fmt(C.nP),"#FFFFFF"],
-                  ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#FFFFFF"],
-                  ["Investment",fmt(C.ti),"#FFFFFF"],
-                  ["Turnover (Yr 1)",fmt(C.ann),"#FFFFFF"],
-                  ["EBITDA",fmt(C.eb),"#FFFFFF"],
-                ].map(([label,value,col])=>(
+                   ["ROI",pct(C.roi),C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"],
+                   ["Net Profit (Yr 1)",fmt(C.nP),C.nP>=0?"#111827":"#DC2626"],
+                   ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#111827"],
+                   ["Investment",fmt(C.ti),"#111827"],
+                   ["Turnover (Yr 1)",fmt(C.upliftedAnn),"#111827"],
+                   ["EBITDA",fmt(C.eb),C.eb>=0?"#111827":"#DC2626"],
                   <div key={label} style={{background:"#F8FAFC",borderRadius:8,padding:"12px 14px"}}>
-                    <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#C7D0D5",marginBottom:4,fontWeight:600}}>{label}</div>
-                    <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
+                   <div key={label} style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:8,padding:"12px 14px"}}>
+                     <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#64748B",marginBottom:4,fontWeight:600}}>{label}</div>
                   </div>
                 ))}
               </div>
@@ -3610,6 +3610,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
   </div>
+  {mapLat&&mapLng&&<div style={{marginBottom:14,borderRadius:6,overflow:"hidden",border:"1px solid #CBD5E1",height:220}}><CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={[]}/></div>}
   <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
     <thead><tr style={{background:"#F1F5F9"}}>{["Operator","Format","Distance","Threat","Notes"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
