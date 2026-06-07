@@ -3276,15 +3276,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
-                {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
+              <button onClick={()=>window.print()} style={{width:"100%",padding:15,background:"#1a3c2e",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
+                {pdfLoading?"⏳ Generating…":"🖨 Print / Save as PDF"}
               </button>
               <p style={{fontSize:12,color:"#111827",marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
             {/* ROI context note */}
             {(
-              <div style={{background:"#F8FAFC",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
+              <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
                 <div style={{fontSize:13,color:"#374151",lineHeight:1.9}}>
                   {`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}
