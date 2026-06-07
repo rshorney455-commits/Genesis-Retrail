@@ -3233,10 +3233,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                    ["Investment",fmt(C.ti),"#111827"],
                    ["Turnover (Yr 1)",fmt(C.upliftedAnn),"#111827"],
                    ["EBITDA",fmt(C.eb),C.eb>=0?"#111827":"#DC2626"],
-                  <div key={label} style={{background:"#F8FAFC",borderRadius:8,padding:"12px 14px"}}>
                    <div key={label} style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:8,padding:"12px 14px"}}>
                      <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#64748B",marginBottom:4,fontWeight:600}}>{label}</div>
-                  </div>
                 ))}
               </div>
               <div style={{borderTop:"1px solid #CBD5E1",paddingTop:12,fontSize:13,color:"#374151",lineHeight:1.7}}>
