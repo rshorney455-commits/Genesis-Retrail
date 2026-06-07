@@ -308,7 +308,9 @@ function AISection({ prompt, label }) {
     if(!prompt) return;
     setLoading(true); setText(""); setDone(false);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // Direct browser calls to Anthropic API are blocked by CORS — requires server proxy
+    throw new Error("AI features require a server proxy. Contact Genesis Retail to enable.");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
@@ -613,7 +615,9 @@ function PPTXExportButton(props) {
         date: new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}),
       };
 
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // Direct browser calls to Anthropic API are blocked by CORS — requires server proxy
+    throw new Error("AI features require a server proxy. Contact Genesis Retail to enable.");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
@@ -975,7 +979,9 @@ Current assessment state: ${JSON.stringify(appState, null, 2).slice(0, 3000)}`;
     if (!agentMsg.trim()) return;
     setAgentLoading(true); setAgentRes("");
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // Direct browser calls to Anthropic API are blocked by CORS — requires server proxy
+    throw new Error("AI features require a server proxy. Contact Genesis Retail to enable.");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1008,7 +1014,9 @@ Run a complete audit across these 5 areas and report findings with a RAG status 
 For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      // Direct browser calls to Anthropic API are blocked by CORS — requires server proxy
+    throw new Error("AI features require a server proxy. Contact Genesis Retail to enable.");
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
