@@ -3239,8 +3239,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             )}
 
             {/* ── 5-YEAR P&L — screen view ── */}
-            <div style={{background:"#fff",border:"1.5px solid #1e3a8a",borderRadius:12,overflow:"hidden",marginBottom:20}}>
-              <div style={{borderBottom:"2px solid #1e3a8a",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div style={{background:"#fff",border:"1px solid #CBD5E1",borderRadius:12,overflow:"hidden",marginBottom:20}}>
+              <div style={{borderBottom:"2px solid #15803D",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div style={{fontSize:13,fontWeight:700,color:"#374151"}}>Five-Year Profit & Loss Forecast</div>
                 <div style={{fontSize:11,color:"#374151"}}>3% sales growth · 2% cost inflation</div>
               </div>
@@ -3261,22 +3261,22 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       {l:"Finance Cost",        k:"fin", neg:true,  hi:false, sub:false},
                       {l:"Net Profit",          k:"np",  neg:false, hi:true,  sub:true},
                     ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#eef1fb":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
-                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?G.text:G.light}}>{dr.l}</td>
+                      <tr key={i} style={{background:dr.hi?"#F0FDF4":dr.sub?"#F8FAFC":i%2===0?"#F8FAFC":"#ffffff",borderBottom:"1px solid "+G.border}}>
+                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?"#111827":G.light}}>{dr.l}</td>
                         {yr5.map((r,j)=>{
                           const val=dr.neg?-r[dr.k]:r[dr.k];
                           const neg=val<0;
-                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#d62828":dr.hi?G.text:G.light,fontSize:13}}>
+                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#DC2626":dr.hi?G.text:G.light,fontSize:13}}>
                             {neg?"("+fmt(Math.abs(val))+")":fmt(val)}
                           </td>;
                         })}
                       </tr>
                     ))}
-                    <tr style={{background:"#F8FAFC",borderTop:"2px solid #1e3a8a"}}>
+                    <tr style={{background:"#F1F5F9",borderTop:"2px solid #CBD5E1"}}>
                       <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:"#374151"}}>Cumulative Net Profit</td>
                       {[1,2,3,4,5].map(y=>{
                         const cn=cumNp(y);
-                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#d62828":"#1e3a8a",fontSize:13}}>
+                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#DC2626":"#1e3a8a",fontSize:13}}>
                           {cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}
                         </td>;
                       })}
@@ -3284,7 +3284,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </tbody>
                 </table>
               </div>
-              <div style={{padding:"10px 14px",background:"#F8FAFC",borderTop:"1px solid "+G.border,fontSize:11,color:"#64748B"}}>
+              <div style={{padding:"10px 14px",background:"#F8FAFC",borderTop:"1px solid #CBD5E1",fontSize:11,color:"#64748B"}}>
                 Base: {fmt(C.upliftedAnn)}/yr post-refit · Total investment {fmt(C.ti)} · Finance {financeRate}% APR over {financeYears} years · Payback {C.pb?C.pb.toFixed(1)+" years":"N/A"}
               </div>
             </div>
