@@ -3184,26 +3184,26 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {step===9&&(
           <div>
             {/* Assessment header */}
-            <div style={{background:G.dark,borderRadius:10,padding:"16px 20px",marginBottom:16}}>
-              <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
+            <div style={{background:"#F1F5F9",borderRadius:10,padding:"16px 20px",marginBottom:16}}>
+              <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
               <div style={{fontSize:18,fontWeight:800,color:"#fff",marginBottom:clientName?6:0}}>{propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
-              {clientName&&<div style={{fontSize:13,color:G.val}}>Prepared for <strong style={{color:"#fff"}}>{clientName}</strong></div>}
-              {!clientName&&<div style={{fontSize:12,color:G.val,fontStyle:"italic"}}>Add client name on the Cover tab</div>}
+              {clientName&&<div style={{fontSize:13,color:"#374151"}}>Prepared for <strong style={{color:"#fff"}}>{clientName}</strong></div>}
+              {!clientName&&<div style={{fontSize:12,color:"#374151",fontStyle:"italic"}}>Add client name on the Cover tab</div>}
             </div>
 
             {/* ── VERDICT HERO BLOCK ── */}
-            <div style={{background:"#0B1418",border:"1px solid #2a3a42",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
-              <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
+            <div style={{background:"#ffffff",border:"1px solid #CBD5E1",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
+              <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
                 {[
                   ["ROI",pct(C.roi),C.roi>=20?"#22C55E":C.roi>=10?"#F59E0B":"#EF4444"],
-                  ["Net Profit (Yr 1)",fmt(C.np),"#FFFFFF"],
-                  ["Payback",C.np>0?(C.ti/C.np).toFixed(1)+" yrs":"—","#FFFFFF"],
+                  ["Net Profit (Yr 1)",fmt(C.nP),"#FFFFFF"],
+                  ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#FFFFFF"],
                   ["Investment",fmt(C.ti),"#FFFFFF"],
                   ["Turnover (Yr 1)",fmt(C.ann),"#FFFFFF"],
                   ["EBITDA",fmt(C.ebitda),"#FFFFFF"],
                 ].map(([label,value,col])=>(
-                  <div key={label} style={{background:"#1E293B",borderRadius:8,padding:"12px 14px"}}>
+                  <div key={label} style={{background:"#F8FAFC",borderRadius:8,padding:"12px 14px"}}>
                     <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#C7D0D5",marginBottom:4,fontWeight:600}}>{label}</div>
                     <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
                   </div>
@@ -3219,20 +3219,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <button onClick={generatePDF} disabled={pdfLoading} style={{width:"100%",padding:15,background:pdfLoading?"#8fa3d6":G.mid,border:"none",borderRadius:10,color:"#fff",cursor:pdfLoading?"not-allowed":"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating PDF…":"⬇ Download Report as PDF"}
               </button>
-              <p style={{fontSize:12,color:"#FFFFFF",marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
+              <p style={{fontSize:12,color:"#111827",marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
             </div>
 
             {/* ROI context note */}
             {C.roi>50&&(
-              <div style={{background:"#1E293B",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
-                <div style={{fontSize:11,fontWeight:700,color:G.val,textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
-                <div style={{fontSize:13,color:G.val,lineHeight:1.9}}>
+              <div style={{background:"#F8FAFC",border:"2px solid #1e3a8a",borderRadius:10,padding:"18px 20px",marginBottom:16}}>
+                <div style={{fontSize:11,fontWeight:700,color:"#374151",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Note on Return on Investment — {pct(C.roi)}</div>
+                <div style={{fontSize:13,color:"#374151",lineHeight:1.9}}>
                   {`The return on investment figure of ${pct(C.roi)} reflects the relatively low capital requirement against an established trading base. The ${fmt(C.wk)} weekly turnover used as the base figure is drawn from the operator's existing trading performance and is not a speculative projection — it represents real, evidenced sales from a store serving this catchment today.`}
                 </div>
-                <div style={{fontSize:13,color:"#FFFFFF",lineHeight:1.9,marginTop:10}}>
+                <div style={{fontSize:13,color:"#111827",lineHeight:1.9,marginTop:10}}>
                   {`The total investment of ${fmt(C.ti)} — comprising a ${fmt(refitCost)} refit and ${fmt(stockCost)} opening stock — should be supported by shopfitter quotes and a stock valuation from the chosen symbol group wholesaler before submission to any lender. The post-refit uplift of ${uplift}% is based on the increased store footprint, extended chilled capacity, symbol group conversion and the introduction of a dedicated world foods range. Comparable store evidence is provided in Section 4b of this report.`}
                 </div>
-                <div style={{fontSize:12,color:"#FFFFFF",marginTop:10,fontStyle:"italic"}}>
+                <div style={{fontSize:12,color:"#111827",marginTop:10,fontStyle:"italic"}}>
                   Genesis Retail recommends this figure is presented alongside 12 months of till data or bank statements from the existing store to evidence the base turnover assumption.
                 </div>
               </div>
@@ -3241,15 +3241,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* ── 5-YEAR P&L — screen view ── */}
             <div style={{background:"#fff",border:"1.5px solid #1e3a8a",borderRadius:12,overflow:"hidden",marginBottom:20}}>
               <div style={{borderBottom:"2px solid #1e3a8a",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div style={{fontSize:13,fontWeight:700,color:G.val}}>Five-Year Profit & Loss Forecast</div>
-                <div style={{fontSize:11,color:G.val}}>3% sales growth · 2% cost inflation</div>
+                <div style={{fontSize:13,fontWeight:700,color:"#374151"}}>Five-Year Profit & Loss Forecast</div>
+                <div style={{fontSize:11,color:"#374151"}}>3% sales growth · 2% cost inflation</div>
               </div>
               <div style={{overflowX:"auto"}}>
                 <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
                   <thead>
-                    <tr style={{background:G.pale}}>
-                      <th style={{padding:"10px 12px",textAlign:"left",color:G.text,fontWeight:700,minWidth:160}}>£</th>
-                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:G.text,fontWeight:700,minWidth:90}}>Year {y}</th>)}
+                    <tr style={{background:"#F8FAFC"}}>
+                      <th style={{padding:"10px 12px",textAlign:"left",color:"#111827",fontWeight:700,minWidth:160}}>£</th>
+                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:"#111827",fontWeight:700,minWidth:90}}>Year {y}</th>)}
                     </tr>
                   </thead>
                   <tbody>
@@ -3272,8 +3272,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         })}
                       </tr>
                     ))}
-                    <tr style={{background:"#1E293B",borderTop:"2px solid #1e3a8a"}}>
-                      <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:G.val}}>Cumulative Net Profit</td>
+                    <tr style={{background:"#F8FAFC",borderTop:"2px solid #1e3a8a"}}>
+                      <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:"#374151"}}>Cumulative Net Profit</td>
                       {[1,2,3,4,5].map(y=>{
                         const cn=cumNp(y);
                         return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#d62828":"#1e3a8a",fontSize:13}}>
@@ -3284,7 +3284,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </tbody>
                 </table>
               </div>
-              <div style={{padding:"10px 14px",background:G.card,borderTop:"1px solid "+G.border,fontSize:11,color:G.light}}>
+              <div style={{padding:"10px 14px",background:"#F8FAFC",borderTop:"1px solid "+G.border,fontSize:11,color:"#64748B"}}>
                 Base: {fmt(C.upliftedAnn)}/yr post-refit · Total investment {fmt(C.ti)} · Finance {financeRate}% APR over {financeYears} years · Payback {C.pb?C.pb.toFixed(1)+" years":"N/A"}
               </div>
             </div>
