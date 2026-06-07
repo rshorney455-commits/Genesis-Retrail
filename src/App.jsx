@@ -3225,18 +3225,19 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <div style={{background:"#ffffff",border:"1px solid #CBD5E1",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
               <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
               <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
-                {[
-                  ["ROI",pct(C.roi),C.roi>=20?"#22C55E":C.roi>=10?"#F59E0B":"#EF4444"],
+                 {[
                    ["ROI",pct(C.roi),C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"],
                    ["Net Profit (Yr 1)",fmt(C.nP),C.nP>=0?"#111827":"#DC2626"],
                    ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#111827"],
                    ["Investment",fmt(C.ti),"#111827"],
                    ["Turnover (Yr 1)",fmt(C.upliftedAnn),"#111827"],
                    ["EBITDA",fmt(C.eb),C.eb>=0?"#111827":"#DC2626"],
+                 ].map(([label,value,col])=>(
                    <div key={label} style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:8,padding:"12px 14px"}}>
                      <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#64748B",marginBottom:4,fontWeight:600}}>{label}</div>
-                    </div>
-                ))}
+                     <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
+                   </div>
+                 ))}
               </div>
               <div style={{borderTop:"1px solid #CBD5E1",paddingTop:12,fontSize:13,color:"#374151",lineHeight:1.7}}>
                 <strong style={{color:VRD?.col||"#15803D"}}>{VRD?.label||"Assessment incomplete"}</strong>
