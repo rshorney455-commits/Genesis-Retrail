@@ -1919,7 +1919,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   return (
     <ErrorBoundary>
-    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:G.bg,minHeight:"100vh",color:G.text}}>
+    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:step===9?"#ffffff":G.bg,minHeight:"100vh",color:G.text}}>
       <style>{`
         *{box-sizing:border-box;margin:0}
         input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
