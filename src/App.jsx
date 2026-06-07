@@ -142,7 +142,7 @@ const G = {
   neg:"#EF4444",     // negative variance
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:"#1a2a20",border:"2px solid #2d55c8",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_manual = {width:"100%",padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 const INP_auto   = {width:"100%",padding:"12px 14px",background:"#1E293B",border:"2px solid #1e3a8a",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
@@ -1982,7 +1982,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
         .pdf-watermark svg{position:absolute;inset:0;width:100%;height:100%;}
-        .pdf-wrapper{position:relative;}
+        .pdf-wrapper{position:relative;overflow-x:hidden;}
       `}</style>
       {/* Load SheetJS for Excel export */}
       {!window.XLSX&&(()=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";document.head.appendChild(s);return null;})()}
@@ -2041,7 +2041,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {propName&&<div style={{fontSize:12,color:"#FFFFFF",marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
             </div>
           </div>
-          <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4}}>
+          <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4,flexWrap:"wrap"}}>
             <button onClick={saveAssessment} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:G.val,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               {saveMsg||"💾 Save"}
             </button>
