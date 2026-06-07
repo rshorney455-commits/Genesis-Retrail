@@ -2027,7 +2027,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         </div>
       </div>
 
-      <div style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto"}}>
+      <div style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto",background:step===9?"#ffffff":G.bg,minHeight:"calc(100vh - 80px)"}}>
 
         {/* ── COVER ── */}
         {step===0&&(
@@ -3182,7 +3182,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
         {/* ── RESULTS ── */}
         {step===9&&(
-          <div>
+          <div style={{background:"#ffffff",minHeight:"100%",padding:"0 0 40px"}}>
             {/* Assessment header */}
             <div style={{background:"#F1F5F9",borderRadius:10,padding:"16px 20px",marginBottom:16}}>
               <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
