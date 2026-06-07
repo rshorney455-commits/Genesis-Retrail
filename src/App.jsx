@@ -531,9 +531,9 @@ function RCommentary({text}){
 const SH  = ({c})=><div style={{fontSize:20,fontWeight:700,color:G.text,marginBottom:18,paddingBottom:10,borderBottom:"2px solid "+G.border}}>{c}</div>;
 const PSH = ({c})=><div style={{fontSize:18,fontWeight:800,color:G.text,marginBottom:16,paddingBottom:8,borderBottom:"3px solid "+G.mid}}>{c}</div>;
 const Sub = ({c})=><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:12,marginTop:4}}>{c}</div>;
-const Row2= ({ch,st})=><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,...(st||{})}}>{ch}</div>;
+const Row2= ({ch,st})=><div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,...(st||{})}}>{ch}</div>;
 const Fld = ({l,h,ch})=><div style={{marginBottom:16}}><div style={{fontSize:13,fontWeight:700,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>{l}</div>{h&&<div style={{fontSize:12,color:G.val,marginBottom:5}}>{h}</div>}{ch}</div>;
-const S3  = ({items})=><div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#dde4f5":G.card,border:"1.5px solid "+(hi?"#2d55c8":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.text:G.light}}>{v}</div></div>)}</div>;
+const S3  = ({items})=><div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>{items.map(({l,v,hi})=><div key={l} style={{background:hi?"#dde4f5":G.card,border:"1.5px solid "+(hi?"#2d55c8":G.border),borderRadius:10,padding:"12px 10px",textAlign:"center"}}><div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>{l}</div><div style={{fontSize:16,fontWeight:700,color:hi?G.text:G.light}}>{v}</div></div>)}</div>;
 const RC  = ({t,ch})=><div className="avoid-break" style={{background:G.card,border:"1px solid "+G.border,borderRadius:12,padding:16,marginBottom:20}}><div style={{fontSize:15,fontWeight:700,color:G.text,marginBottom:14,paddingBottom:8,borderBottom:"1px solid "+G.border}}>{t}</div>{ch}</div>;
 
 // ── Plain-English explainer boxes ─────────────────────────────────────────────
@@ -1951,6 +1951,33 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           img{max-width:100%!important}
         }
         @media print{.pdf-footer{display:block!important}}
+
+        /* ── MOBILE RESPONSIVE ─────────────────────────────── */
+        @media(max-width:600px){
+          /* Content wrapper */
+          .mobile-wrap{padding:16px 12px!important;max-width:100%!important}
+          /* All grids collapse to 1 column on mobile */
+          .rg-2,.rg-3,.rg-4,.rg-5{grid-template-columns:1fr!important}
+          /* 2-col grids stay 2-col on mobile if they fit */
+          .rg-2{grid-template-columns:1fr 1fr!important}
+          /* Tables scroll horizontally */
+          .tbl-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+          /* Inputs full width, prevent iOS zoom (font-size>=16px) */
+          input,select,textarea{font-size:16px!important;max-width:100%!important}
+          /* KPI cards wrap */
+          .kpi-strip{flex-wrap:wrap!important;gap:8px!important}
+          .kpi-strip>*{flex:1 1 calc(50% - 4px)!important;min-width:0!important}
+          /* PDF slides scale down */
+          .slide{padding:16px!important;min-height:auto!important}
+          .pdf-wrapper{font-size:10px!important}
+          /* Buttons full width on mobile */
+          .btn-full-mobile{width:100%!important;margin-bottom:6px!important}
+          /* No horizontal overflow on page */
+          body,#root{overflow-x:hidden!important;max-width:100vw!important}
+        }
+        @media(max-width:430px){
+          .rg-2{grid-template-columns:1fr!important}
+        }
         .pdf-footer{display:none;position:fixed;bottom:0;left:0;right:0;background:#1e3a8a;padding:8px 24px;display:flex;justify-content:space-between;align-items:center;z-index:9999;}
         @keyframes spin{to{transform:rotate(360deg)}}
         .pdf-watermark{pointer-events:none;position:absolute;inset:0;z-index:0;overflow:hidden;}
@@ -2035,7 +2062,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         </div>
       </div>
 
-      <div style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto",background:step===9?"#ffffff":G.bg,minHeight:"calc(100vh - 80px)"}}>
+      <div className="mobile-wrap" style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto",background:step===9?"#ffffff":G.bg,minHeight:"calc(100vh - 80px)"}}>
 
         {/* ── COVER ── */}
         {step===0&&(
@@ -2091,7 +2118,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {/* Site Visit Review Panel */}
               <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"14px 16px",marginBottom:12}}>
                 <div style={{fontSize:10,fontWeight:700,color:G.orange,textTransform:"uppercase",letterSpacing:".12em",marginBottom:12}}>Site Visit Assessment</div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
                   {[
                     {k:"visibility",l:"Visibility from road"},
                     {k:"access",l:"Customer access"},
@@ -2131,7 +2158,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Annotated photos */}
             <div style={{marginBottom:20}}>
               <div style={{fontSize:13,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:8}}>Visit Photos (annotated)</div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+              <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                 {photos.map((ph,i)=>(
                   <div key={i} style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,overflow:"hidden"}}>
                     <img src={ph.src} alt="Visit" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",display:"block"}}/>
@@ -2251,7 +2278,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {step===2&&(
           <div>
             {/* Live financial summary strip */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16,padding:"12px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
+            <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16,padding:"12px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
               {[
                 {l:"Projected Sales",v:fmt(C.ann)},
                 {l:"EBITDA",v:fmt(C.ebitda),c:C.ebitda>0?G.pos:G.neg},
@@ -2270,7 +2297,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {postcodeData&&<div style={{background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.3)",borderRadius:6,padding:"8px 12px",marginBottom:12,fontSize:11,color:G.pos}}>✓ Business rates auto-estimated from VOA data for {postcode} — override with actual figure if known.</div>}
 
             {/* KEY DRIVER fields — 2 column grid */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+            <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
 
               {/* Annual Rent — KEY DRIVER */}
               <div style={{borderLeft:"3px solid #F59E0B",background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
@@ -2324,7 +2351,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             {/* Cost summary row */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,padding:"12px 14px",background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:6}}>
+            <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,padding:"12px 14px",background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:6}}>
               {[
                 {l:"Total Annual Costs",v:fmt(C.annC),hi:true},
                 {l:"Weekly Cost Burden",v:fmt(Math.round(C.annC/52))},
@@ -2344,7 +2371,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Refit and Investment"/>
             <Legend/>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
+            <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
               {REFITS.map(p=>(
                 <button key={p.label} onClick={()=>{setRefitCost(p.value);setCustomRefit(false);}} style={{padding:"14px 12px",textAlign:"left",cursor:"pointer",background:refitCost===p.value&&!customRefit?G.pale:G.card,border:(refitCost===p.value&&!customRefit?"2px":"1px")+" solid "+(refitCost===p.value&&!customRefit?G.mid:G.border),borderRadius:10,fontFamily:"inherit"}}>
                   <div style={{fontSize:13,fontWeight:600,color:refitCost===p.value&&!customRefit?G.text:G.light,marginBottom:4}}>{p.label}</div>
@@ -2411,7 +2438,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{height:5,background:G.pale,borderRadius:3,marginBottom:14}}>
                     <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
                   </div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
+                  <div className="rg-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
                     <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px",textAlign:"center"}}>
                       <div style={{fontSize:10,color:G.light,textTransform:"uppercase",letterSpacing:".07em",marginBottom:6}}>ACS Benchmark</div>
                       <div style={{fontSize:22,fontWeight:800,color:"#FFFFFF"}}>{acsMix !== null ? acsMix+"%" : "—"}</div>
@@ -2463,7 +2490,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         {/* GP margin context */}
             <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14,marginBottom:8}}>
               <div style={{fontSize:12,fontWeight:700,color:"#FFFFFF",marginBottom:10}}>ACS 2025 Average GP Margins by Category</div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+              <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {[
                   {cat:"Hot Food & Drinks",gp:55,note:"Highest margin"},
                   {cat:"Health & Beauty",  gp:38,note:"Premium lines key"},
@@ -2510,7 +2537,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <DemoSec label="Employment status % — ONS census data" keys={EMPLOYMENTS} values={employment} setter={setEmployment}/>
             <DemoSec label="Housing tenure % — ONS census data" keys={HOUSINGS} values={housing} setter={setHousing}/>
             {/* Annotated stats row */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>
+            <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:20,marginBottom:8}}>
               {/* Catchment Pop */}
               <div style={{background:G.card,border:"1.5px solid "+G.border,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Catchment Pop</div>
@@ -2578,7 +2605,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{fontSize:13,color:G.text,lineHeight:1.7,padding:"10px 14px",background:G.pale,borderRadius:8,borderLeft:"3px solid "+G.mid}}>{foodProfile.keyInsight}</div>
                 </div>
 
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+                <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
                   {(foodProfile.topFoods||[]).map((f,i)=>{
                     const above = f.index >= 100;
                     const diff = Math.abs(f.index - 100);
@@ -2595,7 +2622,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   })}
                 </div>
 
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+                <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
                   <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:10,padding:14}}>
                     <div style={{fontSize:11,fontWeight:700,color:G.text,textTransform:"uppercase",letterSpacing:".08em",marginBottom:6}}>Ethnic Food Preferences</div>
                     <div style={{fontSize:12,color:G.text,lineHeight:1.6}}>{foodProfile.ethnicFoodNote}</div>
@@ -2771,7 +2798,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               {existingStore&&<button onClick={()=>setExistingStore(null)} style={{padding:"8px 10px",background:"transparent",border:"1px solid "+G.border,borderRadius:7,cursor:"pointer",color:G.val,fontSize:13}}>✕</button>}
             </div>}/>
             <Sub c="Footfall by hour — sector average, override if needed"/>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
+            <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:24}}>
               {FHOURS.map(h=>(
                 <div key={h} style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:"10px 8px"}}>
                   <div style={{fontSize:11,color:"#FFFFFF",marginBottom:6,textAlign:"center"}}>{h}</div>
@@ -2823,7 +2850,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <SH c="Spreadsheet View"/>
 
             {/* Export buttons */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
+            <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
               {/* Excel export */}
               <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
                 <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>📥 Export Excel</div>
@@ -3202,7 +3229,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* ── VERDICT HERO BLOCK ── */}
             <div style={{background:"#ffffff",border:"1px solid #CBD5E1",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
               <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
+              <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
                 {[
                   ["ROI",pct(C.roi),C.roi>=20?"#22C55E":C.roi>=10?"#F59E0B":"#EF4444"],
                   ["Net Profit (Yr 1)",fmt(C.nP),"#FFFFFF"],
@@ -3252,7 +3279,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:13,fontWeight:700,color:"#374151"}}>Five-Year Profit & Loss Forecast</div>
                 <div style={{fontSize:11,color:"#374151"}}>3% sales growth · 2% cost inflation</div>
               </div>
-              <div style={{overflowX:"auto"}}>
+              <div className="tbl-wrap" style={{overflowX:"auto"}}>
                 <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
                   <thead>
                     <tr style={{background:"#F8FAFC"}}>
@@ -3342,7 +3369,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   })()}
 
   {/* Investment Snapshot */}
-  <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8,marginBottom:16}}>
+  <div className="rg-5" style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8,marginBottom:16}}>
     {(()=>{
       const rr=risks?.filter(r=>r.rag==="red").length||0;
       return [
@@ -3361,7 +3388,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
 
   {/* Secondary KPIs */}
-  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,paddingBottom:14,marginBottom:14,borderBottom:"1px solid #CBD5E1"}}>
+  <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,paddingBottom:14,marginBottom:14,borderBottom:"1px solid #CBD5E1"}}>
     {[[fmt(C.upliftedAnn),"Annual Turnover"],[fmt(C.eb),"EBITDA"],[pct(C.blGP),"Gross Margin"],[sqft>0?`£${(C.upliftedWk/sqft).toFixed(2)}/wk`:"—","Sales / sq ft / wk"]].map(([v,l])=>(
       <div key={l} style={{borderLeft:"3px solid #15803D",paddingLeft:9}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600}}>{l}</div>
@@ -3416,7 +3443,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   {storePhoto&&<img src={storePhoto} alt="Site" style={{width:"100%",maxHeight:170,objectFit:"cover",borderRadius:5,border:"1px solid #CBD5E1",display:"block",marginBottom:14}}/>}
 
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
+  <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
     <div>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Property Details</div>
       {[[propName,"Address"],[postcode,"Postcode"],[location||"—","Location Type"],[sqft?sqft.toLocaleString()+" sq ft":"—","Net Sales Area"],[openHours?openHours+" hrs/day":"—","Opening Hours"],[uplift?uplift+"%":"—","Post-Refit Uplift"]].filter(([v])=>v&&v!=="—").map(([v,l])=>(
@@ -3440,7 +3467,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   {siteVisit&&Object.values(siteVisit).some(v=>v)&&(
     <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:6,padding:"12px 14px",marginBottom:12}}>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Site Visit Assessment</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginBottom:9}}>
+      <div className="rg-5" style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:6,marginBottom:9}}>
         {[["Visibility",siteVisit.visibility],["Access",siteVisit.access],["Parking",siteVisit.parking],["Fascia",siteVisit.fascia],["Competition",siteVisit.competition]].filter(([,v])=>v).map(([l,v])=>(
           <div key={l} style={{textAlign:"center",padding:"6px 4px",background:"#F1F5F9",borderRadius:4}}>
             <div style={{fontSize:8,color:"#64748B",textTransform:"uppercase",letterSpacing:".07em",marginBottom:2}}>{l}</div>
@@ -3479,7 +3506,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Market & Catchment Demographics</div>
   </div>
 
-  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:9,marginBottom:18}}>
+  <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:9,marginBottom:18}}>
     {[[(catchmentPop||0).toLocaleString(),"Catchment Pop"],[`£${(medianIncome||0).toLocaleString()}`,"Median Income"],[`${deprivation||0}/10`,"Deprivation"],[`${DS}/9`,"Demographic Score"]].map(([v,l])=>(
       <div key={l} style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:6,padding:"12px",textAlign:"center"}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:4}}>{l}</div>
@@ -3488,7 +3515,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     ))}
   </div>
 
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
+  <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
     <div>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Age Profile</div>
       {Object.entries(ageBands||{}).map(([band,p])=>(
@@ -3540,7 +3567,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Local Food & Drink Profile</div>
   </div>
-  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+  <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
     {foodProfile.summary&&<div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Catchment Food Profile</div>
       <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{foodProfile.summary}</div>
@@ -3621,7 +3648,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 6</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Recommended Symbol Group</div>
   </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:18}}>
+  <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:18}}>
     {C.symGroups.slice(0,3).map((sg,i)=>(
       <div key={sg.name} style={{border:`2px solid ${i===0?"#15803D":"#CBD5E1"}`,borderRadius:7,padding:"14px 14px",background:i===0?"#F0FDF4":"#fff"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:7}}>
@@ -3652,7 +3679,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance — Year 1</div>
   </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
+  <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
     {[[fmt(C.upliftedWk),"Weekly Turnover","post-refit"],[fmt(C.upliftedAnn),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",pct(C.blGP)+" margin"],[fmt(C.eb),"EBITDA",pct(C.eb/C.upliftedAnn*100)+" of sales"],[fmt(C.nP),"Net Profit",pct(C.nP/C.upliftedAnn*100)+" net margin"],[pct(C.roi),"ROI",C.pb?C.pb.toFixed(1)+" yr payback":""]].map(([v,l,s])=>(
       <div key={l} style={{border:"1px solid #CBD5E1",borderRadius:6,padding:"13px 14px",borderTop:"3px solid #15803D"}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
