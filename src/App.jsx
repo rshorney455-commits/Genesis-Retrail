@@ -3214,8 +3214,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Assessment header */}
             <div style={{background:"#F1F5F9",borderRadius:10,padding:"16px 20px",marginBottom:16}}>
               <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
-              <div style={{fontSize:18,fontWeight:800,color:"#fff",marginBottom:clientName?6:0}}>{propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
-              {clientName&&<div style={{fontSize:13,color:"#374151"}}>Prepared for <strong style={{color:"#fff"}}>{clientName}</strong></div>}
+              <div style={{fontSize:18,fontWeight:800,color:"#111827",marginBottom:clientName?6:0}}>{propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
+              {clientName&&<div style={{fontSize:13,color:"#374151"}}>Prepared for <strong style={{color:"#15803D"}}>{clientName}</strong></div>}
               {!clientName&&<div style={{fontSize:12,color:"#374151",fontStyle:"italic"}}>Add client name on the Cover tab</div>}
             </div>
 
