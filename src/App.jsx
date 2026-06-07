@@ -1928,6 +1928,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   };
 
   return (
+    <div style={{position:"fixed",top:0,left:0,right:0,height:60,background:"#ff0000",color:"#fff",zIndex:999999,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:900}}>BUILD TEST 12345</div>
     <ErrorBoundary>
     <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:step===9?"#ffffff":G.bg,minHeight:"100vh",color:G.text}}>
       <style>{`
