@@ -143,7 +143,7 @@ const G = {
 };
 
 const INP_manual = {width:"100%",padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
-const INP_auto   = {width:"100%",padding:"12px 14px",background:"#1E293B",border:"2px solid #1e3a8a",borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_auto   = {width:"100%",padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
   if(!text) return null;
@@ -1929,7 +1929,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <ErrorBoundary>
     <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:step===9?"#ffffff":G.bg,minHeight:"100vh",color:G.text}}>
       <style>{`
-        *{box-sizing:border-box;margin:0}
+        *{box-sizing:border-box;margin:0;max-width:100%}img,table{max-width:100%}
         input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
         input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(0,0,0,0.08)}
         select option{background:#fff;color:#0c1024}
