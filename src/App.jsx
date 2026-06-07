@@ -3213,36 +3213,67 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {/* ── RESULTS ── */}
         {step===9&&(
           <div style={{background:"#ffffff",minHeight:"100%",padding:"0 0 40px"}}>
-            {/* Assessment header */}
-            <div style={{background:"#F1F5F9",borderRadius:10,padding:"16px 20px",marginBottom:16}}>
-              <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
-              <div style={{fontSize:18,fontWeight:800,color:"#111827",marginBottom:clientName?6:0}}>{propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
-              {clientName&&<div style={{fontSize:13,color:"#374151"}}>Prepared for <strong style={{color:"#15803D"}}>{clientName}</strong></div>}
-              {!clientName&&<div style={{fontSize:12,color:"#374151",fontStyle:"italic"}}>Add client name on the Cover tab</div>}
-            </div>
+            {/* ── EXECUTIVE SUMMARY ── */}
+            <div style={{background:"#fff",border:"1px solid #CBD5E1",borderRadius:10,overflow:"hidden",marginBottom:16}}>
 
-            {/* ── VERDICT HERO BLOCK ── */}
-            <div style={{background:"#ffffff",border:"1px solid #CBD5E1",borderRadius:10,padding:"20px 24px",marginBottom:16}}>
-              <div style={{fontSize:9,letterSpacing:".25em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:12}}>Assessment Verdict</div>
-              <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
-                 {[
-                   ["ROI",pct(C.roi),C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"],
-                   ["Net Profit (Yr 1)",fmt(C.nP),C.nP>=0?"#111827":"#DC2626"],
-                   ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"—","#111827"],
-                   ["Investment",fmt(C.ti),"#111827"],
-                   ["Turnover (Yr 1)",fmt(C.upliftedAnn),"#111827"],
-                   ["EBITDA",fmt(C.eb),C.eb>=0?"#111827":"#DC2626"],
-                 ].map(([label,value,col])=>(
-                   <div key={label} style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:8,padding:"12px 14px"}}>
-                     <div style={{fontSize:9,letterSpacing:".12em",textTransform:"uppercase",color:"#64748B",marginBottom:4,fontWeight:600}}>{label}</div>
-                     <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
-                   </div>
-                 ))}
+              {/* Masthead */}
+              <div style={{background:"#1a3c2e",padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:8}}>
+                <div>
+                  <div style={{fontSize:9,letterSpacing:".2em",color:"rgba(201,151,28,0.9)",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Viability Assessment</div>
+                  <div style={{fontSize:20,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
+                  {clientName&&<div style={{fontSize:12,color:"rgba(255,255,255,0.7)",marginTop:4}}>Prepared for {clientName}</div>}
+                </div>
+                <div style={{textAlign:"right",fontSize:11,color:"rgba(255,255,255,0.6)"}}>
+                  <div>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+                  <div style={{marginTop:2}}>Richard Shorney · Genesis Retail</div>
+                </div>
               </div>
-              <div style={{borderTop:"1px solid #CBD5E1",paddingTop:12,fontSize:13,color:"#374151",lineHeight:1.7}}>
-                <strong style={{color:VRD?.col||"#15803D"}}>{VRD?.label||"Assessment incomplete"}</strong>
-                {VRD?.summary&&<span style={{color:"#374151"}}> — {VRD.summary}</span>}
+
+              {/* Verdict banner */}
+              {(()=>{
+                const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
+                const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
+                const col=isPass?"#16A34A":isCaution?"#B45309":"#DC2626";
+                const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+                return (
+                  <div style={{background:bg,borderBottom:"1px solid #E2E8F0",padding:"14px 20px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+                    <div style={{flex:"0 0 auto"}}>
+                      <div style={{fontSize:9,letterSpacing:".15em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Verdict</div>
+                      <div style={{fontSize:26,fontWeight:900,color:col,letterSpacing:"-.5px",lineHeight:1}}>{label}</div>
+                    </div>
+                    <div style={{fontSize:13,color:"#374151",lineHeight:1.6,flex:1,minWidth:200}}>{VRD?.summary||""}</div>
+                  </div>
+                );
+              })()}
+
+              {/* KPI strip — 6 cards */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)"}}>
+                {[
+                  ["ROI",pct(C.roi),C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"],
+                  ["Net Profit (Yr 1)",fmt(C.nP),C.nP>=0?"#111827":"#DC2626"],
+                  ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A","#111827"],
+                  ["Investment Required",fmt(C.ti),"#111827"],
+                  ["Annual Turnover",fmt(C.upliftedAnn),"#111827"],
+                  ["Risk Rating",(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW",(risks?.filter(r=>r.rag==="red").length||0)>2?"#DC2626":(risks?.filter(r=>r.rag==="red").length||0)>0?"#B45309":"#16A34A"],
+                ].map(([label,value,col],idx)=>(
+                  <div key={label} style={{padding:"13px 16px",borderRight:idx%3!==2?"1px solid #E2E8F0":"none",borderBottom:idx<3?"1px solid #E2E8F0":"none",borderTop:"none"}}>
+                    <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{label}</div>
+                    <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
+                  </div>
+                ))}
               </div>
+
+              {/* Consultant summary */}
+              <div style={{padding:"14px 20px",borderTop:"1px solid #E2E8F0"}}>
+                <div style={{fontSize:9,letterSpacing:".15em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>Consultant Summary</div>
+                <div style={{fontSize:13,color:"#374151",lineHeight:1.85}}>
+                  {commentary?.financial
+                    ? commentary.financial.split(".").slice(0,4).join(".")+"."
+                    : `${propName||"This site"}${postcode?` (${postcode})`:""}. The post-refit model projects annual turnover of ${fmt(C.upliftedAnn)} at ${pct(C.blGP)} gross margin, delivering EBITDA of ${fmt(C.eb)} and net profit of ${fmt(C.nP)}. ${C.roi>=20?"ROI of "+pct(C.roi)+" exceeds the Genesis Retail viability threshold.":C.roi>=10?"ROI of "+pct(C.roi)+" is below the preferred 20% threshold — proceed subject to cost review.":"ROI of "+pct(C.roi)+" does not meet the minimum threshold."} ${(risks?.filter(r=>r.rag==="red").length||0)>0?"The risk register flags "+(risks.filter(r=>r.rag==="red").length)+" material risk"+(risks.filter(r=>r.rag==="red").length!==1?"s":"")+", notably: "+risks.filter(r=>r.rag==="red")[0]?.title+".":"The risk profile is manageable."}`
+                  }
+                </div>
+              </div>
+
             </div>
 
             <div style={{marginBottom:16}}>
