@@ -324,7 +324,7 @@ function AISection({ prompt, label }) {
       setText(output);
       setDone(true);
     } catch(e) {
-      setText("");
+      setText("AI analysis currently unavailable. This feature will be available in a future update.");
       setDone(true);
     } finally {
       setLoading(false);
@@ -993,7 +993,7 @@ Current assessment state: ${JSON.stringify(appState, null, 2).slice(0, 3000)}`;
       });
       const data = await res.json();
       setAgentRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
-    } catch (e) { setAgentRes("Error — please try again."); }
+    } catch (e) { setAgentRes("AI analysis currently unavailable. This feature requires a server-side integration and will be available in a future update."); }
     finally { setAgentLoading(false); }
   };
 
@@ -1027,7 +1027,7 @@ For each finding give: Status · Issue · Recommended fix. Be specific.`;
       });
       const data = await res.json();
       setAuditRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
-    } catch (e) { setAuditRes("Error — please try again."); }
+    } catch (e) { setAuditRes("AI analysis currently unavailable. This feature requires a server-side integration and will be available in a future update."); }
     finally { setAuditLoading(false); }
   };
 
