@@ -3327,7 +3327,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 1 — EXECUTIVE SUMMARY
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
 
   {/* Masthead */}
   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:14,borderBottom:"3px solid #15803D",marginBottom:22}}>
@@ -3421,7 +3421,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{C.roi>=20?`This site exceeds Genesis Retail's 20% investment threshold. ROI of ${pct(C.roi)} and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback represent a strong commercial proposition. Subject to lease terms, this is a site worth proceeding with.`:C.roi>=10?`ROI of ${pct(C.roi)} is below the preferred 20% threshold. The site is financially viable but tight. Rent negotiation and confirmed trading uplift data are required before commitment.`:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold of 10%. The current assumptions do not support a lending or investment decision. Review occupancy costs and trading projections before resubmitting.`}</div>
   </div>
 
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · rshorney@genesisretail.uk · genesisretail.uk</span>
     <span>Confidential — {clientName||"Client Copy"} · Page 1</span>
   </div>
@@ -3430,7 +3430,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 2 — SITE OVERVIEW
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 2</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Site Overview</div>
@@ -3487,7 +3487,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{`A ${location||"convenience"} format of ${sqft||"—"} sq ft${sqft>=1500?" provides strong category depth and range breadth for a symbol group conversion":sqft>=800?" is a viable convenience format, capable of supporting a full symbol group range":" is a compact format requiring disciplined category prioritisation"}. ${rent?`At ${fmt(rent)} annual rent, occupancy costs represent ${C.upliftedAnn>0?pct(rent/C.upliftedAnn*100)+" of projected post-refit turnover.":""}`:""}${postcodeNotes?" "+postcodeNotes:""}`}</div>
   </div>
 
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Site Overview · Page 2</span>
   </div>
 </div>
@@ -3495,7 +3495,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 3 — MARKET & DEMOGRAPHICS
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 3</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Market & Catchment Demographics</div>
@@ -3548,7 +3548,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.demographics||areaNotes||`A catchment population of ${(catchmentPop||0).toLocaleString()} and deprivation score of ${deprivation||0}/10 indicate ${deprivation>=7?"a high-deprivation area where value, PMPs and essential grocery will over-index":deprivation>=4?"a mixed catchment requiring balanced ranging":"a lower-deprivation catchment supporting quality and premium ranging"}.`}</div>
   </div>
 
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Market & Demographics · Page 3</span>
   </div>
 </div>
@@ -3557,7 +3557,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 4 — LOCAL FOOD PROFILE
 ──────────────────────────────────────────────────────────────*/}
 {foodProfile&&(
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 4</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Local Food & Drink Profile</div>
@@ -3595,7 +3595,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.categories||"Range to this catchment, not the national average. Prioritise the categories that over-index here."}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Local Food Profile · Page 4</span>
   </div>
 </div>
@@ -3605,7 +3605,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 5 — COMPETITOR ANALYSIS
 ──────────────────────────────────────────────────────────────*/}
 {competitorList&&competitorList.length>0&&(
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
@@ -3632,7 +3632,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#B45309",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>Footfall & Spend Profile</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.footfall||`Daily footfall of ${(footfall||0).toLocaleString()} customers supports the trading projections. Average basket of £${avgBasket} is consistent with the assessed shopping mission profile.`}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Competitor Analysis · Page 5</span>
   </div>
 </div>
@@ -3642,7 +3642,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 6 — SYMBOL GROUP RECOMMENDATION
 ──────────────────────────────────────────────────────────────*/}
 {C.symGroups&&C.symGroups.length>0&&(
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 6</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Recommended Symbol Group</div>
@@ -3664,7 +3664,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.symbolGroup||`The scoring model has ranked these options based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria. The final decision should involve a formal conversation with the wholesaler about terms, ranging support and refit contribution.`}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Symbol Group · Page 6</span>
   </div>
 </div>
@@ -3674,7 +3674,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
    PAGE 7 — FINANCIAL PERFORMANCE
 ──────────────────────────────────────────────────────────────*/}
 <div style={{color:"#ff0000",fontWeight:800,fontSize:16,padding:"8px 12px",marginBottom:8}}>TEST BUILD 2026-06-08 11:00</div>
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance — Year 1</div>
@@ -3716,7 +3716,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.pl||`ROI of ${pct(C.roi)} on a total investment of ${fmt(C.ti)}. Net profit of ${fmt(C.nP)} gives a payback of ${C.pb?C.pb.toFixed(1)+" years":"N/A"}.`}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Financial Performance · Page 7</span>
   </div>
 </div>
@@ -3724,7 +3724,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 8 — 5-YEAR FORECAST
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 8</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>5-Year Financial Forecast</div>
@@ -3774,7 +3774,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means — Sensitivity</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.sensitivity||`The sensitivity matrix models ${sensitivityData?.flat().filter(c=>c.roi>=20).length||0} of 25 scenarios returning 20%+ ROI. ${(sensitivityData?.[2]?.[2]?.roi||0)>=20?"The base case exceeds the target threshold — the investment is robust across a wide range of trading scenarios.":"The base case is below the 20% target. The investment is sensitive to footfall and rent assumptions."}`}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>5-Year Forecast · Page 8</span>
   </div>
 </div>
@@ -3782,7 +3782,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 9 — RISK REGISTER
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 9</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Risk Register</div>
@@ -3803,7 +3803,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.risks||`${risks?.filter(r=>r.rag==="red").length||0} red risk${risks?.filter(r=>r.rag==="red").length!==1?"s":""} and ${risks?.filter(r=>r.rag==="amber").length||0} amber identified. ${risks?.filter(r=>r.rag==="red").length>2?"Material risks must be addressed before proceeding.":risks?.filter(r=>r.rag==="red").length>0?"One or more significant risks require attention before lease execution.":"Risk profile is manageable."}`}</div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Risk Register · Page 9</span>
   </div>
 </div>
@@ -3811,7 +3811,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 {/*──────────────────────────────────────────────────────────────
    PAGE 10 — INVESTMENT DECISION
 ──────────────────────────────────────────────────────────────*/}
-<div className="slide" style={{padding:"40px 48px",position:"relative",background:"#fff"}}>
+<div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:22}}>
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 10</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Investment Decision</div>
@@ -3846,7 +3846,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       <div style={{fontSize:8,color:"#94A3B8",marginTop:4,lineHeight:1.5}}>This report is prepared on the basis of information provided by the client and publicly available data. Genesis Retail Consultancy accepts no liability for decisions made solely on the basis of this assessment without independent professional advice.</div>
     </div>
   </div>
-  <div style={{position:"absolute",bottom:24,left:48,right:48,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · Confidential</span><span>Investment Decision · Page 10</span>
   </div>
 </div>
