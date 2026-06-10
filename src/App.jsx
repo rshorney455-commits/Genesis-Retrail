@@ -235,6 +235,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
 
     function initMap() {
       try {
+      console.log("[MAP] initMap lat="+lat+" lng="+lng+" competitors="+JSON.stringify((competitors||[]).map(c=>({name:c.name,lat:c.lat,lng:c.lng}))));
       if (mapInstance.current) { mapInstance.current.remove(); mapInstance.current = null; }
       const L = window.L;
       const map = L.map(mapRef.current).setView([lat, lng], 15);
@@ -263,6 +264,7 @@ function CompetitorMap({ lat, lng, competitors, existingStore, comparables }) {
 
       // Competitor markers
       (competitors || []).forEach((c, i) => {
+        if(!c.lat || !c.lng) return; // no coordinates
         const col = c.threat === "high" ? "#d62828" : c.threat === "medium" ? "#e07020" : "#2d55c8";
         const icon = L.divIcon({
           html: `<div style="background:${col};color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.25)">${i+1}</div>`,
@@ -2728,7 +2730,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     const threat = document.getElementById("mc-threat")?.value||"medium";
                     if(!name) return;
                     const distM = Math.round(parseFloat(dist)*1609);
-                    setCompetitorList(p=>[...p,{name,type,distance:dist+" miles",distM,threat,lat:mapLat,lng:mapLng}]);
+                    setCompetitorList(p=>{
+            const idx=p.length;
+            // Spread at 8 compass bearings so markers don't stack on site pin
+            const bearings=[[1,0],[0.7,0.7],[0,1],[-0.7,0.7],[-1,0],[-0.7,-0.7],[0,-1],[0.7,-0.7]];
+            const [dlat,dlng]=bearings[idx%8];
+            const offsetDeg=distM*0.01449; // 1 mile ≈ 0.01449 deg lat
+            return [...p,{name,type,distance:dist+" miles",distM,threat,
+              lat:mapLat+(dlat*offsetDeg),lng:mapLng+(dlng*offsetDeg*1.5)}];
+          });
                     if(document.getElementById("mc-name")) document.getElementById("mc-name").value="";
                     if(document.getElementById("mc-type")) document.getElementById("mc-type").value="";
                     if(document.getElementById("mc-dist")) document.getElementById("mc-dist").value="";
