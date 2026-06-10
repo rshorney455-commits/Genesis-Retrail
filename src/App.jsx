@@ -3299,7 +3299,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
 
-            {/* ── 5-YEAR P&L  —  screen view ── */}
+            {/* ── 5-YEAR P&L  -  screen view ── */}
             <div style={{background:"#fff",border:"1px solid #CBD5E1",borderRadius:12,overflow:"hidden",marginBottom:20}}>
               <div style={{borderBottom:"2px solid #15803D",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div style={{fontSize:13,fontWeight:700,color:"#374151"}}>Five-Year Profit & Loss Forecast</div>
@@ -3352,18 +3352,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
 
-            {/* COVER  —  new design: square photo, address, Genesis info, short summary */}
+            {/* COVER  -  new design: square photo, address, Genesis info, short summary */}
             <div ref={pdfRef} className="pdf-wrapper" style={{background:"#fff",fontFamily:"'Helvetica Neue',Arial,sans-serif",color:"#111827",lineHeight:1.6,fontSize:12}}>
 
 {/*──────────────────────────────────────────────────────────────
-   PAGE 1  —  EXECUTIVE SUMMARY
+   PAGE 1  -  EXECUTIVE SUMMARY
 ──────────────────────────────────────────────────────────────*/}
 <div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
 
   {/* Masthead */}
   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",paddingBottom:14,borderBottom:"3px solid #15803D",marginBottom:22}}>
     <div>
-      <div style={{fontSize:8,letterSpacing:".3em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:3}}>Genesis Retail  —  Site Viability Assessment</div>
+      <div style={{fontSize:8,letterSpacing:".3em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:3}}>Genesis Retail  -  Site Viability Assessment</div>
       <div style={{fontSize:22,fontWeight:700,color:"#111827",letterSpacing:"-.3px"}}>{propName||"Site Assessment"}</div>
       <div style={{fontSize:12,color:"#64748B",marginTop:2}}>{postcode}{location?` · ${location}`:""}</div>
     </div>
@@ -3374,7 +3374,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </div>
   </div>
 
-  {/* VERDICT  —  dominant */}
+  {/* VERDICT  -  dominant */}
   {(()=>{
     const isPass=C.roi>=20, isCaution=C.roi>=10&&C.roi<20, isFail=C.roi<10;
     const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
@@ -3415,7 +3415,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   {/* Secondary KPIs */}
   <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,paddingBottom:14,marginBottom:14,borderBottom:"1px solid #CBD5E1"}}>
-    {[[fmt(C.upliftedAnn),"Annual Turnover"],[fmt(C.eb),"EBITDA"],[pct(C.blGP),"Gross Margin"],[sqft>0?`£${(C.upliftedWk/sqft).toFixed(2)}/wk`:" — ","Sales / sq ft / wk"]].map(([v,l])=>(
+    {[[fmt(C.upliftedAnn),"Annual Turnover"],[fmt(C.eb),"EBITDA"],[pct(C.blGP),"Gross Margin"],[sqft>0?`£${(C.upliftedWk/sqft).toFixed(2)}/wk`:" - ","Sales / sq ft / wk"]].map(([v,l])=>(
       <div key={l} style={{borderLeft:"3px solid #15803D",paddingLeft:9}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600}}>{l}</div>
         <div style={{fontSize:16,fontWeight:700,color:"#111827"}}>{v}</div>
@@ -3459,7 +3459,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 </div>
 
 {/*──────────────────────────────────────────────────────────────
-   PAGE 2  —  SITE OVERVIEW
+   PAGE 2  -  SITE OVERVIEW
 ──────────────────────────────────────────────────────────────*/}
 <div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
@@ -3472,7 +3472,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18,marginBottom:16}}>
     <div>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Property Details</div>
-      {[[propName,"Address"],[postcode,"Postcode"],[location||" — ","Location Type"],[sqft?sqft.toLocaleString()+" sq ft":" — ","Net Sales Area"],[openHours?openHours+" hrs/day":" — ","Opening Hours"],[uplift?uplift+"%":" — ","Post-Refit Uplift"]].filter(([v])=>v&&v!==" — ").map(([v,l])=>(
+      {[[propName,"Address"],[postcode,"Postcode"],[location||" - ","Location Type"],[sqft?sqft.toLocaleString()+" sq ft":" - ","Net Sales Area"],[openHours?openHours+" hrs/day":" - ","Opening Hours"],[uplift?uplift+"%":" - ","Post-Refit Uplift"]].filter(([v])=>v&&v!==" - ").map(([v,l])=>(
         <div key={l} style={{display:"flex",borderBottom:"1px solid #F1F5F9",padding:"5px 0"}}>
           <div style={{width:140,fontSize:10,color:"#64748B",flexShrink:0}}>{l}</div>
           <div style={{fontSize:10,fontWeight:600,color:"#111827"}}>{v}</div>
@@ -3515,7 +3515,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
-    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{`A ${location||"convenience"} format of ${sqft||" — "} sq ft${sqft>=1500?" provides strong category depth and range breadth for a symbol group conversion":sqft>=800?" is a viable convenience format, capable of supporting a full symbol group range":" is a compact format requiring disciplined category prioritisation"}. ${rent?`At ${fmt(rent)} annual rent, occupancy costs represent ${C.upliftedAnn>0?pct(rent/C.upliftedAnn*100)+" of projected post-refit turnover.":""}`:""}${postcodeNotes?" "+postcodeNotes:""}`}</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{`At ${sqft||"—"} sq ft${location?` in a ${location} setting`:""}${rent?`, the rent of ${fmt(rent)} (${C.upliftedAnn>0?pct(rent/C.upliftedAnn*100)+" of post-refit turnover":""})`:""}${sqft>=1500?" supports a full symbol group range with strong category depth":sqft>=800?" is workable for a focused symbol group range":" requires disciplined category prioritisation to maximise sales density"}.${uplift>0?` A ${uplift}% trading uplift post-refit has been applied to the financial model.`:""}`}</div>
   </div>
 
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
@@ -3524,7 +3524,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 </div>
 
 {/*──────────────────────────────────────────────────────────────
-   PAGE 3  —  MARKET & DEMOGRAPHICS
+   PAGE 3  -  MARKET & DEMOGRAPHICS
 ──────────────────────────────────────────────────────────────*/}
 <div className="slide" style={{padding:"24px 20px",background:"#fff",borderBottom:"1px solid #E2E8F0",marginBottom:8}}>
   <div style={{borderBottom:"2px solid #15803D",paddingBottom:9,marginBottom:20}}>
@@ -3872,7 +3872,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       <div style={{gridColumn:"1/-1",background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"12px 16px",marginBottom:16}}>
         <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:7,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Bank & Lender Readiness</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"3px 16px",marginBottom:8}}>
-          {["Existing trading operation — reduces start-up risk","Historic turnover evidence supports projections","Occupancy costs represent a sustainable % of sales","Sensitivity analysis demonstrates downside resilience","Defined investment quantum and payback period","Clear recommendation with commercial rationale"].map((item,i)=>(
+          {["Existing trading operation - reduces start-up risk","Historic turnover evidence supports projections","Occupancy costs represent a sustainable % of sales","Sensitivity analysis demonstrates downside resilience","Defined investment quantum and payback period","Clear recommendation with commercial rationale"].map((item,i)=>(
             <div key={i} style={{display:"flex",gap:5,fontSize:9,color:"#374151",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
               <span style={{color:"#15803D",fontWeight:700,flexShrink:0}}>✓</span><span>{item}</span>
             </div>
