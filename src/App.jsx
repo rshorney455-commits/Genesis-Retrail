@@ -3868,6 +3868,19 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   )}
   <div style={{borderTop:"1px solid #CBD5E1",paddingTop:18,display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginTop:16}}>
     <div>
+      {/* Bank readiness */}
+      <div style={{gridColumn:"1/-1",background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"12px 16px",marginBottom:16}}>
+        <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:7,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Bank & Lender Readiness</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"3px 16px",marginBottom:8}}>
+          {["Existing trading operation — reduces start-up risk","Historic turnover evidence supports projections","Occupancy costs represent a sustainable % of sales","Sensitivity analysis demonstrates downside resilience","Defined investment quantum and payback period","Clear recommendation with commercial rationale"].map((item,i)=>(
+            <div key={i} style={{display:"flex",gap:5,fontSize:9,color:"#374151",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+              <span style={{color:"#15803D",fontWeight:700,flexShrink:0}}>✓</span><span>{item}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{fontSize:10,color:"#374151",lineHeight:1.6,borderTop:"1px solid #BBF7D0",paddingTop:6,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>The site demonstrates the characteristics of a commercially viable convenience retail investment. Subject to normal due diligence, the combination of existing trading history, projected profitability and manageable occupancy costs provides a credible basis for investment consideration.</div>
+      </div>
+
       <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>Richard Shorney</div>
       <div style={{fontSize:10,color:"#64748B"}}>Genesis Retail Consultancy</div>
       <div style={{fontSize:10,color:"#64748B"}}>rshorney@genesisretail.uk · genesisretail.uk · 07551 827907</div>
