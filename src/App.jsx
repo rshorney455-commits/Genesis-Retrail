@@ -3883,38 +3883,41 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
 {/* ── DISCLAIMER & COPYRIGHT ── */}
-<div className="slide" style={{padding:"40px 48px",background:"#fff",pageBreakBefore:"always"}}>
-  <div style={{borderBottom:"2px solid #1a3c2e",paddingBottom:10,marginBottom:28}}>
-    <div style={{fontSize:9,letterSpacing:".2em",color:"#1a3c2e",textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Important Notice</div>
-    <div style={{fontSize:18,fontWeight:700,color:"#111827",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Disclaimer & Terms of Use</div>
-  </div>
+<div style={{padding:"28px 48px 32px",background:"#fff",borderTop:"1px solid #E2E8F0"}}>
 
-  <div style={{fontSize:12,color:"#374151",lineHeight:1.9,marginBottom:24,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <p style={{marginBottom:14}}>This assessment has been prepared using information supplied by the client, publicly available data sources and Genesis Retail commercial assumptions. Financial forecasts, turnover projections, profitability estimates and return on investment calculations are <strong>indicative only</strong> and should not be interpreted as guarantees of future trading performance.</p>
-    <p style={{marginBottom:14}}>Prospective operators, landlords, lenders and investors should undertake their own independent due diligence and seek professional advice before making investment or lending decisions. Genesis Retail Ltd accepts no liability for commercial decisions taken solely on the basis of this report.</p>
-    <p style={{marginBottom:14}}>Trading projections are based on the assumptions, catchment data and financial parameters set out in this report. Actual trading performance will be influenced by factors including but not limited to: operator capability, store execution, competitor response, macro-economic conditions and lease terms. Past performance of comparable stores is not a guarantee of future performance.</p>
-    <p>This report has been prepared for the sole use of the named client. It should not be disclosed to or relied upon by any third party without the prior written consent of Genesis Retail Ltd.</p>
-  </div>
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:32,marginBottom:20}}>
 
-  <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:6,padding:"20px 24px",marginBottom:24,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
-    <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Intellectual Property</div>
-    <div style={{fontSize:11,color:"#374151",lineHeight:1.8}}>The Genesis Retail assessment methodology, financial models, scoring frameworks, sector benchmarks, report structure and recommendations constitute intellectual property belonging exclusively to Genesis Retail Ltd. No part of this report may be reproduced, copied, distributed, published or transmitted without the prior written consent of Genesis Retail Ltd.</div>
-  </div>
-
-  <div style={{borderTop:"2px solid #1a3c2e",paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"flex-end",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+    {/* Important Notice */}
     <div>
-      <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>Richard Shorney</div>
-      <div style={{fontSize:11,color:"#64748B"}}>Genesis Retail Consultancy</div>
-      <div style={{fontSize:11,color:"#64748B"}}>rshorney@genesisretail.uk · genesisretail.uk</div>
-      <div style={{fontSize:11,color:"#64748B"}}>07551 827907</div>
+      <div style={{fontSize:10,fontWeight:800,color:"#111827",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif",borderBottom:"1.5px solid #1a3c2e",paddingBottom:6}}>Important Notice</div>
+      <div style={{fontSize:10,color:"#374151",lineHeight:1.75,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+        Financial forecasts, turnover projections and profitability estimates are indicative only and should not be interpreted as guarantees of future trading performance. Prospective operators, landlords, lenders and investors should undertake independent due diligence and seek professional advice before making investment decisions. Genesis Retail Ltd accepts no liability for commercial decisions taken solely on the basis of this report.
+      </div>
     </div>
-    <div style={{textAlign:"right"}}>
-      <div style={{fontSize:12,fontWeight:700,color:"#111827"}}>© 2026 Genesis Retail Ltd. All Rights Reserved.</div>
-      <div style={{fontSize:10,color:"#64748B",marginTop:4}}>Confidential & Commercially Sensitive</div>
-      {clientName&&<div style={{fontSize:10,color:"#64748B"}}>Prepared Exclusively For {clientName}</div>}
-      <div style={{fontSize:10,color:"#64748B",marginTop:4}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+
+    {/* Copyright & IP */}
+    <div>
+      <div style={{fontSize:10,fontWeight:800,color:"#111827",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,fontFamily:"'Helvetica Neue',Arial,sans-serif",borderBottom:"1.5px solid #1a3c2e",paddingBottom:6}}>Copyright & Intellectual Property</div>
+      <div style={{fontSize:10,color:"#374151",lineHeight:1.75,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+        © 2026 Genesis Retail Ltd. All Rights Reserved. This report is supplied solely for the use of the named recipient and may not be reproduced, copied or distributed without prior written consent. The Genesis Retail assessment methodology, financial models, scoring frameworks and report structure constitute intellectual property belonging exclusively to Genesis Retail Ltd.
+      </div>
+    </div>
+
+  </div>
+
+  {/* Footer strip */}
+  <div style={{borderTop:"1px solid #E2E8F0",paddingTop:12,display:"flex",justifyContent:"space-between",alignItems:"center",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+    <div style={{fontSize:9,color:"#64748B"}}>
+      <strong style={{color:"#111827"}}>Richard Shorney · Genesis Retail</strong>
+      {" · "}rshorney@genesisretail.uk{" · "}genesisretail.uk{" · "}07551 827907
+    </div>
+    <div style={{textAlign:"right",fontSize:9,color:"#64748B"}}>
+      <div>Confidential & Commercially Sensitive</div>
+      {clientName&&<div>Prepared Exclusively For {clientName}</div>}
+      <div>© Genesis Retail Ltd 2026</div>
     </div>
   </div>
+
 </div>
 
 </div>{/* end pdfRef */}
