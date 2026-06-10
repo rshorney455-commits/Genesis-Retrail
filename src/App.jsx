@@ -1939,6 +1939,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         select option{background:#fff;color:#0c1024}
         textarea{resize:vertical}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
+        @page{margin:10mm;size:A4}
         @media print{
           .no-print{display:none!important}
           body,html{background:#fff!important;margin:0;padding:0}
