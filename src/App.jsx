@@ -3276,7 +3276,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </div>
 
             <div style={{marginBottom:16}}>
-              <button onClick={()=>window.print()} style={{width:"100%",padding:15,background:"#1a3c2e",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
+              <button className="no-print" onClick={()=>window.print()} style={{width:"100%",padding:15,background:"#1a3c2e",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
                 {pdfLoading?"⏳ Generating…":"🖨 Print / Save as PDF"}
               </button>
               <p style={{fontSize:12,color:"#111827",marginTop:8,textAlign:"center"}}>Downloads a full A4 PDF directly to your device.</p>
@@ -3453,7 +3453,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>Genesis Retail · rshorney@genesisretail.uk · genesisretail.uk</span>
-    <span>Confidential — {clientName||"Client Copy"} · Page 1</span>
+    <span>Prepared Exclusively For {clientName||"Client"} · Confidential · Page 1</span>
   </div>
 </div>
 
@@ -3518,7 +3518,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
 
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Site Overview · Page 2</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Site Overview · Page 2</span>
   </div>
 </div>
 
@@ -3579,7 +3579,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
 
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Market & Demographics · Page 3</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Market & Demographics · Page 3</span>
   </div>
 </div>
 
@@ -3626,7 +3626,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.categories||"Range to this catchment, not the national average. Prioritise the categories that over-index here."}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Local Food Profile · Page 4</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Local Food Profile · Page 4</span>
   </div>
 </div>
 )}
@@ -3664,7 +3664,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.footfall||`Daily footfall of ${(footfall||0).toLocaleString()} customers supports the trading projections. Average basket of £${avgBasket} is consistent with the assessed shopping mission profile.`}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Competitor Analysis · Page 5</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Competitor Analysis · Page 5</span>
   </div>
 </div>
 )}
@@ -3696,7 +3696,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.symbolGroup||`The scoring model has ranked these options based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria. The final decision should involve a formal conversation with the wholesaler about terms, ranging support and refit contribution.`}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Symbol Group · Page 6</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Symbol Group · Page 6</span>
   </div>
 </div>
 )}
@@ -3747,7 +3747,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.pl||`ROI of ${pct(C.roi)} on a total investment of ${fmt(C.ti)}. Net profit of ${fmt(C.nP)} gives a payback of ${C.pb?C.pb.toFixed(1)+" years":"N/A"}.`}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Financial Performance · Page 7</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Financial Performance · Page 7</span>
   </div>
 </div>
 
@@ -3805,7 +3805,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.sensitivity||`The sensitivity matrix models ${sensitivityData?.flat().filter(c=>c.roi>=20).length||0} of 25 scenarios returning 20%+ ROI. ${(sensitivityData?.[2]?.[2]?.roi||0)>=20?"The base case exceeds the target threshold — the investment is robust across a wide range of trading scenarios.":"The base case is below the 20% target. The investment is sensitive to footfall and rent assumptions."}`}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>5-Year Forecast · Page 8</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>5-Year Forecast · Page 8</span>
   </div>
 </div>
 
@@ -3834,7 +3834,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.risks||`${risks?.filter(r=>r.rag==="red").length||0} red risk${risks?.filter(r=>r.rag==="red").length!==1?"s":""} and ${risks?.filter(r=>r.rag==="amber").length||0} amber identified. ${risks?.filter(r=>r.rag==="red").length>2?"Material risks must be addressed before proceeding.":risks?.filter(r=>r.rag==="red").length>0?"One or more significant risks require attention before lease execution.":"Risk profile is manageable."}`}</div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Risk Register · Page 9</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Risk Register · Page 9</span>
   </div>
 </div>
 
@@ -3877,7 +3877,43 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
-    <span>Genesis Retail · Confidential</span><span>Investment Decision · Page 10</span>
+    <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Investment Decision · Page 10</span>
+  </div>
+</div>
+
+
+{/* ── DISCLAIMER & COPYRIGHT ── */}
+<div className="slide" style={{padding:"40px 48px",background:"#fff",pageBreakBefore:"always"}}>
+  <div style={{borderBottom:"2px solid #1a3c2e",paddingBottom:10,marginBottom:28}}>
+    <div style={{fontSize:9,letterSpacing:".2em",color:"#1a3c2e",textTransform:"uppercase",fontWeight:700,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Important Notice</div>
+    <div style={{fontSize:18,fontWeight:700,color:"#111827",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Disclaimer & Terms of Use</div>
+  </div>
+
+  <div style={{fontSize:12,color:"#374151",lineHeight:1.9,marginBottom:24,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+    <p style={{marginBottom:14}}>This assessment has been prepared using information supplied by the client, publicly available data sources and Genesis Retail commercial assumptions. Financial forecasts, turnover projections, profitability estimates and return on investment calculations are <strong>indicative only</strong> and should not be interpreted as guarantees of future trading performance.</p>
+    <p style={{marginBottom:14}}>Prospective operators, landlords, lenders and investors should undertake their own independent due diligence and seek professional advice before making investment or lending decisions. Genesis Retail Ltd accepts no liability for commercial decisions taken solely on the basis of this report.</p>
+    <p style={{marginBottom:14}}>Trading projections are based on the assumptions, catchment data and financial parameters set out in this report. Actual trading performance will be influenced by factors including but not limited to: operator capability, store execution, competitor response, macro-economic conditions and lease terms. Past performance of comparable stores is not a guarantee of future performance.</p>
+    <p>This report has been prepared for the sole use of the named client. It should not be disclosed to or relied upon by any third party without the prior written consent of Genesis Retail Ltd.</p>
+  </div>
+
+  <div style={{background:"#F8FAFC",border:"1px solid #CBD5E1",borderRadius:6,padding:"20px 24px",marginBottom:24,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+    <div style={{fontSize:10,fontWeight:700,color:"#1a3c2e",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Intellectual Property</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.8}}>The Genesis Retail assessment methodology, financial models, scoring frameworks, sector benchmarks, report structure and recommendations constitute intellectual property belonging exclusively to Genesis Retail Ltd. No part of this report may be reproduced, copied, distributed, published or transmitted without the prior written consent of Genesis Retail Ltd.</div>
+  </div>
+
+  <div style={{borderTop:"2px solid #1a3c2e",paddingTop:20,display:"flex",justifyContent:"space-between",alignItems:"flex-end",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+    <div>
+      <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>Richard Shorney</div>
+      <div style={{fontSize:11,color:"#64748B"}}>Genesis Retail Consultancy</div>
+      <div style={{fontSize:11,color:"#64748B"}}>rshorney@genesisretail.uk · genesisretail.uk</div>
+      <div style={{fontSize:11,color:"#64748B"}}>07551 827907</div>
+    </div>
+    <div style={{textAlign:"right"}}>
+      <div style={{fontSize:12,fontWeight:700,color:"#111827"}}>© 2026 Genesis Retail Ltd. All Rights Reserved.</div>
+      <div style={{fontSize:10,color:"#64748B",marginTop:4}}>Confidential & Commercially Sensitive</div>
+      {clientName&&<div style={{fontSize:10,color:"#64748B"}}>Prepared Exclusively For {clientName}</div>}
+      <div style={{fontSize:10,color:"#64748B",marginTop:4}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
+    </div>
   </div>
 </div>
 
