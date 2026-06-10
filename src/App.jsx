@@ -3268,8 +3268,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:9,letterSpacing:".15em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>Consultant Summary</div>
                 <div style={{fontSize:13,color:"#374151",lineHeight:1.85}}>
                   {commentary?.financial
-                    ? commentary.financial.split(".").slice(0,4).join(".")+"."
-                    : `${propName||"This site"}${postcode?` (${postcode})`:""}. The post-refit model projects annual turnover of ${fmt(C.upliftedAnn)} at ${pct(C.blGP)} gross margin, delivering EBITDA of ${fmt(C.eb)} and net profit of ${fmt(C.nP)}. ${C.roi>=20?"ROI of "+pct(C.roi)+" exceeds the Genesis Retail viability threshold.":C.roi>=10?"ROI of "+pct(C.roi)+" is below the preferred 20% threshold  —  proceed subject to cost review.":"ROI of "+pct(C.roi)+" does not meet the minimum threshold."} ${(risks?.filter(r=>r.rag==="red").length||0)>0?"The risk register flags "+(risks.filter(r=>r.rag==="red").length)+" material risk"+(risks.filter(r=>r.rag==="red").length!==1?"s":"")+", notably: "+risks.filter(r=>r.rag==="red")[0]?.title+".":"The risk profile is manageable."}`
+                    ? commentary.financial.split(".").slice(0,3).join(".")+"."
+                    : `${propName||"The subject site"}${postcode?` at ${postcode}`:""}. Post-refit annual turnover projects to ${fmt(C.upliftedAnn)} at ${pct(C.blGP)} gross margin, delivering EBITDA of ${fmt(C.eb)} and net profit of ${fmt(C.nP)}. ${C.roi>=20?"ROI of "+pct(C.roi)+" meets the Genesis Retail viability threshold.":C.roi>=10?"ROI of "+pct(C.roi)+" is below the preferred 20% threshold.":"ROI of "+pct(C.roi)+" does not meet the minimum threshold."}`
                   }
                 </div>
               </div>
@@ -3443,7 +3443,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   {/* Executive summary */}
   <div style={{fontSize:11,color:"#374151",lineHeight:1.8,marginBottom:14}}>
     <strong style={{color:"#15803D"}}>Executive Summary. </strong>
-    {storeNote||`This assessment covers the proposed convenience retail operation at ${propName||"the subject site"}${postcode?`, ${postcode}`:""}.`}{" "}{commentary?.financial?.split(".")[0]}.
+    {commentary?.financial?.split(".").slice(0,2).join(".")+"." || `${propName||"The subject site"}${postcode?` at ${postcode}`:""}${location?` is a ${location} convenience retail operation`:""}. The financial model projects post-refit annual turnover of ${fmt(C.upliftedAnn)} at a gross margin of ${pct(C.blGP)}.`}
   </div>
 
   {/* What This Means */}
