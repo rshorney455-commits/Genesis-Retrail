@@ -585,7 +585,7 @@ function PPTXExportButton(props) {
     try {
       // Compute derived financials to send
       const {propName,postcode,location,sqft,footfall,avgBasket,uplift,rent,rates,staffPct,
-             utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,
+             computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,
              catchmentPop,medianIncome,deprivation,popDensity,householdSz,
              competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,
              C,VRD,yr5,risks} = props;
@@ -1434,7 +1434,7 @@ export default function App(){
       return {wk:0,ann:0,upliftedWk:0,upliftedAnn:0,blGP:25,annGP:0,stf:0,annC:0,ti:0,mp:0,af:0,eb:0,nP:0,roi:0,pb:null,spf:0,upliftedSpf:0,pen:0,yr1Q:[],priceIndex:4,refitCost:0,stockCost:0,
         symGroups:[{name:"Nisa",score:8,desc:"Recommended"},{name:"Spar",score:7,desc:""},{name:"Budgens",score:6,desc:""},{name:"Costcutter",score:4,desc:""}]};
     }
-  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
+  },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
     if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:"Strong commercial viability. ROI meets the Genesis Retail investment threshold."};
@@ -1511,7 +1511,7 @@ export default function App(){
     const tc=(rent+rates+computedUtilities+otherCosts)*cg+stf2;
     const eb=gp-tc,fin=yr<=financeYears?C.af:0,np=eb-fin;
     return {yr,s,gp,stf2,tc,eb,fin,np};
-  }),[C,staffPct,rent,rates,utilities,otherCosts,financeYears]);
+  }),[C,staffPct,rent,rates,computedUtilities,otherCosts,financeYears]);
 
   const cumNp=yr=>yr5.slice(0,yr).reduce((a,r)=>a+r.np,0);
 
@@ -1541,7 +1541,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
-    rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
+    rent,rates,staffPct,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
     cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,
     spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,
     traffic,fhour,competitors,nearestComp,parking,
@@ -1549,7 +1549,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     competitorList,planningApps,mapLat,mapLng,
     comparables,foodProfile,existingStore,siteVisit,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,rent,rates,staffPct,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile]);
 
   const saveAssessment = useCallback(()=>{
     try {
@@ -1774,7 +1774,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         return {fp,rp,roi:roi2,np:np2};
       });
     });
-  },[footfall,rent,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
+  },[footfall,rent,avgBasket,uplift,C,staffPct,rates,computedUtilities,otherCosts]);
   // ── Dynamic commentary  —  bank-grade, human-written tone ──────────────────────
   const commentary = useMemo(()=>{
     const topCat = [...cats].sort((a,b)=>b.mix-a.mix)[0];
@@ -1806,7 +1806,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
       financial: [
         `Post-refit, the store is projected to turn over ${fmt(C.upliftedWk)} per week - ${fmt(C.upliftedAnn)} annually. This is built on a current base of ${fmt(C.wk)}/week, with a ${uplift}% uplift applied to reflect the larger unit, improved format, extended range and the trading benefit of symbol group affiliation.`,
-        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24-26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24-26%."}. After all costs - rent, rates, staff, utilities and finance - the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
+        `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24-26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24-26%."}. After all costs - rent, rates, staff, computedUtilities and finance - the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
         `The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} is ${paybackVerdict} - ${C.pb&&C.pb<=4?"well inside the 4-year benchmark that lenders and operators look for in convenience retail.":C.pb&&C.pb<=6?"within the 4-6 year range generally considered acceptable for this type of investment.":"above the 6-year marker. This does not make the investment unviable, but it does mean the operator will need to be confident in the trading projections before committing."}`,
         `Sales density of £${(C.upliftedSpf||0).toFixed(2)} per square foot per week is ${spfVerdict} of £16-20. ${C.upliftedSpf<16?"Improving this figure should be a priority - a broader chilled and food to go range is the most reliable way to drive sales per square foot in a convenience store of this type.":"This is a credible figure and consistent with well-run stores in similar locations."}`
       ].join(" "),
@@ -1879,7 +1879,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
       pl: [
         `The profit and loss account is built on post refit annual revenue of ${fmt(C.upliftedAnn)}, with a cost of goods of ${fmt(Math.round(C.upliftedAnn*(1-C.blGP/100)))} - leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin.`,
-        `Total operating costs - rent, rates, staff, utilities and other costs - come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The business is generating sufficient gross profit to cover these costs and service the loan, but the headroom is limited. Any underperformance on sales or an unexpected cost increase - a rates revaluation, a rent review, an equipment failure - would have a disproportionate impact on the bottom line. The operator should stress-test the cost base carefully before proceeding.":totalCostRatio>65?"This is within the expected range for a convenience store of this type, but the operator should be conscious that there is not a great deal of room to absorb cost shocks. Tightly managed operations with a focus on rota efficiency and energy costs will be important.":"This is well controlled and leaves healthy headroom for profit delivery. The business can absorb a reasonable degree of cost variation without dropping below viability."}`,
+        `Total operating costs - rent, rates, staff, computedUtilities and other costs - come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The business is generating sufficient gross profit to cover these costs and service the loan, but the headroom is limited. Any underperformance on sales or an unexpected cost increase - a rates revaluation, a rent review, an equipment failure - would have a disproportionate impact on the bottom line. The operator should stress-test the cost base carefully before proceeding.":totalCostRatio>65?"This is within the expected range for a convenience store of this type, but the operator should be conscious that there is not a great deal of room to absorb cost shocks. Tightly managed operations with a focus on rota efficiency and energy costs will be important.":"This is well controlled and leaves healthy headroom for profit delivery. The business can absorb a reasonable degree of cost variation without dropping below viability."}`,
         `Staff costs at ${pct(staffRatio)} of sales ${staffRatio>12?"are above the 9-12% sector norm. This should be reviewed - either the staffing model has been set above what the projected turnover justifies, or the store relies heavily on higher-cost staff. Both are worth addressing before the refit completes.":staffRatio<9?"are lean. This is achievable in a well-run owner-operated store, but the operator should be confident the store can be covered safely and compliantly at this level.":"are within the 9-12% sector norm and do not raise any concerns."}`,
         `EBITDA - the trading profit before finance - is ${fmt(C.eb)}, representing ${pct(ebitdaMargin)} of sales. ${ebitdaMargin>=12?"This is a strong EBITDA margin for a convenience store and gives the business a solid platform to service the finance and still deliver meaningful net profit.":ebitdaMargin>=8?"This is at the lower end of what Genesis Retail would consider healthy - sufficient to service the loan comfortably, but without significant surplus.":ebitdaMargin>=5?"EBITDA at this level covers the finance charge but leaves limited buffer. The business needs to trade to plan; there is not much room for error.":"EBITDA is below the 8% minimum threshold Genesis Retail applies to viable convenience retail investments. The cost base or the trading projections - or both - need to be reviewed before this assessment can support a lending application."}`
       ].join(" "),
@@ -1907,7 +1907,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       ].join(" "),
 
     };
-  },[C,cats,uplift,rent,rates,staffPct,utilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,DS]);
+  },[C,cats,uplift,rent,rates,staffPct,computedUtilities,otherCosts,risks,competitorList,nearestComp,planningApps,footfall,avgBasket,catchmentPop,medianIncome,deprivation,ageBands,employment,housing,spendBands,missions,fhour,financeYears,yr5,sensitivityData,DS]);
 
 
   // ── Max affordable rent (Lease Calculator) ──────────────────────────────────
@@ -1919,9 +1919,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     const stf2 = ann2*(staffPct/100);
     // net = gp - (rent + rates + stf + utils + other) - finance = targetRoi/100 * ti
     // rent = gp - rates - stf - utils - other - finance - targetRoi*ti/100
-    const maxR = gp2 - rates - stf2 - utilities - otherCosts - C.af - (targetRoi/100)*C.ti;
+    const maxR = gp2 - rates - stf2 - computedUtilities - otherCosts - C.af - (targetRoi/100)*C.ti;
     return Math.max(0, maxR);
-  },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts,targetRoi]);
+  },[footfall,avgBasket,uplift,C,staffPct,rates,computedUtilities,otherCosts,targetRoi]);
 
   const rentSensitivity = useMemo(()=>{
     return [5,10,15,18,20,25,30].map(tgt=>{
@@ -1929,10 +1929,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       const ann2 = wk2*52;
       const gp2  = ann2*(C.blGP/100);
       const stf2 = ann2*(staffPct/100);
-      const maxR = gp2 - rates - stf2 - utilities - otherCosts - C.af - (tgt/100)*C.ti;
+      const maxR = gp2 - rates - stf2 - computedUtilities - otherCosts - C.af - (tgt/100)*C.ti;
       return {tgt, maxR:Math.max(0,maxR)};
     });
-  },[footfall,avgBasket,uplift,C,staffPct,rates,utilities,otherCosts]);
+  },[footfall,avgBasket,uplift,C,staffPct,rates,computedUtilities,otherCosts]);
 
   const generatePDF = async () => {
     if(!pdfRef.current) return;
@@ -2427,7 +2427,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <span style={{fontSize:8,background:"rgba(199,208,213,0.15)",color:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>MODEL ASSUMPTION</span>
                 </div>
                 <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={utilities} onFocus={e=>e.target.select()} onChange={e=>setUtilities(e.target.value===""?0:+e.target.value)}/>
-                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(utilities/C.ann*100)+" of projected sales":""} · Sector average</div>
+                <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(computedUtilities/C.ann*100)+" of projected sales":""} · Sector average</div>
               </div>
 
               {/* Other Costs */}
@@ -2991,7 +2991,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       XLSX.utils.book_append_sheet(wb, ws1, "Summary");
 
                       const yr5labels = ["Sales Revenue","Cost of Goods","GROSS PROFIT","","Rent","Business Rates","Staff & Wages","Utilities","Other Costs","TOTAL OP COSTS","","EBITDA","","Finance Cost","","NET PROFIT","","CUMULATIVE PROFIT"];
-                      const yr5x = yr5.map((r,i)=>({...r,cogs:r.s-r.gp,rent_:rent*Math.pow(1.02,i),rates_:rates*Math.pow(1.02,i),stf_:r.stf2,utils_:utilities*Math.pow(1.02,i),other_:otherCosts*Math.pow(1.02,i),cum:yr5.slice(0,i+1).reduce((a,x)=>a+x.np,0)}));
+                      const yr5x = yr5.map((r,i)=>({...r,cogs:r.s-r.gp,rent_:rent*Math.pow(1.02,i),rates_:rates*Math.pow(1.02,i),stf_:r.stf2,utils_:computedUtilities*Math.pow(1.02,i),other_:otherCosts*Math.pow(1.02,i),cum:yr5.slice(0,i+1).reduce((a,x)=>a+x.np,0)}));
                       const plRows = [["5-YEAR P&L - "+(propName||"Assessment"),"","","","","",""],["",..."Year 1,Year 2,Year 3,Year 4,Year 5".split(","),"5-Yr Total"]];
                       const plKeys = ["s","cogs","gp",null,"rent_","rates_","stf_","utils_","other_","tc",null,"eb",null,"fin",null,"np",null,"cum"];
                       plKeys.forEach((k,i)=>{ if(!k){plRows.push(["","","","","","",""]);return;} const tot=["cum"].includes(k)?"":yr5x.reduce((a,r)=>a+(r[k]||0),0); plRows.push([yr5labels[i],...yr5x.map(r=>r[k]||0),tot]); });
@@ -3007,7 +3007,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["GROSS PROFIT",...months.map(()=>ann1*(C.blGP/100)/12),ann1*(C.blGP/100)],
                         ["Rent",...months.map(()=>-rent/12),-rent],
                         ["Staff",...months.map(()=>-(ann1*staffPct/100)/12),-(ann1*staffPct/100)],
-                        ["Utilities",...months.map(()=>-utilities/12),-utilities],
+                        ["Utilities",...months.map(()=>-computedUtilities/12),-utilities],
                         ["Other",...months.map(()=>-otherCosts/12),-otherCosts],
                         ["Loan Repayment",...months.map(()=>-C.mp),-C.mp*12],
                         ["NET CASHFLOW",...months.map(()=>mNet),mNet*12],
@@ -3047,7 +3047,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <PPTXExportButton
                   propName={propName} postcode={postcode} location={location}
                   sqft={sqft} footfall={footfall} avgBasket={avgBasket} uplift={uplift}
-                  rent={rent} rates={rates} staffPct={staffPct} utilities={utilities} otherCosts={otherCosts}
+                  rent={rent} rates={rates} staffPct={staffPct} computedUtilities={computedUtilities} otherCosts={otherCosts}
                   refitCost={refitCost} stockCost={stockCost} financeRate={financeRate} financeYears={financeYears}
                   cats={cats} ageBands={ageBands} catchmentPop={catchmentPop} medianIncome={medianIncome}
                   deprivation={deprivation} popDensity={popDensity} householdSz={householdSz}
@@ -3076,7 +3076,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 cogs:  r.s-r.gp,
                 rent_:  rent*Math.pow(1.02,i),
                 rates_: rates*Math.pow(1.02,i),
-                utils_: utilities*Math.pow(1.02,i),
+                utils_: computedUtilities*Math.pow(1.02,i),
                 other_: otherCosts*Math.pow(1.02,i),
                 cum:   yr5.slice(0,i+1).reduce((a,x)=>a+x.np,0),
                 gm:    r.gp/r.s*100,
@@ -3166,7 +3166,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             const mRent   = -rent/12;
                             const mRates  = -rates/12;
                             const mStaff  = -(ann1*staffPct/100)/12;
-                            const mUtils  = -utilities/12;
+                            const mUtils  = -computedUtilities/12;
                             const mOther  = -otherCosts/12;
                             const mFin    = -C.mp;
                             const mTotOut = mRent+mRates+mStaff+mUtils+mOther+mFin;
@@ -3577,7 +3577,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </div>
     <div>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:9}}>Cost Assumptions</div>
-      {[[fmt(rent),"Annual Rent"],[fmt(rates),"Business Rates"],[staffPct+"%","Staff Cost %"],[fmt(utilities),"Utilities"],[fmt(otherCosts),"Other Costs"],[fmt(refitCost),"Refit Budget"],[fmt(stockCost),"Opening Stock"]].map(([v,l])=>(
+      {[[fmt(rent),"Annual Rent"],[fmt(rates),"Business Rates"],[staffPct+"%","Staff Cost %"],[fmt(computedUtilities),"Utilities"],[fmt(otherCosts),"Other Costs"],[fmt(refitCost),"Refit Budget"],[fmt(stockCost),"Opening Stock"]].map(([v,l])=>(
         <div key={l} style={{display:"flex",borderBottom:"1px solid #F1F5F9",padding:"5px 0"}}>
           <div style={{width:140,fontSize:10,color:"#64748B",flexShrink:0}}>{l}</div>
           <div style={{fontSize:10,fontWeight:600,color:"#111827"}}>{v}</div>
