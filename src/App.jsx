@@ -3966,7 +3966,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
     const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
     const col=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
-    return(
+    return(<>
       <div style={{background:bg,border:`2.5px solid ${col}`,borderRadius:8,padding:"26px 30px",marginBottom:22,textAlign:"center"}}>
         <div style={{fontSize:9,letterSpacing:".22em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:7}}>Genesis Retail Recommendation</div>
         <div style={{fontSize:44,fontWeight:900,color:col,letterSpacing:"-1.5px",lineHeight:1,marginBottom:10}}>{label}</div>
@@ -3985,7 +3985,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           </div>
         ))}
       </div>
-    );
+    </>);
   })()}
   {refitCommentary&&(
     <div style={{marginBottom:18}}>
