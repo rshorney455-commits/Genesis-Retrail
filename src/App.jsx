@@ -1437,8 +1437,8 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:`ROI of ${pct(C.roi)} exceeds Genesis Retail's investment threshold. Payback achieved within ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years.`};
-    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:`ROI of ${pct(C.roi)} is below the preferred 20% threshold. Reduce occupancy costs or confirm trading uplift before committing.`};
+    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria exceeded.`};
+    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
     if(C.roi>=0)  return {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
     return              {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
   },[C.roi]);
@@ -2352,11 +2352,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             </select>
           </Fld>
         </div>
-        <div style={{background:"rgba(21,128,61,0.06)",border:"1px solid rgba(21,128,61,0.2)",borderRadius:6,padding:"10px 14px",marginBottom:16,fontSize:12,color:G.muted}}>
-          <strong style={{color:G.text}}>Computed Annual Utilities: </strong>
-          <span style={{color:"#22C55E",fontWeight:700,fontSize:14}}>£{computedUtilities.toLocaleString()}</span>
-          <span style={{marginLeft:8}}>{electricityOverride>0?"(override entered)":dairyMetres>0||numFreezers>0?"(refrigeration model)":sqft>0?"("+sqft+" sq ft × £20)":"(enter sq ft or refrigeration data)"}</span>
-        </div>
+
 
 {step===2&&(
           <div>
@@ -3346,33 +3342,35 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 );
               })()}
 
-              {/* KPI strip */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid #E2E8F0"}}>
+              {/* Primary KPIs */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",borderBottom:"1px solid #E2E8F0"}}>
                 {[
-                  {l:"ROI",v:pct(C.roi),sub:`Against ${fmt(C.ti)} investment`,c:C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"},
-                  {l:"Net Profit (Yr 1)",v:fmt(C.nP),sub:`${fmt(Math.round(C.nP/52))} per week`,c:C.nP>=0?"#111827":"#DC2626"},
-                  {l:"Payback",v:C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A",sub:`On ${fmt(C.ti)} total investment`,c:"#111827"},
-                  {l:"Risk Rating",v:(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW",sub:`${risks?.filter(r=>r.rag==="red").length||0} red / ${risks?.filter(r=>r.rag==="amber").length||0} amber`,c:(risks?.filter(r=>r.rag==="red").length||0)>2?"#DC2626":(risks?.filter(r=>r.rag==="red").length||0)>0?"#B45309":"#16A34A"},
+                  {l:"ROI",v:pct(C.roi),sub:`${fmt(Math.round(C.nP/52))}/wk net`,c:C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"},
+                  {l:"Net Profit (Yr 1)",v:fmt(C.nP),sub:`${fmt(Math.round(C.nP/52))}/wk`,c:C.nP>=0?"#111827":"#DC2626"},
+                  {l:"Investment Required",v:fmt(C.ti),sub:"Total capital outlay",c:"#111827"},
+                  {l:"Payback",v:C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A",sub:"Capital recovery period",c:"#111827"},
+                  {l:"Risk Rating",v:(()=>{const r=risks?.filter(r=>r.rag==="red").length||0;return r>2?"HIGH":r>0?"MEDIUM":"LOW"})(),sub:`${risks?.filter(r=>r.rag==="red").length||0} red · ${risks?.filter(r=>r.rag==="amber").length||0} amber`,c:"#111827"},
                 ].map(({l,v,sub,c},idx)=>(
-                  <div key={l} style={{padding:"13px 14px",borderRight:idx<3?"1px solid #E2E8F0":"none"}}>
-                    <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
-                    <div style={{fontSize:20,fontWeight:800,color:c,lineHeight:1,marginBottom:3}}>{v}</div>
-                    <div style={{fontSize:9,color:"#94A3B8"}}>{sub}</div>
+                  <div key={l} style={{padding:"14px 12px",borderRight:idx<4?"1px solid #E2E8F0":"none"}}>
+                    <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:4}}>{l}</div>
+                    <div style={{fontSize:18,fontWeight:800,color:c,lineHeight:1,marginBottom:4}}>{v}</div>
+                    <div style={{fontSize:9,color:"#94A3B8",fontWeight:400}}>{sub}</div>
                   </div>
                 ))}
               </div>
-              {/* Financial detail strip */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)"}}>
+              {/* Secondary metrics */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)"}}>
                 {[
-                  {l:"Gross Profit",v:fmt(C.annGP),sub:`${fmt(Math.round(C.annGP/52))}/wk · ${pct(C.blGP)} margin`},
+                  {l:"Gross Profit",v:fmt(C.annGP),sub:`${pct(C.blGP)} margin`},
                   {l:"EBITDA",v:fmt(C.eb),sub:`${fmt(Math.round(C.eb/52))}/wk`},
-                  {l:"Annual Turnover",v:fmt(C.upliftedAnn),sub:`${fmt(Math.round(C.upliftedWk))}/wk post refit`},
-                  {l:"Utilities",v:fmt(computedUtilities),sub:electricityOverride>0?"Actual cost entered":dairyMetres>0||numFreezers>0?"Refrigeration model":`${sqft} sq ft x £20`},
+                  {l:"Turnover (Post Refit)",v:fmt(C.upliftedAnn),sub:`${fmt(Math.round(C.upliftedWk))}/wk`},
+                  {l:"Utilities",v:fmt(computedUtilities),sub:electricityOverride>0?"Override entered":dairyMetres>0||numFreezers>0?"Refrigeration model":`${sqft||0} sq ft x £20`},
+                  {l:"Staff Cost",v:fmt(C.stf),sub:`${staffPct}% of turnover`},
                 ].map(({l,v,sub},idx)=>(
-                  <div key={l} style={{padding:"11px 14px",borderRight:idx<3?"1px solid #E2E8F0":"none",borderTop:"1px solid #E2E8F0"}}>
+                  <div key={l} style={{padding:"12px 12px",borderRight:idx<4?"1px solid #E2E8F0":"none",borderTop:"1px solid #E2E8F0"}}>
                     <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
-                    <div style={{fontSize:16,fontWeight:700,color:"#111827",lineHeight:1,marginBottom:2}}>{v}</div>
-                    <div style={{fontSize:9,color:"#94A3B8"}}>{sub}</div>
+                    <div style={{fontSize:14,fontWeight:700,color:"#111827",lineHeight:1,marginBottom:2}}>{v}</div>
+                    <div style={{fontSize:9,color:"#94A3B8",fontWeight:400}}>{sub}</div>
                   </div>
                 ))}
               </div>
@@ -3382,7 +3380,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:9,letterSpacing:".15em",color:"#15803D",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>Consultant Summary</div>
                 <div style={{fontSize:13,color:"#374151",lineHeight:1.85}}>
                   {commentary?.financial
-                    ? commentary.financial.split(".").slice(0,3).join(".")+"."
+                    ? commentary.financial.split(".").slice(0,2).join(".")+"."
                     : `${propName||"The subject site"}${postcode?` at ${postcode}`:""}. Post-refit annual turnover projects to ${fmt(C.upliftedAnn)} at ${pct(C.blGP)} gross margin, delivering EBITDA of ${fmt(C.eb)} and net profit of ${fmt(C.nP)}. ${C.roi>=20?"ROI of "+pct(C.roi)+" meets the Genesis Retail viability threshold.":C.roi>=10?"ROI of "+pct(C.roi)+" is below the preferred 20% threshold.":"ROI of "+pct(C.roi)+" does not meet the minimum threshold."}`
                   }
                 </div>
