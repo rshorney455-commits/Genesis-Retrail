@@ -1437,9 +1437,9 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:"Strong commercial viability. ROI meets the Genesis Retail investment threshold."};
-    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:"Viable but below the preferred 20% threshold. Address occupancy costs before committing."};
-    if(C.roi>=0)  return {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"ROI below minimum threshold. Review rent, rates and trading assumptions."};
+    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:`ROI of ${pct(C.roi)} exceeds Genesis Retail's investment threshold. Payback achieved within ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years.`};
+    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:`ROI of ${pct(C.roi)} is below the preferred 20% threshold. Reduce occupancy costs or confirm trading uplift before committing.`};
+    if(C.roi>=0)  return {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
     return              {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
   },[C.roi]);
 
@@ -3336,26 +3336,40 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{background:bg,borderBottom:"1px solid #E2E8F0",padding:"14px 20px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
                     <div style={{flex:"0 0 auto"}}>
                       <div style={{fontSize:9,letterSpacing:".15em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Verdict</div>
-                      <div style={{fontSize:26,fontWeight:900,color:col,letterSpacing:"-.5px",lineHeight:1}}>{label}</div>
+                      <div style={{fontSize:20,fontWeight:900,color:col,letterSpacing:"-.3px",lineHeight:1}}>{label}</div>
                     </div>
                     <div style={{fontSize:13,color:"#374151",lineHeight:1.6,flex:1,minWidth:200}}>{VRD?.summary||""}</div>
                   </div>
                 );
               })()}
 
-              {/* KPI strip  —  6 cards */}
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)"}}>
+              {/* KPI strip */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:"1px solid #E2E8F0"}}>
                 {[
-                  ["ROI",pct(C.roi),C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"],
-                  ["Net Profit (Yr 1)",fmt(C.nP),C.nP>=0?"#111827":"#DC2626"],
-                  ["Payback",C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A","#111827"],
-                  ["Investment Required",fmt(C.ti),"#111827"],
-                  ["Annual Turnover",fmt(C.upliftedAnn),"#111827"],
-                  ["Risk Rating",(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW",(risks?.filter(r=>r.rag==="red").length||0)>2?"#DC2626":(risks?.filter(r=>r.rag==="red").length||0)>0?"#B45309":"#16A34A"],
-                ].map(([label,value,col],idx)=>(
-                  <div key={label} style={{padding:"13px 16px",borderRight:idx%3!==2?"1px solid #E2E8F0":"none",borderBottom:idx<3?"1px solid #E2E8F0":"none",borderTop:"none"}}>
-                    <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{label}</div>
-                    <div style={{fontSize:20,fontWeight:800,color:col,lineHeight:1}}>{value}</div>
+                  {l:"ROI",v:pct(C.roi),sub:`Against ${fmt(C.ti)} investment`,c:C.roi>=20?"#16A34A":C.roi>=10?"#B45309":"#DC2626"},
+                  {l:"Net Profit (Yr 1)",v:fmt(C.nP),sub:`${fmt(Math.round(C.nP/52))} per week`,c:C.nP>=0?"#111827":"#DC2626"},
+                  {l:"Payback",v:C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A",sub:`On ${fmt(C.ti)} total investment`,c:"#111827"},
+                  {l:"Risk Rating",v:(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW",sub:`${risks?.filter(r=>r.rag==="red").length||0} red / ${risks?.filter(r=>r.rag==="amber").length||0} amber`,c:(risks?.filter(r=>r.rag==="red").length||0)>2?"#DC2626":(risks?.filter(r=>r.rag==="red").length||0)>0?"#B45309":"#16A34A"},
+                ].map(({l,v,sub,c},idx)=>(
+                  <div key={l} style={{padding:"13px 14px",borderRight:idx<3?"1px solid #E2E8F0":"none"}}>
+                    <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
+                    <div style={{fontSize:20,fontWeight:800,color:c,lineHeight:1,marginBottom:3}}>{v}</div>
+                    <div style={{fontSize:9,color:"#94A3B8"}}>{sub}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Financial detail strip */}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)"}}>
+                {[
+                  {l:"Gross Profit",v:fmt(C.annGP),sub:`${fmt(Math.round(C.annGP/52))}/wk · ${pct(C.blGP)} margin`},
+                  {l:"EBITDA",v:fmt(C.eb),sub:`${fmt(Math.round(C.eb/52))}/wk`},
+                  {l:"Annual Turnover",v:fmt(C.upliftedAnn),sub:`${fmt(Math.round(C.upliftedWk))}/wk post refit`},
+                  {l:"Utilities",v:fmt(computedUtilities),sub:electricityOverride>0?"Actual cost entered":dairyMetres>0||numFreezers>0?"Refrigeration model":`${sqft} sq ft x £20`},
+                ].map(({l,v,sub},idx)=>(
+                  <div key={l} style={{padding:"11px 14px",borderRight:idx<3?"1px solid #E2E8F0":"none",borderTop:"1px solid #E2E8F0"}}>
+                    <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
+                    <div style={{fontSize:16,fontWeight:700,color:"#111827",lineHeight:1,marginBottom:2}}>{v}</div>
+                    <div style={{fontSize:9,color:"#94A3B8"}}>{sub}</div>
                   </div>
                 ))}
               </div>
@@ -3808,7 +3822,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance - Year 1</div>
   </div>
   <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
-    {[[fmt(C.upliftedWk),"Weekly Turnover","post refit"],[fmt(C.upliftedAnn),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",pct(C.blGP)+" margin"],[fmt(C.eb),"EBITDA",pct(C.eb/C.upliftedAnn*100)+" of sales"],[fmt(C.nP),"Net Profit",pct(C.nP/C.upliftedAnn*100)+" net margin"],[pct(C.roi),"ROI",C.pb?C.pb.toFixed(1)+" yr payback":""]].map(([v,l,s])=>(
+    {[[fmt(C.upliftedWk),"Weekly Turnover","post refit"],[fmt(C.upliftedAnn),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",`${fmt(Math.round(C.annGP/52))}/wk · ${pct(C.blGP)} margin`],[fmt(C.eb),"EBITDA",`${fmt(Math.round(C.eb/52))}/wk`],[fmt(C.nP),"Net Profit",`${fmt(Math.round(C.nP/52))}/wk`],[pct(C.roi),"ROI",`Against ${fmt(C.ti)} investment`]].map(([v,l,s])=>(
       <div key={l} style={{border:"1px solid #CBD5E1",borderRadius:6,padding:"13px 14px",borderTop:"3px solid #15803D"}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
         <div style={{fontSize:24,fontWeight:900,color:"#111827",lineHeight:1}}>{v}</div>
