@@ -406,7 +406,7 @@ function SymbolGroupScorer({ location, weeklyTurnover, demographics, cats }) {
         <div key={sg.name} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",marginBottom:8,background:i===0?G.pale:G.card,border:"1px solid "+(i===0?G.mid:G.border),borderRadius:10}}>
           <div style={{fontSize:13,fontWeight:i===0?800:600,color:i===0?G.text:G.text,minWidth:110}}>{i===0?"⭐ ":""}{sg.name}</div>
           <div style={{flex:1}}>
-            <div style={{height:6,background:"#1E293B",borderRadius:3}}>
+            <div style={{height:6,background:"#FFFFFF",borderRadius:3}}>
               <div style={{height:"100%",background:i===0?G.mid:G.light,borderRadius:3,width:(sg.score/8*100)+"%"}}/>
             </div>
             <div style={{fontSize:11,color:"#FFFFFF",marginTop:3}}>{sg.desc}</div>
@@ -2227,7 +2227,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <Legend/>
 
             {/* Postcode lookup */}
-            <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
+            <div style={{background:"#FFFFFF",border:"1.5px solid "+G.mid,borderRadius:12,padding:16,marginBottom:20}}>
               <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:8}}>✦ Auto-populate from postcode</div>
               <div style={{fontSize:13,color:G.text,marginBottom:12,lineHeight:1.6}}>Enter the site postcode to automatically pull: competitor data, local demographics, VOA rates estimate, planning applications, and more.</div>
               <div style={{display:"flex",gap:10}}>
@@ -2615,7 +2615,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div>
             <SH c="Catchment Demographics"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#1E293B",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
+            {postcodeData&&<div style={{background:"#FFFFFF",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.val}}>✓ Regional income and population estimates auto-filled from postcode data. Override with ONS census figures for greater accuracy.</div>}
             <Row2 ch={[
               <Fld key="a" l="Catchment population (1 mile)" h="ONS census or Google Maps" ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={catchmentPop} onFocus={e=>e.target.select()} onChange={e=>setCatchmentPop(e.target.value===""?0:+e.target.value)}/>}/>,
               <Fld key="b" l="Population density" ch={<select style={postcodeData?INP_auto:INP_manual} value={popDensity} onChange={e=>setPopDensity(e.target.value)}><option value="high">High - urban</option><option value="medium">Medium - suburban</option><option value="low">Low - rural</option></select>}/>,
@@ -2637,7 +2637,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
 
               {/* Penetration Rate - with annotation */}
-              <div style={{background:"#1a2a20",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
+              <div style={{background:"#FFFFFF",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
                 <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
                 <div style={{fontSize:16,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>{pct(C.pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab - this figure may reflect incomplete data.</div>}
@@ -2944,7 +2944,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             {/* Export buttons */}
             <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
               {/* Excel export */}
-              <div style={{background:"#1E293B",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
+              <div style={{background:"#FFFFFF",border:"1.5px solid "+G.mid,borderRadius:12,padding:16}}>
                 <div style={{fontSize:14,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>📥 Export Excel</div>
                 <div style={{fontSize:12,color:G.text,marginBottom:12,lineHeight:1.5}}>Fully populated workbook - P&L, 5-year, cashflow, sensitivity and glossary.</div>
                 <button
@@ -3135,7 +3135,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           ))}
                           <tr style={{background:G.pale}}>{TDL("TOTAL OP COSTS",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(r.tc)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.tc,0))})</td></tr>
                           {SectionRow("EBITDA")}
-                          <tr style={{background:"#1E293B"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
+                          <tr style={{background:"#FFFFFF"}}>{TDL("EBITDA",true,false,true)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:r.eb>=0?G.pos:G.neg,borderBottom:"1px solid "+G.border}}>{r.eb<0?"("+fmt(Math.abs(r.eb))+")":fmt(r.eb)}</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,fontWeight:700,color:yr5x.reduce((a,r)=>a+r.eb,0)>=0?G.mid:"#d62828",borderBottom:"1px solid "+G.border}}>{fmt(yr5x.reduce((a,r)=>a+r.eb,0))}</td></tr>
                           {SectionRow("Finance")}
                           <tr>{TDL("Loan Repayment",false,true,false)}{yr5x.map((r,i)=><td key={i} style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(r.fin)})</td>)}<td style={{padding:"7px 10px",textAlign:"right",fontSize:12,color:G.val,borderBottom:"1px solid "+G.border}}>({fmt(yr5x.reduce((a,r)=>a+r.fin,0))})</td></tr>
                           {SectionRow("Net Profit")}
