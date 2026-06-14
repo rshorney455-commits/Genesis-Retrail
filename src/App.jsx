@@ -1993,6 +1993,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           body{font-size:11pt}
           h1,h2,h3{page-break-after:avoid}
           table{page-break-inside:avoid}
+          .slide{page-break-inside:avoid}
+          .avoid-break{page-break-inside:avoid}
+          h1,h2,h3,.section-header{page-break-after:avoid}
           img{max-width:100%!important}
         }
         @media print{.pdf-footer{display:block!important}}
@@ -3753,7 +3756,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
   </div>
-  {mapLat&&mapLng&&<div style={{marginBottom:14,borderRadius:6,overflow:"hidden",border:"1px solid #CBD5E1",height:220}}><CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={[]}/></div>}
+  {mapLat&&mapLng&&competitorList?.some(c=>c.lat&&c.lng&&(Math.abs(c.lat-mapLat)>0.0001||Math.abs(c.lng-mapLng)>0.0001))&&<div style={{marginBottom:14,borderRadius:6,overflow:"hidden",border:"1px solid #CBD5E1",height:220}}><CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={[]}/></div>}
   <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
     <thead><tr style={{background:"#F1F5F9"}}>{["Operator","Format","Distance","Threat","Notes"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
@@ -3945,6 +3948,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.risks||`${risks?.filter(r=>r.rag==="red").length||0} red risk${risks?.filter(r=>r.rag==="red").length!==1?"s":""} and ${risks?.filter(r=>r.rag==="amber").length||0} amber identified. ${risks?.filter(r=>r.rag==="red").length>2?"Material risks must be addressed before proceeding.":risks?.filter(r=>r.rag==="red").length>0?"One or more significant risks require attention before lease execution.":"Risk profile is manageable."}`}</div>
+    <div style={{marginTop:8,fontSize:10,color:"#64748B",lineHeight:1.5}}>
+      <strong style={{color:"#374151"}}>Risk Rating: {(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW"}</strong>
+      {" "}Derived from {risks?.filter(r=>r.rag==="red").length||0} red, {risks?.filter(r=>r.rag==="amber").length||0} amber and {risks?.filter(r=>r.rag==="green").length||0} green risk factors across {risks?.length||0} assessed criteria.
+    </div>
   </div>
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Risk Register · Page 9</span>
@@ -3994,7 +4001,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   <div style={{borderTop:"1px solid #CBD5E1",paddingTop:18,display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginTop:16}}>
     <div>
       {/* Bank readiness */}
-      <div style={{gridColumn:"1/-1",background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"12px 16px",marginBottom:16}}>
+      <div className="avoid-break" style={{gridColumn:"1/-1",background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"12px 16px",marginBottom:16}}>
         <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:7,fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>Bank & Lender Readiness</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"3px 16px",marginBottom:8}}>
           {["Existing trading operation - reduces start-up risk","Historic turnover evidence supports projections","Occupancy costs represent a sustainable % of sales","Sensitivity analysis demonstrates downside resilience","Defined investment quantum and payback period","Clear recommendation with commercial rationale"].map((item,i)=>(
@@ -4022,7 +4029,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
 {/* ── DISCLAIMER & COPYRIGHT ── */}
-<div style={{padding:"28px 48px 32px",background:"#fff",borderTop:"1px solid #E2E8F0"}}>
+<div className="avoid-break" style={{padding:"28px 48px 32px",background:"#fff",borderTop:"1px solid #E2E8F0"}}>
 
   <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:32,marginBottom:20}}>
 
