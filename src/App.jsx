@@ -31,13 +31,13 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 // ── Sector averages by location type ─────────────────────────────────────────
 const SECTOR = {
   "city-centre": {
-    footfall:600, avgBasket:5.50, staffPct:10, utilities:12000, otherCosts:9000,
+    footfall:600, avgBasket:5.50, staffPct:10, otherCosts:9000,
     spendBands:{u5:35,s5:38,s10:15,s15:8,s20:4},
     missions:{"Top-up":30,"Grab and Go":35,"Treat or Impulse":15,"Food to Go":15,"Big Shop Supplement":5},
     fhour:{"6-8am":8,"8-10am":18,"10-12pm":10,"12-2pm":22,"2-4pm":10,"4-6pm":18,"6-8pm":10,"8-10pm":4},
   },
   "suburban": {
-    footfall:400, avgBasket:6.80, staffPct:9, utilities:9000, otherCosts:8000,
+    footfall:400, avgBasket:6.80, staffPct:9, otherCosts:8000,
     spendBands:{u5:25,s5:38,s10:22,s15:10,s20:5},
     missions:{"Top-up":42,"Grab and Go":22,"Treat or Impulse":15,"Food to Go":8,"Big Shop Supplement":13},
     fhour:{"6-8am":4,"8-10am":14,"10-12pm":12,"12-2pm":16,"2-4pm":12,"4-6pm":18,"6-8pm":16,"8-10pm":8},
@@ -600,7 +600,7 @@ function PPTXExportButton(props) {
       const payload = {
         propName:propName||"Site Assessment", postcode:postcode||"", location, locLabel,
         sqft, footfall, avgBasket, uplift, rent, rates, staffPct,
-        utilities, otherCosts, refitCost, stockCost, financeRate, financeYears,
+        utilities, computedUtilities, otherCosts, refitCost, stockCost, financeRate, financeYears, dairyMetres, frozenMetres, numFreezers, cabinetType, cabinetAge, hasCoffee, hasBakeOff, hasHotFood, electricityOverride,
         cats, ageBands, catchmentPop, medianIncome, deprivation, popDensity, householdSz,
         competitors, nearestComp, parking, tHP, tPG, tNH, tFF, tRG, tVA, areaNotes, storeNote,
         derived: {
@@ -1115,7 +1115,37 @@ export default function App(){
   const [rent,setRent]=useState(18000);
   const [rates,setRates]=useState(6000);
   const [staffPct,setStaffPct]=useState(SECTOR.suburban.staffPct);
-  const [utilities,setUtilities]=useState(SECTOR.suburban.utilities);
+  const [utilities,setUtilities]=useState(0);
+  // Refrigeration state
+  const [dairyMetres,setDairyMetres]=useState(0);
+  const [frozenMetres,setFrozenMetres]=useState(0);
+  const [numFreezers,setNumFreezers]=useState(0);
+  const [cabinetType,setCabinetType]=useState('mixed');
+  const [cabinetAge,setCabinetAge]=useState('5-10');
+  // Food to go
+  const [hasCoffee,setHasCoffee]=useState(false);
+  const [hasBakeOff,setHasBakeOff]=useState(false);
+  const [hasHotFood,setHasHotFood]=useState(false);
+  // Electricity override
+  const [electricityOverride,setElectricityOverride]=useState(0);
+
+  // ── DYNAMIC UTILITY MODEL ──────────────────────────────────────────────
+  const computedUtilities = useMemo(()=>{
+    // Priority 1: user-entered electricity override
+    if(electricityOverride>0) return electricityOverride;
+    // Priority 2: refrigeration model (if data entered)
+    if(dairyMetres>0 || numFreezers>0){
+      const base = 12000;
+      const dairy = dairyMetres * 1800;
+      const freezer = numFreezers * 1000;
+      const ftg = (hasCoffee?1000:0)+(hasBakeOff?2000:0)+(hasHotFood?2000:0);
+      return base + dairy + freezer + ftg;
+    }
+    // Priority 3: sqft model (default Genesis model)
+    if(sqft>0) return sqft * 20;
+    // Priority 4: absolute fallback (no data entered)
+    return 20000;
+  },[electricityOverride,dairyMetres,numFreezers,hasCoffee,hasBakeOff,hasHotFood,sqft]);
   const [otherCosts,setOtherCosts]=useState(SECTOR.suburban.otherCosts);
   const [refitCost,setRefitCost]=useState(110000);
   const [stockCost,setStockCost]=useState(40000);
@@ -1377,7 +1407,7 @@ export default function App(){
     const blGP=cats.reduce((s,c)=>s+(c.mix/100)*c.gp,0);
     const annGP=upliftedAnn*(blGP/100);
     const stf=upliftedAnn*(staffPct/100);
-    const annC=rent+rates+stf+utilities+otherCosts;
+    const annC=rent+rates+stf+computedUtilities+otherCosts;
     const ti=refitCost+stockCost;
     const mr=financeRate/100/12, np2=financeYears*12;
     const mp=ti*(mr*Math.pow(1+mr,np2))/(Math.pow(1+mr,np2)-1);
@@ -1478,7 +1508,7 @@ export default function App(){
   const yr5=useMemo(()=>[1,2,3,4,5].map(yr=>{
     const g=Math.pow(1.03,yr-1),cg=Math.pow(1.02,yr-1);
     const s=C.upliftedAnn*g,gp=s*(C.blGP/100),stf2=s*(staffPct/100);
-    const tc=(rent+rates+utilities+otherCosts)*cg+stf2;
+    const tc=(rent+rates+computedUtilities+otherCosts)*cg+stf2;
     const eb=gp-tc,fin=yr<=financeYears?C.af:0,np=eb-fin;
     return {yr,s,gp,stf2,tc,eb,fin,np};
   }),[C,staffPct,rent,rates,utilities,otherCosts,financeYears]);
@@ -1622,7 +1652,16 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
     setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||9);
-    setUtilities(saved.utilities||9000); setOtherCosts(saved.otherCosts||8000);
+    setUtilities(saved.utilities||0); // 0 = auto-compute from sqft/refrigeration model
+      setDairyMetres(saved.dairyMetres||0);
+      setFrozenMetres(saved.frozenMetres||0);
+      setNumFreezers(saved.numFreezers||0);
+      setCabinetType(saved.cabinetType||'mixed');
+      setCabinetAge(saved.cabinetAge||'5-10');
+      setHasCoffee(!!saved.hasCoffee);
+      setHasBakeOff(!!saved.hasBakeOff);
+      setHasHotFood(!!saved.hasHotFood);
+      setElectricityOverride(saved.electricityOverride||0); setOtherCosts(saved.otherCosts||8000);
     setRefitCost(saved.refitCost||110000); setStockCost(saved.stockCost||40000);
     setFinanceRate(saved.financeRate||8); setFinanceYears(saved.financeYears||5);
     setCats(CATS0.map(c=>({...c})));  // Always reset to ACS 2025 defaults on load
@@ -1728,7 +1767,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         const ann2 = wk2*52;
         const gp2  = ann2*(C.blGP/100);
         const stf2 = ann2*(staffPct/100);
-        const cost2= adjR+rates+stf2+utilities+otherCosts;
+        const cost2= adjR+rates+stf2+computedUtilities+otherCosts;
         const eb2  = gp2-cost2;
         const np2  = eb2-C.af;
         const roi2 = C.ti>0?(np2/C.ti)*100:0;
@@ -2271,7 +2310,54 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── COSTS ── */}
-        {step===2&&(
+        {/* ── REFRIGERATION ── */}
+        <SH c="Refrigeration & Food To Go"/>
+        <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:8}}>
+          <Fld label="Dairy / Chilled Cabinet Run (Metres)" hint="Total linear metres of open/doored dairy and chilled cabinets">
+            <input type="number" style={INP_manual} value={dairyMetres||''} placeholder="e.g. 6" onChange={e=>setDairyMetres(parseFloat(e.target.value)||0)}/>
+          </Fld>
+          <Fld label="Number of Double Door Freezers" hint="Count of upright double-door frozen food cabinets">
+            <input type="number" style={INP_manual} value={numFreezers||''} placeholder="e.g. 2" onChange={e=>setNumFreezers(parseInt(e.target.value)||0)}/>
+          </Fld>
+          <Fld label="Cabinet Type">
+            <select style={INP_manual} value={cabinetType} onChange={e=>setCabinetType(e.target.value)}>
+              <option value="open">Open Front</option>
+              <option value="mixed">Mixed</option>
+              <option value="doored">Doored</option>
+            </select>
+          </Fld>
+          <Fld label="Estimated Cabinet Age">
+            <select style={INP_manual} value={cabinetAge} onChange={e=>setCabinetAge(e.target.value)}>
+              <option value="under5">Under 5 Years</option>
+              <option value="5-10">5 to 10 Years</option>
+              <option value="over10">Over 10 Years</option>
+            </select>
+          </Fld>
+        </div>
+        <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
+          <Fld label="Bean to Cup Coffee">
+            <select style={INP_manual} value={hasCoffee?'yes':'no'} onChange={e=>setHasCoffee(e.target.value==='yes')}>
+              <option value="no">No</option><option value="yes">Yes</option>
+            </select>
+          </Fld>
+          <Fld label="Bake Off Offer">
+            <select style={INP_manual} value={hasBakeOff?'yes':'no'} onChange={e=>setHasBakeOff(e.target.value==='yes')}>
+              <option value="no">No</option><option value="yes">Yes</option>
+            </select>
+          </Fld>
+          <Fld label="Hot Food To Go">
+            <select style={INP_manual} value={hasHotFood?'yes':'no'} onChange={e=>setHasHotFood(e.target.value==='yes')}>
+              <option value="no">No</option><option value="yes">Yes</option>
+            </select>
+          </Fld>
+        </div>
+        <div style={{background:"rgba(21,128,61,0.06)",border:"1px solid rgba(21,128,61,0.2)",borderRadius:6,padding:"10px 14px",marginBottom:16,fontSize:12,color:G.muted}}>
+          <strong style={{color:G.text}}>Computed Annual Utilities: </strong>
+          <span style={{color:"#22C55E",fontWeight:700,fontSize:14}}>£{computedUtilities.toLocaleString()}</span>
+          <span style={{marginLeft:8}}>{electricityOverride>0?"(override entered)":dairyMetres>0||numFreezers>0?"(refrigeration model)":sqft>0?"("+sqft+" sq ft × £20)":"(enter sq ft or refrigeration data)"}</span>
+        </div>
+
+{step===2&&(
           <div>
             {/* Live financial summary strip */}
             <div className="rg-4" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8,marginBottom:16,padding:"12px 14px",background:G.card,borderRadius:8,border:"1px solid "+G.border}}>
@@ -2325,7 +2411,16 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:10,color:G.light,marginTop:4}}>{fmt(C.stf)} per year · {C.ann>0?pct(C.stf/C.ann*100)+" of turnover":""}</div>
               </div>
 
-              {/* Utilities */}
+              {/* Utilities — computed automatically, override optional */}
+        <Fld label="Actual Annual Electricity Cost (Optional Override)" hint="If entered, overrides the automatic utility model. Leave blank to use the Genesis Retail model.">
+          <input type="number" style={INP_manual} value={electricityOverride||''} placeholder="Leave blank to auto-calculate" onChange={e=>setElectricityOverride(parseFloat(e.target.value)||0)}/>
+        </Fld>
+        {electricityOverride===0&&(
+          <div style={{fontSize:11,color:G.muted,marginBottom:8,padding:"6px 10px",background:"rgba(21,128,61,0.06)",borderRadius:4}}>
+            Auto-computed: £{computedUtilities.toLocaleString()} {dairyMetres>0||numFreezers>0?"(refrigeration model)":sqft>0?`(${sqft} sq ft × £20)`:"(enter sq ft on Property tab)"}
+          </div>
+        )}
+{/* Utilities display */}
               <div style={{borderLeft:"3px solid "+G.border,background:G.card,borderRadius:"0 6px 6px 0",padding:"10px 14px"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
                   <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Utilities (£)</div>
@@ -2881,7 +2976,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["COSTS","","",""],
                         ["Annual Rent", rent, "Business Rates", rates],
                         ["Staff % of Sales", staffPct/100, "Staff Cost (£)", C.stf],
-                        ["Utilities", utilities, "Other Costs", otherCosts],
+                        ["Utilities", computedUtilities, "Other Costs", otherCosts],
                         ["","","",""],
                         ["INVESTMENT","","",""],
                         ["Refit Cost", refitCost, "Opening Stock", stockCost],
@@ -2905,7 +3000,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       XLSX.utils.book_append_sheet(wb, ws2, "5-Year P&L");
 
                       const months = ["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"];
-                      const ann1=C.upliftedAnn, mNet=ann1*(C.blGP/100)/12-(rent+rates+(ann1*staffPct/100)+utilities+otherCosts)/12-C.mp;
+                      const ann1=C.upliftedAnn, mNet=ann1*(C.blGP/100)/12-(rent+rates+(ann1*staffPct/100)+computedUtilities+otherCosts)/12-C.mp;
                       const cfRows=[["MONTHLY CASHFLOW - YEAR 1"],["Item",...months,"Total"],
                         ["Sales Revenue",...months.map(()=>ann1/12),ann1],
                         ["Cost of Goods",...months.map(()=>-(ann1*(1-C.blGP/100))/12),-(ann1*(1-C.blGP/100))],
@@ -3117,7 +3212,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                           {/* Running balance */}
                           <tr><td colSpan={14} style={{height:4}}></td></tr>
                           {(()=>{
-                            const mNet = C.upliftedAnn*(C.blGP/100)/12 - (rent+rates+(C.upliftedAnn*staffPct/100)+utilities+otherCosts)/12 - C.mp;
+                            const mNet = C.upliftedAnn*(C.blGP/100)/12 - (rent+rates+(C.upliftedAnn*staffPct/100)+computedUtilities+otherCosts)/12 - C.mp;
                             let bal=0;
                             return (
                               <tr style={{background:"#b8e0e8"}}>
@@ -3730,7 +3825,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {l:"Staff Wages",v:-C.stf,sub:true},
         {l:"Rent",v:-rent,sub:true},
         {l:"Business Rates",v:-rates,sub:true},
-        {l:"Utilities",v:-utilities,sub:true},
+        {l:"Utilities",v:-computedUtilities,sub:true},
         {l:"Other Costs",v:-otherCosts,sub:true},
         {l:"EBITDA",v:C.eb,b:true,p:C.eb/C.upliftedAnn*100},
         {l:"Finance Charge",v:-C.af,sub:true},
