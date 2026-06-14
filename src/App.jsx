@@ -1279,7 +1279,7 @@ export default function App(){
         setCompetitors(compList.length);
         setNearestComp(parseFloat(compList[0].distance));
       }
-    } catch(e) { console.log("Google Places fetch failed:", e); }
+    } catch(e) { // fetch failed silently }
   },[]);
 
   // ── Postcode lookup ──────────────────────────────────────────────────────
@@ -1343,7 +1343,7 @@ export default function App(){
         };
         setFoodProfile(profile);
       } catch(e) {
-        console.log("Food profile lookup failed:", e.message);
+        // food profile lookup failed silently
       }
 
       // Fetch competitors using Google Places API
@@ -1437,7 +1437,7 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"Investment Assessment",label:"Investment Assessment",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria met on current assumptions.`};
+    if(C.roi>=20) return {l:"Investment Assessment",label:"Investment Assessment",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):" - "} years. Investment criteria met on current assumptions.`};
     if(C.roi>=10) return {l:"Assessment Outcome",label:"Assessment Outcome",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
     if(C.roi>=0)  return {l:"Assessment Outcome",label:"Assessment Outcome",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
     return              {l:"Assessment Outcome",label:"Assessment Outcome",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
@@ -3009,7 +3009,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["GROSS PROFIT",...months.map(()=>ann1*(C.blGP/100)/12),ann1*(C.blGP/100)],
                         ["Rent",...months.map(()=>-rent/12),-rent],
                         ["Staff",...months.map(()=>-(ann1*staffPct/100)/12),-(ann1*staffPct/100)],
-                        ["Utilities",...months.map(()=>-computedUtilities/12),-utilities],
+                        ["Utilities",...months.map(()=>-computedUtilities/12),-computedUtilities],
                         ["Other",...months.map(()=>-otherCosts/12),-otherCosts],
                         ["Loan Repayment",...months.map(()=>-C.mp),-C.mp*12],
                         ["NET CASHFLOW",...months.map(()=>mNet),mNet*12],
