@@ -3993,7 +3993,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </>);
   })()}
   {refitCommentary&&(
-    <div style={{marginBottom:18}}>
+    <div className="avoid-break" style={{marginBottom:18}}>
       <div style={{fontSize:9,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Consultant Rationale</div>
       <div style={{fontSize:11,color:"#374151",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{(refitCommentary||"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uFFFD\uFFFE\uFFFF\u200B\u200C\u200D\u2028\u2029\uFEFF]/g,"")}</div>
     </div>
