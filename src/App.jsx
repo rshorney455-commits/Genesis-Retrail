@@ -3336,7 +3336,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{background:bg,borderBottom:"1px solid #E2E8F0",padding:"14px 20px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
                     <div style={{flex:"0 0 auto"}}>
                       <div style={{fontSize:9,letterSpacing:".15em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Verdict</div>
-                      <div style={{fontSize:20,fontWeight:900,color:col,letterSpacing:"-.3px",lineHeight:1}}>{label}</div>
+                      <div style={{display:"flex",alignItems:"center",gap:8}}>
+                        <span style={{fontSize:20,fontWeight:900,color:col,letterSpacing:"-.3px",lineHeight:1}}>{label}</span>
+                        <span style={{fontSize:16}}>{isPass?"✅":isCaution?"⚠️":"❌"}</span>
+                      </div>
                     </div>
                     <div style={{fontSize:13,color:"#374151",lineHeight:1.6,flex:1,minWidth:200}}>{VRD?.summary||""}</div>
                   </div>
@@ -3498,7 +3501,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         <div style={{flex:1}}>
           <div style={{fontSize:8,letterSpacing:".2em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:5}}>Genesis Retail Assessment Verdict</div>
           <div style={{fontSize:36,fontWeight:900,color:col,letterSpacing:"-1px",lineHeight:1,marginBottom:8}}>{label}</div>
-          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}>{isPass?`This site demonstrates strong commercial viability. A ${pct(C.roi)} ROI with a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meets Genesis Retail's investment threshold.`:isCaution?`This site shows moderate viability. ROI of ${pct(C.roi)} is below the preferred 20% threshold. Proceed subject to cost reduction or revised trading assumptions.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum threshold.`}</div>
+          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}>{isPass?`A ${pct(C.roi)} ROI with a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meets Genesis Retail's investment threshold.`:isCaution?`This site shows moderate viability. ROI of ${pct(C.roi)} is below the preferred 20% threshold. Proceed subject to cost reduction or revised trading assumptions.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum threshold.`}</div>
         </div>
         <div style={{fontSize:56,lineHeight:1}}>{icon}</div>
       </div>
@@ -3967,7 +3970,20 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       <div style={{background:bg,border:`2.5px solid ${col}`,borderRadius:8,padding:"26px 30px",marginBottom:22,textAlign:"center"}}>
         <div style={{fontSize:9,letterSpacing:".22em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:7}}>Genesis Retail Recommendation</div>
         <div style={{fontSize:44,fontWeight:900,color:col,letterSpacing:"-1.5px",lineHeight:1,marginBottom:10}}>{label}</div>
-        <div style={{fontSize:12,color:"#374151",maxWidth:500,margin:"0 auto",lineHeight:1.7}}>{isPass?`This site demonstrates strong commercial viability. A ${pct(C.roi)} return on investment and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meet Genesis Retail's investment threshold. Subject to lease terms and refit execution, this is a sound commercial proposition.`:isCaution?`This site shows financial viability on current assumptions but sits below the preferred 20% ROI threshold. We recommend proceeding subject to a reduction in occupancy costs or confirmation of the trading uplift assumptions through recent till data.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum 10% threshold required for convenience retail investment. Review rent, rates and trading assumptions before resubmitting.`}</div>
+        <div style={{fontSize:12,color:"#374151",maxWidth:500,margin:"0 auto",lineHeight:1.7}}>{isPass?`A ${pct(C.roi)} return on investment and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meet Genesis Retail's investment threshold. Subject to lease terms and refit execution, this is a sound commercial proposition.`:isCaution?`This site shows financial viability on current assumptions but sits below the preferred 20% ROI threshold. We recommend proceeding subject to a reduction in occupancy costs or confirmation of the trading uplift assumptions through recent till data.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum 10% threshold required for convenience retail investment. Review rent, rates and trading assumptions before resubmitting.`}</div>
+      </div>
+      <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:14}}>
+        {[
+          {l:"ROI",v:pct(C.roi),c:C.roi>=20?"#15803D":C.roi>=10?"#B45309":"#DC2626"},
+          {l:"Net Profit",v:fmt(C.nP),c:C.nP>=0?"#111827":"#DC2626"},
+          {l:"Payback",v:C.nP>0?(C.ti/C.nP).toFixed(1)+" yrs":"N/A",c:"#111827"},
+          {l:"Risk Rating",v:(risks?.filter(r=>r.rag==="red").length||0)>2?"HIGH":(risks?.filter(r=>r.rag==="red").length||0)>0?"MEDIUM":"LOW",c:(risks?.filter(r=>r.rag==="red").length||0)>2?"#DC2626":(risks?.filter(r=>r.rag==="red").length||0)>0?"#B45309":"#15803D"},
+        ].map(({l,v,c})=>(
+          <div key={l} style={{textAlign:"center",fontFamily:"'Helvetica Neue',Arial,sans-serif"}}>
+            <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:2}}>{l}</div>
+            <div style={{fontSize:16,fontWeight:800,color:c}}>{v}</div>
+          </div>
+        ))}
       </div>
     );
   })()}
