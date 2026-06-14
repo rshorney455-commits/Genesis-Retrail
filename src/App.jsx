@@ -718,7 +718,7 @@ Reply with ONLY this exact JSON and nothing else:
             <tr><td style="padding-left:20px">Rent</td><td class="neg">(${fmt2(d.rent)})</td><td class="neg">${pct2(d.rent/d.derived.uplAnn*100)}</td></tr>
             <tr><td style="padding-left:20px">Business Rates</td><td class="neg">(${fmt2(d.rates)})</td><td class="neg">${pct2(d.rates/d.derived.uplAnn*100)}</td></tr>
             <tr><td style="padding-left:20px">Staff & Wages (${d.staffPct}%)</td><td class="neg">(${fmt2(d.derived.stf)})</td><td class="neg">${pct2(d.derived.stf/d.derived.uplAnn*100)}</td></tr>
-            <tr><td style="padding-left:20px">Utilities</td><td class="neg">(${fmt2(d.utilities)})</td><td class="neg">${pct2(d.utilities/d.derived.uplAnn*100)}</td></tr>
+            <tr><td style="padding-left:20px">Utilities</td><td class="neg">(${fmt2(d.computedUtilities)})</td><td class="neg">${pct2(d.computedUtilities/d.derived.uplAnn*100)}</td></tr>
             <tr><td style="padding-left:20px">Other Costs</td><td class="neg">(${fmt2(d.otherCosts)})</td><td class="neg">${pct2(d.otherCosts/d.derived.uplAnn*100)}</td></tr>
             <tr class="ebitda-row"><td><strong>EBITDA</strong></td><td><strong>${fmt2(d.derived.eb)}</strong></td><td><strong>${pct2(d.derived.eb/d.derived.uplAnn*100)}</strong></td></tr>
             <tr><td style="padding-left:20px">Finance / Loan Cost</td><td class="neg">(${fmt2(d.derived.af)})</td><td class="neg">${pct2(d.derived.af/d.derived.uplAnn*100)}</td></tr>
@@ -1279,7 +1279,7 @@ export default function App(){
         setCompetitors(compList.length);
         setNearestComp(parseFloat(compList[0].distance));
       }
-    } catch(e) { // fetch failed silently }
+    } catch(e) { /* fetch failed */ }
   },[]);
 
   // ── Postcode lookup ──────────────────────────────────────────────────────
@@ -1343,7 +1343,7 @@ export default function App(){
         };
         setFoodProfile(profile);
       } catch(e) {
-        // food profile lookup failed silently
+    } catch(e) { /* food profile lookup failed */ }
       }
 
       // Fetch competitors using Google Places API
