@@ -607,7 +607,7 @@ function PPTXExportButton(props) {
           wk:C.wk, ann:C.ann, uplWk:C.upliftedWk, uplAnn:C.upliftedAnn,
           blGP:C.blGP, annGP:C.annGP, stf:C.stf, annC:C.annC, ti:C.ti,
           mp:C.mp, af:C.af, eb:C.eb, nP:C.nP, roi:C.roi, pb:C.pb,
-          spf:C.spf, uplSpf:C.upliftedSpf, pen:C.pen,
+          spf:C.spf, uplSpf:C.upliftedSpf,
         },
         verdict: VRD.l,
         yr5: yr5.map(r=>({...r})),
@@ -1437,10 +1437,10 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"PROCEED",label:"PROCEED",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria exceeded.`};
-    if(C.roi>=10) return {l:"PROCEED WITH CAUTION",label:"PROCEED WITH CAUTION",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
-    if(C.roi>=0)  return {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
-    return              {l:"DO NOT PROCEED",label:"DO NOT PROCEED",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
+    if(C.roi>=20) return {l:"COMMERCIALLY VIABLE",label:"COMMERCIALLY VIABLE",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria met on current assumptions.`};
+    if(C.roi>=10) return {l:"VIABLE SUBJECT TO DUE DILIGENCE",label:"VIABLE SUBJECT TO DUE DILIGENCE",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
+    if(C.roi>=0)  return {l:"NOT COMMERCIALLY VIABLE",label:"NOT COMMERCIALLY VIABLE",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
+    return              {l:"NOT COMMERCIALLY VIABLE",label:"NOT COMMERCIALLY VIABLE",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
   },[C.roi]);
 
   const DS=useMemo(()=>{
@@ -1871,11 +1871,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       ].join(" "),
 
       demographics: [
-        `With a catchment population of ${catchmentPop.toLocaleString()} within one mile, the store has a penetration rate of ${pct(C.pen)}. ${C.pen>=20?"This is a strong penetration rate and suggests the store already plays an important role in the local food economy. The challenge is to hold that share and grow basket rather than grow footfall.":C.pen>=15?"This is above the 15% benchmark for a viable convenience store and indicates a healthy customer base to build on.":"This is below the 15% benchmark. Building penetration will require the store to give customers a reason to choose it over alternatives - a cleaner, more comprehensive offer post refit is the most direct way to achieve this."}`,
+        `With a catchment population of ${catchmentPop.pen)}. ${C. The challenge is to hold that share and grow basket rather than grow footfall.":C.pen>=15?"This is above the 15% benchmark for a viable convenience store and indicates a healthy customer base to build on.":"This is below the 15% benchmark."}`,
         `The working age population of 18-54 accounts for ${pct(workingAge)} of the catchment. ${workingAge>=55?"This is a strong working age proportion - it supports demand across all trading periods and justifies investment in food to go, coffee and a decent lunch offer alongside the core convenience range.":"This is a slightly lower working age proportion than average. The store should still cover all missions, but the emphasis on grab-and-go and food to go should be calibrated against the actual daytime footfall pattern observed on the visit."}`,
         `${socialHousing>=25?`Social and council housing accounts for ${pct(socialHousing)} of housing tenure - a significant proportion. Price-marked packs are not optional in a catchment like this, they are expected. Own-brand ranges, value tiers and consistent pricing on everyday lines will be central to building loyalty with this customer base.`:ownerOccupied>=60?`Owner occupation at ${pct(ownerOccupied)} is above average, which typically points to a more settled, higher-spending customer base with less price sensitivity than a predominantly rented catchment. The operator has room to invest in quality and range breadth.`:`The tenure mix reflects a broadly mainstream catchment. A balanced approach - covering value lines without compromising on the quality and range that attract higher-spending customers - is the right positioning.`}`,
         `A median household income of ${fmt(medianIncome)} ${medianIncome>=35000?"is above the national average and supports a fuller, better-quality convenience offer. Customers here will pay for freshness, range and service.":medianIncome>=27000?"sits broadly in line with the national average. Mainstream pricing, a solid symbol group range and a clean store will be the foundation of a strong trading position.":"is below the national average. Value credentials matter here - PMPs, price-marked promotions and a well controlled cost structure are essential."}`,
-        `The deprivation index of ${deprivation}/10 ${deprivation<=3?"indicates a high deprivation catchment. This is not a barrier to a successful store - high deprivation areas often have the strongest convenience retail penetration - but the range and pricing strategy need to reflect the economic reality of the customer base.":deprivation<=6?"indicates moderate deprivation. The store needs to cover value without sacrificing the range quality that brings in the broader catchment.":"indicates a relatively low deprivation catchment, which gives the operator more flexibility on ranging and pricing strategy."}`
+        `The deprivation index of ${deprivation}/10 ${deprivation<=3?"indicates a high deprivation catchment.":deprivation<=6?"indicates moderate deprivation. The store needs to cover value without sacrificing the range quality that brings in the broader catchment.":"indicates a relatively low deprivation catchment, which gives the operator more flexibility on ranging and pricing strategy."}`
       ].join(" "),
 
       pl: [
@@ -1988,15 +1988,18 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           .avoid-break{page-break-inside:avoid}
           nav,header,.nav-inner{display:none!important}
           #root>div>div:first-child{display:none!important}
-          .pdf-wrapper{padding:0!important;margin:0!important}
+          .pdf-wrapper{padding:0!important;margin:0!important;overflow:visible!important}
           *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-          body{font-size:11pt}
+          body{font-size:11pt;overflow:visible!important}
           h1,h2,h3{page-break-after:avoid}
           table{page-break-inside:avoid}
-          .slide{page-break-inside:avoid}
+          .slide{page-break-inside:avoid;overflow:visible!important}
           .avoid-break{page-break-inside:avoid}
           h1,h2,h3,.section-header{page-break-after:avoid}
           img{max-width:100%!important}
+          div{overflow:visible!important}
+          *{position:static!important;float:none!important}
+          .slide{position:relative!important}
         }
         @media print{.pdf-footer{display:block!important}}
 
@@ -2315,7 +2318,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
         {/* ── COSTS ── */}
         {/* ── REFRIGERATION ── */}
-        <SH c="Refrigeration & Food To Go"/>
+        <SH c="Property Details"/>
         <div className="rg-2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:8}}>
           <Fld label="Dairy / Chilled Cabinet Run (Metres)" hint="Total linear metres of open/doored dairy and chilled cabinets">
             <input type="number" style={INP_manual} value={dairyMetres||''} placeholder="e.g. 6" onChange={e=>setDairyMetres(parseFloat(e.target.value)||0)}/>
@@ -2635,10 +2638,9 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{fontSize:16,fontWeight:700,color:G.text}}>{catchmentPop.toLocaleString()}</div>
               </div>
 
-              {/* Penetration Rate - with annotation */}
-              <div style={{background:"#FFFFFF",border:"1.5px solid "+G.mid,borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
-                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".08em",marginBottom:5}}>Penetration Rate</div>
-                <div style={{fontSize:16,fontWeight:700,color:"#FFFFFF",marginBottom:6}}>{pct(C.pen)}</div>
+
+
+                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".pen)}</div>
                 {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab - this figure may reflect incomplete data.</div>}
                 <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
                   <strong style={{color:G.light}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
@@ -2964,7 +2966,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         ["Annual Finance Cost", C.af, "Net Profit", C.nP],
                         ["Total Investment", C.ti, "ROI", C.roi/100],
                         ["Monthly Loan Payment", C.mp, "Payback Period (years)", C.pb||0],
-                        ["Sales per Sq Ft / week", C.upliftedSpf, "Catchment Penetration", C.pen/100],
+                        ["Sales per Sq Ft / week", C.pen/100],
                         ["","","",""],
                         ["VERDICT", VRD.l, "", ""],
                         ["","","",""],
@@ -3330,7 +3332,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
                 const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
                 const col=isPass?"#16A34A":isCaution?"#B45309":"#DC2626";
-                const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+                const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
                 return (
                   <div style={{background:bg,borderBottom:"1px solid #E2E8F0",padding:"14px 20px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
                     <div style={{flex:"0 0 auto"}}>
@@ -3492,7 +3494,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   {/* VERDICT - dominant */}
   {(()=>{
     const isPass=C.roi>=20, isCaution=C.roi>=10&&C.roi<20, isFail=C.roi<10;
-    const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+    const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
     const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
     const border=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
     const col=border;
@@ -3564,7 +3566,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   {/* What This Means */}
   <div style={{background:"#F0FDF4",border:"1px solid #BBF7D0",borderLeft:"4px solid #15803D",borderRadius:"0 6px 6px 0",padding:"11px 14px"}}>
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
-    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{C.roi>=20?`This site exceeds Genesis Retail's 20% investment threshold. ROI of ${pct(C.roi)} and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback represent a strong commercial proposition. Subject to lease terms, this is a site worth proceeding with.`:C.roi>=10?`ROI of ${pct(C.roi)} is below the preferred 20% threshold. The site is financially viable but tight. Rent negotiation and confirmed trading uplift data are required before commitment.`:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold of 10%. The current assumptions do not support a lending or investment decision. Review occupancy costs and trading projections before resubmitting.`}</div>
+    <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{C.roi>=20?`The projected performance exceeds Genesis Retail's 20% investment threshold. ROI of ${pct(C.roi)} and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback represent a credible basis for investment consideration. Subject to lease terms, the projected returns support further consideration.`:C.roi>=10?`ROI of ${pct(C.roi)} is below the preferred 20% threshold. The site is financially viable but tight. Rent negotiation and confirmed trading uplift data are required before commitment.`:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold of 10%. The current assumptions do not support a lending or investment decision. Review occupancy costs and trading projections before resubmitting.`}</div>
   </div>
 
   <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
@@ -3968,14 +3970,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
   {(()=>{
     const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
-    const label=isPass?"PROCEED":isCaution?"PROCEED WITH CAUTION":"DO NOT PROCEED";
+    const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
     const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
     const col=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
     return(<>
       <div style={{background:bg,border:`2.5px solid ${col}`,borderRadius:8,padding:"26px 30px",marginBottom:22,textAlign:"center"}}>
         <div style={{fontSize:9,letterSpacing:".22em",color:col,textTransform:"uppercase",fontWeight:700,marginBottom:7}}>Genesis Retail Recommendation</div>
         <div style={{fontSize:44,fontWeight:900,color:col,letterSpacing:"-1.5px",lineHeight:1,marginBottom:10}}>{label}</div>
-        <div style={{fontSize:12,color:"#374151",maxWidth:500,margin:"0 auto",lineHeight:1.7}}>{isPass?`A ${pct(C.roi)} return on investment and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meet Genesis Retail's investment threshold. Subject to lease terms and refit execution, this is a sound commercial proposition.`:isCaution?`This site shows financial viability on current assumptions but sits below the preferred 20% ROI threshold. We recommend proceeding subject to a reduction in occupancy costs or confirmation of the trading uplift assumptions through recent till data.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum 10% threshold required for convenience retail investment. Review rent, rates and trading assumptions before resubmitting.`}</div>
+        <div style={{fontSize:12,color:"#374151",maxWidth:500,margin:"0 auto",lineHeight:1.7}}>{isPass?`A ${pct(C.roi)} return on investment and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback meet Genesis Retail's investment threshold. Subject to lease terms and refit execution, this is a basis for further investment consideration.`:isCaution?`This site shows financial viability on current assumptions but sits below the preferred 20% ROI threshold. We recommend proceeding subject to a reduction in occupancy costs or confirmation of the trading uplift assumptions through recent till data.`:`The current financial model does not support a recommendation to proceed. ROI of ${pct(C.roi)} falls below the minimum 10% threshold required for convenience retail investment. Review rent, rates and trading assumptions before resubmitting.`}</div>
       </div>
       <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:14}}>
         {[
