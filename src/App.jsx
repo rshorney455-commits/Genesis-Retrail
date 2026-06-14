@@ -3827,11 +3827,11 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 7</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Financial Performance - Year 1</div>
   </div>
-  <div className="rg-3" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:20}}>
+  <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:14}}>
     {[[fmt(C.upliftedWk),"Weekly Turnover","post refit"],[fmt(C.upliftedAnn),"Annual Turnover",`inc. ${uplift}% uplift`],[fmt(C.annGP),"Gross Profit",`${fmt(Math.round(C.annGP/52))}/wk · ${pct(C.blGP)} margin`],[fmt(C.eb),"EBITDA",`${fmt(Math.round(C.eb/52))}/wk`],[fmt(C.nP),"Net Profit",`${fmt(Math.round(C.nP/52))}/wk`],[pct(C.roi),"ROI",`Against ${fmt(C.ti)} investment`]].map(([v,l,s])=>(
-      <div key={l} style={{border:"1px solid #CBD5E1",borderRadius:6,padding:"13px 14px",borderTop:"3px solid #15803D"}}>
+      <div key={l} style={{border:"1px solid #CBD5E1",borderRadius:6,padding:"10px 12px",borderTop:"2px solid #15803D"}}>
         <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
-        <div style={{fontSize:24,fontWeight:900,color:"#111827",lineHeight:1}}>{v}</div>
+        <div style={{fontSize:20,fontWeight:900,color:"#111827",lineHeight:1}}>{v}</div>
         {s&&<div style={{fontSize:9,color:"#64748B",marginTop:3}}>{s}</div>}
       </div>
     ))}
