@@ -43,19 +43,19 @@ const SECTOR = {
     fhour:{"6-8am":4,"8-10am":14,"10-12pm":12,"12-2pm":16,"2-4pm":12,"4-6pm":18,"6-8pm":16,"8-10pm":8},
   },
   "village": {
-    footfall:250, avgBasket:8.00, staffPct:9, utilities:7500, otherCosts:7000,
+    footfall:250, avgBasket:8.00, staffPct:9, otherCosts:7000,
     spendBands:{u5:15,s5:30,s10:28,s15:17,s20:10},
     missions:{"Top-up":45,"Grab and Go":18,"Treat or Impulse":12,"Food to Go":5,"Big Shop Supplement":20},
     fhour:{"6-8am":3,"8-10am":12,"10-12pm":15,"12-2pm":14,"2-4pm":13,"4-6pm":16,"6-8pm":18,"8-10pm":9},
   },
   "parade": {
-    footfall:350, avgBasket:7.00, staffPct:9, utilities:8500, otherCosts:7500,
+    footfall:350, avgBasket:7.00, staffPct:9, otherCosts:7500,
     spendBands:{u5:20,s5:36,s10:24,s15:13,s20:7},
     missions:{"Top-up":40,"Grab and Go":25,"Treat or Impulse":15,"Food to Go":8,"Big Shop Supplement":12},
     fhour:{"6-8am":4,"8-10am":13,"10-12pm":14,"12-2pm":17,"2-4pm":12,"4-6pm":18,"6-8pm":16,"8-10pm":6},
   },
   "forecourt": {
-    footfall:500, avgBasket:6.00, staffPct:11, utilities:14000, otherCosts:10000,
+    footfall:500, avgBasket:6.00, staffPct:11, otherCosts:10000,
     spendBands:{u5:40,s5:36,s10:14,s15:7,s20:3},
     missions:{"Top-up":25,"Grab and Go":40,"Treat or Impulse":18,"Food to Go":14,"Big Shop Supplement":3},
     fhour:{"6-8am":10,"8-10am":16,"10-12pm":12,"12-2pm":14,"2-4pm":12,"4-6pm":16,"6-8pm":14,"8-10pm":6},
@@ -1205,7 +1205,7 @@ export default function App(){
     const s=SECTOR[location];
     if(!s) return;
     setFootfall(s.footfall); setAvgBasket(s.avgBasket); setStaffPct(s.staffPct);
-    setUtilities(s.utilities); setOtherCosts(s.otherCosts); setSpendBands(s.spendBands);
+    // utilities now computed dynamically setOtherCosts(s.otherCosts); setSpendBands(s.spendBands);
     setMissions({...s.missions}); setFhour({...s.fhour});
   },[location]);
 
@@ -1652,7 +1652,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
     setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||9);
-    setUtilities(saved.utilities||0); // 0 = auto-compute from sqft/refrigeration model
+    // If old assessment had a manually set utility value, treat it as an override
+      if(saved.utilities && saved.utilities > 0 && !saved.electricityOverride) { setElectricityOverride(saved.utilities); }
       setDairyMetres(saved.dairyMetres||0);
       setFrozenMetres(saved.frozenMetres||0);
       setNumFreezers(saved.numFreezers||0);
@@ -2426,7 +2427,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{fontSize:10,fontWeight:700,color:G.text,letterSpacing:".1em",textTransform:"uppercase"}}>Utilities (£)</div>
                   <span style={{fontSize:8,background:"rgba(199,208,213,0.15)",color:G.light,padding:"1px 6px",borderRadius:3,fontWeight:700,letterSpacing:".08em"}}>MODEL ASSUMPTION</span>
                 </div>
-                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={utilities} onFocus={e=>e.target.select()} onChange={e=>setUtilities(e.target.value===""?0:+e.target.value)}/>
+                <input style={{...INP_manual,padding:"7px 10px",fontSize:16,fontWeight:700,background:"transparent",border:"1px solid "+G.border}} type="number" value={electricityOverride||""} onFocus={e=>e.target.select()} onChange={e=>setElectricityOverride(e.target.value===""?0:+e.target.value)}/>
                 <div style={{fontSize:10,color:G.light,marginTop:4}}>{C.ann>0?pct(computedUtilities/C.ann*100)+" of projected sales":""} · Sector average</div>
               </div>
 
