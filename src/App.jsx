@@ -1437,10 +1437,10 @@ export default function App(){
   },[footfall,avgBasket,sqft,cats,staffPct,rent,rates,computedUtilities,otherCosts,refitCost,stockCost,financeRate,financeYears,catchmentPop,uplift]);
 
   const VRD=useMemo(()=>{
-    if(C.roi>=20) return {l:"COMMERCIALLY VIABLE",label:"COMMERCIALLY VIABLE",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria met on current assumptions.`};
-    if(C.roi>=10) return {l:"VIABLE SUBJECT TO DUE DILIGENCE",label:"VIABLE SUBJECT TO DUE DILIGENCE",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
-    if(C.roi>=0)  return {l:"NOT COMMERCIALLY VIABLE",label:"NOT COMMERCIALLY VIABLE",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
-    return              {l:"NOT COMMERCIALLY VIABLE",label:"NOT COMMERCIALLY VIABLE",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
+    if(C.roi>=20) return {l:"Investment Assessment",label:"Investment Assessment",col:"#15803D",icon:"✅",summary:`ROI ${pct(C.roi)}. Payback achieved in ${C.nP>0?(C.ti/C.nP).toFixed(1):"—"} years. Investment criteria met on current assumptions.`};
+    if(C.roi>=10) return {l:"Assessment Outcome",label:"Assessment Outcome",col:"#B45309",icon:"⚠️",summary:`ROI ${pct(C.roi)}. Below preferred 20% threshold. Occupancy cost review required.`};
+    if(C.roi>=0)  return {l:"Assessment Outcome",label:"Assessment Outcome",col:"#DC2626",icon:"❌",summary:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold.`};
+    return              {l:"Assessment Outcome",label:"Assessment Outcome",col:"#DC2626",icon:"❌",summary:"Negative ROI. Investment not recoverable on current assumptions."};
   },[C.roi]);
 
   const DS=useMemo(()=>{
@@ -3332,7 +3332,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
                 const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
                 const col=isPass?"#16A34A":isCaution?"#B45309":"#DC2626";
-                const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
+                const label=isPass?"POSITIVE ASSESSMENT":isCaution?"CONDITIONAL ASSESSMENT":"ADVERSE ASSESSMENT";
                 return (
                   <div style={{background:bg,borderBottom:"1px solid #E2E8F0",padding:"14px 20px",display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
                     <div style={{flex:"0 0 auto"}}>
@@ -3359,7 +3359,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div key={l} style={{padding:"14px 12px",borderRight:idx<4?"1px solid #E2E8F0":"none"}}>
                     <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:4}}>{l}</div>
                     <div style={{fontSize:18,fontWeight:800,color:c,lineHeight:1,marginBottom:4}}>{v}</div>
-                    <div style={{fontSize:9,color:"#94A3B8",fontWeight:400}}>{sub}</div>
+                    <div style={{fontSize:9,color:"#6B7280",fontWeight:400}}>{sub}</div>
                   </div>
                 ))}
               </div>
@@ -3375,7 +3375,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div key={l} style={{padding:"12px 12px",borderRight:idx<4?"1px solid #E2E8F0":"none",borderTop:"1px solid #E2E8F0"}}>
                     <div style={{fontSize:8,letterSpacing:".1em",textTransform:"uppercase",color:"#64748B",fontWeight:600,marginBottom:3}}>{l}</div>
                     <div style={{fontSize:14,fontWeight:700,color:"#111827",lineHeight:1,marginBottom:2}}>{v}</div>
-                    <div style={{fontSize:9,color:"#94A3B8",fontWeight:400}}>{sub}</div>
+                    <div style={{fontSize:9,color:"#6B7280",fontWeight:400}}>{sub}</div>
                   </div>
                 ))}
               </div>
@@ -3494,7 +3494,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   {/* VERDICT - dominant */}
   {(()=>{
     const isPass=C.roi>=20, isCaution=C.roi>=10&&C.roi<20, isFail=C.roi<10;
-    const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
+    const label=isPass?"POSITIVE ASSESSMENT":isCaution?"CONDITIONAL ASSESSMENT":"ADVERSE ASSESSMENT";
     const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
     const border=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
     const col=border;
@@ -3569,7 +3569,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{C.roi>=20?`The projected performance exceeds Genesis Retail's 20% investment threshold. ROI of ${pct(C.roi)} and a ${C.pb?C.pb.toFixed(1)+"-year":""} payback represent a credible basis for investment consideration. Subject to lease terms, the projected returns support further consideration.`:C.roi>=10?`ROI of ${pct(C.roi)} is below the preferred 20% threshold. The site is financially viable but tight. Rent negotiation and confirmed trading uplift data are required before commitment.`:`ROI of ${pct(C.roi)} does not meet the minimum investment threshold of 10%. The current assumptions do not support a lending or investment decision. Review occupancy costs and trading projections before resubmitting.`}</div>
   </div>
 
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>Genesis Retail · rshorney@genesisretail.uk · genesisretail.uk</span>
     <span>Prepared Exclusively For {clientName||"Client"} · Confidential · Page 1</span>
   </div>
@@ -3635,7 +3635,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{`At ${sqft||" - "} sq ft${location?` in a ${location} setting`:""}${rent?`, the rent of ${fmt(rent)} (${C.upliftedAnn>0?pct(rent/C.upliftedAnn*100)+" of post refit turnover":""})`:""}${sqft>=1500?" supports a full symbol group range with strong category depth":sqft>=800?" is workable for a focused symbol group range":" requires disciplined category prioritisation to maximise sales density"}.${uplift>0?` A ${uplift}% trading uplift post refit has been applied to the financial model.`:""}`}</div>
   </div>
 
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Site Overview · Page 2</span>
   </div>
 </div>
@@ -3696,7 +3696,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.demographics||areaNotes||`A catchment population of ${(catchmentPop||0).toLocaleString()} and deprivation score of ${deprivation||0}/10 indicate ${deprivation>=7?"a high deprivation area where value, PMPs and essential grocery will over-index":deprivation>=4?"a mixed catchment requiring balanced ranging":"a lower-deprivation catchment supporting quality and premium ranging"}.`}</div>
   </div>
 
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Market & Demographics · Page 3</span>
   </div>
 </div>
@@ -3743,7 +3743,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.categories||"Range to this catchment, not the national average. Prioritise the categories that over-index here."}</div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Local Food Profile · Page 4</span>
   </div>
 </div>
@@ -3758,7 +3758,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
   </div>
-  {/* Competitor map removed from V1 — competitor table and narrative retained */}
+  {mapLat&&mapLng&&competitorList&&competitorList.length>0&&<div style={{marginBottom:14,borderRadius:6,overflow:"hidden",border:"1px solid #D9D9D9",height:220}}><CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={[]}/></div>}
   <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
     <thead><tr style={{background:"#F1F5F9"}}>{["Operator","Format","Distance","Threat","Notes"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
@@ -3781,7 +3781,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#B45309",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>Footfall & Spend Profile</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.footfall||`Daily footfall of ${(footfall||0).toLocaleString()} customers supports the trading projections. Average basket of £${avgBasket} is consistent with the assessed shopping mission profile.`}</div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Competitor Analysis · Page 5</span>
   </div>
 </div>
@@ -3804,7 +3804,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           <div style={{fontSize:10,fontWeight:700,color:i===0?"#15803D":"#64748B"}}>{sg.score}/10</div>
         </div>
         {i===0&&<div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".1em",marginBottom:5}}>★ Recommended</div>}
-        <div style={{height:5,background:"#E2E8F0",borderRadius:2,marginBottom:7}}><div style={{height:"100%",background:i===0?"#15803D":"#94A3B8",borderRadius:2,width:(sg.score/10*100)+"%"}}/></div>
+        <div style={{height:5,background:"#E2E8F0",borderRadius:2,marginBottom:7}}><div style={{height:"100%",background:i===0?"#15803D":"#4B5563",borderRadius:2,width:(sg.score/10*100)+"%"}}/></div>
         <div style={{fontSize:10,color:"#64748B",lineHeight:1.5}}>{sg.desc}</div>
       </div>
     ))}
@@ -3813,7 +3813,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.symbolGroup||`The scoring model has ranked these options based on location type, projected turnover, catchment profile and category mix. The top-ranked group is the best fit on the assessed criteria. The final decision should involve a formal conversation with the wholesaler about terms, ranging support and refit contribution.`}</div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Symbol Group · Page 6</span>
   </div>
 </div>
@@ -3864,7 +3864,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.pl||`ROI of ${pct(C.roi)} on a total investment of ${fmt(C.ti)}. Net profit of ${fmt(C.nP)} gives a payback of ${C.pb?C.pb.toFixed(1)+" years":"N/A"}.`}</div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Financial Performance · Page 7</span>
   </div>
 </div>
@@ -3922,7 +3922,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,fontWeight:700,color:"#64748B",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>What This Means - Sensitivity</div>
     <div style={{fontSize:11,color:"#374151",lineHeight:1.7}}>{commentary?.sensitivity||`The sensitivity matrix models ${sensitivityData?.flat().filter(c=>c.roi>=20).length||0} of 25 scenarios returning 20%+ ROI. ${(sensitivityData?.[2]?.[2]?.roi||0)>=20?"The base case exceeds the target threshold - the investment is robust across a wide range of trading scenarios.":"The base case is below the 20% target. The investment is sensitive to footfall and rent assumptions."}`}</div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>5-Year Forecast · Page 8</span>
   </div>
 </div>
@@ -3955,7 +3955,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       {" "}Derived from {risks?.filter(r=>r.rag==="red").length||0} red, {risks?.filter(r=>r.rag==="amber").length||0} amber and {risks?.filter(r=>r.rag==="green").length||0} green risk factors across {risks?.length||0} assessed criteria.
     </div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Risk Register · Page 9</span>
   </div>
 </div>
@@ -3970,7 +3970,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   </div>
   {(()=>{
     const isPass=C.roi>=20,isCaution=C.roi>=10&&C.roi<20;
-    const label=isPass?"COMMERCIALLY VIABLE":isCaution?"VIABLE SUBJECT TO DUE DILIGENCE":"NOT COMMERCIALLY VIABLE";
+    const label=isPass?"POSITIVE ASSESSMENT":isCaution?"CONDITIONAL ASSESSMENT":"ADVERSE ASSESSMENT";
     const bg=isPass?"#F0FDF4":isCaution?"#FFFBEB":"#FEF2F2";
     const col=isPass?"#15803D":isCaution?"#B45309":"#DC2626";
     return(<>
@@ -4021,10 +4021,10 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     </div>
     <div style={{textAlign:"right",maxWidth:280}}>
       <div style={{fontSize:10,color:"#64748B"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-      <div style={{fontSize:8,color:"#94A3B8",marginTop:4,lineHeight:1.5}}>This report is prepared on the basis of information provided by the client and publicly available data. Genesis Retail Consultancy accepts no liability for decisions made solely on the basis of this assessment without independent professional advice.</div>
+      <div style={{fontSize:8,color:"#4B5563",marginTop:4,lineHeight:1.5}}>This report is prepared on the basis of information provided by the client and publicly available data. Genesis Retail Consultancy accepts no liability for decisions made solely on the basis of this assessment without independent professional advice.</div>
     </div>
   </div>
-  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#94A3B8"}}>
+  <div style={{marginTop:24,borderTop:"1px solid #CBD5E1",paddingTop:7,display:"flex",justifyContent:"space-between",fontSize:8,color:"#4B5563"}}>
     <span>© 2026 Genesis Retail Ltd · Confidential & Commercially Sensitive</span><span>Investment Decision · Page 10</span>
   </div>
 </div>
