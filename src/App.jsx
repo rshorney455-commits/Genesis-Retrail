@@ -148,7 +148,7 @@ const INP_auto   = {width:"100%",padding:"12px 14px",background:"#F9F9F9",border
 function Commentary({text}){
   if(!text) return null;
   return (
-    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#1a2a20",border:"1px solid #2d55c8",borderLeft:"4px solid #1e3a8a",borderRadius:"0 8px 8px 0",fontSize:13,color:G.val,lineHeight:1.9}}>
+    <div style={{margin:"12px 0 20px",padding:"14px 18px",background:"#FFFFFF",border:"1px solid #2d55c8",borderLeft:"4px solid #000000",borderRadius:"0 8px 8px 0",fontSize:13,color:G.val,lineHeight:1.9}}>
       {text}
     </div>
   );
@@ -162,7 +162,7 @@ function Legend(){
         <span style={{fontSize:12,color:G.text}}>You fill in on the visit</span>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:7}}>
-        <div style={{width:14,height:14,borderRadius:3,background:"#1a2a20",border:"1.5px solid #2d55c8",flexShrink:0}}/>
+        <div style={{width:14,height:14,borderRadius:3,background:"#FFFFFF",border:"1.5px solid #2d55c8",flexShrink:0}}/>
         <span style={{fontSize:12,color:G.text}}>Auto-filled / sector average - override if needed</span>
       </div>
     </div>
