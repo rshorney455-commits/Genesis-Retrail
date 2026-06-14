@@ -2640,14 +2640,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 
 
 
-                <div style={{fontSize:11,color:G.light,textTransform:"uppercase",letterSpacing:".pen)}</div>
-                {C.pen>=99&&<div style={{fontSize:10,color:G.val,background:"#fff3cd",border:"1px solid #b45309",borderRadius:4,padding:"4px 6px",marginBottom:6}}>⚠ Check catchment population on Demographics tab - this figure may reflect incomplete data.</div>}
-                <div style={{fontSize:10,color:G.light,lineHeight:1.5,textAlign:"left",borderTop:"1px solid "+G.border,paddingTop:6}}>
-                  <strong style={{color:G.light}}>What this means:</strong> The % of people within 1 mile who would shop here weekly. 
-                  <br/><span style={{color:C.pen>=15?"#0d5e72":C.pen>=10?"#ffffff":"#c05010"}}>{C.pen>=20?"✓ Strong - well above the 15% target":C.pen>=15?"✓ Good - meets the 15% benchmark":C.pen>=10?"⚠ Below target - aim for 15%+ with good ranging":"✗ Low - consider whether catchment is large enough"}</span>
-                  <br/><span style={{fontSize:9,color:G.light}}>Benchmark: 15-25% for a well-run convenience store</span>
-                </div>
-              </div>
+
+
+
+
+
+
+
+
 
               {/* Demographic Score - with annotation */}
               <div style={{background:DS>=6?"#eef1fb":DS>=4?G.card:"#fdf8ec",border:"1.5px solid "+(DS>=6?G.mid:DS>=4?G.border:G.orange),borderRadius:10,padding:"12px 10px",textAlign:"center"}}>
