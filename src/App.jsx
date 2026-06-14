@@ -1342,9 +1342,9 @@ export default function App(){
             : ["Budget white-label lines", "Deep tobacco range beyond mainstream brands"],
         };
         setFoodProfile(profile);
-      } catch(e) {
-    } catch(e) { /* food profile lookup failed */ }
-      }
+      } catch(e) { /* food profile lookup failed */ }
+
+
 
       // Fetch competitors using Google Places API
       fetchCompetitors(lat, lng, clean);
