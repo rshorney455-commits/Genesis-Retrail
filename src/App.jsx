@@ -2420,7 +2420,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         </Fld>
         {electricityOverride===0&&(
           <div style={{fontSize:11,color:G.muted,marginBottom:8,padding:"6px 10px",background:"rgba(21,128,61,0.06)",borderRadius:4}}>
-            Auto-computed: £{computedUtilities.toLocaleString()} {dairyMetres>0||numFreezers>0?"(refrigeration model)":sqft>0?`(${sqft} sq ft × £20)`:"(enter sq ft on Property tab)"}
+
           </div>
         )}
 {/* Utilities display */}
@@ -3758,7 +3758,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     <div style={{fontSize:8,letterSpacing:".2em",color:"#15803D",textTransform:"uppercase",fontWeight:700}}>Section 5</div>
     <div style={{fontSize:18,fontWeight:700,color:"#111827"}}>Competitor Analysis</div>
   </div>
-  {mapLat&&mapLng&&competitorList?.some(c=>c.lat&&c.lng&&(Math.abs(c.lat-mapLat)>0.0001||Math.abs(c.lng-mapLng)>0.0001))&&<div style={{marginBottom:14,borderRadius:6,overflow:"hidden",border:"1px solid #CBD5E1",height:220}}><CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={[]}/></div>}
+  {/* Competitor map removed from V1 — competitor table and narrative retained */}
   <table style={{width:"100%",borderCollapse:"collapse",fontSize:10,marginBottom:16}}>
     <thead><tr style={{background:"#F1F5F9"}}>{["Operator","Format","Distance","Threat","Notes"].map(h=><th key={h} style={{padding:"9px 10px",textAlign:"left",fontWeight:700,color:"#374151",fontSize:9,textTransform:"uppercase",letterSpacing:".06em"}}>{h}</th>)}</tr></thead>
     <tbody>
@@ -4126,7 +4126,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   <div style={{fontSize:11,fontWeight:700,color:"#15803D",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
                   <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
                   <div style={{fontSize:13,color:"#374151",lineHeight:1.85}}>
-                    {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed - in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
+                    {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"appears commercially viable based on the assumptions contained within this assessment that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed - in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
                   </div>
                 </div>
 
