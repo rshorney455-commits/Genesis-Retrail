@@ -124,26 +124,26 @@ const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",
 const pct = n => (isNaN(n)||n==null?0:n).toFixed(1)+"%";
 
 const G = {
-  bg:"#0B1418",      // main background
-  card:"#1E293B",    // card / row highlight
-  border:"#2a3a42",  // subtle borders
-  text:"#FFFFFF",    // primary text / figures
-  dark:"#0B1418",    // deep background
-  mid:"#123A2D",     // section header fills
-  light:"#C7D0D5",   // secondary labels
-  pale:"#1E293B",    // highlight rows
-  orange:"#F59E0B",  // accent
-  pos:"#22C55E",     // positive values
-  neg:"#EF4444",     // negative values
-  val:"#FFFFFF",     // all KPI figures  // amber accent
-  obg:"#1a2a20",     // subtle green tint bg
-  val:"#FFFFFF",     // all figures white
+  bg:"#FFFFFF",      // main background
+  card:"#FFFFFF",    // card / row highlight
+  border:"#D9D9D9",  // subtle borders
+  text:"#000000",    // primary text
+  dark:"#000000",    // deep text
+  mid:"#000000",     // section header text
+  light:"#444444",   // secondary labels
+  pale:"#F9F9F9",    // highlight rows
+  orange:"#000000",  // accent (monochrome)
+  pos:"#22C55E",     // positive values (kept for Results)
+  neg:"#EF4444",     // negative values (kept for Results)
+  val:"#000000",     // all KPI figures
+  obg:"#FFFFFF",     // background
+  muted:"#444444",   // muted text
   pos:"#22C55E",     // positive variance
   neg:"#EF4444",     // negative variance
 };
 
-const INP_manual = {width:"100%",padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
-const INP_auto   = {width:"100%",padding:"12px 14px",background:G.card,border:"1px solid "+G.border,borderRadius:8,color:G.val,fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_manual = {width:"100%",padding:"12px 14px",background:"#FFFFFF",border:"1px solid #D9D9D9",borderRadius:4,color:"#000000",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
+const INP_auto   = {width:"100%",padding:"12px 14px",background:"#F9F9F9",border:"1px solid #D9D9D9",borderRadius:4,color:"#000000",fontFamily:"inherit",fontSize:16,outline:"none",WebkitAppearance:"none",appearance:"none",fontWeight:700};
 
 function Commentary({text}){
   if(!text) return null;
@@ -566,7 +566,7 @@ function DemoSec({label,keys,values,setter}){
       {keys.map(k=>(
         <div key={k} style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
           <div style={{fontSize:14,color:G.val,flex:1,minWidth:0}}>{k}</div>
-          <div style={{width:60,height:6,background:G.pale,borderRadius:3,flexShrink:0}}><div style={{height:"100%",background:G.mid,borderRadius:3,width:values[k]+"%"}}/></div>
+          <div style={{width:60,height:6,background:G.pale,borderRadius:3,flexShrink:0}}><div style={{height:"100%",background:"#FFFFFF",borderRadius:3,width:values[k]+"%"}}/></div>
           <input style={{...INP_manual,width:60,flexShrink:0,padding:8,textAlign:"center"}} type="number" step="0.5" value={values[k]} onFocus={e=>e.target.select()} onChange={e=>setter(p=>({...p,[k]:e.target.value===""?0:parseFloat(e.target.value)||0}))}/>
         </div>
       ))}
@@ -1971,14 +1971,14 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   return (
     <>
     <ErrorBoundary>
-    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:step===9?"#ffffff":G.bg,minHeight:"100vh",color:G.text}}>
+    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",background:"#FFFFFF",minHeight:"100vh",color:G.text}}>
       <style>{`
         *{box-sizing:border-box;margin:0;max-width:100%}img,table{max-width:100%}
         input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
         input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(0,0,0,0.08)}
-        select option{background:#fff;color:#0c1024}
+        select option{background:#fff;color:#000}
         textarea{resize:vertical}
-        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#c8cfe8;border-radius:3px}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#D9D9D9;border-radius:3px}
         @page{margin:10mm;size:A4}
         @media print{
           .no-print{display:none!important}
@@ -2047,7 +2047,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <div style={{background:G.card,border:"1px solid "+G.border,borderRadius:8,padding:12,marginBottom:12,fontSize:11,wordBreak:"break-all",color:G.text,lineHeight:1.6,maxHeight:120,overflowY:"auto"}}>{sharePayload}</div>
                 <div style={{fontSize:12,color:"#FFFFFF",marginBottom:12,lineHeight:1.6}}>⚠ Send this token via email or WhatsApp. Tell the client their PIN separately. The token expires when you close this window.</div>
                 <div style={{display:"flex",gap:8}}>
-                  <button onClick={()=>{navigator.clipboard?.writeText(sharePayload);setSaveMsg("Token copied!");setTimeout(()=>setSaveMsg(""),2000);}} style={{flex:2,padding:12,background:G.mid,border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>📋 Copy Token</button>
+                  <button onClick={()=>{navigator.clipboard?.writeText(sharePayload);setSaveMsg("Token copied!");setTimeout(()=>setSaveMsg(""),2000);}} style={{flex:2,padding:12,background:"#FFFFFF",border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}>📋 Copy Token</button>
                   <button onClick={()=>{setShowShare(false);setSharePayload(null);setSharePin("");}} style={{flex:1,padding:12,background:G.bg,border:"1.5px solid "+G.border,borderRadius:8,color:G.light,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>Close</button>
                 </div>
               </>
@@ -2068,13 +2068,13 @@ Write a concise, professional 4-paragraph executive summary for this site assess
       )}
 
       {/* Header nav */}
-      <div className="no-print" style={{background:"#0B1418",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
+      <div className="no-print" style={{background:"#FFFFFF",padding:"16px 16px 0",position:"sticky",top:0,zIndex:100,borderBottom:"1px solid #D9D9D9",boxShadow:"0 4px 20px rgba(6,14,36,0.6)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
             <img src="https://genesisretail.uk/logo.jpg" alt="Genesis Retail" style={{height:44,width:"auto",objectFit:"contain",borderRadius:4}}/>
             <div>
-              <div style={{fontSize:13,fontWeight:600,color:G.val,letterSpacing:".04em"}}>Site Viability Assessor</div>
-              {propName&&<div style={{fontSize:12,color:"#FFFFFF",marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
+              <div style={{fontSize:13,fontWeight:600,color:"#000000",letterSpacing:".04em"}}>Site Viability Assessor</div>
+              {propName&&<div style={{fontSize:12,color:"#444444",marginTop:1}}>{propName}{postcode?" · "+postcode:""}</div>}
             </div>
           </div>
           <div style={{display:"flex",gap:6,flexShrink:0,marginTop:4,flexWrap:"wrap"}}>
@@ -2098,7 +2098,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         </div>
       </div>
 
-      <div className="mobile-wrap" style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto",background:step===9?"#ffffff":G.bg,minHeight:"calc(100vh - 80px)"}}>
+      <div className="mobile-wrap" style={{padding:"24px 16px 24px",maxWidth:700,margin:"0 auto",background:"#FFFFFF",minHeight:"calc(100vh - 80px)"}}>
 
         {/* ── COVER ── */}
         {step===0&&(
@@ -2258,7 +2258,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       <a
                         href={`https://www.planning.data.gov.uk/map/?postcode=${encodeURIComponent(postcode.trim())}&dataset=planning-application`}
                         target="_blank" rel="noopener noreferrer"
-                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:G.mid,color:"#fff",borderRadius:7,fontSize:13,fontWeight:700,textDecoration:"none"}}
+                        style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 14px",background:"#FFFFFF",color:"#fff",borderRadius:7,fontSize:13,fontWeight:700,textDecoration:"none"}}
                       >
                         Gov.uk planning map →
                       </a>
@@ -2528,7 +2528,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     </div>
                   </div>
                   <div style={{height:5,background:G.pale,borderRadius:3,marginBottom:14}}>
-                    <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
+                    <div style={{height:"100%",background:"#FFFFFF",borderRadius:3,width:Math.min(cat.mix/20*100,100)+"%"}}/>
                   </div>
                   <div className="rg-3" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
                     <div style={{background:"#fff",border:"1px solid "+G.border,borderRadius:8,padding:"12px",textAlign:"center"}}>
@@ -2576,7 +2576,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   </div>
                 ))}
               </div>
-              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:"#FFFFFF",marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% - adjust to reach 100%</div>}
+              {Math.abs(totalMix-100)>=0.1&&<div style={{textAlign:"center",fontSize:12,color:"#444444",marginTop:10,fontWeight:600}}>⚠ Mix is {totalMix.toFixed(1)}% - adjust to reach 100%</div>}
             </div>
 
                         {/* GP margin context */}
@@ -2754,7 +2754,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div key={b.key} style={{marginBottom:14}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:14,color:G.text}}><span>{b.label}</span><span style={{fontWeight:700,color:"#FFFFFF"}}>{spendBands[b.key]}%</span></div>
                 <div style={{display:"flex",gap:10,alignItems:"center"}}>
-                  <div style={{flex:1,height:8,background:G.pale,borderRadius:4}}><div style={{height:"100%",background:G.mid,borderRadius:4,width:spendBands[b.key]+"%"}}/></div>
+                  <div style={{flex:1,height:8,background:G.pale,borderRadius:4}}><div style={{height:"100%",background:"#FFFFFF",borderRadius:4,width:spendBands[b.key]+"%"}}/></div>
                   <input style={{...INP_auto,width:70,padding:"8px 10px",textAlign:"center"}} type="number" step="1" value={spendBands[b.key]} onFocus={e=>e.target.select()} onChange={e=>setSpendBands(p=>({...p,[b.key]:e.target.value===""?0:+e.target.value}))}/>
                 </div>
               </div>
@@ -2791,7 +2791,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               <div style={{marginBottom:24}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
                   <Sub c="Competitor Map - auto-generated from postcode"/>
-                  <button onClick={()=>fetchCompetitors(mapLat,mapLng,postcode)} style={{padding:"6px 12px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>↻ Refresh Competitors</button>
+                  <button onClick={()=>fetchCompetitors(mapLat,mapLng,postcode)} style={{padding:"6px 12px",background:"#FFFFFF",color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600}}>↻ Refresh Competitors</button>
                 </div>
                 <CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>
                 {competitorList.length>0&&(
@@ -2830,7 +2830,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                     if(document.getElementById("mc-name")) document.getElementById("mc-name").value="";
                     if(document.getElementById("mc-type")) document.getElementById("mc-type").value="";
                     if(document.getElementById("mc-dist")) document.getElementById("mc-dist").value="";
-                  }} style={{marginTop:10,padding:"9px 20px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600}}>+ Add</button>
+                  }} style={{marginTop:10,padding:"9px 20px",background:"#FFFFFF",color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600}}>+ Add</button>
                 </div>
               </div>
             )}
@@ -2886,7 +2886,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                   if(data[0]) setExistingStore({name:addr,lat:parseFloat(data[0].lat),lng:parseFloat(data[0].lon)});
                   else alert("Address not found - try adding the postcode");
                 } catch(e) { alert("Lookup failed"); }
-              }} style={{padding:"8px 14px",background:G.mid,color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600,flexShrink:0}}>Locate</button>
+              }} style={{padding:"8px 14px",background:"#FFFFFF",color:"#fff",border:"none",borderRadius:7,cursor:"pointer",fontFamily:"inherit",fontSize:13,fontWeight:600,flexShrink:0}}>Locate</button>
               {existingStore&&<button onClick={()=>setExistingStore(null)} style={{padding:"8px 10px",background:"transparent",border:"1px solid "+G.border,borderRadius:7,cursor:"pointer",color:G.val,fontSize:13}}>✕</button>}
             </div>}/>
             <Sub c="Footfall by hour - sector average, override if needed"/>
@@ -3035,7 +3035,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                       XLSX.writeFile(wb, filename);
                     } catch(e){ alert("Export failed: "+e.message); }
                   }}
-                  style={{width:"100%",padding:12,background:G.mid,border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
+                  style={{width:"100%",padding:12,background:"#FFFFFF",border:"none",borderRadius:8,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:14,fontWeight:700}}
                 >
                   📥 Download Excel
                 </button>
@@ -3087,7 +3087,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               }));
 
               const TH = (t,right)=>(
-                <th style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:right?"right":"left",whiteSpace:"nowrap",position:"sticky",top:0}}>{t}</th>
+                <th style={{padding:"8px 10px",background:"#FFFFFF",color:"#fff",fontSize:11,fontWeight:700,textAlign:right?"right":"left",whiteSpace:"nowrap",position:"sticky",top:0}}>{t}</th>
               );
               const TD = (v,bold,neg,hi,pctFmt)=>(
                 <td style={{padding:"7px 10px",fontSize:12,textAlign:"right",fontWeight:bold?700:400,color:neg?"#d62828":hi?G.text:G.light,background:hi?"#dde4f5":"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>
@@ -3098,7 +3098,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <td style={{padding:"7px 10px",fontSize:12,fontWeight:bold?700:400,color:hi?G.text:G.light,paddingLeft:indent?22:10,background:hi?G.pale:"transparent",borderBottom:"1px solid "+G.border,whiteSpace:"nowrap"}}>{v}</td>
               );
               const SectionRow = (label)=>(
-                <tr><td colSpan={10} style={{background:G.mid,padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{label}</td></tr>
+                <tr><td colSpan={10} style={{background:"#FFFFFF",padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{label}</td></tr>
               );
 
               return (
@@ -3191,7 +3191,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                             ];
                             let running=0;
                             return cfItems.map((item,idx)=>{
-                              if(item.type==="hdr") return <tr key={idx}><td colSpan={14} style={{background:G.mid,padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{item.l}</td></tr>;
+                              if(item.type==="hdr") return <tr key={idx}><td colSpan={14} style={{background:"#FFFFFF",padding:"5px 10px",fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".1em"}}>{item.l}</td></tr>;
                               if(item.type==="gap"||!item.l) return <tr key={idx}><td colSpan={14} style={{height:6}}></td></tr>;
                               const bg = item.hi?"#dde4f5":item.hi2?"#b8e0e8":"transparent";
                               const col = item.v<0?"#c05010":item.hi||item.hi2?G.mid:G.dark;
@@ -3237,8 +3237,8 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         <table style={{width:"100%",borderCollapse:"collapse"}}>
                           <thead>
                             <tr>
-                              <th style={{padding:"8px 12px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:"left"}}>Footfall ↕ / Rent →</th>
-                              {[-20,-10,0,10,20].map(rp=><th key={rp} style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:"center"}}>Rent {rp>0?"+":""}{rp}%</th>)}
+                              <th style={{padding:"8px 12px",background:"#FFFFFF",color:"#fff",fontSize:11,fontWeight:700,textAlign:"left"}}>Footfall ↕ / Rent →</th>
+                              {[-20,-10,0,10,20].map(rp=><th key={rp} style={{padding:"8px 10px",background:"#FFFFFF",color:"#fff",fontSize:11,fontWeight:700,textAlign:"center"}}>Rent {rp>0?"+":""}{rp}%</th>)}
                             </tr>
                           </thead>
                           <tbody>
@@ -3265,7 +3265,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                         <thead>
                           <tr>
                             {["Category","Sales Mix","GP %","Annual Sales","Annual GP","GP Contribution"].map(h=>(
-                              <th key={h} style={{padding:"8px 10px",background:G.mid,color:"#fff",fontSize:11,fontWeight:700,textAlign:h==="Category"?"left":"right",whiteSpace:"nowrap"}}>{h}</th>
+                              <th key={h} style={{padding:"8px 10px",background:"#FFFFFF",color:"#fff",fontSize:11,fontWeight:700,textAlign:h==="Category"?"left":"right",whiteSpace:"nowrap"}}>{h}</th>
                             ))}
                           </tr>
                         </thead>
@@ -3280,7 +3280,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                               <td style={{padding:"8px 10px",textAlign:"right",fontSize:12}}>
                                 <div style={{display:"flex",alignItems:"center",gap:6,justifyContent:"flex-end"}}>
                                   <div style={{width:60,height:6,background:G.pale,borderRadius:3}}>
-                                    <div style={{height:"100%",background:G.mid,borderRadius:3,width:Math.min(cat.mix*4,100)+"%"}}/>
+                                    <div style={{height:"100%",background:"#FFFFFF",borderRadius:3,width:Math.min(cat.mix*4,100)+"%"}}/>
                                   </div>
                                   <span style={{color:"#FFFFFF",minWidth:30}}>{pct(C.ann*cat.mix/100*cat.gp/100/C.annGP*100)}</span>
                                 </div>
