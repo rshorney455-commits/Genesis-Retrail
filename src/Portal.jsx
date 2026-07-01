@@ -741,7 +741,7 @@ function AdminDashboard({ onLogout }) {
                   <div style={{ padding:"10px 14px", background:P.pale, borderRadius:8,
                     fontSize:12, color:P.navy, marginBottom:14 }}>
                     <strong>Client ID:</strong> {form.id}<br/>
-                    <strong>Login URL:</strong> genesis-retrail.vercel.app/portal<br/>
+                    <strong>Login URL:</strong> genesis-retail.vercel.app/portal<br/>
                     Share these with the retailer.
                   </div>
                 )}
