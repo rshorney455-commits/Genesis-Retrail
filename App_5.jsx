@@ -3853,22 +3853,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </div>
             )}
 
-            {/* Written Assessment Summary */}
-            <div className="avoid-break">
-              <RPSH c="Genesis Retail — Written Assessment"/>
-              <div style={{fontSize:14,color:"#1a2144",lineHeight:2.0}}>
-                <p style={{marginBottom:16}}>{commentary.financial}</p>
-                <p style={{marginBottom:16}}>{commentary.risks}</p>
-                <p style={{marginBottom:16}}>{commentary.competitors}</p>
-                <p style={{marginBottom:16}}>{commentary.categories}</p>
-                <p style={{marginBottom:16}}>{commentary.footfall}</p>
-                <p style={{marginBottom:16}}>{commentary.demographics}</p>
-                <p style={{marginBottom:16}}>{commentary.pl}</p>
-                <p style={{marginBottom:16}}>{commentary.fiveYear}</p>
-                <p style={{marginBottom:0}}>{commentary.sensitivity}</p>
-              </div>
-            </div>
-
               {/* PDF Footer — branding on every print page */}
               <div style={{marginTop:24,borderTop:"2px solid #1e3a8a",paddingTop:12,display:"flex",justifyContent:"space-between",alignItems:"center",background:"#fff"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12}}>
