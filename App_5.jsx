@@ -119,7 +119,31 @@ const TRAFFIC_F   = [
   {k:"school",      l:"School nearby",         h:"Within 400m",                 num:false},
   {k:"office",      l:"Office / industrial",   h:"Significant employer nearby", num:false},
 ];
-const STEPS = ["Cover","Property","Costs","Refit","Categories","Demographics","Spend","Traffic","Spreadsheet","Results","Admin"];
+const STEPS = ["Start","Site & Costs","Catchment","Competition","Trading","Results"];
+
+// ── V2: Location type auto-detection from postcodes.io rural_urban_classification ──
+const LOCATION_TYPE_MAP = {
+  "A1":"city-centre","A2":"city-centre","A3":"city-centre","A4":"city-centre",
+  "B1":"city-centre","B2":"city-centre","B3":"city-centre","B4":"city-centre",
+  "C1":"suburban","C2":"suburban",
+  "D1":"parade","D2":"village",
+  "E1":"village","E2":"village",
+  "F1":"village","F2":"village",
+};
+
+// ── V2: SBRR business rates calculation from rateable value ──
+function calculateBusinessRates(rateableValue) {
+  const STANDARD_MULTIPLIER = 0.546;  // 2024/25
+  const SMALL_BIZ_MULTIPLIER = 0.499; // 2024/25
+  if (!rateableValue || rateableValue <= 0) return 0;
+  if (rateableValue <= 12000) return 0; // 100% SBRR
+  if (rateableValue <= 15000) {
+    const reliefPct = ((15000 - rateableValue) / 3000) * 100;
+    return Math.round(rateableValue * SMALL_BIZ_MULTIPLIER * (1 - reliefPct / 100));
+  }
+  if (rateableValue <= 51000) return Math.round(rateableValue * SMALL_BIZ_MULTIPLIER);
+  return Math.round(rateableValue * STANDARD_MULTIPLIER);
+}
 
 const fmt = n => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(isNaN(n)||!isFinite(n)?0:n);
 const pct = n => (isNaN(n)||!isFinite(n)) ? "0.0%" : n.toFixed(1)+"%";
@@ -155,50 +179,6 @@ function Legend(){
       </div>
     </div>
   );
-}
-
-// ── Postcode lookup hook ──────────────────────────────────────────────────────
-function usePostcodeLookup() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
-  const [data, setData]       = useState(null);
-
-  const lookup = useCallback(async (postcode) => {
-    const clean = postcode.replace(/\s/g,"").toUpperCase();
-    if(clean.length < 5) return;
-    setLoading(true); setError(null);
-    try {
-      // 1. Get lat/lng from postcodes.io
-      const geoRes = await fetch(`https://api.postcodes.io/postcodes/${clean}`);
-      const geoJson = await geoRes.json();
-      if(geoJson.status !== 200) throw new Error("Postcode not found");
-      const { latitude, longitude, admin_district, region, codes } = geoJson.result;
-
-      // 2. ONS deprivation proxy via LSOA code
-      const lsoa = codes?.lsoa || "";
-
-      // 3. Get nearby places using Nominatim (free OSM geocoder)
-      const nearbyRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=40&viewbox=${longitude-0.02},${latitude+0.02},${longitude+0.02},${latitude-0.02}&bounded=1&q=convenience+store+OR+supermarket+OR+off+licence+OR+petrol+station`,
-        { headers: { "Accept-Language":"en-GB" } }
-      );
-      const nearbyJson = await nearbyRes.json();
-
-      // 4. Planning applications via Planning Explorer (open data)
-      // Using postcodes.io nearest endpoint for LPA info
-      const lpaRes = await fetch(`https://api.postcodes.io/postcodes/${clean}`);
-      const lpaJson = await lpaRes.json();
-      const lpa = lpaJson.result?.admin_district || "";
-
-      setData({ latitude, longitude, admin_district, region, lsoa, lpa, nearbyPlaces: nearbyJson || [] });
-    } catch(e) {
-      setError(e.message || "Lookup failed");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  return { lookup, loading, error, data };
 }
 
 // ── Competitor Map (OpenStreetMap + Leaflet via CDN) ──────────────────────────
@@ -1086,6 +1066,7 @@ export default function App(){
   const [uplift,setUplift]=useState(15);
   const [rent,setRent]=useState(18000);
   const [rates,setRates]=useState(6000);
+  const [rateableValue,setRateableValue]=useState(0);
   const [staffPct,setStaffPct]=useState(SECTOR.suburban.staffPct);
   const [utilities,setUtilities]=useState(SECTOR.suburban.utilities);
   const [otherCosts,setOtherCosts]=useState(SECTOR.suburban.otherCosts);
@@ -1224,7 +1205,7 @@ export default function App(){
     } catch(e) { console.log("Google Places fetch failed:", e); }
   },[]);
 
-  // ── Postcode lookup ──────────────────────────────────────────────────────
+  // ── V2: Postcode lookup — auto-populates everything ──────────────────────
   const doPostcodeLookup = useCallback(async (pc) => {
     const clean = pc.replace(/\s/g,"").toUpperCase();
     if(clean.length < 5) return;
@@ -1238,6 +1219,20 @@ export default function App(){
       setMapLat(lat); setMapLng(lng);
       setPostcodeData(r);
 
+      // ── V2: Auto-detect location type from rural_urban_classification ──
+      const ruCode = (r.codes?.rural_urban || r.rural_urban_classification || "").replace(/[^A-Z0-9]/gi,"").substring(0,2).toUpperCase();
+      const detectedLocation = LOCATION_TYPE_MAP[ruCode] || "suburban";
+      setLocation(detectedLocation);
+
+      // ── V2: Deprivation from IMD rank (England has 32,844 LSOAs) ──
+      if(r.codes?.lsoa) {
+        const imdRank = r.imd || null;
+        if(imdRank) {
+          const decile = Math.min(10, Math.max(1, Math.ceil(imdRank / 3284.4)));
+          setDeprivation(decile);
+        }
+      }
+
       // Auto-fill location intelligence from region
       const region = (r.region||"").toLowerCase();
       if(region.includes("london")) { setCatchmentPop(12000); setPopDensity("high"); setMedianIncome(38000); }
@@ -1245,13 +1240,27 @@ export default function App(){
       else if(region.includes("north")||region.includes("yorkshire")||region.includes("midlands")) { setCatchmentPop(7500); setPopDensity("medium"); setMedianIncome(27000); }
       else { setCatchmentPop(8500); setPopDensity("medium"); setMedianIncome(30000); }
 
-      // ── Food consumption profile — static lookup by deprivation + region ────────
+      // ── V2: ONS census data by LSOA (runs client-side) ──
+      const lsoaCode = r.codes?.lsoa;
+      if(lsoaCode) {
+        try {
+          // Try nomisweb for population + age structure
+          const onsRes = await fetch(`https://www.nomisweb.co.uk/api/v01/dataset/NM_2021_1.data.json?geography=${lsoaCode}&measures=20100&select=geography_name,cell_name,obs_value`);
+          if(onsRes.ok) {
+            const onsData = await onsRes.json();
+            const obs = onsData?.obs || [];
+            const totalPop = obs.find(o => o.cell_name === "Total: All usual residents");
+            if(totalPop?.obs_value) setCatchmentPop(parseInt(totalPop.obs_value));
+          }
+        } catch(e) { console.log("ONS census fetch failed, using regional defaults:", e.message); }
+      }
+
+      // ── Food consumption profile — static lookup by deprivation + region ────
       try {
         const dep = deprivation;
         const isHighDep = dep <= 4;
         const isMidDep = dep > 4 && dep <= 7;
-        const isLowDep = dep > 7;
-        const isLondon = (r.region||"").toLowerCase().includes("london") || (r.nuts1||"").includes("E13");
+        const isLondon = (r.region||"").toLowerCase().includes("london") || (r.nuts||"").includes("E13");
         const isEssex = (r.admin_county||"").toLowerCase().includes("essex") || (r.admin_district||"").toLowerCase().includes("thurrock");
 
         const profile = {
@@ -1291,6 +1300,7 @@ export default function App(){
       // Fetch competitors using Google Places API
       fetchCompetitors(lat, lng, clean);
 
+      // ── V2: Rates — fallback estimate until user enters rateable value ──
       const rateMultiplier = region.includes("london") ? 55 : region.includes("south east") ? 42 : 32;
       setRates(Math.round((sqft * rateMultiplier) / 100) * 100);
 
@@ -1493,7 +1503,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   const isLoading = useRef(false);
   const gatherState = useCallback(()=>({
     propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,
-    rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
+    rent,rates,rateableValue,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,
     cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,
     spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,
     traffic,fhour,competitors,nearestComp,parking,
@@ -1501,7 +1511,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     competitorList,planningApps,mapLat,mapLng,
     comparables,foodProfile,existingStore,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,rent,rates,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,rent,rates,rateableValue,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
 
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1564,7 +1574,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
   }
 
   // Step 3: Debounced autosave — no deps, fires after every render, 2s debounce
-  const saveTimeoutRef = useRef();
   useEffect(()=>{
     clearTimeout(saveTimeoutRef.current);
     saveTimeoutRef.current = setTimeout(async()=>{
@@ -2019,7 +2028,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
             <button onClick={()=>setShowShare(true)} style={{padding:"7px 12px",background:"rgba(212,160,23,0.15)",border:"1.5px solid #2d55c8",borderRadius:7,color:"#2d55c8",cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:700}}>
               🔒 Share
             </button>
-            <button onClick={()=>setStep(10)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}}>⚙</button>
+            <button onClick={()=>setStep(6)} title="Admin" style={{padding:"7px 10px",background:"transparent",border:"none",color:"#3a4a6a",cursor:"pointer",fontSize:16,opacity:0.4}}>⚙</button>
             {(()=>{
               const cfg = {
                 saving: {color:"#94a3b8", label:"Saving..."},
@@ -2038,7 +2047,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         </div>
         <div style={{display:"flex",gap:2,overflowX:"auto",WebkitOverflowScrolling:"touch"}}>
           {STEPS.map((s,i)=>(
-            i===10 ? null :
+            i>=STEPS.length ? null :
             <button key={i} onClick={()=>setStep(i)} style={{flexShrink:0,padding:"8px 12px",background:step===i?"#fff":step>i?"#2d55c8":"transparent",border:"1.5px solid "+(step===i?"#fff":step>i?"#2d55c8":"#5a6fa8"),color:step===i?G.mid:"#fff",fontSize:12,borderRadius:"6px 6px 0 0",whiteSpace:"nowrap",cursor:"pointer",fontFamily:"inherit",fontWeight:step===i?700:400}}>
               {i+1}. {s}
             </button>
@@ -2127,7 +2136,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── PROPERTY ── */}
-        {step===1&&(
+        {step===0&&(
           <div>
             <SH c="Property Details"/>
             <Legend/>
@@ -2217,13 +2226,27 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── COSTS ── */}
-        {step===2&&(
+        {step===1&&(
           <div>
             <SH c="Operating Costs"/>
             <Legend/>
-            {postcodeData&&<div style={{background:"#dde4f5",border:"1px solid "+G.border,borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:G.mid}}>✓ Business rates auto-estimated from VOA data for {postcode}. Override if you have the actual figure.</div>}
             <Fld l="Annual rent (£)" h="Ask the landlord or agent" ch={<input style={INP_manual} type="number" value={rent} onFocus={e=>e.target.select()} onChange={e=>setRent(e.target.value===""?0:+e.target.value)}/>}/>
-            <Fld l="Business rates (£)" h={postcodeData?"Auto-estimated from VOA — override with actual figure":"Check VOA website or ask the agent"} ch={<input style={postcodeData?INP_auto:INP_manual} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>}/>
+            <div style={{background:"#f0f4ff",border:"1.5px solid #b8c9e8",borderRadius:10,padding:"16px 14px",marginBottom:16}}>
+              <div style={{fontSize:13,fontWeight:700,color:G.mid,marginBottom:8}}>Business Rates (SBRR Calculator)</div>
+              {postcode&&<div style={{fontSize:12,color:G.light,marginBottom:10}}>
+                <a href={"https://www.gov.uk/correct-your-business-rates?postcode="+encodeURIComponent(postcode)} target="_blank" rel="noopener noreferrer" style={{color:"#1e3a8a",fontWeight:600}}>→ Look up rateable value on gov.uk</a>
+                <span style={{marginLeft:8}}>Enter the rateable value shown for your property.</span>
+              </div>}
+              <Fld l="Rateable value (£)" h="From VOA — gov.uk/find-business-rates" ch={<input style={INP_manual} type="number" value={rateableValue} onFocus={e=>e.target.select()} onChange={e=>{const rv=e.target.value===""?0:+e.target.value;setRateableValue(rv);if(rv>0)setRates(calculateBusinessRates(rv));}}/>}/>
+              {rateableValue>0&&(
+                <div style={{background:"#e8f0e8",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#1a5c2e",fontWeight:600}}>
+                  {rateableValue<=12000?"100% Small Business Rates Relief — £0 rates":rateableValue<=15000?`Tapered SBRR — ${Math.round(((15000-rateableValue)/3000)*100)}% relief`:rateableValue<=51000?"Small business multiplier (49.9p) applies":"Standard multiplier (54.6p) applies"}
+                  {" · Annual rates: £"+calculateBusinessRates(rateableValue).toLocaleString()}
+                </div>
+              )}
+              {!rateableValue&&rates>0&&<div style={{fontSize:12,color:G.orange,fontWeight:600,marginTop:4}}>Using estimate — enter rateable value above for accurate figure</div>}
+            </div>
+            <Fld l="Business rates (£)" h="Calculated from rateable value above, or enter manually" ch={<input style={rateableValue>0?INP_auto:INP_manual} type="number" value={rates} onFocus={e=>e.target.select()} onChange={e=>setRates(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Staff / wages (% of sales)" h={"Sector average = "+fmt(C.stf)+" per year"} ch={<input style={INP_auto} type="number" step="0.5" value={staffPct} onFocus={e=>e.target.select()} onChange={e=>setStaffPct(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Utilities (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" value={utilities} onFocus={e=>e.target.select()} onChange={e=>setUtilities(e.target.value===""?0:+e.target.value)}/>}/>
             <Fld l="Other costs (£)" h="Sector average — override if needed" ch={<input style={INP_auto} type="number" value={otherCosts} onFocus={e=>e.target.select()} onChange={e=>setOtherCosts(e.target.value===""?0:+e.target.value)}/>}/>
@@ -2232,7 +2255,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── REFIT ── */}
-        {step===3&&(
+        {step===1&&(
           <div>
             <SH c="Refit and Investment"/>
             <Legend/>
@@ -2385,7 +2408,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── DEMOGRAPHICS ── */}
-        {step===5&&(
+        {step===2&&(
           <div>
             <SH c="Catchment Demographics"/>
             <Legend/>
@@ -2519,7 +2542,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── SPEND ── */}
-        {step===6&&(
+        {step===4&&(
           <div>
             <SH c="Spend Profile"/>
             <Legend/>
@@ -2555,7 +2578,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── TRAFFIC ── */}
-        {step===7&&(
+        {step===3&&(
           <div>
             <SH c="Traffic and Area"/>
             <Legend/>
@@ -2711,7 +2734,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── SPREADSHEET ── */}
-        {step===8&&(
+        {step===5&&(
           <div>
             <SH c="Spreadsheet View"/>
 
@@ -3082,7 +3105,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         )}
 
         {/* ── RESULTS ── */}
-        {step===9&&(
+        {step===5&&(
           <div>
             {/* Assessment header */}
             <div style={{background:G.dark,borderRadius:10,padding:"16px 20px",marginBottom:16}}>
@@ -3362,21 +3385,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 Year 1 ramp-up assumes 75% of mature trading in Q1, rising to 100% by Q4 as the store establishes its customer base post-refit. Based on Project Retail methodology.
               </div>
             </div>}
-
-            {/* S1: FINANCIAL */}
-            <div className="avoid-break">
-              <RPSH c="1. Financial Summary"/>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
-                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)],["Opening Hours",openHours+"hrs/day"]].map(([l,v])=>(
-                  <div key={l} style={{background:"#f8f9fd",border:"1px solid "+"#d1d9e6",borderRadius:8,padding:12,textAlign:"center"}}>
-                    <div style={{fontSize:11,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
-                    <div style={{fontSize:17,fontWeight:700,color:"#1e3a8a"}}>{v}</div>
-                  </div>
-                ))}
-              </div>
-              <RRC t="Profit and Loss" ch={<HBar data={[{l:"Gross Profit",v:C.annGP},{l:"Rent",v:-rent},{l:"Rates",v:-rates},{l:"Staff "+staffPct+"%",v:-C.stf},{l:"Utilities",v:-utilities},{l:"Other",v:-otherCosts},{l:"EBITDA",v:C.eb},{l:"Finance",v:-C.af},{l:"Net Profit",v:C.nP}]}/>}/>
-              <RCommentary text={commentary.financial}/>
-            </div>
 
             {/* S1: FINANCIAL */}
             <div className="avoid-break">
@@ -3949,15 +3957,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
           </div>
         )}
 
-        {step<9&&(
+        {step<5&&(
           <div style={{display:"flex",gap:12,marginTop:16}}>
             {step>0&&<button onClick={()=>setStep(s=>s-1)} style={{flex:1,padding:14,background:"#ffffff",border:"1.5px solid "+"#d1d9e6",borderRadius:10,color:"#1e3a8a",cursor:"pointer",fontFamily:"inherit",fontSize:15,fontWeight:600}}>Back</button>}
-            <button onClick={()=>setStep(s=>s+1)} style={{flex:2,padding:14,background:"#1e3a8a",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>{step===8?"View Full Report →":"Continue"}</button>
+            <button onClick={()=>setStep(s=>s+1)} style={{flex:2,padding:14,background:"#1e3a8a",border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>{step===4?"View Full Report →":"Continue"}</button>
           </div>
         )}
 
         {/* ── ADMIN / AI AGENT ── */}
-        {step===10&&<AdminTab onBack={()=>setStep(9)} appState={gatherState()}/>}
+        {step===6&&<AdminTab onBack={()=>setStep(5)} appState={gatherState()}/>}
       </div>
     </div>
     </ErrorBoundary>
