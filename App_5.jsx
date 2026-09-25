@@ -1122,6 +1122,38 @@ export default function App(){
     {name:"",weeklyT:0,sqft:0,location:"suburban",notes:"",lat:null,lng:null},
   ]);
 
+  // ── Professional Report narrative fields (matching Ramsgate PDF structure) ──
+  const [reportTenure,setReportTenure]=useState("New lease");
+  const [reportStatus,setReportStatus]=useState("Draft for discussion");
+  const [reportFascia,setReportFascia]=useState("");
+  const [reportPitch,setReportPitch]=useState("");
+  const [reportVOEntry,setReportVOEntry]=useState("");
+  const [reportPhysicalCondition,setReportPhysicalCondition]=useState("");
+  const [reportOperationalIssue,setReportOperationalIssue]=useState("");
+  const [reportOccupancyNote,setReportOccupancyNote]=useState("");
+  const [reportFasciaComparison,setReportFasciaComparison]=useState([]);
+  const [reportFasciaRecommendation,setReportFasciaRecommendation]=useState("");
+  const [reportFasciaThirdOption,setReportFasciaThirdOption]=useState("");
+  const [reportCompetitionReading,setReportCompetitionReading]=useState("");
+  const [reportTownIndicators,setReportTownIndicators]=useState("");
+  const [reportRegeneration,setReportRegeneration]=useState("");
+  const [reportCouncilNote,setReportCouncilNote]=useState("");
+  const [reportWhereDeadLivesDies,setReportWhereDeadLivesDies]=useState("");
+  const [reportWhatStoreMustBe,setReportWhatStoreMustBe]=useState("");
+  const [reportRiskActions,setReportRiskActions]=useState({});
+  const [reportNextSteps,setReportNextSteps]=useState([
+    {action:"",why:""},
+    {action:"",why:""},
+    {action:"",why:""},
+  ]);
+  const [reportSeasonalityNote,setReportSeasonalityNote]=useState("");
+  const [reportConfidenceRating,setReportConfidenceRating]=useState("LOW to MEDIUM");
+  const [reportConfidenceNotes,setReportConfidenceNotes]=useState([]);
+  const [reportSources,setReportSources]=useState([]);
+  const [reportIssuedTo,setReportIssuedTo]=useState("");
+  const [reportVerdictText,setReportVerdictText]=useState("");
+  const [reportKeyFindings,setReportKeyFindings]=useState([]);
+
   // Photo annotations
   const [photos,setPhotos]=useState([]);
 
@@ -1511,8 +1543,15 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,
     competitorList,planningApps,mapLat,mapLng,
     comparables,foodProfile,existingStore,
+    reportTenure,reportStatus,reportFascia,reportPitch,reportVOEntry,
+    reportPhysicalCondition,reportOperationalIssue,reportOccupancyNote,
+    reportFasciaComparison,reportFasciaRecommendation,reportFasciaThirdOption,
+    reportCompetitionReading,reportTownIndicators,reportRegeneration,reportCouncilNote,
+    reportWhereDeadLivesDies,reportWhatStoreMustBe,reportRiskActions,reportNextSteps,
+    reportSeasonalityNote,reportConfidenceRating,reportConfidenceNotes,reportSources,
+    reportIssuedTo,reportVerdictText,reportKeyFindings,
     savedAt: new Date().toISOString(),
-  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,rent,rates,rateableValue,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile,existingStore]);
+  }),[propName,postcode,sqft,location,footfall,avgBasket,openHours,uplift,clientName,postcodeNotes,rent,rates,rateableValue,staffPct,utilities,otherCosts,refitCost,stockCost,financeRate,financeYears,cats,ageBands,employment,housing,popDensity,catchmentPop,medianIncome,deprivation,householdSz,spendBands,peakDay,peakHour,morningTrade,lunchTrade,eveningTrade,missions,traffic,fhour,competitors,nearestComp,parking,tHP,tPG,tNH,tFF,tRG,tVA,areaNotes,storeNote,genesisNote,refitCommentary,competitorList,planningApps,mapLat,mapLng,comparables,foodProfile,existingStore,reportTenure,reportStatus,reportFascia,reportPitch,reportVOEntry,reportPhysicalCondition,reportOperationalIssue,reportOccupancyNote,reportFasciaComparison,reportFasciaRecommendation,reportFasciaThirdOption,reportCompetitionReading,reportTownIndicators,reportRegeneration,reportCouncilNote,reportWhereDeadLivesDies,reportWhatStoreMustBe,reportRiskActions,reportNextSteps,reportSeasonalityNote,reportConfidenceRating,reportConfidenceNotes,reportSources,reportIssuedTo,reportVerdictText,reportKeyFindings]);
 
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1684,6 +1723,33 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     if(saved.planningApps) setPlanningApps(saved.planningApps);
     if(saved.mapLat) setMapLat(saved.mapLat); if(saved.mapLng) setMapLng(saved.mapLng);
     if(saved.comparables) setComparables(saved.comparables);
+    // Professional report narrative fields
+    if(saved.reportTenure) setReportTenure(saved.reportTenure);
+    if(saved.reportStatus) setReportStatus(saved.reportStatus);
+    if(saved.reportFascia) setReportFascia(saved.reportFascia);
+    if(saved.reportPitch) setReportPitch(saved.reportPitch);
+    if(saved.reportVOEntry) setReportVOEntry(saved.reportVOEntry);
+    if(saved.reportPhysicalCondition) setReportPhysicalCondition(saved.reportPhysicalCondition);
+    if(saved.reportOperationalIssue) setReportOperationalIssue(saved.reportOperationalIssue);
+    if(saved.reportOccupancyNote) setReportOccupancyNote(saved.reportOccupancyNote);
+    if(saved.reportFasciaComparison) setReportFasciaComparison(saved.reportFasciaComparison);
+    if(saved.reportFasciaRecommendation) setReportFasciaRecommendation(saved.reportFasciaRecommendation);
+    if(saved.reportFasciaThirdOption) setReportFasciaThirdOption(saved.reportFasciaThirdOption);
+    if(saved.reportCompetitionReading) setReportCompetitionReading(saved.reportCompetitionReading);
+    if(saved.reportTownIndicators) setReportTownIndicators(saved.reportTownIndicators);
+    if(saved.reportRegeneration) setReportRegeneration(saved.reportRegeneration);
+    if(saved.reportCouncilNote) setReportCouncilNote(saved.reportCouncilNote);
+    if(saved.reportWhereDeadLivesDies) setReportWhereDeadLivesDies(saved.reportWhereDeadLivesDies);
+    if(saved.reportWhatStoreMustBe) setReportWhatStoreMustBe(saved.reportWhatStoreMustBe);
+    if(saved.reportRiskActions) setReportRiskActions(saved.reportRiskActions);
+    if(saved.reportNextSteps) setReportNextSteps(saved.reportNextSteps);
+    if(saved.reportSeasonalityNote) setReportSeasonalityNote(saved.reportSeasonalityNote);
+    if(saved.reportConfidenceRating) setReportConfidenceRating(saved.reportConfidenceRating);
+    if(saved.reportConfidenceNotes) setReportConfidenceNotes(saved.reportConfidenceNotes);
+    if(saved.reportSources) setReportSources(saved.reportSources);
+    if(saved.reportIssuedTo) setReportIssuedTo(saved.reportIssuedTo);
+    if(saved.reportVerdictText) setReportVerdictText(saved.reportVerdictText);
+    if(saved.reportKeyFindings) setReportKeyFindings(saved.reportKeyFindings);
     setPostcodeData(saved.mapLat ? {latitude:saved.mapLat,longitude:saved.mapLng} : null);
     // Re-inject known competitors if list is empty or missing
     if((!saved.competitorList || saved.competitorList.length===0) && saved.mapLat && saved.postcode) {
@@ -3191,730 +3257,843 @@ Write a concise, professional 4-paragraph executive summary for this site assess
                 <rect width="100%" height="100%" fill="url(#wm)"/>
               </svg>
             </div>
-            <div style={{display:"flex",flexDirection:"column",borderBottom:"2px solid "+"#1a2744",marginBottom:16,paddingBottom:16}}>
+{/* ═══ PROFESSIONAL REPORT — Matching Ramsgate PDF Structure ═══ */}
 
-              {/* Header band */}
-              <div style={{borderBottom:"3px solid #1a2744",paddingBottom:16,marginBottom:24,display:"flex",justifyContent:"space-between",alignItems:"flex-end"}}>
-                <div>
-                  <div style={{fontSize:9,letterSpacing:".3em",color:"#FB923C",textTransform:"uppercase",marginBottom:4,fontWeight:700}}>Genesis Retail — Confidential</div>
-                  <div style={{fontSize:22,fontWeight:800,color:"#1a2744",letterSpacing:".01em",lineHeight:1.1}}>Site Viability Assessment</div>
-                  {clientName&&<div style={{fontSize:13,color:"#4a5568",marginTop:6}}>Prepared for <strong style={{color:"#1a1a2e"}}>{clientName}</strong></div>}
-                </div>
-                <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:11,color:"#4a5568"}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}</div>
-                  <div style={{fontSize:11,color:"#4a5568",marginTop:2}}>Prepared by Richard Shorney</div>
-                </div>
-              </div>
+{/* ── COVER PAGE ── */}
+<div className="avoid-break" style={{minHeight:"90vh",display:"flex",flexDirection:"column"}}>
+  {/* Dark navy header band */}
+  <div style={{background:"#1a2744",padding:"40px 32px 24px",marginBottom:0}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+      <div style={{display:"flex",alignItems:"center",gap:14}}>
+        <div style={{width:48,height:48,background:"#fff",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{color:"#1a2744",fontWeight:900,fontSize:22}}>G</div>
+        </div>
+        <div>
+          <div style={{fontSize:13,fontWeight:800,color:"#fff",letterSpacing:".12em"}}>GENESIS RETAIL</div>
+          <div style={{fontSize:10,color:"#FB923C",letterSpacing:".15em",textTransform:"uppercase",fontWeight:600}}>Independent Convenience Consultancy</div>
+        </div>
+      </div>
+      <div style={{textAlign:"right",color:"#8fa0b8",fontSize:10}}>
+        <div>rshorney@genesisretail.uk</div>
+        <div>07551 827907</div>
+      </div>
+    </div>
+  </div>
 
-              {/* Two column layout: square photo left, details right */}
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,marginBottom:24,alignItems:"start"}}>
+  {/* Large site name section */}
+  <div style={{background:"#f0f3fa",padding:"32px 32px 28px",borderBottom:"3px solid #1a2744"}}>
+    <div style={{fontSize:11,letterSpacing:".2em",color:"#FB923C",textTransform:"uppercase",fontWeight:700,marginBottom:8}}>Site Suitability Assessment</div>
+    <div style={{fontSize:28,fontWeight:800,color:"#1a2744",lineHeight:1.15,marginBottom:6}}>{propName||"Site Assessment"}</div>
+    <div style={{fontSize:16,color:"#4a5568",fontWeight:500}}>{postcode||""}</div>
+  </div>
 
-                {/* Square store photo */}
-                <div>
-                  {storePhoto ? (
-                    <img src={storePhoto} alt="Store" style={{width:"100%",aspectRatio:"1/1",objectFit:"cover",borderRadius:12,border:"2px solid #1a2744",display:"block"}}/>
-                  ) : (
-                    <div style={{width:"100%",aspectRatio:"1/1",background:"#f6f8fc",border:"2px dashed "+"#c8cdd6",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:8}}>
-                      <div style={{fontSize:40}}>🏪</div>
-                      <div style={{fontSize:12,color:"#4a5568"}}>Store photo</div>
-                    </div>
-                  )}
-                </div>
+  {/* Key details table */}
+  <div style={{padding:"24px 32px",flex:1}}>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+      <tbody>
+        {[
+          ["UNIT",`${sqft.toLocaleString()} sq ft net selling area`],
+          ["VO ENTRY",reportVOEntry||`Rateable Value: £${(rateableValue||0).toLocaleString()}`],
+          ["PITCH",reportPitch||(location.replace(/-/g," ").replace(/\b\w/g,l=>l.toUpperCase()))],
+          ["FASCIA ASSESSED",reportFascia||(C.symGroups?.[0]?.name||"To be confirmed")],
+          ["TENURE",reportTenure],
+          ["PREPARED BY","Richard Shorney, Genesis Retail"],
+          ["DATE",new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})],
+          ["STATUS",reportStatus],
+        ].map(([label,value],i)=>(
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6"}}>
+            <td style={{padding:"10px 14px",fontWeight:700,color:"#1a2744",width:"35%",fontSize:11,letterSpacing:".05em",textTransform:"uppercase"}}>{label}</td>
+            <td style={{padding:"10px 14px",color:"#1a1a2e"}}>{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 
-                {/* Address + details */}
-                <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                  <div style={{background:"#f6f8fc",border:"1px solid #c8cdd6",borderRadius:10,padding:"16px 18px"}}>
-                    <div style={{fontSize:10,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Site Address</div>
-                    <div style={{fontSize:20,fontWeight:800,color:"#1a1a2e",lineHeight:1.2,marginBottom:4}}>
-                      {propName && propName!==postcode ? propName : (postcode||"Site not named")}
-                    </div>
-                    {postcode && propName!==postcode && <div style={{fontSize:13,color:"#1a2744",marginBottom:6,fontWeight:600}}>{postcode}</div>}
-                    <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"#f0f3fa",border:"1px solid #1a2744",borderRadius:4,padding:"4px 10px"}}>
-                      <span style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"capitalize"}}>{location.replace(/-/g," ")}</span>
-                    </div>
-                    {clientName&&<div style={{fontSize:13,color:"#4a5568",marginTop:10}}>Prepared for <strong style={{color:"#1a1a2e"}}>{clientName}</strong></div>}
-                  </div>
-                  {/* Key metrics preview */}
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                    {[["Post-Refit Weekly",fmt(C.upliftedWk)],["ROI",pct(C.roi)],["Net Profit",fmt(C.nP)],["Payback",C.pb?C.pb.toFixed(1)+" yrs":"N/A"]].map(([l,v])=>(
-                      <div key={l} style={{background:"#f0f3fa",border:"1px solid #c8cdd6",borderRadius:8,padding:"10px 12px",textAlign:"center"}}>
-                        <div style={{fontSize:9,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
-                        <div style={{fontSize:16,fontWeight:800,color:"#1a2744"}}>{v}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+  {/* Footer contact */}
+  <div style={{borderTop:"2px solid #1a2744",padding:"16px 32px",display:"flex",justifyContent:"space-between",fontSize:10,color:"#4a5568"}}>
+    <div><strong style={{color:"#1a2744"}}>Genesis Retail</strong> · Independent Convenience Consultancy</div>
+    <div>rshorney@genesisretail.uk · 07551 827907</div>
+  </div>
+</div>
 
-              {/* Short summary from assessor */}
-              <div style={{background:"#f6f8fc",border:"1.5px solid "+"#1a2744",borderRadius:12,padding:"18px 20px",flex:1}}>
-                <div style={{fontSize:10,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Assessor's Summary</div>
-                {storeNote ? (
-                  <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{storeNote}</p>
-                ) : (
-                  <p style={{fontSize:13,color:"#4a5568",fontStyle:"italic",lineHeight:1.7}}>Add your summary on the Cover tab — describe the store, location, key observations and your initial impression.</p>
-                )}
-              </div>
-            </div>
+{/* ── SECTION 1: EXECUTIVE SUMMARY ── */}
+<div className="page-break avoid-break">
+  <RPSH c="1. Executive Summary"/>
+  <div style={{fontSize:13,color:R.text,lineHeight:2,marginBottom:16}}>
+    {reportVerdictText || commentary.financial.split(". ").slice(0,3).join(". ")+"."}
+  </div>
 
-            {/* Refit Commentary — shown in report if filled in */}
-            {refitCommentary&&(
-              <div className="avoid-break" style={{marginBottom:14,padding:"18px 20px",background:"#f6f8fc",border:"1.5px solid "+"#1a2744",borderRadius:12}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10}}>Post-Refit Plan & Expected Benefits</div>
-                <p style={{fontSize:14,color:"#1a1a2e",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{refitCommentary}</p>
-              </div>
-            )}
+  {/* VERDICT box */}
+  <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:8,padding:"16px 20px",marginBottom:20}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:6}}>VERDICT</div>
+    <div style={{fontSize:18,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
+    <div style={{fontSize:13,color:R.text,lineHeight:1.8}}>
+      {`The store needs to achieve break-even weekly sales of ${fmt(Math.round((C.annC+C.af)/(C.blGP/100)/52))} per week to cover all costs including finance. Post-refit projections of ${fmt(C.upliftedWk)} per week ${C.upliftedWk*52*(C.blGP/100)>C.annC+C.af?"exceed":"fall short of"} this threshold by ${fmt(Math.abs(C.upliftedWk-Math.round((C.annC+C.af)/(C.blGP/100)/52)))}/week.`}
+    </div>
+  </div>
 
-            {/* S0: AI EXECUTIVE SUMMARY */}
-            <div className="avoid-break">
-              <RPSH c="Executive Summary"/>
-              {/* ROI explanation box */}
-              <div style={{background:"#f6f8fc",border:"1.5px solid "+"#1a2744",borderRadius:12,padding:16,marginBottom:16}}>
-                <div style={{fontSize:14,fontWeight:800,color:"#1a2744",marginBottom:10}}>What does {pct(C.roi)} ROI mean?</div>
-                <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,marginBottom:10}}>
-                  <strong>Return on Investment (ROI)</strong> measures how much profit the business generates each year as a percentage of the total capital invested.
-                  A <strong style={{color:VRD.col}}>{pct(C.roi)} ROI</strong> means that for every <strong>£100</strong> invested in this business, <strong>£{(C.roi||0).toFixed(0)}</strong> comes back as profit every year.
-                </p>
-                <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,marginBottom:10}}>
-                  To put that in context: a UK savings account currently pays around 4–5% per year. The Genesis Retail minimum threshold for a viable convenience retail investment is 20%.
-                  At {pct(C.roi)}, this site <strong style={{color:VRD.col}}>
-                    {C.roi>=20?"comfortably exceeds that threshold":C.roi>=15?"meets that threshold":"falls below that threshold — see risk register"}
-                  </strong>.
-                </p>
-                <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8}}>
-                  The total investment of <strong>{fmt(C.ti)}</strong> ({fmt(refitCost)} refit + {fmt(stockCost)} opening stock) is forecast to be recovered in <strong style={{color:"#1a2744"}}>{C.pb?(C.pb||0).toFixed(1)+" years":"N/A"}</strong> from net profits alone,
-                  with an annual net profit of <strong>{fmt(C.nP)}</strong> after all costs including the {fmt(Math.round(C.mp))}/month loan repayment.
-                </p>
-              </div>
-              {/* 5-Year Cumulative Net Profit strip */}
-              <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:10,padding:"14px 16px",marginBottom:16}}>
-                <div style={{fontSize:10,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:12}}>5-Year Cumulative Net Profit</div>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8}}>
-                  {yr5.map((r,i)=>(
-                    <div key={i} style={{textAlign:"center"}}>
-                      <div style={{fontSize:9,color:"#4a5568",marginBottom:4,textTransform:"uppercase",letterSpacing:".08em"}}>Year {r.yr}</div>
-                      <div style={{fontSize:14,fontWeight:800,color:"#1a2240",background:"#fde8d0",borderRadius:4,padding:"2px 6px",display:"inline-block"}}>{fmt(cumNp(r.yr))}</div>
-                    </div>
+  {/* Key findings */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>Key Findings</div>
+  <div style={{fontSize:13,color:R.text,lineHeight:2}}>
+    {(reportKeyFindings.length>0?reportKeyFindings:[
+      `Return on investment. The projected ROI of ${pct(C.roi)} ${C.roi>=20?"exceeds":"is below"} the Genesis Retail 20% threshold. Net annual profit of ${fmt(C.nP)} on total investment of ${fmt(C.ti)}.`,
+      `Sales density. Post-refit sales density of £${(C.upliftedSpf||0).toFixed(2)}/sq ft/week is ${C.upliftedSpf>=16?"in line with":"below"} the symbol group benchmark of £16–20/sq ft/week.`,
+      `Rent position. Rent at ${pct(rent/C.upliftedAnn*100)} of projected turnover ${rent/C.upliftedAnn*100<=10?"is within":"exceeds"} the 10% target ratio.`,
+      `Competition. ${competitorList.filter(c=>c.threat==="high").length} high-threat competitor${competitorList.filter(c=>c.threat==="high").length!==1?"s":""} identified within the immediate catchment.`,
+      `Catchment. Population of ${catchmentPop.toLocaleString()} with median household income of ${fmt(medianIncome)}. Deprivation index ${deprivation}/10.`,
+    ]).map((finding,i)=>(
+      <p key={i} style={{marginBottom:10}}><strong style={{color:"#1a2744"}}>{finding.split(". ")[0]}.</strong> {finding.split(". ").slice(1).join(". ")}</p>
+    ))}
+  </div>
+</div>
+
+{/* ── SECTION 2: THE UNIT ── */}
+<div className="page-break avoid-break">
+  <RPSH c="2. The Unit"/>
+
+  {/* VO Record table */}
+  <div style={{marginBottom:20}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Valuation Office Record</div>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+      <tbody>
+        {[
+          ["Address",propName||""],
+          ["Postcode",postcode||""],
+          ["Description",`Retail premises and premises — ${sqft.toLocaleString()} sq ft`],
+          ["Rateable Value",`£${(rateableValue||0).toLocaleString()}`],
+          ["Indicative Rates",`£${rates.toLocaleString()}/yr (${rateableValue<=15000?"Small Business Relief applied":"Standard multiplier"})`],
+          ["Implied Rental Tone",sqft>0?`£${(rent/sqft).toFixed(0)} per sq ft`:"—"],
+        ].map(([label,value],i)=>(
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+            <td style={{padding:"8px 14px",fontWeight:600,color:"#1a2744",width:"35%"}}>{label}</td>
+            <td style={{padding:"8px 14px",color:R.text}}>{value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* Physical condition */}
+  {reportPhysicalCondition&&(
+    <div style={{marginBottom:20}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Physical Condition</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:2,whiteSpace:"pre-wrap"}}>{reportPhysicalCondition}</div>
+    </div>
+  )}
+
+  {/* Operational issue callout */}
+  {reportOperationalIssue&&(
+    <div style={{background:"#fff4ea",border:"2px solid #FB923C",borderRadius:8,padding:"16px 20px",marginBottom:20}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>THE OPERATIONAL ISSUE THAT MATTERS MOST</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:1.9}}>{reportOperationalIssue}</div>
+    </div>
+  )}
+
+  {/* Occupancy note */}
+  {reportOccupancyNote&&(
+    <div style={{fontSize:13,color:R.text,lineHeight:2,marginBottom:16}}>
+      <strong style={{color:"#1a2744"}}>Occupancy.</strong> {reportOccupancyNote}
+    </div>
+  )}
+
+  {/* Store photo */}
+  {storePhoto&&(
+    <div style={{marginTop:16}}>
+      <img src={storePhoto} alt="Store" style={{width:"100%",maxHeight:300,objectFit:"cover",borderRadius:8,border:"1px solid #c8cdd6"}}/>
+    </div>
+  )}
+</div>
+
+{/* ── SECTION 3: FASCIA ASSESSMENT ── */}
+<div className="page-break avoid-break">
+  <RPSH c="3. Fascia Assessment"/>
+
+  {/* Symbol group comparison table */}
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Criteria</th>
+        {C.symGroups.slice(0,3).map((sg,i)=>(
+          <th key={i} style={{padding:"8px 12px",textAlign:"center",color:"#fff",fontWeight:700}}>{sg.name}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        ["Suitability Score (out of 10)",...C.symGroups.slice(0,3).map(sg=>sg.score+"/10")],
+        ["Key Strength",...C.symGroups.slice(0,3).map(sg=>sg.desc.split(",")[0])],
+        ["Own Brand Access",...C.symGroups.slice(0,3).map(sg=>sg.name==="Nisa"?"Co-op own brand":sg.name==="Spar"?"Spar own brand":sg.name==="Budgens"?"Budgens premium":"Costcutter value")],
+      ].map((row,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{row[0]}</td>
+          {row.slice(1).map((cell,j)=>(
+            <td key={j} style={{padding:"8px 12px",textAlign:"center",color:R.text}}>{cell}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  {/* Recommended fascia callout */}
+  <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:8,padding:"16px 20px",marginBottom:16}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:6}}>RECOMMENDED FASCIA</div>
+    <div style={{fontSize:15,fontWeight:800,color:"#1a2744",marginBottom:6}}>{C.symGroups?.[0]?.name||"To be confirmed"}</div>
+    <div style={{fontSize:13,color:R.text,lineHeight:1.8}}>
+      {reportFasciaRecommendation||commentary.symbolGroup.split(". ").slice(0,2).join(". ")+"."}
+    </div>
+  </div>
+
+  {reportFasciaThirdOption&&(
+    <div style={{marginTop:12}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",marginBottom:6}}>A third option worth testing</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:1.9}}>{reportFasciaThirdOption}</div>
+    </div>
+  )}
+</div>
+
+{/* ── SECTION 4: COMPETITION ── */}
+<div className="page-break avoid-break">
+  <RPSH c="4. Competition"/>
+
+  {competitorList.length>0&&(
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+      <thead>
+        <tr style={{background:"#1a2744"}}>
+          {["Fascia","Location","Approx Distance","Format","Threat Rating"].map(h=>(
+            <th key={h} style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700,fontSize:11}}>{h}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {competitorList.slice(0,12).map((comp,i)=>(
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+            <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{comp.name}</td>
+            <td style={{padding:"8px 12px",color:R.text}}>{comp.type||"—"}</td>
+            <td style={{padding:"8px 12px",color:R.text}}>{comp.distance||"—"}</td>
+            <td style={{padding:"8px 12px",color:R.text}}>{comp.type==="Tesco Express"||comp.type==="convenience_store"?"Convenience":comp.type==="supermarket"?"Supermarket":"Convenience"}</td>
+            <td style={{padding:"8px 12px"}}>
+              <span style={{display:"inline-block",padding:"2px 10px",borderRadius:4,fontSize:11,fontWeight:700,
+                background:comp.threat==="high"?"#fde8e8":comp.threat==="medium"?"#fff4ea":"#d5e8d5",
+                color:comp.threat==="high"?"#d62828":comp.threat==="medium"?"#c05010":"#1a6b1a"
+              }}>{(comp.threat||"low").charAt(0).toUpperCase()+(comp.threat||"low").slice(1)}</span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+
+  {/* Reading of the competition callout */}
+  <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:8,padding:"16px 20px",marginBottom:16}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>READING OF THE COMPETITION</div>
+    <div style={{fontSize:13,color:R.text,lineHeight:1.9}}>
+      {reportCompetitionReading||commentary.competitors}
+    </div>
+  </div>
+</div>
+
+{/* ── SECTION 5: CATCHMENT AND TOWN CONTEXT ── */}
+<div className="page-break avoid-break">
+  <RPSH c="5. Catchment and Town Context"/>
+
+  {/* Town centre indicators table */}
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        {["Indicator","Local Value","Comparator","Read"].map(h=>(
+          <th key={h} style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700,fontSize:11}}>{h}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        ["Population (1-mile catchment)",catchmentPop.toLocaleString(),"8,500 (UK avg)",catchmentPop>=8500?"Above average":"Below average"],
+        ["Median Household Income",fmt(medianIncome),"£31,400 (UK)",medianIncome>=31400?"Above average":"Below average"],
+        ["Deprivation Index",deprivation+"/10","5/10 (mid-point)",deprivation<=4?"High deprivation":deprivation<=7?"Moderate":"Low deprivation"],
+        ["Population Density",popDensity,"—",popDensity==="high"?"Supports high footfall":"—"],
+        ["Working Age Population (18–54)",pct((ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0)),"55%",((ageBands["18-24"]||0)+(ageBands["25-34"]||0)+(ageBands["35-44"]||0)+(ageBands["45-54"]||0))>=55?"Strong":"Below benchmark"],
+        ["House Prices",tHP,"—",tHP],
+        ["Population Growth",tPG,"—",tPG],
+        ["High Street Footfall",tFF,"—",tFF],
+        ["Regeneration Activity",tRG,"—",tRG],
+      ].map((row,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{row[0]}</td>
+          <td style={{padding:"8px 12px",color:R.text}}>{row[1]}</td>
+          <td style={{padding:"8px 12px",color:"#4a5568",fontSize:11}}>{row[2]}</td>
+          <td style={{padding:"8px 12px",color:R.text,fontWeight:500}}>{row[3]}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  {/* Regeneration */}
+  {(reportRegeneration||areaNotes)&&(
+    <div style={{marginBottom:16}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Regeneration & Area Context</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:2,whiteSpace:"pre-wrap"}}>{reportRegeneration||areaNotes}</div>
+    </div>
+  )}
+
+  {/* Council note callout */}
+  {reportCouncilNote&&(
+    <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:8,padding:"16px 20px"}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:6}}>WORTH PURSUING WITH THE COUNCIL</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:1.8}}>{reportCouncilNote}</div>
+    </div>
+  )}
+
+  <RCommentary text={commentary.demographics}/>
+</div>
+
+{/* ── SECTION 6: FINANCIAL APPRAISAL ── */}
+<div className="page-break avoid-break">
+  <RPSH c="6. Financial Appraisal"/>
+
+  {/* Cost base table with rent scenarios */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Cost Base</div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Item</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Annual (£)</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>% of Sales</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        ["Projected Annual Sales",C.upliftedAnn,"100.0"],
+        ["Cost of Goods (COGS)",C.upliftedAnn*(1-C.blGP/100),pct(100-C.blGP)],
+        ["Gross Profit",C.annGP,pct(C.blGP)],
+        ["Rent",rent,pct(rent/C.upliftedAnn*100)],
+        ["Business Rates",rates,pct(rates/C.upliftedAnn*100)],
+        ["Staff & Wages ("+staffPct+"%)",C.stf,pct(staffPct)],
+        ["Utilities",utilities,pct(utilities/C.upliftedAnn*100)],
+        ["Other Costs",otherCosts,pct(otherCosts/C.upliftedAnn*100)],
+        ["Total Operating Costs",C.annC,pct(C.annC/C.upliftedAnn*100)],
+        ["EBITDA",C.eb,pct(C.eb/C.upliftedAnn*100)],
+        ["Finance Cost ("+financeRate+"% APR, "+financeYears+"yr)",C.af,pct(C.af/C.upliftedAnn*100)],
+        ["Net Profit",C.nP,pct(C.nP/C.upliftedAnn*100)],
+      ].map((row,i)=>{
+        const isHighlight=[2,8,9,11].includes(i);
+        const isTotal=[8,11].includes(i);
+        return (
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:isHighlight?"#f0f3fa":"#fff"}}>
+            <td style={{padding:"8px 12px",fontWeight:isHighlight?700:400,color:isHighlight?"#1a2744":R.text}}>{row[0]}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",fontWeight:isHighlight?700:400,color:row[1]<0?"#d62828":isHighlight?"#1a2744":R.text}}>{typeof row[1]==="number"?(row[1]<0?"("+fmt(Math.abs(row[1]))+")":fmt(row[1])):row[1]}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",fontWeight:isHighlight?700:400,color:isHighlight?"#1a2744":"#4a5568",fontSize:11}}>{typeof row[2]==="string"?row[2]:pct(row[2])}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+
+  {/* Break-even */}
+  <div style={{marginBottom:20}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Break-Even Analysis</div>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+      <thead>
+        <tr style={{background:"#1a2744"}}>
+          <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Metric</th>
+          <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {[
+          ["Break-Even Weekly Sales",fmt(Math.round((C.annC+C.af)/(C.blGP/100)/52))],
+          ["Projected Weekly Sales",fmt(C.upliftedWk)],
+          ["Headroom / (Shortfall)",fmt(Math.round(C.upliftedWk-((C.annC+C.af)/(C.blGP/100)/52)))],
+          ["Return on Investment",pct(C.roi)],
+          ["Payback Period",C.pb?C.pb.toFixed(1)+" years":"N/A"],
+        ].map((row,i)=>(
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i===2?"#f0f3fa":"#fff"}}>
+            <td style={{padding:"8px 12px",fontWeight:i>=2?700:400,color:i>=2?"#1a2744":R.text}}>{row[0]}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",fontWeight:i>=2?700:400,color:i>=2?"#1a2744":R.text}}>{row[1]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <RCommentary text={commentary.financial}/>
+</div>
+
+{/* ── SECTION 6 continued: TURNOVER SCENARIOS ── */}
+<div className="page-break avoid-break">
+  <RPSH c="6 (continued). Turnover Scenarios"/>
+
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Scenario</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Weekly Sales</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Annual Sales</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Gross Profit</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Net Profit</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>ROI</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        {label:"Low (−15%)",factor:0.85},
+        {label:"Central (Base)",factor:1.0},
+        {label:"High (+15%)",factor:1.15},
+      ].map((sc,i)=>{
+        const wk2=C.upliftedWk*sc.factor;
+        const ann2=wk2*52;
+        const gp2=ann2*(C.blGP/100);
+        const stf2=ann2*(staffPct/100);
+        const tc2=rent+rates+stf2+utilities+otherCosts;
+        const np2=gp2-tc2-C.af;
+        const roi2=C.ti>0?(np2/C.ti)*100:0;
+        const isCentral=sc.factor===1.0;
+        return (
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:isCentral?"#f0f3fa":"#fff",fontWeight:isCentral?700:400}}>
+            <td style={{padding:"8px 12px",color:isCentral?"#1a2744":R.text}}>{sc.label}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",color:isCentral?"#1a2744":R.text}}>{fmt(wk2)}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",color:isCentral?"#1a2744":R.text}}>{fmt(ann2)}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",color:isCentral?"#1a2744":R.text}}>{fmt(gp2)}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",color:np2<0?"#d62828":isCentral?"#1a2744":R.text}}>{np2<0?"("+fmt(Math.abs(np2))+")":fmt(np2)}</td>
+            <td style={{padding:"8px 12px",textAlign:"right",color:roi2<10?"#d62828":isCentral?"#1a2744":"#4a5568"}}>{pct(roi2)}</td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+
+  {/* Where this deal lives or dies */}
+  <div style={{background:"#fff4ea",border:"2px solid #FB923C",borderRadius:8,padding:"16px 20px",marginBottom:16}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:6}}>WHERE THIS DEAL LIVES OR DIES</div>
+    <div style={{fontSize:13,color:R.text,lineHeight:1.9}}>
+      {reportWhereDeadLivesDies||`The financial model is most sensitive to rent and footfall. At the current rent of ${fmt(rent)}/yr (${pct(rent/C.upliftedAnn*100)} of sales), every £1,000 reduction in rent adds approximately £1,000 directly to net profit. The maximum affordable rent at a 20% ROI target is ${fmt(maxRent)}/yr.`}
+    </div>
+  </div>
+
+  {/* What the store has to be */}
+  {reportWhatStoreMustBe&&(
+    <div style={{marginTop:12}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>What the store has to be</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:2,whiteSpace:"pre-wrap"}}>{reportWhatStoreMustBe}</div>
+    </div>
+  )}
+
+  <RCommentary text={commentary.pl}/>
+</div>
+
+{/* ── SECTION 7: RISKS AND UNKNOWNS ── */}
+<div className="page-break avoid-break">
+  <RPSH c="7. Risks and Unknowns"/>
+
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:16}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700,width:"30%"}}>Risk</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700,width:"40%"}}>Assessment</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700,width:"30%"}}>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {risks.map((risk,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:risk.rag==="red"?"#fde8e8":risk.rag==="amber"?"#fff8f0":"#fff"}}>
+          <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744",verticalAlign:"top"}}>
+            <span style={{display:"inline-block",width:10,height:10,borderRadius:"50%",marginRight:8,verticalAlign:"middle",
+              background:risk.rag==="red"?"#d62828":risk.rag==="amber"?"#FB923C":"#22c55e"}}/>
+            {risk.title}
+          </td>
+          <td style={{padding:"8px 12px",color:R.text,lineHeight:1.7,verticalAlign:"top"}}>{risk.detail}</td>
+          <td style={{padding:"8px 12px",color:"#1a2744",fontWeight:500,verticalAlign:"top"}}>{reportRiskActions[i]||"Monitor and review"}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <RCommentary text={commentary.risks}/>
+</div>
+
+{/* ── SECTION 8: ASSESSMENT AND RECOMMENDATIONS ── */}
+<div className="page-break avoid-break">
+  <RPSH c="8. Assessment and Recommendations"/>
+
+  {/* Site Scorecard */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Site Scorecard</div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Factor</th>
+        <th style={{padding:"8px 12px",textAlign:"center",color:"#fff",fontWeight:700,width:110}}>Rating</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        ["Financial Returns",C.roi>=15?"Positive":C.roi>=5?"Neutral":"Negative",`ROI ${pct(C.roi)}, Net Profit ${fmt(C.nP)}`],
+        ["Sales Density",C.upliftedSpf>=16?"Positive":C.upliftedSpf>=12?"Neutral":"Negative",`£${(C.upliftedSpf||0).toFixed(2)}/sq ft/wk`],
+        ["Rent Position",rent/C.upliftedAnn*100<=10?"Positive":rent/C.upliftedAnn*100<=15?"Neutral":"Negative",`${pct(rent/C.upliftedAnn*100)} of turnover`],
+        ["Competition",competitorList.filter(c=>c.threat==="high").length===0?"Positive":competitorList.filter(c=>c.threat==="high").length<=2?"Neutral":"Negative",`${competitorList.filter(c=>c.threat==="high").length} high-threat competitors`],
+        ["Catchment Quality",DS>=7?"Positive":DS>=4?"Neutral":"Negative",`Population ${catchmentPop.toLocaleString()}, Income ${fmt(medianIncome)}`],
+        ["Footfall & Access",TS>=7?"Positive":TS>=4?"Neutral":"Negative",`${footfall} transactions/day, ${parking} parking spaces`],
+        ["Unit Condition",refitCost/sqft>=100?"Neutral":"Positive",`£${Math.round(refitCost/sqft)}/sq ft refit investment`],
+        ["Planning Risk",planningApps.filter(p=>p.risk==="high").length===0?"Positive":"Negative",planningApps.filter(p=>p.risk==="high").length===0?"No high-risk applications":`${planningApps.filter(p=>p.risk==="high").length} high-risk applications`],
+      ].map((row,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{row[0]}</td>
+          <td style={{padding:"8px 12px",textAlign:"center"}}>
+            <span style={{display:"inline-block",padding:"3px 12px",borderRadius:4,fontSize:11,fontWeight:700,
+              background:row[1]==="Positive"?"#d5e8d5":row[1]==="Neutral"?"#fff4ea":"#fde8e8",
+              color:row[1]==="Positive"?"#1a6b1a":row[1]==="Neutral"?"#c05010":"#d62828"
+            }}>{row[1]}</span>
+          </td>
+          <td style={{padding:"8px 12px",color:R.text,fontSize:12}}>{row[2]}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  {/* Next Steps */}
+  {reportNextSteps.filter(s=>s.action).length>0&&(
+    <div style={{marginBottom:20}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Next Steps</div>
+      <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+        <thead>
+          <tr style={{background:"#1a2744"}}>
+            <th style={{padding:"8px 12px",textAlign:"center",color:"#fff",fontWeight:700,width:40}}>#</th>
+            <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Action</th>
+            <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Why It Matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reportNextSteps.filter(s=>s.action).map((step,i)=>(
+            <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+              <td style={{padding:"8px 12px",textAlign:"center",fontWeight:700,color:"#1a2744"}}>{i+1}</td>
+              <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{step.action}</td>
+              <td style={{padding:"8px 12px",color:R.text}}>{step.why}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {/* Seasonality */}
+  {reportSeasonalityNote&&(
+    <div style={{background:"#f6f8fc",border:"1px solid #c8cdd6",borderRadius:8,padding:"14px 18px",marginBottom:16}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#1a2744",marginBottom:6}}>Seasonality</div>
+      <div style={{fontSize:13,color:R.text,lineHeight:1.8}}>{reportSeasonalityNote}</div>
+    </div>
+  )}
+</div>
+
+{/* ── SECTION 9: FIVE-YEAR FORECAST & SENSITIVITY ── */}
+<div className="page-break avoid-break">
+  <RPSH c="9a. Five-Year Financial Forecast"/>
+  <div style={{overflowX:"auto"}}>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+      <thead>
+        <tr style={{background:"#1a2744"}}>
+          <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:140}}>£</th>
+          {yr5.map(r=><th key={r.yr} style={{padding:"8px 10px",textAlign:"right",color:"#fff",fontWeight:700,minWidth:90}}>Year {r.yr}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {[
+          {l:"Sales Revenue",k:"s",hi:false},
+          {l:"Gross Profit",k:"gp",hi:true},
+          {l:"Operating Costs",k:"tc",hi:false,neg:true},
+          {l:"EBITDA",k:"eb",hi:true},
+          {l:"Finance Cost",k:"fin",hi:false,neg:true},
+          {l:"Net Profit",k:"np",hi:true},
+        ].map((dr,i)=>(
+          <tr key={i} style={{background:dr.hi?"#f0f3fa":"#fff",borderBottom:"1px solid #c8cdd6"}}>
+            <td style={{padding:"6px 10px",fontSize:11,fontWeight:dr.hi?700:400,color:dr.hi?"#1a2744":R.text}}>{dr.l}</td>
+            {yr5.map((r,j)=>{
+              const val=dr.neg?-r[dr.k]:r[dr.k];
+              return <td key={j} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:dr.hi?700:400,color:val<0?"#d62828":dr.hi?"#1a2744":R.text}}>
+                {val<0?"("+fmt(Math.abs(val))+")":fmt(val)}
+              </td>;
+            })}
+          </tr>
+        ))}
+        <tr style={{background:"#1a2744"}}>
+          <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:"#fff"}}>Cumulative Net Profit</td>
+          {[1,2,3,4,5].map(y=>{
+            const cn=cumNp(y);
+            return <td key={y} style={{padding:"6px 8px",textAlign:"right",fontSize:11,fontWeight:700,color:cn>=0?"#bbf7d0":"#fca5a5"}}>
+              {cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}
+            </td>;
+          })}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style={{fontSize:11,color:"#4a5568",fontStyle:"italic",marginTop:8,marginBottom:16}}>
+    3% annual sales growth · 2% cost inflation · Finance: {financeRate}% APR over {financeYears} years
+  </div>
+  <RCommentary text={commentary.fiveYear}/>
+</div>
+
+{/* ── SENSITIVITY ── */}
+<div className="avoid-break">
+  <RPSH c="9b. Sensitivity Analysis"/>
+  <div style={{background:"#f0f3fa",border:"1px solid #c8cdd6",borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:12,color:"#1a2744"}}>
+    ROI impact if footfall and rent vary from base assumptions. <strong>Green = meets 20% target. Amber = 10–20%. Red = below 10%.</strong>
+  </div>
+  <div style={{overflowX:"auto"}}>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+      <thead>
+        <tr style={{background:"#1a2744"}}>
+          <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:120}}>Footfall ↕ / Rent →</th>
+          {[-20,-10,0,+10,+20].map(rp=>(
+            <th key={rp} style={{padding:"8px",textAlign:"center",color:"#fff",fontWeight:700,minWidth:70}}>Rent {rp>0?"+":""}{rp}%</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sensitivityData.map((row,ri)=>(
+          <tr key={ri} style={{borderBottom:"1px solid #c8cdd6"}}>
+            <td style={{padding:"8px 10px",fontSize:12,fontWeight:700,color:"#1a2744",background:"#f6f8fc"}}>
+              Footfall {row[0].fp>0?"+":""}{row[0].fp}%
+            </td>
+            {row.map((cell,ci)=>{
+              const isBase = cell.fp===0 && cell.rp===0;
+              const bg = isBase?"#d5dde8":cell.roi>=20?"#d5e8d5":cell.roi>=10?"#fff4ea":"#fde8e8";
+              const col = isBase?"#1a2744":cell.roi>=20?"#1a6b1a":cell.roi>=10?"#c05010":"#d62828";
+              return (
+                <td key={ci} style={{padding:"8px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:12,border:isBase?"2px solid #1a2744":"none"}}>
+                  {cell.roi.toFixed(1)}%
+                  {isBase&&<div style={{fontSize:9,fontWeight:400}}>BASE</div>}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div style={{fontSize:12,color:"#4a5568",marginTop:8}}>Base case: {footfall} transactions/day at {fmt(rent)}/yr rent · Post-refit uplift {uplift}%</div>
+  <RCommentary text={commentary.sensitivity}/>
+</div>
+
+{/* ── MONTHLY CASHFLOW ── */}
+<div className="page-break avoid-break">
+  <RPSH c="9c. Year 1 Monthly Cash Flow"/>
+  <div style={{overflowX:"auto"}}>
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+      <thead>
+        <tr style={{background:"#1a2744"}}>
+          <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:140}}>Item</th>
+          {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map(m=>(
+            <th key={m} style={{padding:"6px 4px",textAlign:"right",color:"#fff",fontWeight:700,minWidth:60}}>{m}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {(()=>{
+          const ann1 = C.upliftedAnn;
+          const mSales = ann1/12;
+          const mGP    = ann1*(C.blGP/100)/12;
+          const mRent  = -rent/12;
+          const mRates = -rates/12;
+          const mStaff = -(ann1*staffPct/100)/12;
+          const mUtils = -utilities/12;
+          const mOther = -otherCosts/12;
+          const mFin   = -C.mp;
+          const mNet   = mGP+mRent+mRates+mStaff+mUtils+mOther+mFin;
+          const rows = [
+            {l:"Sales Revenue",v:mSales,bold:false},
+            {l:"Gross Profit",v:mGP,bold:true,hi:true},
+            {l:"Rent",v:mRent,bold:false},
+            {l:"Business Rates",v:mRates,bold:false},
+            {l:"Staff & Wages",v:mStaff,bold:false},
+            {l:"Utilities",v:mUtils,bold:false},
+            {l:"Other Costs",v:mOther,bold:false},
+            {l:"Loan Repayment",v:mFin,bold:false},
+            {l:"Net Cash Flow",v:mNet,bold:true,hi2:true},
+          ];
+          let bal=0;
+          return (
+            <>
+              {rows.map((r,i)=>(
+                <tr key={i} style={{background:r.hi?"#d5dde8":r.hi2?"#f0f3fa":"#fff",borderBottom:"1px solid #c8cdd6"}}>
+                  <td style={{padding:"6px 10px",fontSize:11,fontWeight:r.bold?700:400,color:r.hi||r.hi2?"#1a2744":R.text}}>{r.l}</td>
+                  {[...Array(12)].map((_,mi)=>(
+                    <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:r.bold?700:400,color:r.v<0?"#d62828":r.hi||r.hi2?"#1a2744":R.text}}>
+                      {r.v<0?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}
+                    </td>
                   ))}
-                </div>
-              </div>
-              <AISection prompt={aiPrompt} label="AI Executive Summary"/>
-            </div>
-
-            {/* S0b: MARKET SHARE ANALYSIS */}
-            {marketShareData&&<div className="avoid-break">
-              <RPSH c="Market Share & Catchment Analysis"/>
-
-              {/* Competition scoring matrix */}
-              <RRC t="Competition Scoring Matrix" ch={
-                <div>
-                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,background:"#1a2744",padding:"8px 12px",borderRadius:"8px 8px 0 0"}}>
-                    {["Scoring Category","Max Score","This Store","Weighting"].map(h=>(
-                      <div key={h} style={{fontSize:10,fontWeight:700,color:"#fff",textTransform:"uppercase"}}>{h}</div>
-                    ))}
-                  </div>
-                  {[
-                    ["Store Quality / Shopfit",18,(marketShareData?.scoring?.storeQuality||18)],
-                    ["Trading Location",18,(marketShareData?.scoring?.locationScore||13)],
-                    ["Stocking Range",18,(marketShareData?.scoring?.stockingScore||18)],
-                    ["Categories Sold",18,(marketShareData?.scoring?.categoriesScore||14)],
-                    ["Pricing Strategy",18,(marketShareData?.scoring?.pricingScore||12)],
-                    ["Marketing Activity",18,(marketShareData?.scoring?.marketingScore||12)],
-                    ["Availability / Hours",18,(marketShareData?.scoring?.availabilityScore||16)],
-                    ["Customer Service",10,(marketShareData?.scoring?.serviceScore||10)],
-                  ].map(([l,max,score],i)=>(
-                    <div key={l} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"7px 12px",background:i%2===0?"#f6f8fc":"#fff",borderBottom:"1px solid "+"#c8cdd6"}}>
-                      <div style={{fontSize:12,color:"#1a1a2e"}}>{l}</div>
-                      <div style={{fontSize:12,color:"#4a5568",textAlign:"center"}}>{max}</div>
-                      <div style={{fontSize:12,fontWeight:700,color:"#1a2744",textAlign:"center"}}>{score}</div>
-                      <div style={{textAlign:"center"}}>
-                        <div style={{height:6,background:"#f0f3fa",borderRadius:3,marginTop:4}}>
-                          <div style={{height:"100%",background:"#1a2744",borderRadius:3,width:(score/max*100)+"%"}}/>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:0,padding:"8px 12px",background:"#f0f3fa",borderRadius:"0 0 8px 8px",borderTop:"2px solid "+"#1a2744"}}>
-                    <div style={{fontSize:12,fontWeight:700,color:"#1a2744"}}>TOTAL SCORE</div>
-                    <div style={{fontSize:12,color:"#4a5568",textAlign:"center"}}>136</div>
-                    <div style={{fontSize:13,fontWeight:800,color:"#1a2744",textAlign:"center"}}>{(marketShareData?.ourScore||118)}</div>
-                    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textAlign:"center"}}>{(marketShareData?.marketShareFactor||52).toFixed(1)}% share</div>
-                  </div>
-                </div>
-              }/>
-
-              {/* Year 1 Quarterly ramp-up */}
-              <Sub c="Year 1 — Quarterly Trading Ramp-Up"/>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:8}}>
-                {(marketShareData?.yr1Quarterly||[]).map(q=>(
-                  <div key={q.q} style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10,padding:14,textAlign:"center"}}>
-                    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",marginBottom:6}}>Q{q.q} — {["Jan-Mar","Apr-Jun","Jul-Sep","Oct-Dec"][q.q-1]}</div>
-                    <div style={{fontSize:10,color:"#4a5568",marginBottom:4}}>{Math.round(q.factor*100)}% of mature trading</div>
-                    <div style={{height:4,background:"#f0f3fa",borderRadius:2,marginBottom:8}}>
-                      <div style={{height:"100%",background:"#1a2744",borderRadius:2,width:(q.factor*100)+"%"}}/>
-                    </div>
-                    <div style={{fontSize:15,fontWeight:700,color:"#1a1a2e",marginBottom:2}}>{fmt(q.sales)}</div>
-                    <div style={{fontSize:11,color:"#1a2744"}}>GP: {fmt(q.gp)}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{fontSize:11,color:"#4a5568",fontStyle:"italic"}}>
-                Year 1 ramp-up assumes 75% of mature trading in Q1, rising to 100% by Q4 as the store establishes its customer base post-refit. Based on Project Retail methodology.
-              </div>
-            </div>}
-
-            {/* S1: FINANCIAL */}
-            <div className="avoid-break">
-              <RPSH c="1. Financial Summary"/>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:24}}>
-                {[["Base Weekly Turnover",fmt(C.wk)],["Post-Refit Weekly",fmt(C.upliftedWk)],["Annual Sales",fmt(C.upliftedAnn)],["Gross Profit "+pct(C.blGP),fmt(C.annGP)],["Net Profit",fmt(C.nP)],["ROI",pct(C.roi)],["Total Investment",fmt(C.ti)],["Payback",C.pb?(C.pb||0).toFixed(1)+" yrs":"N/A"],["Sales/sqft/wk","£"+(C.upliftedSpf||0).toFixed(2)],["Opening Hours",openHours+"hrs/day"]].map(([l,v])=>(
-                  <div key={l} style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:8,padding:12,textAlign:"center"}}>
-                    <div style={{fontSize:11,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:5}}>{l}</div>
-                    <div style={{fontSize:17,fontWeight:700,color:"#1a2744"}}>{v}</div>
-                  </div>
-                ))}
-              </div>
-              <RRC t="Profit and Loss" ch={<HBar data={[{l:"Gross Profit",v:C.annGP},{l:"Rent",v:-rent},{l:"Rates",v:-rates},{l:"Staff "+staffPct+"%",v:-C.stf},{l:"Utilities",v:-utilities},{l:"Other",v:-otherCosts},{l:"EBITDA",v:C.eb},{l:"Finance",v:-C.af},{l:"Net Profit",v:C.nP}]}/>}/>
-              <RCommentary text={commentary.financial}/>
-            </div>
-
-            {/* S1b: PROPERTY, COSTS & INVESTMENT */}
-            <div className="avoid-break">
-              <RPSH c="1b. Property, Costs & Investment"/>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Property</div>
-                  {[["Net Selling Area",sqft.toLocaleString()+" sq ft"],["Location Type",location.replace(/-/g," ")],["Opening Hours",openHours+" hrs/day"],["Post-Refit Uplift",uplift+"%"]].map(([l,v])=>(
-                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #c8cdd6",fontSize:13}}>
-                      <span style={{color:"#4a5568"}}>{l}</span><span style={{fontWeight:700,color:"#1a1a2e"}}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Annual Operating Costs</div>
-                  {[["Rent",fmt(rent)],["Business Rates",fmt(rates)],["Staff Wages "+staffPct+"%",fmt(C.stf)],["Utilities",fmt(utilities)],["Other Costs",fmt(otherCosts)],["Total Costs",fmt(C.annC)]].map(([l,v],i)=>(
-                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #c8cdd6",fontSize:13,fontWeight:i===5?700:400}}>
-                      <span style={{color:i===5?"#1a2744":"#4a5568"}}>{l}</span><span style={{fontWeight:i===5?800:700,color:i===5?"#1a2744":"#1a1a2e"}}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Investment</div>
-                  {[["Refit Cost",fmt(refitCost)],["Opening Stock",fmt(stockCost)],["Total Investment",fmt(C.ti)],["Finance Rate",financeRate+"%"],["Finance Term",financeYears+" years"],["Monthly Repayment",fmt(Math.round(C.mp))]].map(([l,v],i)=>(
-                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #c8cdd6",fontSize:13}}>
-                      <span style={{color:"#4a5568"}}>{l}</span><span style={{fontWeight:700,color:"#1a1a2e"}}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div style={{fontSize:11,fontWeight:700,color:"#4a5568",textTransform:"uppercase",letterSpacing:".08em",marginBottom:10}}>Area Trends</div>
-                  {[["House Prices",tHP],["Population Growth",tPG],["New Homes",tNH],["Food & Fuel",tFF],["Retail Growth",tRG],["Vehicle Access",tVA]].map(([l,v])=>(
-                    <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #c8cdd6",fontSize:13}}>
-                      <span style={{color:"#4a5568"}}>{l}</span>
-                      <span style={{fontWeight:700,color:v.includes("Rising")?"#166534":v.includes("Declining")?"#d62828":"#1a1a2e"}}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="avoid-break">
-              <RPSH c="2. Risk Register"/>
-              <RRC t="Automated Risk Assessment" ch={<RiskRegister risks={risks}/>}/>
-              <RCommentary text={commentary.risks}/>
-
-              {planningApps.length>0&&(
-                <RRC t="Planning Conflict Assessment" ch={
-                  <div>
-                    {planningApps.map((pa,i)=>(
-                      <div key={i} style={{padding:"10px 0",borderBottom:i<planningApps.length-1?"1px solid "+"#c8cdd6":"none"}}>
-                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
-                          <div><div style={{fontSize:13,fontWeight:700,color:"#1a1a2e"}}>{pa.desc}</div><div style={{fontSize:12,color:"#4a5568",marginTop:2}}>{pa.ref} · {pa.distance} · {pa.status}</div></div>
-                          <div style={{padding:"3px 10px",borderRadius:4,fontSize:11,fontWeight:700,background:pa.risk==="high"?"#fde8e8":pa.risk==="medium"?"#fff4ea":"#d5dde8",color:pa.risk==="high"?"#d62828":pa.risk==="medium"?"#FB923C":"#1a2744",flexShrink:0}}>{pa.risk.toUpperCase()}</div>
-                        </div>
-                      </div>
-                    ))}
-                    <div style={{fontSize:12,color:"#4a5568",marginTop:10,fontStyle:"italic"}}>Planning data is indicative only. Always verify with the Local Planning Authority.</div>
-                  </div>
-                }/>
-              )}
-            </div>
-
-            {/* S3: SYMBOL GROUP */}
-            <div className="avoid-break">
-              <RPSH c="3. Symbol Group Recommendation"/>
-              <RRC t="Best-fit symbol groups for this site" ch={<SymbolGroupScorer location={location} weeklyTurnover={C.upliftedWk} demographics={{medianIncome,deprivation}} cats={cats}/>}/>
-              <RCommentary text={commentary.symbolGroup}/>
-            </div>
-
-            {/* S4: COMPETITORS */}
-            {mapLat&&(
-              <>
-                <div className="avoid-break">
-                  <RPSH c="4. Competitor Analysis"/>
-                  <RRC t="Competitor Map" ch={<CompetitorMap lat={mapLat} lng={mapLng} competitors={competitorList} existingStore={existingStore} comparables={comparables}/>}/>
-                  {competitorList.length>0&&(
-                    <RRC t="Competitor List" ch={
-                      <div>
-                        {competitorList.slice(0,10).map((c,i)=>(
-                          <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 0",borderBottom:"1px solid "+"#c8cdd6"}}>
-                            <div style={{width:22,height:22,borderRadius:50,background:c.threat==="high"?"#d62828":c.threat==="medium"?"#FB923C":"#1a2744",color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{i+1}</div>
-                            <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:"#1a1a2e"}}>{c.name}</div><div style={{fontSize:11,color:"#4a5568"}}>{c.type}</div></div>
-                            <div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:c.threat==="high"?"#d62828":c.threat==="medium"?"#FB923C":"#1a2744"}}>{c.distance}</div><div style={{fontSize:10,color:"#4a5568"}}>{c.threat} threat</div></div>
-                          </div>
-                        ))}
-                      </div>
-                    }/>
-                  )}
-                </div>
-                <RCommentary text={commentary.competitors}/>
-              </>
-            )}
-
-            {/* S4b: COMPARABLE SITES */}
-            {comparables.some(c=>c.name)&&(
-              <div className="avoid-break">
-                <RPSH c="4b. Comparable Store Benchmarks"/>
-                <div style={{fontSize:13,color:"#4a5568",marginBottom:16,lineHeight:1.7}}>The following comparable stores have been selected as trading benchmarks for this assessment. Sales density comparisons are based on post-refit projections for the subject site.</div>
-                {comparables.filter(c=>c.name).map((c,i)=>(
-                  <div key={i} style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10,padding:16,marginBottom:12}}>
-                    <div style={{fontSize:15,fontWeight:700,color:"#1a2744",marginBottom:12}}>{c.name}</div>
-                    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
-                      {[
-                        ["Weekly Turnover",c.weeklyT>0?fmt(c.weeklyT):"Not stated"],
-                        ["Store Size",c.sqft>0?c.sqft.toLocaleString()+" sq ft":"Not stated"],
-                        ["Sales Density",c.sqft>=100&&c.weeklyT>0?"£"+(c.weeklyT/c.sqft).toFixed(2)+"/sqft/wk":"—"],
-                      ].map(([l,v])=>(
-                        <div key={l} style={{textAlign:"center",background:"#fff",border:"1px solid "+"#c8cdd6",borderRadius:8,padding:"10px 8px"}}>
-                          <div style={{fontSize:10,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
-                          <div style={{fontSize:15,fontWeight:700,color:"#1a2744"}}>{v}</div>
-                        </div>
-                      ))}
-                    </div>
-                    {c.sqft>0&&c.weeklyT>0&&(
-                      <div style={{fontSize:12,color:"#1a2744",fontWeight:600,padding:"8px 12px",background:"#f0f3fa",borderRadius:6}}>
-                        Subject site post-refit sales density: £{(C.upliftedSpf||0).toFixed(2)}/sqft/wk — {C.upliftedSpf>=(c.weeklyT/c.sqft)?"above":"below"} this comparable
-                      </div>
-                    )}
-                    {c.notes&&<div style={{fontSize:13,color:"#1a1a2e",marginTop:10,lineHeight:1.7,borderTop:"1px solid "+"#c8cdd6",paddingTop:10}}>{c.notes}</div>}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Area notes */}
-            {areaNotes&&(
-              <div className="avoid-break" style={{marginBottom:20,padding:"14px 16px",background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Area Notes</div>
-                <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,whiteSpace:"pre-wrap",margin:0}}>{areaNotes}</p>
-              </div>
-            )}
-
-            {/* S5: CATEGORIES */}
-            <div className="avoid-break">
-              <RPSH c="5. Category Sales Mix"/>
-              <RRC t="Annual Sales by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.mix-a.mix).map(c=>({l:c.name.split(" ")[0],v:Math.round(C.upliftedAnn*c.mix/100)}))} height={200} fv={v=>fmt(v).replace(",000","k")}/>}/>
-              <RRC t="Category Mix" ch={<Donut data={cats.filter(c=>c.mix>0).map(c=>({l:c.name,v:c.mix}))}/>}/>
-              <RRC t="Gross Profit % by Category" ch={<BarChart data={[...cats].sort((a,b)=>b.gp-a.gp).map(c=>({l:c.name.split(" ")[0],v:c.gp}))} height={160} fv={v=>v+"%"}/>}/>
-              <RCommentary text={commentary.categories}/>
-            </div>
-
-            {/* S6: FOOTFALL */}
-            <div className="avoid-break">
-              <RPSH c="6. Footfall and Spend Profile"/>
-              <RRC t="Footfall by Hour of Day" ch={<BarChart data={FHOURS.map(h=>({l:h,v:fhour[h]}))} height={160} fv={v=>v+"%"}/>}/>
-              <RRC t="Basket Size Distribution" ch={<BarChart data={SBANDS.map(b=>({l:b.label,v:spendBands[b.key]}))} height={150} fv={v=>v+"%"}/>}/>
-              <RRC t="Shopping Mission Mix" ch={<Donut data={MISSIONS.map(k=>({l:k,v:missions[k]}))}/>}/>
-              <RCommentary text={commentary.footfall}/>
-            </div>
-
-            {/* S7: DEMOGRAPHICS */}
-            <div className="avoid-break">
-              <RPSH c="7. Catchment Demographics"/>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
-                {[["Catchment Population",catchmentPop.toLocaleString()],["Median Income",fmt(medianIncome)],["Penetration Rate",pct(C.pen)],["Deprivation Index",deprivation+"/10"],["Demographic Score",DS+"/9"],["Avg Household Size",""+householdSz]].map(([l,v])=>(
-                  <div key={l} style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:8,padding:"10px 12px"}}>
-                    <div style={{fontSize:11,color:"#4a5568",textTransform:"uppercase",letterSpacing:".07em",marginBottom:4}}>{l}</div>
-                    <div style={{fontSize:16,fontWeight:700,color:"#1a2744"}}>{v}</div>
-                  </div>
-                ))}
-              </div>
-              <RRC t="Age Profile" ch={<BarChart data={AGE_BANDS.map(k=>({l:k,v:ageBands[k]}))} height={140} fv={v=>v+"%"}/>}/>
-              <RRC t="Employment Status" ch={<BarChart data={EMPLOYMENTS.map(k=>({l:k.split(" ")[0],v:employment[k]}))} height={130} fv={v=>v+"%"}/>}/>
-              <RRC t="Housing Tenure" ch={<Donut data={HOUSINGS.map(k=>({l:k,v:housing[k]}))}/>}/>
-              <RCommentary text={commentary.demographics}/>
-
-              {/* Food consumption profile */}
-              {foodProfile&&(
-                <div style={{marginTop:16}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:12}}>Local Food Consumption Profile</div>
-                  <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,marginBottom:12,padding:"12px 14px",background:"#f0f3fa",border:"1px solid #c8cdd6",borderRadius:8}}>{foodProfile.summary}</div>
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
-                    {(foodProfile.topFoods||[]).slice(0,6).map((f,i)=>{
-                      const above = f.index>=100;
-                      return (
-                        <div key={i} style={{background:above?"#eef1f8":"#fef9f0",border:"1px solid "+(above?"#1a2744":"#c8cdd6"),borderRadius:8,padding:12}}>
-                          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                            <div style={{fontSize:12,fontWeight:700,color:"#1a1a2e"}}>{f.category}</div>
-                            <div style={{padding:"2px 6px",borderRadius:4,fontSize:10,fontWeight:800,background:above?"#1a2744":"#FB923C",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
-                          </div>
-                          <div style={{fontSize:11,color:"#4a5568",lineHeight:1.5}}>{f.insight}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {foodProfile.keyInsight&&<div style={{fontSize:12,color:"#1a2744",fontWeight:600,padding:"10px 14px",background:"#f0f3fa",borderRadius:6,borderLeft:"3px solid #1a2744"}}>{foodProfile.keyInsight}</div>}
-                </div>
-              )}
-            </div>
-
-            {/* Postcode notes in report */}
-            {postcodeNotes&&(
-              <div className="avoid-break" style={{marginBottom:20,padding:"14px 16px",background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Location Notes — {postcode}</div>
-                <p style={{fontSize:13,color:"#1a1a2e",lineHeight:1.8,whiteSpace:"pre-wrap",margin:0}}>{postcodeNotes}</p>
-              </div>
-            )}
-
-            {/* S7b: LOCAL FOOD CONSUMPTION PROFILE */}
-            {foodProfile&&(
-              <div className="avoid-break">
-                <RPSH c="Local Food Consumption Profile"/>
-                <div style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10,padding:16,marginBottom:16}}>
-                  <div style={{fontSize:14,color:"#1a1a2e",lineHeight:1.8,marginBottom:10}}>{foodProfile.summary}</div>
-                  <div style={{padding:"12px 16px",background:"#f0f3fa",borderRadius:8,borderLeft:"3px solid "+"#1a2744"}}>
-                    <div style={{fontSize:12,fontWeight:700,color:"#1a2744",marginBottom:4}}>Key Ranging Recommendation</div>
-                    <div style={{fontSize:13,color:"#1a1a2e",lineHeight:1.7}}>{foodProfile.keyInsight}</div>
-                  </div>
-                </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
-                  {(foodProfile.topFoods||[]).map((f,i)=>{
-                    const above = f.index >= 100;
-                    return (
-                      <div key={i} style={{background:above?"#eef1f8":"#f8f9fc",border:"1px solid "+(above?"#1a2744":"#c8cdd6"),borderRadius:8,padding:12}}>
-                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                          <div style={{fontSize:12,fontWeight:700,color:"#1a1a2e"}}>{f.category}</div>
-                          <div style={{fontSize:11,fontWeight:800,padding:"2px 6px",borderRadius:4,background:above?"#1a2744":"#c05010",color:"#fff"}}>{f.index>=100?"+":"-"}{Math.abs(f.index-100)}%</div>
-                        </div>
-                        <div style={{fontSize:10,color:"#4a5568",marginBottom:5,lineHeight:1.4}}>{f.insight}</div>
-                        <div style={{fontSize:10,color:"#1a2744",fontWeight:600,borderTop:"1px solid "+"#c8cdd6",paddingTop:5}}>→ {f.action}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <RRC t="Ethnic Food Preferences & Health Trends" ch={
-                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-                    <div><div style={{fontSize:11,fontWeight:700,color:"#1a2744",marginBottom:4}}>Ethnic Food Preferences</div><div style={{fontSize:12,color:"#1a1a2e",lineHeight:1.6}}>{foodProfile.ethnicFoodNote}</div></div>
-                    <div><div style={{fontSize:11,fontWeight:700,color:"#1a2744",marginBottom:4}}>Health Consciousness</div><div style={{fontSize:12,color:"#1a1a2e",lineHeight:1.6}}>{foodProfile.healthTrend}</div></div>
-                  </div>
-                }/>
-                {foodProfile.avoidCategories&&foodProfile.avoidCategories.length>0&&(
-                  <div style={{background:"#fdf8ec",border:"1px solid "+"#FB923C",borderRadius:8,padding:12}}>
-                    <div style={{fontSize:11,fontWeight:700,color:"#FB923C",marginBottom:6}}>DE-PRIORITISE IN RANGING</div>
-                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{foodProfile.avoidCategories.map((c,i)=><div key={i} style={{padding:"3px 10px",background:"#fff",border:"1px solid "+"#FB923C",borderRadius:6,fontSize:12,color:"#FB923C"}}>{c}</div>)}</div>
-                  </div>
-                )}
-                <div style={{fontSize:11,color:"#4a5568",marginTop:8,fontStyle:"italic"}}>Based on ONS Family Food Survey regional data and local demographic indicators. Use as a ranging guide alongside visit observations.</div>
-              </div>
-            )}
-
-            {/* S8: DETAILED P&L */}
-            <div className="avoid-break">
-              <RPSH c="8. Detailed Profit and Loss"/>
-              <div style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:12,overflow:"hidden",marginBottom:20}}>
-                {[
-                  {type:"head",l:"INCOME"},
-                  {type:"row", l:"Gross Sales Revenue (post-refit)",v:C.upliftedAnn,bold:true},
-                  {type:"row", l:"Cost of Goods "+pct(100-C.blGP),v:-(C.upliftedAnn*(1-C.blGP/100))},
-                  {type:"sub", l:"GROSS PROFIT",v:C.annGP,bold:true},
-                  {type:"gap"},
-                  {type:"head",l:"OPERATING COSTS"},
-                  {type:"row", l:"Rent",v:-rent},
-                  {type:"row", l:"Business Rates",v:-rates},
-                  {type:"row", l:"Staff and Wages "+staffPct+"% of sales",v:-C.stf},
-                  {type:"row", l:"Utilities",v:-utilities},
-                  {type:"row", l:"Other Costs",v:-otherCosts},
-                  {type:"sub", l:"TOTAL OPERATING COSTS",v:-(rent+rates+C.stf+utilities+otherCosts),bold:true},
-                  {type:"gap"},
-                  {type:"sub", l:"EBITDA",v:C.eb,bold:true,hi:true},
-                  {type:"gap"},
-                  {type:"head",l:"FINANCE"},
-                  {type:"row", l:"Loan Repayment "+financeRate+"% APR / "+financeYears+"yr",v:-C.af},
-                  {type:"gap"},
-                  {type:"sub", l:"NET PROFIT",v:C.nP,bold:true,hi:true},
-                  {type:"gap"},
-                  {type:"head",l:"KEY RATIOS"},
-                  {type:"kv",l:"Gross Margin",d:pct(C.blGP)},
-                  {type:"kv",l:"Staff Cost Ratio",d:staffPct+"%"},
-                  {type:"kv",l:"Total Cost Ratio",d:pct(C.annC/C.upliftedAnn*100)},
-                  {type:"kv",l:"EBITDA Margin",d:pct(C.eb/C.upliftedAnn*100)},
-                  {type:"kv",l:"Net Margin",d:pct(C.nP/C.upliftedAnn*100)},
-                  {type:"kv",l:"Return on Investment",d:pct(C.roi)},
-                  {type:"kv",l:"Payback Period",d:C.pb?(C.pb||0).toFixed(1)+" years":"N/A"},
-                  {type:"kv",l:"Sales per Sq Ft weekly (post-refit)",d:"£"+(C.upliftedSpf||0).toFixed(2)},
-                ].map((r,i)=>{
-                  if(r.type==="gap") return <div key={i} style={{height:8}}/>;
-                  if(r.type==="head") return <div key={i} style={{background:"#1a2744",padding:"6px 16px",fontSize:11,fontWeight:700,color:"#fff",textTransform:"uppercase",letterSpacing:".12em"}}>{r.l}</div>;
-                  if(r.type==="kv") return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"8px 16px",borderBottom:"1px solid "+"#c8cdd6"}}><span style={{fontSize:13,color:"#4a5568"}}>{r.l}</span><span style={{fontSize:13,fontWeight:700,color:"#1a2744"}}>{r.d}</span></div>;
-                  const neg=r.v<0,hiCol=r.v>=0?"#1a2744":"#d62828";
-                  return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:(r.type==="sub"?"10px":"7px")+" 16px",borderBottom:"1px solid "+"#c8cdd6",background:r.hi?(r.v>=0?"#d5dde8":"#fde8e8"):r.type==="sub"?"#f0f3fa":"transparent"}}>
-                    <span style={{fontSize:r.bold?14:13,color:r.bold?"#0c1024":"#1a1a2e",fontWeight:r.bold?700:400,paddingLeft:r.type==="row"?12:0}}>{r.l}</span>
-                    <span style={{fontSize:r.bold?15:13,fontWeight:r.bold?700:400,color:r.hi?hiCol:neg?"#c05010":"#0c1024"}}>{neg?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}</span>
-                  </div>;
+                </tr>
+              ))}
+              <tr style={{background:"#1a2744"}}>
+                <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:"#fff"}}>Closing Balance</td>
+                {[...Array(12)].map((_,mi)=>{
+                  bal+=mNet;
+                  return <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?"#bbf7d0":"#fca5a5"}}>
+                    {bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}
+                  </td>;
                 })}
-              </div>
-            </div>
-            <RCommentary text={commentary.pl}/>
+              </tr>
+            </>
+          );
+        })()}
+      </tbody>
+    </table>
+  </div>
+  <div style={{fontSize:12,color:"#4a5568",fontStyle:"italic",marginTop:10,padding:"10px 14px",background:"#f6f8fc",border:"1px solid #c8cdd6",borderRadius:6}}>
+    Monthly figures represent steady-state post-refit trading based on annual projections divided equally across 12 months. Seasonal variation has not been modelled.
+  </div>
+</div>
 
-            {/* S9: 5-YEAR */}
-            <div className="avoid-break">
-              <RPSH c="9. Five-Year Cash Flow Forecast"/>
-              <div style={{overflowX:"auto"}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                  <thead>
-                    <tr style={{background:"#1a2744"}}>
-                      <th style={{padding:"10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:160}}>Item</th>
-                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:"#fff",fontWeight:700,minWidth:90}}>Year {y}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      {l:"Sales Revenue",k:"s",neg:false},
-                      {l:"Gross Profit",k:"gp",neg:false,sub:true},
-                      {l:"  Op. Costs",k:"tc",neg:true},
-                      {l:"EBITDA",k:"eb",neg:false,hi:true},
-                      {l:"Finance Cost",k:"fin",neg:true},
-                      {l:"Net Profit",k:"np",neg:false,hi:true},
-                    ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#d5dde8":dr.sub?"#f0f3fa":i%2===0?"#f6f8fc":"#fff",borderBottom:"1px solid "+"#c8cdd6"}}>
-                        <td style={{padding:"8px 10px",fontSize:13,fontWeight:dr.hi?700:400,color:dr.hi?"#1a2744":"#1a1a2e"}}>{dr.l}</td>
-                        {yr5.map((r,j)=>{const val=dr.neg?-r[dr.k]:r[dr.k];const neg=val<0;return <td key={j} style={{padding:"8px",textAlign:"right",fontWeight:dr.hi?700:400,color:neg?"#d62828":dr.hi?"#1a2744":"#0c1024",fontSize:13}}>{neg?"("+fmt(Math.abs(val))+")":fmt(val)}</td>;})}
-                      </tr>
-                    ))}
-                    <tr style={{background:"#f0f3fa",borderBottom:"1px solid "+"#c8cdd6"}}>
-                      <td style={{padding:"8px 10px",fontSize:13,fontWeight:700,color:"#1a2744"}}>Cumulative Net Profit</td>
-                      {[1,2,3,4,5].map(y=>{const cn=cumNp(y);return <td key={y} style={{padding:"8px",textAlign:"right",fontWeight:700,color:cn<0?"#d62828":"#1a2744",fontSize:13}}>{cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}</td>;})}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <RCommentary text={commentary.fiveYear}/>
+{/* ── SECTION 10: BASIS OF ASSESSMENT ── */}
+<div className="page-break avoid-break">
+  <RPSH c="10. Basis of Assessment"/>
 
-            {/* S9b: MONTHLY CASHFLOW */}
-            <div className="avoid-break">
-              <RPSH c="9b. Year 1 Monthly Cash Flow"/>
-              <div style={{overflowX:"auto"}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                  <thead>
-                    <tr style={{background:"#1a2744"}}>
-                      <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:140}}>Item</th>
-                      {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map(m=>(
-                        <th key={m} style={{padding:"6px 4px",textAlign:"right",color:"#fff",fontWeight:700,minWidth:60}}>{m}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(()=>{
-                      const ann1 = C.upliftedAnn;
-                      const mSales = ann1/12;
-                      const mGP    = ann1*(C.blGP/100)/12;
-                      const mRent  = -rent/12;
-                      const mRates = -rates/12;
-                      const mStaff = -(ann1*staffPct/100)/12;
-                      const mUtils = -utilities/12;
-                      const mOther = -otherCosts/12;
-                      const mFin   = -C.mp;
-                      const mNet   = mGP+mRent+mRates+mStaff+mUtils+mOther+mFin;
-                      const rows = [
-                        {l:"Sales Revenue",v:mSales,bold:false},
-                        {l:"Gross Profit",v:mGP,bold:true,hi:true},
-                        {l:"Rent",v:mRent,bold:false},
-                        {l:"Business Rates",v:mRates,bold:false},
-                        {l:"Staff & Wages",v:mStaff,bold:false},
-                        {l:"Utilities",v:mUtils,bold:false},
-                        {l:"Other Costs",v:mOther,bold:false},
-                        {l:"Loan Repayment",v:mFin,bold:false},
-                        {l:"Net Cash Flow",v:mNet,bold:true,hi2:true},
-                      ];
-                      let bal=0;
-                      return (
-                        <>
-                          {rows.map((r,i)=>(
-                            <tr key={i} style={{background:r.hi?"#d5dde8":r.hi2?"#f0f3fa":"#fff",borderBottom:"1px solid #c8cdd6"}}>
-                              <td style={{padding:"6px 10px",fontSize:11,fontWeight:r.bold?700:400,color:r.hi||r.hi2?"#1a2744":"#1a1a2e"}}>{r.l}</td>
-                              {[...Array(12)].map((_,mi)=>(
-                                <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:r.bold?700:400,color:r.v<0?"#d62828":r.hi||r.hi2?"#1a2744":"#1a1a2e"}}>
-                                  {r.v<0?"("+fmt(Math.abs(r.v))+")":fmt(r.v)}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                          <tr style={{background:"#1a2744"}}>
-                            <td style={{padding:"6px 10px",fontSize:11,fontWeight:700,color:"#fff"}}>Closing Balance</td>
-                            {[...Array(12)].map((_,mi)=>{
-                              bal+=mNet;
-                              return <td key={mi} style={{padding:"6px 4px",textAlign:"right",fontSize:11,fontWeight:700,color:bal>=0?"#bbf7d0":"#fca5a5"}}>
-                                {bal<0?"("+fmt(Math.abs(bal))+")":fmt(bal)}
-                              </td>;
-                            })}
-                          </tr>
-                        </>
-                      );
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-              <div style={{fontSize:12,color:"#4a5568",fontStyle:"italic",marginTop:10,padding:"10px 14px",background:"#f6f8fc",border:"1px solid #c8cdd6",borderRadius:6}}>
-                Monthly figures represent steady-state post-refit trading based on annual projections divided equally across 12 months. Seasonal variation has not been modelled. Actual trading performance in the early months of operation may differ as the store establishes its post-refit customer base.
-              </div>
-            </div>
-            <div className="avoid-break">
-              <RPSH c="10. Sensitivity Analysis"/>
-              <div style={{background:"#d5dde8",border:"1px solid "+"#c8cdd6",borderRadius:8,padding:"10px 14px",marginBottom:16,fontSize:13,color:"#1a2744"}}>
-                ROI impact if footfall and rent vary from base assumptions. <strong>Green = meets 20% target. Amber = 10–20%. Red = below 10%.</strong>
-              </div>
-              <div style={{overflowX:"auto"}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                  <thead>
-                    <tr style={{background:"#1a2744"}}>
-                      <th style={{padding:"8px 10px",textAlign:"left",color:"#fff",fontWeight:700,minWidth:120}}>Footfall ↕ / Rent →</th>
-                      {[-20,-10,0,+10,+20].map(rp=>(
-                        <th key={rp} style={{padding:"8px",textAlign:"center",color:"#fff",fontWeight:700,minWidth:70}}>Rent {rp>0?"+":""}{rp}%</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sensitivityData.map((row,ri)=>(
-                      <tr key={ri} style={{borderBottom:"1px solid "+"#c8cdd6"}}>
-                        <td style={{padding:"8px 10px",fontSize:12,fontWeight:700,color:"#1a2744",background:"#f6f8fc"}}>
-                          Footfall {row[0].fp>0?"+":""}{row[0].fp}%
-                        </td>
-                        {row.map((cell,ci)=>{
-                          const isBase = cell.fp===0 && cell.rp===0;
-                          const bg = isBase?"#d5dde8":cell.roi>=20?"#d5dde8":cell.roi>=10?"#fff4ea":"#fde8e8";
-                          const col = isBase?"#1a2744":cell.roi>=20?"#1a2744":cell.roi>=10?"#FB923C":"#d62828";
-                          return (
-                            <td key={ci} style={{padding:"8px",textAlign:"center",background:bg,fontWeight:isBase?800:600,color:col,fontSize:12,border:isBase?"2px solid "+"#1a2744":"none"}}>
-                              {cell.roi.toFixed(1)}%
-                              {isBase&&<div style={{fontSize:9,fontWeight:400}}>BASE</div>}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div style={{fontSize:12,color:"#4a5568",marginTop:8}}>Base case: {footfall} transactions/day at {fmt(rent)}/yr rent · Post-refit uplift {uplift}%</div>
-              <RCommentary text={commentary.sensitivity}/>
-            </div>
+  {/* Assumptions table */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Assumptions</div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:20}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Assumption</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Value</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      {[
+        ["Net selling area",sqft.toLocaleString()+" sq ft","Client / VOA"],
+        ["Daily transactions",footfall.toString(),"Estimated from location type and catchment"],
+        ["Average basket","£"+(avgBasket||0).toFixed(2),"Sector benchmark adjusted for catchment"],
+        ["Post-refit uplift",uplift+"%","Genesis Retail methodology"],
+        ["Blended gross margin",pct(C.blGP),"ACS Local Shop Report 2025 + category mix"],
+        ["Rent","£"+rent.toLocaleString()+"/yr","Agent / marketing particulars"],
+        ["Business rates","£"+rates.toLocaleString()+"/yr","VOA 2023 list / calculated"],
+        ["Staff cost ratio",staffPct+"% of sales","Sector benchmark"],
+        ["Sales growth (annual)","3%","Conservative organic growth"],
+        ["Cost inflation (annual)","2%","CPI-linked"],
+        ["Finance rate",financeRate+"% APR","Market rate for convenience retail lending"],
+        ["Finance term",financeYears+" years","Standard commercial loan"],
+      ].map((row,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"8px 12px",fontWeight:600,color:"#1a2744"}}>{row[0]}</td>
+          <td style={{padding:"8px 12px",color:R.text}}>{row[1]}</td>
+          <td style={{padding:"8px 12px",color:"#4a5568",fontSize:11}}>{row[2]}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
 
+  {/* Confidence rating */}
+  <div style={{background:"#f0f3fa",border:"1.5px solid #1a2744",borderRadius:8,padding:"16px 20px",marginBottom:16}}>
+    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Confidence Rating: {reportConfidenceRating||"LOW to MEDIUM"}</div>
+    <div style={{fontSize:13,color:R.text,lineHeight:1.8}}>
+      This assessment is based on publicly available data, sector benchmarks, and the assessor's professional judgement. No site visit has been incorporated unless stated. Financial projections are indicative and should be validated against actual trading data where available.
+    </div>
+  </div>
+</div>
 
-            {/* S12: VISIT PHOTOS */}
-            {photos.length>0&&(
-              <div className="avoid-break">
-                <RPSH c="14. Visit Photography"/>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-                  {photos.map((ph,i)=>(
-                    <div key={i} style={{background:"#f6f8fc",border:"1px solid "+"#c8cdd6",borderRadius:10,overflow:"hidden"}}>
-                      <img src={ph.src} alt={ph.tag} style={{width:"100%",height:160,objectFit:"cover",display:"block"}}/>
-                      <div style={{padding:"10px 12px"}}>
-                        <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".08em",marginBottom:3}}>{ph.tag}</div>
-                        {ph.caption&&<div style={{fontSize:13,color:"#1a1a2e"}}>{ph.caption}</div>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+{/* ── VISIT PHOTOS ── */}
+{photos.length>0&&(
+  <div className="page-break avoid-break">
+    <RPSH c="11. Visit Photography"/>
+    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+      {photos.map((ph,i)=>(
+        <div key={i} style={{background:"#f6f8fc",border:"1px solid #c8cdd6",borderRadius:10,overflow:"hidden"}}>
+          <img src={ph.src} alt={ph.tag} style={{width:"100%",height:160,objectFit:"cover",display:"block"}}/>
+          <div style={{padding:"10px 12px"}}>
+            <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".08em",marginBottom:3}}>{ph.tag}</div>
+            {ph.caption&&<div style={{fontSize:13,color:R.text}}>{ph.caption}</div>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
-              {/* PDF Footer — branding on every print page */}
-              <div style={{marginTop:24,borderTop:"2px solid #1a2744",paddingTop:12,display:"flex",justifyContent:"space-between",alignItems:"center",background:"#fff"}}>
-                <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <div style={{width:28,height:28,background:"#1a2744",borderRadius:3,display:"flex",alignItems:"center",justifyContent:"center",color:"#d4af37",fontWeight:800,fontSize:14}}>G</div>
-                  <div>
-                    <div style={{fontSize:11,fontWeight:700,color:"#1a2744",letterSpacing:".05em"}}>GENESIS RETAIL</div>
-                    <div style={{fontSize:9,color:"#4a5568",letterSpacing:".1em",textTransform:"uppercase"}}>Independent Convenience Consultancy</div>
-                  </div>
-                </div>
-                <div style={{textAlign:"right",fontSize:11,color:"#4a5568"}}>
-                  <div style={{fontWeight:600,color:"#1a2744"}}>Richard Shorney</div>
-                  <div>rshorney@genesisretail.uk</div>
-                </div>
-              </div>
+{/* ── CATEGORY MIX ── */}
+<div className="page-break avoid-break">
+  <RPSH c="12. Category Mix & Margin Analysis"/>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:16}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Category</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Sales Mix %</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Gross Margin %</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Annual Sales (£)</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Annual GP (£)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {cats.filter(c=>c.mix>0).sort((a,b)=>b.mix-a.mix).map((cat,i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"6px 12px",fontWeight:500,color:"#1a2744"}}>{cat.name}</td>
+          <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{pct(cat.mix)}</td>
+          <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{pct(cat.gp)}</td>
+          <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{fmt(C.upliftedAnn*cat.mix/100)}</td>
+          <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{fmt(C.upliftedAnn*cat.mix/100*cat.gp/100)}</td>
+        </tr>
+      ))}
+      <tr style={{background:"#f0f3fa",borderTop:"2px solid #1a2744"}}>
+        <td style={{padding:"8px 12px",fontWeight:700,color:"#1a2744"}}>TOTAL</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{pct(cats.reduce((s,c)=>s+c.mix,0))}</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{pct(C.blGP)}</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{fmt(C.upliftedAnn)}</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{fmt(C.annGP)}</td>
+      </tr>
+    </tbody>
+  </table>
+  <RCommentary text={commentary.categories}/>
+</div>
+
+{/* ── IMPORTANT NOTICE / LEGAL ── */}
+<div className="page-break avoid-break">
+  <RPSH c="Important Notice"/>
+  <div style={{fontSize:12,color:R.text,lineHeight:2,marginBottom:20}}>
+    <p style={{marginBottom:12}}>This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed professional advisers. The contents are confidential and must not be reproduced, referred to or disclosed to any other party without the prior written consent of Genesis Retail.</p>
+    <p style={{marginBottom:12}}>All financial projections contained in this report are based on the assumptions stated and are provided for indicative purposes only. They do not constitute a guarantee of future performance. Actual trading results may differ materially from the projections contained herein.</p>
+    <p style={{marginBottom:12}}>Competitor and planning data is sourced from publicly available datasets including the Valuation Office Agency, Companies House, planning authority portals and open mapping data. This data may not reflect all operators or applications in the catchment and should be verified through a physical site visit.</p>
+    <p style={{marginBottom:12}}>This report does not constitute financial, legal, property or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification. The recipient should take their own professional advice before entering into any financial commitment.</p>
+    <p style={{marginBottom:12}}>The intellectual property in this report, including the methodology, scoring model and financial framework, belongs to Genesis Retail. Unauthorised reproduction, reverse-engineering or distribution is prohibited.</p>
+  </div>
+
+  {/* Document Control */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Document Control</div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:24}}>
+    <tbody>
+      {[
+        ["Reference","GR-SVA-"+(postcode||"DRAFT").replace(/\s/g,"").toUpperCase()+"-"+new Date().getFullYear()],
+        ["Version","1.0"],
+        ["Date",new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})],
+        ["Prepared by","Richard Shorney, Genesis Retail"],
+        ["Issued to",reportIssuedTo||clientName||"[Client name]"],
+        ["Classification","Confidential — Client and professional advisers only"],
+        ["Status",reportStatus],
+        ["Review by",new Date(Date.now()+90*24*60*60*1000).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})],
+      ].map(([label,value],i)=>(
+        <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+          <td style={{padding:"8px 14px",fontWeight:600,color:"#1a2744",width:"35%"}}>{label}</td>
+          <td style={{padding:"8px 14px",color:R.text}}>{value}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+{/* ── BACK PAGE ── */}
+<div className="page-break" style={{background:"#1a2744",padding:"48px 32px",minHeight:"60vh",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",textAlign:"center",borderRadius:0}}>
+  <div style={{width:80,height:80,background:"#fff",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:24}}>
+    <div style={{color:"#1a2744",fontWeight:900,fontSize:36}}>G</div>
+  </div>
+  <div style={{fontSize:20,fontWeight:800,color:"#fff",letterSpacing:".15em",marginBottom:8}}>GENESIS RETAIL</div>
+  <div style={{fontSize:12,color:"#FB923C",letterSpacing:".2em",textTransform:"uppercase",fontWeight:600,marginBottom:32}}>Independent Convenience Consultancy</div>
+  <div style={{fontSize:13,color:"#8fa0b8",lineHeight:2,maxWidth:500,marginBottom:32}}>
+    Site viability assessments · Trading reviews & action plans · Property acquisition · Property disposal · Range analysis · Refit planning · Symbol group selection · Financial modelling
+  </div>
+  <div style={{fontSize:13,color:"#fff",marginBottom:6}}>Richard Shorney</div>
+  <div style={{fontSize:12,color:"#8fa0b8",marginBottom:4}}>rshorney@genesisretail.uk</div>
+  <div style={{fontSize:12,color:"#8fa0b8",marginBottom:4}}>07551 827907</div>
+  <div style={{fontSize:12,color:"#8fa0b8"}}>genesisretail.uk</div>
+  <div style={{fontSize:10,color:"#4a5568",marginTop:32}}>© Genesis Retail {new Date().getFullYear()} · All rights reserved</div>
+</div>
             </div>{/* end pdfRef */}
-            <div style={{marginTop:32,background:"#fff",border:"2px solid "+G.mid,borderRadius:14,overflow:"hidden"}}>
-              <div style={{background:"#1a2744",padding:"18px 24px"}}>
-                <div style={{fontSize:9,letterSpacing:".25em",color:"#FB923C",textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Confidential</div>
-                <div style={{fontSize:18,fontWeight:800,color:"#fff",lineHeight:1.2}}>{propName||"Site Assessment"}{postcode?" · "+postcode:""}</div>
-                <div style={{fontSize:12,color:"#4a5568",marginTop:6}}>{new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})} · Prepared by Richard Shorney, Genesis Retail</div>
-              </div>
-              <div style={{padding:"24px 24px 8px"}}>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>1. Financial Performance & Investment Case</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.financial}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>2. Risk Assessment</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.risks}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>3. Competitive Environment</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.competitors}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>4. Category Mix & Margin Analysis</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.categories}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>5. Footfall & Spend Profile</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.footfall}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>6. Catchment Demographics</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.demographics}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>7. Profit & Loss</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.pl}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>8. Five-Year Outlook</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.fiveYear}</div>
-                </div>
-
-                <div style={{marginBottom:24}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:10,paddingBottom:6,borderBottom:"2px solid "+G.mid}}>9. Sensitivity & Downside Analysis</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.95}}>{commentary.sensitivity}</div>
-                </div>
-
-                <div style={{marginBottom:24,padding:"16px 20px",background:"#eef1f8",border:"1.5px solid "+G.mid,borderRadius:10}}>
-                  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".12em",marginBottom:8}}>Overall Verdict</div>
-                  <div style={{fontSize:16,fontWeight:800,color:VRD.col,marginBottom:8}}>{VRD.l}</div>
-                  <div style={{fontSize:14,color:"#1a2240",lineHeight:1.9}}>
-                    {`This assessment concludes that ${propName||"the subject site"} ${C.roi>=20?"presents a strong investment opportunity that meets the Genesis Retail viability threshold. The financial projections are robust, the catchment is well-suited to a convenience retail offer, and the operator's existing trading history on this parade significantly de-risks the opportunity.":C.roi>=10?"is a viable investment that merits further consideration, subject to the risk factors identified in this report being addressed — in particular the rent position. The operator's knowledge of this catchment and existing customer base provide a meaningful trading advantage.":"requires further review before a recommendation to proceed can be made. The financial projections do not currently meet the Genesis Retail minimum threshold and the assumptions underlying the uplift should be stress-tested carefully with the operator before any commitment is made."}`}
-                  </div>
-                </div>
-
-              </div>
-              <div style={{padding:"18px 24px",background:"#1a2744",borderTop:"2px solid #1a2744"}}>
-                <div style={{fontSize:11,fontWeight:700,color:"#fde8d0",textTransform:"uppercase",letterSpacing:".1em",marginBottom:8}}>Important Notice</div>
-                <div style={{fontSize:12,color:"#e0e8ff",lineHeight:1.8}}>
-                  This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed financial advisers. All financial projections are based on the assumptions stated within this document and are provided for indicative purposes only. Competitor and planning data is sourced from public datasets and may not reflect all operators in the catchment. Actual trading performance may differ materially from the projections contained herein. This report does not constitute financial, legal or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification. The contents of this report are confidential and must not be reproduced or distributed without the prior written consent of Genesis Retail.
-                </div>
-                <div style={{fontSize:11,color:"#8fa0b8",marginTop:10}}>© Genesis Retail {new Date().getFullYear()} · Richard Shorney · rshorney@genesisretail.uk</div>
-              </div>
-            </div>
           </div>
         )}
 
