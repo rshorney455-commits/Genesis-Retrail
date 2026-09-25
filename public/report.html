@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genesis Retail — Site Suitability Assessment</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--navy:#1a2744;--orange:#FB923C;--text:#1a1a2e;--muted:#4a5568;--pale:#f0f3fa;--border:#c8cdd6;--alt:#f6f8fc;--red:#d62828;--green:#22c55e;--amber:#c05010}
+  body{font-family:Georgia,'Times New Roman',serif;color:var(--text);background:#fff;font-size:12pt;line-height:1.8}
+  h1,h2,h3,.section-head,.callout-label,.meta-label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  table{width:100%;border-collapse:collapse;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11pt}
+  th{background:var(--navy);color:#fff;font-weight:700;padding:8px 12px;text-align:left}
+  td{padding:8px 12px;border-bottom:1px solid var(--border)}
+  tr:nth-child(even){background:var(--alt)}
+  .page-break{page-break-before:always;break-before:page;padding-top:20px}
+  .avoid-break{page-break-inside:avoid;break-inside:avoid}
+  .section-head{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14pt;font-weight:800;color:var(--navy);border-bottom:3px solid var(--navy);padding-bottom:8px;margin-bottom:18px;letter-spacing:.02em}
+  .callout{border:2px solid var(--navy);border-radius:8px;padding:16px 20px;margin:18px 0;background:var(--pale)}
+  .callout-orange{border-color:var(--orange);background:#fff4ea}
+  .callout-label{font-size:10pt;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .callout-navy .callout-label{color:var(--navy)}
+  .meta-label{font-size:10pt;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .commentary{font-size:11pt;color:var(--muted);line-height:1.9;margin:14px 0;font-style:italic;border-left:3px solid var(--border);padding:10px 16px;background:var(--alt)}
+  .rag-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:10pt;font-weight:700;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .tag-positive{background:#d5e8d5;color:#1a6b1a}
+  .tag-neutral{background:#fff4ea;color:var(--amber)}
+  .tag-negative{background:#fde8e8;color:var(--red)}
+  .footer{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:9pt;color:var(--muted);text-align:center;border-top:1px solid var(--border);padding:12px 0;margin-top:30px}
+  .sens-cell{padding:8px;text-align:center;font-weight:600;font-size:11pt;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+  .kpi-box{background:var(--alt);border-radius:8px;padding:12px 16px;border:1px solid var(--border)}
+  .kpi-label{font-size:9pt;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .kpi-value{font-size:12pt;font-weight:700;color:var(--navy);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .highlight-row{background:var(--pale)!important;font-weight:700}
+  .highlight-row td{color:var(--navy);font-weight:700}
+  .total-row{background:var(--pale)!important;border-top:2px solid var(--navy)}
+  .total-row td{color:var(--navy);font-weight:700}
+  .right{text-align:right}
+  .center{text-align:center}
+  .bold{font-weight:700}
+  .navy{color:var(--navy)}
+
+  /* ── INPUT FORM (hidden on print) ── */
+  #inputForm{background:#f8f9fb;border:2px solid var(--navy);border-radius:12px;padding:28px;margin-bottom:30px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  #inputForm h2{font-size:16pt;color:var(--navy);margin-bottom:16px;font-weight:800}
+  #inputForm label{display:block;font-size:10pt;font-weight:600;color:var(--navy);margin-bottom:3px;margin-top:10px}
+  #inputForm input,#inputForm select,#inputForm textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:11pt;font-family:inherit;background:#fff}
+  #inputForm textarea{min-height:60px;resize:vertical}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
+  .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+  .form-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+  .form-section-title{font-size:11pt;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .btn-generate{display:block;width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:14pt;font-weight:700;cursor:pointer;margin-top:20px;font-family:inherit;letter-spacing:.03em}
+  .btn-generate:hover{background:#0f1a30}
+  .btn-print{display:inline-block;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:12pt;font-weight:700;cursor:pointer;font-family:inherit;margin-right:10px}
+
+  /* ── PRINT ── */
+  @media print{
+    @page{size:A4 portrait;margin:10mm 12mm 15mm 12mm}
+    body{background:#fff!important;font-size:10pt}
+    #inputForm,.no-print{display:none!important}
+    .page-break{page-break-before:always!important;break-before:page!important}
+    .avoid-break{page-break-inside:avoid!important;break-inside:avoid!important}
+    h1,h2,h3{page-break-after:avoid!important}
+    p{orphans:3;widows:3}
+    table{page-break-inside:avoid!important}
+    thead{display:table-header-group!important}
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+    a[href]::after{content:none!important}
+    .footer{position:running(footer)}
+    @bottom-center{content:element(footer)}
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- INPUT FORM — fills data, hidden on print                          -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div id="inputForm">
+  <h2>Genesis Retail — Site Suitability Assessment</h2>
+  <p style="font-size:10pt;color:var(--muted);margin-bottom:14px">Fill in the site data below. The report updates live. Print to PDF when ready.</p>
+
+  <div class="form-section">
+    <div class="form-section-title">Site Details</div>
+    <div class="form-grid">
+      <div><label>Property Name</label><input id="f_propName" value="29-31 High Street, Ramsgate"></div>
+      <div><label>Postcode</label><input id="f_postcode" value="CT11 9AG"></div>
+      <div><label>Net Selling Area (sq ft)</label><input type="number" id="f_sqft" value="1200"></div>
+      <div><label>Location Type</label>
+        <select id="f_location">
+          <option value="city-centre">City Centre / Transport Hub</option>
+          <option value="parade" selected>Retail Parade</option>
+          <option value="suburban">Suburban Residential</option>
+          <option value="village">Village / Rural</option>
+          <option value="forecourt">Forecourt</option>
+        </select>
+      </div>
+      <div><label>Client Name</label><input id="f_clientName" value=""></div>
+      <div><label>Rateable Value (£)</label><input type="number" id="f_rateableValue" value="12500"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Trading Assumptions</div>
+    <div class="form-grid">
+      <div><label>Daily Transactions</label><input type="number" id="f_footfall" value="380"></div>
+      <div><label>Average Basket (£)</label><input type="number" id="f_avgBasket" value="7.20" step="0.10"></div>
+      <div><label>Opening Hours/Day</label><input type="number" id="f_openHours" value="16"></div>
+      <div><label>Post-Refit Uplift (%)</label><input type="number" id="f_uplift" value="15"></div>
+      <div><label>Staff Cost (% of Sales)</label><input type="number" id="f_staffPct" value="9"></div>
+      <div><label>Parking Spaces</label><input type="number" id="f_parking" value="4"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Costs</div>
+    <div class="form-grid">
+      <div><label>Annual Rent (£)</label><input type="number" id="f_rent" value="18000"></div>
+      <div><label>Business Rates (£/yr)</label><input type="number" id="f_rates" value="6200"></div>
+      <div><label>Utilities (£/yr)</label><input type="number" id="f_utilities" value="9000"></div>
+      <div><label>Other Costs (£/yr)</label><input type="number" id="f_otherCosts" value="8000"></div>
+      <div><label>Refit Cost (£)</label><input type="number" id="f_refitCost" value="120000"></div>
+      <div><label>Stock Cost (£)</label><input type="number" id="f_stockCost" value="40000"></div>
+      <div><label>Finance Rate (% APR)</label><input type="number" id="f_financeRate" value="8" step="0.5"></div>
+      <div><label>Finance Term (years)</label><input type="number" id="f_financeYears" value="5"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Catchment Demographics</div>
+    <div class="form-grid">
+      <div><label>Catchment Population (1-mile)</label><input type="number" id="f_catchmentPop" value="9200"></div>
+      <div><label>Median Household Income (£)</label><input type="number" id="f_medianIncome" value="28500"></div>
+      <div><label>Household Size (avg)</label><input type="number" id="f_householdSz" value="2.3" step="0.1"></div>
+      <div><label>Deprivation Index (1-10)</label><input type="number" id="f_deprivation" value="4" min="1" max="10"></div>
+      <div><label>Population Density</label>
+        <select id="f_popDensity">
+          <option value="high">High</option>
+          <option value="medium" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </div>
+      <div><label>Competitors (within 0.5mi)</label><input type="number" id="f_competitors" value="3"></div>
+      <div><label>Nearest Competitor (miles)</label><input type="number" id="f_nearestComp" value="0.2" step="0.1"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Age Bands (%)</div>
+    <div class="form-grid" style="grid-template-columns:repeat(6,1fr)">
+      <div><label>18-24</label><input type="number" id="f_age1824" value="12"></div>
+      <div><label>25-34</label><input type="number" id="f_age2534" value="15"></div>
+      <div><label>35-44</label><input type="number" id="f_age3544" value="14"></div>
+      <div><label>45-54</label><input type="number" id="f_age4554" value="13"></div>
+      <div><label>55-64</label><input type="number" id="f_age5564" value="12"></div>
+      <div><label>65+</label><input type="number" id="f_age65" value="18"></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Area Trends</div>
+    <div class="form-grid" style="grid-template-columns:repeat(6,1fr)">
+      <div><label>House Prices</label><select id="f_tHP"><option>Rising</option><option selected>Stable</option><option>Declining</option></select></div>
+      <div><label>Population</label><select id="f_tPG"><option>Growing</option><option selected>Stable</option><option>Declining</option></select></div>
+      <div><label>Footfall</label><select id="f_tFF"><option>Growing</option><option selected>Stable</option><option>Declining</option></select></div>
+      <div><label>Regeneration</label><select id="f_tRG"><option>Active</option><option selected>Stable</option><option>None</option></select></div>
+      <div><label>Vacancy Rate</label><select id="f_tVA"><option>Low</option><option selected>Stable</option><option>High</option></select></div>
+      <div><label>New Housing</label><select id="f_tNH"><option>Active</option><option selected>Stable</option><option>None</option></select></div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Report Narrative Fields</div>
+    <div class="form-grid-2">
+      <div><label>Tenure</label><input id="f_reportTenure" value="New lease — terms to be agreed"></div>
+      <div><label>Status</label><input id="f_reportStatus" value="Desktop Assessment"></div>
+      <div><label>Fascia Assessed</label><input id="f_reportFascia" value=""></div>
+      <div><label>Pitch / Position</label><input id="f_reportPitch" value=""></div>
+    </div>
+    <label>Physical Condition</label>
+    <textarea id="f_reportPhysicalCondition" placeholder="Describe the unit's physical state..."></textarea>
+    <label>The Operational Issue That Matters Most</label>
+    <textarea id="f_reportOperationalIssue" placeholder="What is the single biggest operational challenge?"></textarea>
+    <label>Where This Deal Lives or Dies</label>
+    <textarea id="f_reportWhereDeadLivesDies" placeholder="What are the make-or-break factors?"></textarea>
+    <label>What the Store Has to Be</label>
+    <textarea id="f_reportWhatStoreMustBe" placeholder="Define the store's identity to succeed..."></textarea>
+    <label>Verdict / Executive Summary Override</label>
+    <textarea id="f_reportVerdictText" placeholder="Custom executive summary paragraph (leave blank for auto-generated)"></textarea>
+    <label>Issued To</label>
+    <input id="f_reportIssuedTo" value="">
+  </div>
+
+  <div class="form-section">
+    <div class="form-section-title">Competitors</div>
+    <p style="font-size:9pt;color:var(--muted);margin-bottom:8px">Add up to 8 competitors. Leave blank rows empty.</p>
+    <table style="font-size:10pt">
+      <thead><tr><th>Name</th><th>Distance</th><th>Type</th><th>Threat</th></tr></thead>
+      <tbody id="compTableBody">
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
+            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
+            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn-generate" onclick="generateReport()">Generate Report ↓</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<!-- REPORT OUTPUT                                                      -->
+<!-- ════════════════════════════════════════════════════════════════════ -->
+<div id="report" style="max-width:800px;margin:0 auto"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// GENESIS RETAIL — REPORT ENGINE
+// Computational features from the Vercel assessment app,
+// rendered in the Ramsgate/Felpham professional report style.
+// ══════════════════════════════════════════════════════════════════════
+
+const fmt = v => '£' + Math.round(v).toLocaleString('en-GB');
+const pct = v => (v||0).toFixed(1) + '%';
+
+function gatherInputs() {
+  const v = id => document.getElementById(id)?.value || '';
+  const n = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const competitors = [];
+  document.querySelectorAll('#compTableBody tr').forEach(row => {
+    const name = row.querySelector('.comp-name')?.value?.trim();
+    if (name) competitors.push({
+      name,
+      distance: row.querySelector('.comp-dist')?.value || '—',
+      type: row.querySelector('.comp-type')?.value || 'convenience_store',
+      threat: row.querySelector('.comp-threat')?.value || 'low'
+    });
+  });
+
+  return {
+    propName: v('f_propName'), postcode: v('f_postcode'), sqft: n('f_sqft'),
+    location: v('f_location'), clientName: v('f_clientName'), rateableValue: n('f_rateableValue'),
+    footfall: n('f_footfall'), avgBasket: n('f_avgBasket'), openHours: n('f_openHours'),
+    uplift: n('f_uplift'), staffPct: n('f_staffPct'), parking: n('f_parking'),
+    rent: n('f_rent'), rates: n('f_rates'), utilities: n('f_utilities'),
+    otherCosts: n('f_otherCosts'), refitCost: n('f_refitCost'), stockCost: n('f_stockCost'),
+    financeRate: n('f_financeRate'), financeYears: n('f_financeYears'),
+    catchmentPop: n('f_catchmentPop'), medianIncome: n('f_medianIncome'),
+    householdSz: n('f_householdSz') || 2.3, deprivation: n('f_deprivation'),
+    popDensity: v('f_popDensity'), competitors: n('f_competitors'), nearestComp: n('f_nearestComp'),
+    ageBands: {
+      '18-24': n('f_age1824'), '25-34': n('f_age2534'), '35-44': n('f_age3544'),
+      '45-54': n('f_age4554'), '55-64': n('f_age5564'), '65+': n('f_age65')
+    },
+    tHP: v('f_tHP'), tPG: v('f_tPG'), tFF: v('f_tFF'), tRG: v('f_tRG'), tVA: v('f_tVA'), tNH: v('f_tNH'),
+    reportTenure: v('f_reportTenure'), reportStatus: v('f_reportStatus'),
+    reportFascia: v('f_reportFascia'), reportPitch: v('f_reportPitch'),
+    reportPhysicalCondition: v('f_reportPhysicalCondition'),
+    reportOperationalIssue: v('f_reportOperationalIssue'),
+    reportWhereDeadLivesDies: v('f_reportWhereDeadLivesDies'),
+    reportWhatStoreMustBe: v('f_reportWhatStoreMustBe'),
+    reportVerdictText: v('f_reportVerdictText'),
+    reportIssuedTo: v('f_reportIssuedTo'),
+    competitorList: competitors
+  };
+}
+
+// ── ACS 2025 Category Defaults ──
+const CATS = [
+  {name:"Tobacco & Vaping",mix:18.8,gp:11},
+  {name:"Alcohol",mix:13.5,gp:22},
+  {name:"Chilled Foods",mix:12.9,gp:32},
+  {name:"Soft Drinks",mix:8.5,gp:30},
+  {name:"Canned & Packaged Grocery",mix:7.5,gp:28},
+  {name:"Confectionery",mix:5.8,gp:38},
+  {name:"Bread & Bakery",mix:4.6,gp:34},
+  {name:"Fruit & Veg",mix:4.2,gp:35},
+  {name:"Bagged Savoury Snacks",mix:4.1,gp:38},
+  {name:"Fresh Milk",mix:3.8,gp:22},
+  {name:"Frozen Foods",mix:3.5,gp:30},
+  {name:"Health & Beauty",mix:3.2,gp:35},
+  {name:"Household",mix:2.8,gp:30},
+  {name:"Hot Food & Drinks To Go",mix:2.5,gp:55},
+  {name:"Non-Food / Other",mix:2.2,gp:40},
+  {name:"News & Magazines",mix:2.1,gp:22}
+];
+
+// ── COMPUTATION ENGINE ──
+function compute(S) {
+  const cats = CATS;
+  const wk = S.footfall * 7 * S.avgBasket;
+  const ann = wk * 52;
+  const upliftedWk = wk * (1 + S.uplift / 100);
+  const upliftedAnn = upliftedWk * 52;
+  const blGP = cats.reduce((s, c) => s + (c.mix / 100) * c.gp, 0);
+  const annGP = upliftedAnn * (blGP / 100);
+  const stf = upliftedAnn * (S.staffPct / 100);
+  const annC = S.rent + S.rates + stf + S.utilities + S.otherCosts;
+  const ti = S.refitCost + S.stockCost;
+  const mr = S.financeRate / 100 / 12;
+  const np2 = S.financeYears * 12;
+  const mp = ti * (mr * Math.pow(1 + mr, np2)) / (Math.pow(1 + mr, np2) - 1);
+  const af = mp * 12;
+  const eb = annGP - annC;
+  const nP = annGP - annC - af;
+  const roi = ti > 0 ? (nP / ti) * 100 : 0;
+  const pb = nP > 0 ? ti / nP : null;
+  const spf = S.sqft > 0 ? wk / S.sqft : 0;
+  const upliftedSpf = S.sqft > 0 ? upliftedWk / S.sqft : 0;
+  const pen = S.catchmentPop > 0 ? Math.min((S.footfall * 365) / S.catchmentPop * 100, 100) : 0;
+  const breakEvenWk = Math.round((annC + af) / (blGP / 100) / 52);
+
+  // Symbol group scoring
+  const refitPerSqft = S.sqft > 0 ? S.refitCost / S.sqft : 0;
+  const symGroups = [
+    {name:"Nisa", score:8, desc:"Co-op own brand access, flexible terms, strong fresh food range"},
+    {name:"Spar", score:7, desc:"Strong fresh food, good margin support, wide UK coverage"},
+    {name:"Budgens", score: S.medianIncome >= 35000 ? 6 : 4, desc:"Premium positioning, ideal for higher-income catchments"},
+    {name:"Costcutter", score:4, desc:"Value positioning, strong chilled range, lower entry threshold"},
+    {name:"Premier", score:5, desc:"Flexible terms, strong tobacco and impulse range"},
+    {name:"Londis", score:5, desc:"Good value, strong BWS range, flexible ordering"},
+  ].sort((a, b) => b.score - a.score);
+
+  // Verdict
+  let verdict, verdictCol;
+  if (roi >= 20) { verdict = "Strong Opportunity"; verdictCol = "#1a2744"; }
+  else if (roi >= 10) { verdict = "Viable — Proceed with Care"; verdictCol = "#1a2744"; }
+  else if (roi >= 0) { verdict = "Marginal — Review Costs"; verdictCol = "#c05010"; }
+  else { verdict = "Not Viable"; verdictCol = "#d62828"; }
+
+  // Demographic score
+  let DS = 0;
+  if (S.medianIncome >= 32000) DS += 2; else if (S.medianIncome >= 25000) DS += 1;
+  if (S.catchmentPop >= 10000) DS += 2; else if (S.catchmentPop >= 5000) DS += 1;
+  if (S.popDensity === "high") DS += 2; else if (S.popDensity === "medium") DS += 1;
+  if (S.deprivation <= 4) DS += 1;
+  const wa = (S.ageBands["18-24"]||0) + (S.ageBands["25-34"]||0) + (S.ageBands["35-44"]||0) + (S.ageBands["45-54"]||0);
+  if (wa >= 55) DS += 2; else if (wa >= 45) DS += 1;
+
+  // Traffic score
+  let TS = 0;
+  if (S.parking >= 4) TS += 1;
+
+  // ── MARKET SHARE MODEL ──
+  const storeQuality = refitPerSqft > 150 ? 18 : refitPerSqft > 80 ? 14 : refitPerSqft > 40 ? 10 : 7;
+  const locationScore = {"city-centre":18,"forecourt":16,"parade":14,"suburban":13,"village":11}[S.location] || 12;
+  const stockingScore = 11;
+  const categoriesScore = cats.length >= 14 ? 18 : cats.length >= 10 ? 14 : 10;
+  const ourScore = storeQuality + locationScore + stockingScore + categoriesScore + 12 + 12 + 12 + 8;
+  const ourServices = 26 + 2.4 + (S.parking * 2.8) + ((S.openHours || 16) * 0.59) + 94;
+  const ourCatTotal = 146;
+  const ourDet = ourScore + ourServices + ourCatTotal;
+  const compDet = S.competitors > 3 ? 480 : S.competitors > 1 ? 380 : 300;
+  const totalDet = ourDet + compDet;
+  const marketShareFactor = totalDet > 0 ? (ourDet / totalDet) * 100 : 52;
+  const avgHhSpend = S.medianIncome > 40000 ? 82 : S.medianIncome > 30000 ? 70 : S.medianIncome > 22000 ? 60 : 52;
+  const weeklyMarket_ms = (S.catchmentPop / S.householdSz) * avgHhSpend;
+  const capturedWeekly = weeklyMarket_ms * (marketShareFactor / 100);
+
+  // ── RANGE & SPACE ALLOCATION ──
+  const totalSqft = S.sqft || 800;
+  const incomeLevel = S.medianIncome >= 40000 ? "affluent" : S.medianIncome >= 30000 ? "mid" : S.medianIncome >= 22000 ? "value" : "budget";
+  const youngPop = (S.ageBands["18-24"]||0) + (S.ageBands["25-34"]||0);
+  const familyPop = (S.ageBands["35-44"]||0) + (S.ageBands["45-54"]||0);
+  const olderPop = (S.ageBands["55-64"]||0) + (S.ageBands["65+"]||0);
+  const isUrban = S.location === "city-centre" || S.location === "forecourt" || S.popDensity === "high";
+  const isFamily = familyPop >= 35;
+  const isYoung = youngPop >= 35;
+  const isOlder = olderPop >= 30;
+
+  const alloc = [];
+  const tobPct = incomeLevel === "affluent" ? 4 : incomeLevel === "mid" ? 5 : 6;
+  alloc.push({cat:"Tobacco & Vaping", pct:tobPct, notes:"Behind counter — gantry + vape display"});
+  const alcPct = incomeLevel === "affluent" ? 16 : isUrban ? 14 : isOlder ? 15 : 12;
+  alloc.push({cat:"Alcohol", pct:alcPct, notes:incomeLevel === "affluent" ? "Premium wines, craft beer focus" : "Value + mid-range BWS"});
+  const chillPct = isFamily ? 18 : incomeLevel === "affluent" ? 17 : 14;
+  alloc.push({cat:"Chilled Foods", pct:chillPct, notes:isFamily ? "Extended range — ready meals, family packs" : "Core chilled + meal solutions"});
+  alloc.push({cat:"Soft Drinks", pct:isYoung ? 9 : 7, notes:isYoung ? "Energy drinks, premium soft" : "Core range"});
+  alloc.push({cat:"Canned & Packaged Grocery", pct:isFamily ? 10 : 8, notes:isFamily ? "Extended cooking/cupboard range" : "Core essentials"});
+  alloc.push({cat:"Confectionery", pct:isYoung || isFamily ? 6 : 5, notes:"Impulse zone near till"});
+  alloc.push({cat:"Bread & Bakery", pct:5, notes:"Fresh bread, wraps, bakery"});
+  alloc.push({cat:"Fruit & Veg", pct:incomeLevel === "affluent" ? 6 : isFamily ? 5 : 4, notes:incomeLevel === "affluent" ? "Premium & organic range" : "Core fresh produce"});
+  alloc.push({cat:"Bagged Savoury Snacks", pct:isYoung ? 5 : 4, notes:"Sharing + impulse"});
+  alloc.push({cat:"Fresh Milk", pct:3, notes:"Essential — rear of store"});
+  alloc.push({cat:"Frozen Foods", pct:isFamily ? 6 : totalSqft >= 1200 ? 5 : 4, notes:isFamily ? "Extended frozen — family meals, ice cream" : "Core frozen"});
+  alloc.push({cat:"Health & Beauty", pct:isYoung || incomeLevel === "affluent" ? 4 : 3, notes:isYoung ? "Skincare, grooming, supplements" : "Core HBA"});
+  alloc.push({cat:"Household", pct:3, notes:"Cleaning, laundry, kitchen"});
+  const hotPct = isUrban || isYoung ? 6 : S.location === "forecourt" ? 7 : 3;
+  alloc.push({cat:"Hot Food & Drinks To Go", pct:hotPct, notes:isUrban ? "Coffee, hot food counter — key margin driver" : "Basic hot drinks station"});
+  alloc.push({cat:"Non-Food / Other", pct:3, notes:"Seasonal, cards, stationery"});
+  alloc.push({cat:"News & Magazines", pct:2, notes:"Reduced fixture — digital shift"});
+
+  const totalAllocPct = alloc.reduce((s, a) => s + a.pct, 0);
+  alloc.forEach(a => {
+    a.pct = Math.round(a.pct / totalAllocPct * 100);
+    a.sqft = Math.round(totalSqft * a.pct / 100);
+  });
+  alloc.sort((a, b) => b.pct - a.pct);
+
+  // Predicted weekly turnover
+  const hhCount = S.catchmentPop / S.householdSz;
+  const weeklyMarket = hhCount * avgHhSpend;
+  const baseCapture = S.competitors > 5 ? 0.06 : S.competitors > 3 ? 0.09 : S.competitors > 1 ? 0.14 : 0.22;
+  const qualityMult = totalSqft >= 1500 ? 1.15 : totalSqft >= 1000 ? 1.05 : totalSqft >= 600 ? 1.0 : 0.85;
+  const locationMult = S.location === "city-centre" ? 1.2 : S.location === "forecourt" ? 1.15 : S.location === "parade" ? 1.1 : S.location === "suburban" ? 1.0 : 0.9;
+  const captureRate = Math.min(baseCapture * qualityMult * locationMult, 0.35);
+  const predictedWeekly = weeklyMarket * captureRate;
+  const benchmarkWeekly = totalSqft * 17;
+  const cappedWeekly = Math.min(predictedWeekly, benchmarkWeekly * 1.4);
+  const finalWeekly = Math.max(cappedWeekly, totalSqft * 10);
+
+  const demographicProfile = incomeLevel === "affluent" ? "Affluent catchment — premium range opportunity"
+    : incomeLevel === "mid" ? "Mid-income catchment — balanced range"
+    : incomeLevel === "value" ? "Value-conscious catchment — price-led range"
+    : "Budget catchment — essentials focus";
+  const storeProfile = totalSqft >= 2000 ? "Large format — full convenience offer"
+    : totalSqft >= 1200 ? "Mid-size — strong category depth possible"
+    : totalSqft >= 800 ? "Standard convenience — core range"
+    : "Compact — focused essentials offer";
+
+  // ── RISK REGISTER ──
+  const risks = [];
+  const rentRatio = S.rent / upliftedAnn * 100;
+  if (rentRatio > 15) risks.push({rag:"red",title:"Rent too high relative to turnover",detail:`Rent is ${pct(rentRatio)} of projected sales. Ideal is under 10%. Negotiate hard or walk away.`,action:"Renegotiate before exchange"});
+  else if (rentRatio > 10) risks.push({rag:"amber",title:"Rent at upper limit",detail:`Rent is ${pct(rentRatio)} of sales. Aim to get below 10% before committing.`,action:"Push for rent reduction"});
+  else risks.push({rag:"green",title:"Rent within acceptable range",detail:`Rent at ${pct(rentRatio)} of sales is within the target range.`,action:"Confirm at heads of terms"});
+
+  const highThreatComps = S.competitorList.filter(c => c.threat === "high").length;
+  if (highThreatComps > 0) risks.push({rag:"red",title:"Major competitor within close proximity",detail:`${highThreatComps} major competitor(s) within 300m. Review footfall impact.`,action:"Site visit — assess direct impact"});
+  else if (S.competitors > 3) risks.push({rag:"amber",title:"High competitor density",detail:`${S.competitors} competitors within 0.5 miles. Market may be saturated.`,action:"Monitor trading performance closely"});
+  else risks.push({rag:"green",title:"Competitor density manageable",detail:`${S.competitors} competitors within 0.5 miles — within acceptable range.`,action:"No action required"});
+
+  if (upliftedSpf < 12) risks.push({rag:"red",title:"Sales density below benchmark",detail:`£${upliftedSpf.toFixed(2)}/sqft/wk is below the £12 minimum benchmark.`,action:"Review sales assumptions"});
+  else if (upliftedSpf < 16) risks.push({rag:"amber",title:"Sales density below symbol group average",detail:`£${upliftedSpf.toFixed(2)}/sqft/wk is below the £16-20 benchmark.`,action:"Focus on range and footfall drivers"});
+  else risks.push({rag:"green",title:"Sales density meets average",detail:`£${upliftedSpf.toFixed(2)}/sqft/wk meets the symbol group benchmark.`,action:"Maintain and grow"});
+
+  if (roi < 0) risks.push({rag:"red",title:"Negative ROI",detail:"Business does not generate sufficient profit to service the investment.",action:"Restructure deal or walk away"});
+  else if (roi < 10) risks.push({rag:"amber",title:"ROI below target threshold",detail:`${pct(roi)} ROI is below the 10% minimum for convenience retail.`,action:"Stress-test assumptions"});
+  else risks.push({rag:"green",title:"ROI meets investment threshold",detail:`${pct(roi)} ROI meets the target threshold.`,action:"Proceed with confidence"});
+
+  if (S.staffPct > 12) risks.push({rag:"amber",title:"Staff cost ratio high",detail:`Staff at ${S.staffPct}% of sales is above sector average.`,action:"Review rota efficiency"});
+
+  // ── 5-YEAR FORECAST ──
+  const yr5 = [1,2,3,4,5].map(yr => {
+    const g = Math.pow(1.03, yr - 1), cg = Math.pow(1.02, yr - 1);
+    const s = upliftedAnn * g, gp2 = s * (blGP / 100), stf2 = s * (S.staffPct / 100);
+    const tc = (S.rent + S.rates + S.utilities + S.otherCosts) * cg + stf2;
+    const eb2 = gp2 - tc, fin = yr <= S.financeYears ? af : 0, np3 = eb2 - fin;
+    return {yr, s, gp:gp2, stf:stf2, tc, eb:eb2, fin, np:np3};
+  });
+  const cumNp = yr => yr5.slice(0, yr).reduce((a, r) => a + r.np, 0);
+
+  // ── SENSITIVITY ANALYSIS ──
+  const sensSteps = [-20, -10, 0, 10, 20];
+  const sensitivityData = sensSteps.map(fp => sensSteps.map(rp => {
+    const adjF = S.footfall * (1 + fp / 100);
+    const adjR = S.rent * (1 + rp / 100);
+    const wk2 = adjF * 7 * S.avgBasket * (1 + S.uplift / 100);
+    const ann2 = wk2 * 52;
+    const gp2 = ann2 * (blGP / 100);
+    const stf2 = ann2 * (S.staffPct / 100);
+    const cost2 = adjR + S.rates + stf2 + S.utilities + S.otherCosts;
+    const eb2 = gp2 - cost2;
+    const np3 = eb2 - af;
+    const roi2 = ti > 0 ? (np3 / ti) * 100 : 0;
+    return {fp, rp, roi: roi2, np: np3};
+  }));
+
+  // Max affordable rent
+  const maxRent = (() => {
+    const wk2 = S.footfall * 7 * S.avgBasket * (1 + S.uplift / 100);
+    const ann2 = wk2 * 52;
+    const gp2 = ann2 * (blGP / 100);
+    const stf2 = ann2 * (S.staffPct / 100);
+    return Math.max(0, gp2 - S.rates - stf2 - S.utilities - S.otherCosts - af - 0.20 * ti);
+  })();
+
+  // Scorecard
+  const scorecard = [
+    ["Financial Returns", roi>=15?"Positive":roi>=5?"Neutral":"Negative", `ROI ${pct(roi)}, Net Profit ${fmt(nP)}`],
+    ["Sales Density", upliftedSpf>=16?"Positive":upliftedSpf>=12?"Neutral":"Negative", `£${upliftedSpf.toFixed(2)}/sq ft/wk`],
+    ["Rent Position", rentRatio<=10?"Positive":rentRatio<=15?"Neutral":"Negative", `${pct(rentRatio)} of turnover`],
+    ["Competition", highThreatComps===0?"Positive":highThreatComps<=2?"Neutral":"Negative", `${highThreatComps} high-threat competitors`],
+    ["Catchment Quality", DS>=7?"Positive":DS>=4?"Neutral":"Negative", `Population ${S.catchmentPop.toLocaleString()}, Income ${fmt(S.medianIncome)}`],
+    ["Footfall & Access", S.footfall>=400?"Positive":S.footfall>=250?"Neutral":"Negative", `${S.footfall} transactions/day, ${S.parking} parking spaces`],
+    ["Unit Condition", S.refitCost/S.sqft>=100?"Neutral":"Positive", `£${Math.round(S.refitCost/S.sqft)}/sq ft refit investment`],
+  ];
+
+  const locLabel = {"city-centre":"city centre / transport hub","suburban":"suburban residential area","village":"village or rural location","parade":"retail parade","forecourt":"forecourt site"}[S.location] || S.location;
+
+  return {
+    wk, ann, upliftedWk, upliftedAnn, blGP, annGP, stf, annC, ti, mp, af, eb, nP, roi, pb,
+    spf, upliftedSpf, pen, breakEvenWk, symGroups, verdict, verdictCol,
+    DS, TS, marketShareFactor, weeklyMarket: weeklyMarket_ms, capturedWeekly,
+    alloc, predictedWeekly: Math.round(finalWeekly), predictedAnnual: Math.round(finalWeekly * 52),
+    captureRate: Math.round(captureRate * 100 * 10) / 10, weeklyMarketRA: Math.round(weeklyMarket),
+    demographicProfile, storeProfile, incomeLevel,
+    risks, yr5, cumNp, sensitivityData, maxRent, scorecard, rentRatio, locLabel,
+    cats, highThreatComps, ourScore, ourDet, compDet
+  };
+}
+
+// ── COMMENTARY GENERATOR ──
+function generateCommentary(S, C) {
+  const roiVerdict = C.roi >= 20 ? "strong" : C.roi >= 10 ? "viable but tight" : "below target";
+  const paybackVerdict = C.pb && C.pb <= 4 ? "excellent" : C.pb && C.pb <= 6 ? "acceptable" : "extended";
+  const spfVerdict = C.upliftedSpf >= 20 ? "well above the symbol group average" : C.upliftedSpf >= 16 ? "in line with the symbol group average" : C.upliftedSpf >= 12 ? "below the symbol group average but above the independent minimum" : "below the independent minimum";
+  const ebitdaMargin = C.eb / C.upliftedAnn * 100;
+  const totalCostRatio = C.annC / C.upliftedAnn * 100;
+  const staffRatio = C.stf / C.upliftedAnn * 100;
+
+  return {
+    financial: [
+      `Post-refit, the store is projected to turn over ${fmt(C.upliftedWk)} per week — ${fmt(C.upliftedAnn)} annually. This is built on a current base of ${fmt(C.wk)}/week, with a ${S.uplift}% uplift applied to reflect the improved format, extended range and the trading benefit of symbol group affiliation.`,
+      `The blended gross margin of ${pct(C.blGP)} is ${C.blGP>=26?"above the convenience sector average of 24–26%, reflecting a well-structured category mix.":"within the convenience sector average range of 24–26%."}. After all costs — rent, rates, staff, utilities and finance — the business is forecast to deliver a net profit of ${fmt(C.nP)} in Year 1. That represents a ${pct(C.roi)} return on the total investment of ${fmt(C.ti)}, which is ${roiVerdict} by Genesis Retail standards.`,
+      `The payback period of ${C.pb?C.pb.toFixed(1)+" years":"N/A"} is ${paybackVerdict}. Sales density of £${(C.upliftedSpf||0).toFixed(2)} per square foot per week is ${spfVerdict} of £16–20.`
+    ].join(' '),
+
+    pl: [
+      `The profit and loss account is built on post-refit annual revenue of ${fmt(C.upliftedAnn)}, with a cost of goods of ${fmt(Math.round(C.upliftedAnn*(1-C.blGP/100)))} — leaving a gross profit of ${fmt(C.annGP)} at ${pct(C.blGP)} margin.`,
+      `Total operating costs come to ${fmt(C.annC)}, representing ${pct(totalCostRatio)} of sales. ${totalCostRatio>75?"This is high. The headroom is limited.":totalCostRatio>65?"This is within the expected range, but cost control is important.":"This is well-controlled and leaves healthy headroom."}`,
+      `Staff costs at ${pct(staffRatio)} of sales ${staffRatio>12?"are above the 9–12% sector norm and should be reviewed.":staffRatio<9?"are lean — achievable in a well-run owner-operated store.":"are within the 9–12% sector norm."}`,
+      `EBITDA is ${fmt(C.eb)}, representing ${pct(ebitdaMargin)} of sales. ${ebitdaMargin>=12?"This is a strong EBITDA margin.":ebitdaMargin>=8?"This is at the lower end of what Genesis Retail would consider healthy.":"EBITDA is below the 8% threshold."}`
+    ].join(' '),
+
+    fiveYear: [
+      `The five-year forecast applies 3% annual sales growth with operating costs inflating at 2% per year. By Year 5, the store is forecast to generate annual sales of ${fmt(C.yr5[4]?.s||0)} and a net profit of ${fmt(C.yr5[4]?.np||0)}. Cumulative net profit across five years is ${fmt(C.cumNp(5))}.`,
+      C.cumNp(5) > 0 ? `A cumulative return of ${fmt(C.cumNp(5))} against an initial investment of ${fmt(C.ti)} represents a strong five-year position.` : `The cumulative position is negative — the investment does not recover within the modelled window on current assumptions.`
+    ].join(' '),
+
+    sensitivity: [
+      `The sensitivity table models ROI across 25 scenarios with footfall varying ±20% and rent varying ±20%.`,
+      `The base case delivers ${pct(C.sensitivityData[2]?.[2]?.roi||0)} ROI. ${C.sensitivityData.flat().filter(c=>c.roi>=20).length} of 25 scenarios meet the 20% target. ${C.sensitivityData[0]?.[0]?.roi>=10?"Even the most adverse scenario returns "+pct(C.sensitivityData[0][0].roi)+" — reasonable downside protection.":"The worst case drops to "+pct(C.sensitivityData[0]?.[0]?.roi||0)+" — limited downside protection."}`
+    ].join(' '),
+
+    competitors: S.competitorList.length > 0
+      ? `${S.competitorList.length} competitor${S.competitorList.length!==1?"s":""} identified within the catchment. ${C.highThreatComps>0?C.highThreatComps+" rated high threat.":"None rated high threat."} The nearest competitor is ${S.nearestComp} miles away. ${S.nearestComp<0.25?"At this distance, both stores compete directly for the same passing trade.":S.nearestComp<0.5?"Close enough to feel in day-to-day trading.":"A comfortable buffer for a convenience store."}`
+      : `No competitors were identified from open mapping data. This should be verified on the ground during the site visit.`,
+
+    demographics: [
+      `With a catchment population of ${S.catchmentPop.toLocaleString()} within one mile, the store has a penetration rate of ${pct(C.pen)}. ${C.pen>=15?"This is above the 15% benchmark for a viable convenience store.":"This is below the 15% benchmark — building penetration should be a priority."}`,
+      `A median household income of ${fmt(S.medianIncome)} ${S.medianIncome>=35000?"is above the national average and supports a fuller convenience offer.":S.medianIncome>=27000?"sits broadly in line with the national average.":"is below the national average. Value credentials matter here."}`,
+      `The deprivation index of ${S.deprivation}/10 ${S.deprivation<=3?"indicates high deprivation — strong convenience penetration but pricing strategy must reflect the customer base.":S.deprivation<=6?"indicates moderate deprivation.":"indicates a relatively low-deprivation catchment."}`
+    ].join(' ')
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// RENDER REPORT
+// ══════════════════════════════════════════════════════════════════════
+function generateReport() {
+  const S = gatherInputs();
+  const C = compute(S);
+  const commentary = generateCommentary(S, C);
+  const today = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  const ref = 'GR-SSA-' + (S.postcode || 'DRAFT').replace(/\s/g, '').toUpperCase() + '-' + new Date().getFullYear();
+  const reviewBy = new Date(Date.now() + 90*24*60*60*1000).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+
+  let html = '';
+
+  // ── COVER PAGE ──
+  html += `
+  <div class="avoid-break" style="min-height:90vh;display:flex;flex-direction:column">
+    <div style="background:#1a2744;padding:40px 32px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="width:48px;height:48px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center">
+            <div style="color:#1a2744;font-weight:900;font-size:22pt;font-family:-apple-system,sans-serif">G</div>
+          </div>
+          <div>
+            <div style="font-size:13pt;font-weight:800;color:#fff;letter-spacing:.12em;font-family:-apple-system,sans-serif">GENESIS RETAIL</div>
+            <div style="font-size:9pt;color:#FB923C;letter-spacing:.15em;text-transform:uppercase;font-weight:600;font-family:-apple-system,sans-serif">Independent Convenience Consultancy</div>
+          </div>
+        </div>
+        <div style="text-align:right;color:#8fa0b8;font-size:9pt;font-family:-apple-system,sans-serif">
+          <div>rshorney@genesisretail.uk</div>
+          <div>07551 827907</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#f0f3fa;padding:32px 32px 28px;border-bottom:3px solid #1a2744">
+      <div style="font-size:10pt;letter-spacing:.2em;color:#FB923C;text-transform:uppercase;font-weight:700;margin-bottom:8px;font-family:-apple-system,sans-serif">Site Suitability Assessment</div>
+      <div style="font-size:26pt;font-weight:800;color:#1a2744;line-height:1.15;margin-bottom:6px;font-family:-apple-system,sans-serif">${S.propName || 'Site Assessment'}</div>
+      <div style="font-size:14pt;color:#4a5568;font-weight:500">${S.postcode || ''}</div>
+    </div>
+    <div style="padding:24px 32px;flex:1">
+      <table style="font-size:12pt"><tbody>
+        ${[
+          ['UNIT', `${S.sqft.toLocaleString()} sq ft net selling area`],
+          ['VO ENTRY', `Rateable Value: £${(S.rateableValue||0).toLocaleString()}`],
+          ['PITCH', S.reportPitch || C.locLabel.replace(/\b\w/g, l => l.toUpperCase())],
+          ['FASCIA ASSESSED', S.reportFascia || C.symGroups[0]?.name || 'To be confirmed'],
+          ['TENURE', S.reportTenure || 'To be confirmed'],
+          ['PREPARED BY', 'Richard Shorney, Genesis Retail'],
+          ['DATE', today],
+          ['STATUS', S.reportStatus || 'Desktop Assessment'],
+        ].map(([l, v]) => `<tr style="border-bottom:1px solid #c8cdd6"><td style="padding:10px 14px;font-weight:700;color:#1a2744;width:35%;font-size:10pt;letter-spacing:.05em;text-transform:uppercase;font-family:-apple-system,sans-serif">${l}</td><td style="padding:10px 14px;color:#1a1a2e">${v}</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+    <div style="border-top:2px solid #1a2744;padding:16px 32px;display:flex;justify-content:space-between;font-size:9pt;color:#4a5568;font-family:-apple-system,sans-serif">
+      <div><strong style="color:#1a2744">Genesis Retail</strong> · Independent Convenience Consultancy</div>
+      <div>rshorney@genesisretail.uk · 07551 827907</div>
+    </div>
+  </div>`;
+
+  // ── SECTION 1: EXECUTIVE SUMMARY ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">1. Executive Summary</div>
+    <div style="font-size:11pt;line-height:2;margin-bottom:16px">
+      ${S.reportVerdictText || commentary.financial}
+    </div>
+    <div class="callout">
+      <div class="callout-label">VERDICT</div>
+      <div style="font-size:16pt;font-weight:800;color:${C.verdictCol};margin-bottom:8px;font-family:-apple-system,sans-serif">${C.verdict}</div>
+      <div style="font-size:11pt;line-height:1.8">
+        The store needs to achieve break-even weekly sales of ${fmt(C.breakEvenWk)} per week to cover all costs including finance. Post-refit projections of ${fmt(C.upliftedWk)} per week ${C.upliftedWk > C.breakEvenWk ? "exceed" : "fall short of"} this threshold by ${fmt(Math.abs(C.upliftedWk - C.breakEvenWk))}/week.
+      </div>
+    </div>
+    <div class="meta-label" style="margin-top:20px">Key Findings</div>
+    <div style="font-size:11pt;line-height:2">
+      ${[
+        `Return on investment. The projected ROI of ${pct(C.roi)} ${C.roi>=20?"exceeds":"is below"} the Genesis Retail 20% threshold. Net annual profit of ${fmt(C.nP)} on total investment of ${fmt(C.ti)}.`,
+        `Sales density. Post-refit sales density of £${(C.upliftedSpf||0).toFixed(2)}/sq ft/week is ${C.upliftedSpf>=16?"in line with":"below"} the symbol group benchmark of £16–20/sq ft/week.`,
+        `Rent position. Rent at ${pct(C.rentRatio)} of projected turnover ${C.rentRatio<=10?"is within":"exceeds"} the 10% target ratio.`,
+        `Competition. ${C.highThreatComps} high-threat competitor${C.highThreatComps!==1?"s":""} identified within the immediate catchment.`,
+        `Catchment. Population of ${S.catchmentPop.toLocaleString()} with median household income of ${fmt(S.medianIncome)}. Deprivation index ${S.deprivation}/10.`,
+      ].map(f => `<p style="margin-bottom:10px"><strong style="color:#1a2744">${f.split('. ')[0]}.</strong> ${f.split('. ').slice(1).join('. ')}</p>`).join('')}
+    </div>
+  </div>`;
+
+  // ── SECTION 2: THE UNIT ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">2. The Unit</div>
+    <div class="meta-label">Valuation Office Record</div>
+    <table><tbody>
+      ${[
+        ['Address', S.propName || ''],
+        ['Postcode', S.postcode || ''],
+        ['Description', `Retail premises — ${S.sqft.toLocaleString()} sq ft`],
+        ['Rateable Value', `£${(S.rateableValue||0).toLocaleString()}`],
+        ['Indicative Rates', `£${S.rates.toLocaleString()}/yr`],
+        ['Implied Rental Tone', S.sqft > 0 ? `£${(S.rent/S.sqft).toFixed(0)} per sq ft` : '—'],
+      ].map(([l,v], i) => `<tr${i%2===0?' style="background:#f6f8fc"':''}><td style="font-weight:600;color:#1a2744;width:35%">${l}</td><td>${v}</td></tr>`).join('')}
+    </tbody></table>
+    ${S.reportPhysicalCondition ? `
+    <div class="meta-label" style="margin-top:20px">Physical Condition</div>
+    <div style="font-size:11pt;line-height:2">${S.reportPhysicalCondition}</div>` : ''}
+    ${S.reportOperationalIssue ? `
+    <div class="callout callout-orange" style="margin-top:20px">
+      <div class="callout-label">THE OPERATIONAL ISSUE THAT MATTERS MOST</div>
+      <div style="font-size:11pt;line-height:1.9">${S.reportOperationalIssue}</div>
+    </div>` : ''}
+  </div>`;
+
+  // ── SECTION 3: FASCIA ASSESSMENT ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">3. Fascia Assessment</div>
+    <table>
+      <thead><tr><th>Criteria</th>${C.symGroups.slice(0,3).map(sg => `<th class="center">${sg.name}</th>`).join('')}</tr></thead>
+      <tbody>
+        <tr style="background:#f6f8fc"><td style="font-weight:600;color:#1a2744">Suitability Score</td>${C.symGroups.slice(0,3).map(sg => `<td class="center">${sg.score}/10</td>`).join('')}</tr>
+        <tr><td style="font-weight:600;color:#1a2744">Key Strength</td>${C.symGroups.slice(0,3).map(sg => `<td class="center" style="font-size:10pt">${sg.desc.split(',')[0]}</td>`).join('')}</tr>
+        <tr style="background:#f6f8fc"><td style="font-weight:600;color:#1a2744">Own Brand</td>${C.symGroups.slice(0,3).map(sg => `<td class="center" style="font-size:10pt">${sg.name==="Nisa"?"Co-op own brand":sg.name==="Spar"?"Spar own brand":"Wholesaler range"}</td>`).join('')}</tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:20px">
+      <div class="callout-label">RECOMMENDED FASCIA — ${C.symGroups[0]?.name?.toUpperCase() || 'TBC'}</div>
+      <div style="font-size:11pt;line-height:1.8">${C.symGroups[0]?.desc || ''}</div>
+    </div>
+  </div>`;
+
+  // ── SECTION 4: COMPETITION ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">4. Competition</div>
+    ${S.competitorList.length > 0 ? `
+    <table>
+      <thead><tr><th>Fascia</th><th>Distance</th><th>Format</th><th class="center">Threat</th></tr></thead>
+      <tbody>
+        ${S.competitorList.map((c, i) => `
+        <tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:600;color:#1a2744">${c.name}</td>
+          <td>${c.distance}</td>
+          <td>${c.type === 'supermarket' ? 'Supermarket' : 'Convenience'}</td>
+          <td class="center"><span class="tag ${c.threat==='high'?'tag-negative':c.threat==='medium'?'tag-neutral':'tag-positive'}">${c.threat.charAt(0).toUpperCase()+c.threat.slice(1)}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>` : '<p style="font-style:italic;color:#4a5568">No competitors entered. Verify during site visit.</p>'}
+    <div class="callout" style="margin-top:20px">
+      <div class="callout-label">READING OF THE COMPETITION</div>
+      <div style="font-size:11pt;line-height:1.9">${commentary.competitors}</div>
+    </div>
+  </div>`;
+
+  // ── SECTION 5: CATCHMENT AND TOWN CONTEXT ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">5. Catchment and Town Context</div>
+    <table>
+      <thead><tr><th>Indicator</th><th>Local Value</th><th>Comparator</th><th>Read</th></tr></thead>
+      <tbody>
+        ${[
+          ['Population (1-mile)', S.catchmentPop.toLocaleString(), '8,500', S.catchmentPop>=8500?'Above average':'Below average'],
+          ['Median Income', fmt(S.medianIncome), '£31,400', S.medianIncome>=31400?'Above average':'Below average'],
+          ['Deprivation', S.deprivation+'/10', '5/10', S.deprivation<=4?'High deprivation':S.deprivation<=7?'Moderate':'Low'],
+          ['Density', S.popDensity, '—', S.popDensity==='high'?'Supports high footfall':'—'],
+          ['Working Age (18-54)', pct((S.ageBands["18-24"]||0)+(S.ageBands["25-34"]||0)+(S.ageBands["35-44"]||0)+(S.ageBands["45-54"]||0)), '55%', ((S.ageBands["18-24"]||0)+(S.ageBands["25-34"]||0)+(S.ageBands["35-44"]||0)+(S.ageBands["45-54"]||0))>=55?'Strong':'Below benchmark'],
+          ['House Prices', S.tHP, '—', S.tHP],
+          ['Population Growth', S.tPG, '—', S.tPG],
+          ['Footfall Trend', S.tFF, '—', S.tFF],
+          ['Regeneration', S.tRG, '—', S.tRG],
+        ].map(([a,b,c,d], i) => `<tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:600;color:#1a2744">${a}</td><td>${b}</td><td style="font-size:10pt;color:#4a5568">${c}</td><td style="font-weight:500">${d}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="commentary" style="margin-top:20px">${commentary.demographics}</div>
+  </div>`;
+
+  // ── SECTION 6: FINANCIAL APPRAISAL ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">6. Financial Appraisal</div>
+    <div class="meta-label">Cost Base</div>
+    <table>
+      <thead><tr><th>Item</th><th class="right">Annual (£)</th><th class="right">% of Sales</th></tr></thead>
+      <tbody>
+        ${[
+          ['Projected Annual Sales', C.upliftedAnn, '100.0%', false],
+          ['Cost of Goods (COGS)', C.upliftedAnn*(1-C.blGP/100), pct(100-C.blGP), false],
+          ['Gross Profit', C.annGP, pct(C.blGP), true],
+          ['Rent', S.rent, pct(S.rent/C.upliftedAnn*100), false],
+          ['Business Rates', S.rates, pct(S.rates/C.upliftedAnn*100), false],
+          ['Staff & Wages ('+S.staffPct+'%)', C.stf, pct(S.staffPct), false],
+          ['Utilities', S.utilities, pct(S.utilities/C.upliftedAnn*100), false],
+          ['Other Costs', S.otherCosts, pct(S.otherCosts/C.upliftedAnn*100), false],
+          ['Total Operating Costs', C.annC, pct(C.annC/C.upliftedAnn*100), true],
+          ['EBITDA', C.eb, pct(C.eb/C.upliftedAnn*100), true],
+          ['Finance Cost ('+S.financeRate+'% APR, '+S.financeYears+'yr)', C.af, pct(C.af/C.upliftedAnn*100), false],
+          ['Net Profit', C.nP, pct(C.nP/C.upliftedAnn*100), true],
+        ].map(([l, v, p, hi]) => `<tr${hi?' class="highlight-row"':''}>
+          <td style="${hi?'font-weight:700;color:#1a2744':''}">${l}</td>
+          <td class="right" style="${hi?'font-weight:700;color:#1a2744':''}${v<0?';color:#d62828':''}">${v<0?'('+fmt(Math.abs(v))+')':fmt(v)}</td>
+          <td class="right" style="font-size:10pt;${hi?'font-weight:700;color:#1a2744':'color:#4a5568'}">${p}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="meta-label" style="margin-top:24px">Break-Even Analysis</div>
+    <table>
+      <thead><tr><th>Metric</th><th class="right">Value</th></tr></thead>
+      <tbody>
+        ${[
+          ['Break-Even Weekly Sales', fmt(C.breakEvenWk)],
+          ['Projected Weekly Sales', fmt(C.upliftedWk)],
+          ['Headroom / (Shortfall)', fmt(Math.round(C.upliftedWk - C.breakEvenWk))],
+          ['Return on Investment', pct(C.roi)],
+          ['Payback Period', C.pb ? C.pb.toFixed(1)+' years' : 'N/A'],
+        ].map(([l,v], i) => `<tr${i>=2?' class="highlight-row"':''}><td style="${i>=2?'font-weight:700;color:#1a2744':''}">${l}</td><td class="right" style="${i>=2?'font-weight:700;color:#1a2744':''}">${v}</td></tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="commentary" style="margin-top:16px">${commentary.pl}</div>
+  </div>`;
+
+  // ── SECTION 6 continued: TURNOVER SCENARIOS ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">6 (continued). Turnover Scenarios</div>
+    <table>
+      <thead><tr><th>Scenario</th><th class="right">Weekly</th><th class="right">Annual</th><th class="right">Gross Profit</th><th class="right">Net Profit</th><th class="right">ROI</th></tr></thead>
+      <tbody>
+        ${[{label:'Low (−15%)',factor:0.85},{label:'Central (Base)',factor:1.0},{label:'High (+15%)',factor:1.15}].map(sc => {
+          const wk2 = C.upliftedWk * sc.factor;
+          const ann2 = wk2 * 52;
+          const gp2 = ann2 * (C.blGP / 100);
+          const stf2 = ann2 * (S.staffPct / 100);
+          const tc2 = S.rent + S.rates + stf2 + S.utilities + S.otherCosts;
+          const np2 = gp2 - tc2 - C.af;
+          const roi2 = C.ti > 0 ? (np2 / C.ti) * 100 : 0;
+          const isCentral = sc.factor === 1.0;
+          return `<tr${isCentral?' class="highlight-row"':''}>
+            <td style="${isCentral?'font-weight:700;color:#1a2744':''}">${sc.label}</td>
+            <td class="right">${fmt(wk2)}</td><td class="right">${fmt(ann2)}</td>
+            <td class="right">${fmt(gp2)}</td>
+            <td class="right" style="${np2<0?'color:#d62828':''}">${np2<0?'('+fmt(Math.abs(np2))+')':fmt(np2)}</td>
+            <td class="right" style="${roi2<10?'color:#d62828':''}">${pct(roi2)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div class="callout callout-orange" style="margin-top:20px">
+      <div class="callout-label">WHERE THIS DEAL LIVES OR DIES</div>
+      <div style="font-size:11pt;line-height:1.9">
+        ${S.reportWhereDeadLivesDies || `The financial model is most sensitive to rent and footfall. At the current rent of ${fmt(S.rent)}/yr (${pct(C.rentRatio)} of sales), every £1,000 reduction in rent adds approximately £1,000 directly to net profit. The maximum affordable rent at a 20% ROI target is ${fmt(C.maxRent)}/yr.`}
+      </div>
+    </div>
+    ${S.reportWhatStoreMustBe ? `
+    <div style="margin-top:16px">
+      <div class="meta-label">What the Store Has to Be</div>
+      <div style="font-size:11pt;line-height:2;white-space:pre-wrap">${S.reportWhatStoreMustBe}</div>
+    </div>` : ''}
+  </div>`;
+
+  // ── SECTION 7: RISKS AND UNKNOWNS ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">7. Risks and Unknowns</div>
+    <table>
+      <thead><tr><th style="width:30%">Risk</th><th style="width:40%">Assessment</th><th style="width:30%">Action</th></tr></thead>
+      <tbody>
+        ${C.risks.map((r, i) => `
+        <tr style="background:${r.rag==='red'?'#fde8e8':r.rag==='amber'?'#fff4ea':'#fff'}">
+          <td style="font-weight:600;color:#1a2744;vertical-align:top">
+            <span class="rag-dot" style="background:${r.rag==='red'?'#d62828':r.rag==='amber'?'#FB923C':'#22c55e'}"></span>${r.title}
+          </td>
+          <td style="line-height:1.7;vertical-align:top">${r.detail}</td>
+          <td style="color:#1a2744;font-weight:500;vertical-align:top">${r.action}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // ── SECTION 8: ASSESSMENT AND RECOMMENDATIONS ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">8. Assessment and Recommendations</div>
+    <div class="meta-label">Site Scorecard</div>
+    <table>
+      <thead><tr><th>Factor</th><th class="center" style="width:110px">Rating</th><th>Comment</th></tr></thead>
+      <tbody>
+        ${C.scorecard.map(([factor, rating, comment], i) => `
+        <tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:600;color:#1a2744">${factor}</td>
+          <td class="center"><span class="tag ${rating==='Positive'?'tag-positive':rating==='Neutral'?'tag-neutral':'tag-negative'}">${rating}</span></td>
+          <td style="font-size:10pt">${comment}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:20px">
+      <div class="callout-label">RECOMMENDATION</div>
+      <div style="font-size:13pt;font-weight:800;color:${C.verdictCol};margin-bottom:6px;font-family:-apple-system,sans-serif">${C.verdict}</div>
+      <div style="font-size:11pt;line-height:1.8">
+        ${C.roi >= 20 ? `This site meets all key thresholds and represents a strong investment opportunity. Proceed to heads of terms with confidence, subject to satisfactory lease negotiation and site visit verification.`
+        : C.roi >= 10 ? `This site is viable but carries risk factors that need to be managed. The operator should be confident in the trading projections and negotiate hard on the lease terms before committing.`
+        : C.roi >= 0 ? `This site is marginal on current assumptions. The cost base or trading projections need to improve before this assessment can support the investment. Consider whether the rent can be reduced or the trading case strengthened.`
+        : `This site does not meet the viability threshold on current assumptions. The investment case is not supported by this assessment.`}
+      </div>
+    </div>
+  </div>`;
+
+  // ── SECTION 9a: FIVE-YEAR FORECAST ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">9a. Five-Year Financial Forecast</div>
+    <table style="font-size:10pt">
+      <thead><tr><th>£</th>${C.yr5.map(r => `<th class="right">Year ${r.yr}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${[
+          {l:'Sales Revenue',k:'s',hi:false},
+          {l:'Gross Profit',k:'gp',hi:true},
+          {l:'Operating Costs',k:'tc',hi:false,neg:true},
+          {l:'EBITDA',k:'eb',hi:true},
+          {l:'Finance Cost',k:'fin',hi:false,neg:true},
+          {l:'Net Profit',k:'np',hi:true},
+        ].map(dr => `<tr${dr.hi?' class="highlight-row"':''}>
+          <td style="${dr.hi?'font-weight:700;color:#1a2744':''}">${dr.l}</td>
+          ${C.yr5.map(r => {
+            const val = dr.neg ? -r[dr.k] : r[dr.k];
+            return `<td class="right" style="${dr.hi?'font-weight:700;color:#1a2744':''}${val<0?';color:#d62828':''}">${val<0?'('+fmt(Math.abs(val))+')':fmt(val)}</td>`;
+          }).join('')}
+        </tr>`).join('')}
+        <tr style="background:#1a2744"><td style="color:#fff;font-weight:700">Cumulative Net Profit</td>
+          ${[1,2,3,4,5].map(y => {
+            const cn = C.cumNp(y);
+            return `<td class="right" style="font-weight:700;color:${cn>=0?'#bbf7d0':'#fca5a5'}">${cn<0?'('+fmt(Math.abs(cn))+')':fmt(cn)}</td>`;
+          }).join('')}
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:10pt;color:#4a5568;font-style:italic;margin-top:8px">
+      3% annual sales growth · 2% cost inflation · Finance: ${S.financeRate}% APR over ${S.financeYears} years
+    </div>
+    <div class="commentary" style="margin-top:16px">${commentary.fiveYear}</div>
+  </div>`;
+
+  // ── SECTION 9b: SENSITIVITY ANALYSIS ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">9b. Sensitivity Analysis</div>
+    <div style="background:#f0f3fa;border:1px solid #c8cdd6;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11pt;font-family:-apple-system,sans-serif;color:#1a2744">
+      ROI impact if footfall and rent vary from base assumptions. <strong>Green = meets 20% target. Amber = 10–20%. Red = below 10%.</strong>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="min-width:120px">Footfall ↕ / Rent →</th>
+        ${[-20,-10,0,10,20].map(rp => `<th class="center">Rent ${rp>0?'+':''}${rp}%</th>`).join('')}
+      </tr></thead>
+      <tbody>
+        ${C.sensitivityData.map((row, ri) => `<tr>
+          <td style="font-weight:700;color:#1a2744;background:#f6f8fc">Footfall ${row[0].fp>0?'+':''}${row[0].fp}%</td>
+          ${row.map(cell => {
+            const isBase = cell.fp === 0 && cell.rp === 0;
+            const bg = isBase ? '#d5dde8' : cell.roi >= 20 ? '#d5e8d5' : cell.roi >= 10 ? '#fff4ea' : '#fde8e8';
+            const col = isBase ? '#1a2744' : cell.roi >= 20 ? '#1a6b1a' : cell.roi >= 10 ? '#c05010' : '#d62828';
+            return `<td class="sens-cell" style="background:${bg};color:${col};${isBase?'font-weight:800;border:2px solid #1a2744':''}">${cell.roi.toFixed(1)}%${isBase?'<br><span style="font-size:8pt;font-weight:400">BASE</span>':''}</td>`;
+          }).join('')}
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="font-size:10pt;color:#4a5568;margin-top:8px;font-family:-apple-system,sans-serif">
+      Base case: ${S.footfall} transactions/day at ${fmt(S.rent)}/yr rent · Post-refit uplift ${S.uplift}%
+    </div>
+    <div class="commentary" style="margin-top:16px">${commentary.sensitivity}</div>
+  </div>`;
+
+  // ── SECTION 10: PREDICTED RANGE & SPACE ALLOCATION ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">10. Predicted Range & Space Allocation</div>
+    <div class="callout" style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="callout-label">PREDICTED WEEKLY TURNOVER</div>
+          <div style="font-size:24pt;font-weight:800;color:#1a2744;font-family:-apple-system,sans-serif">${fmt(C.predictedWeekly)}<span style="font-size:12pt;font-weight:400;color:#4a5568"> /week</span></div>
+          <div style="font-size:11pt;color:#4a5568;margin-top:4px">${fmt(C.predictedAnnual)} per annum</div>
+        </div>
+        <div style="text-align:right;font-size:10pt;font-family:-apple-system,sans-serif">
+          <div style="color:#4a5568">Market capture rate: <strong style="color:#1a2744">${C.captureRate}%</strong></div>
+          <div style="color:#4a5568">Weekly addressable market: <strong style="color:#1a2744">${fmt(C.weeklyMarketRA)}</strong></div>
+          <div style="color:#4a5568">Predicted sales density: <strong style="color:#1a2744">£${(C.predictedWeekly/(S.sqft||800)).toFixed(2)}/sqft/wk</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:10pt;line-height:1.8;margin-bottom:16px">
+      Based on a catchment population of ${S.catchmentPop.toLocaleString()} within a 1-mile radius, median household income of ${fmt(S.medianIncome)}, ${S.competitors} competitor(s) within 0.5 miles, and a ${(S.sqft||800).toLocaleString()} sqft trading floor.
+      The predicted turnover is derived from the estimated weekly convenience-grocery market of ${fmt(C.weeklyMarketRA)}, applying a capture rate of ${C.captureRate}% based on store location, size and competitive density.
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-box"><div class="kpi-label">Demographic Profile</div><div class="kpi-value">${C.demographicProfile}</div></div>
+      <div class="kpi-box"><div class="kpi-label">Store Profile</div><div class="kpi-value">${C.storeProfile}</div></div>
+    </div>
+
+    <div class="meta-label" style="margin-top:20px">Recommended Space Allocation</div>
+    <table>
+      <thead><tr><th>Category</th><th class="right">% of Floor</th><th class="right">Sqft</th><th class="right">Predicted Weekly (£)</th><th>Range Notes</th></tr></thead>
+      <tbody>
+        ${C.alloc.map((a, i) => {
+          const catMatch = CATS.find(c => c.name === a.cat);
+          const catMix = catMatch ? catMatch.mix : 0;
+          const weeklyRev = C.predictedWeekly * catMix / 100;
+          return `<tr${i%2===0?' style="background:#f6f8fc"':''}>
+            <td style="font-weight:500;color:#1a2744">${a.cat}</td>
+            <td class="right">${a.pct}%</td>
+            <td class="right">${a.sqft.toLocaleString()}</td>
+            <td class="right">${fmt(weeklyRev)}</td>
+            <td style="font-size:10pt;color:#4a5568">${a.notes}</td>
+          </tr>`;
+        }).join('')}
+        <tr class="total-row">
+          <td>TOTAL</td><td class="right">100%</td><td class="right">${(S.sqft||800).toLocaleString()}</td>
+          <td class="right">${fmt(C.predictedWeekly)}</td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>`;
+
+  // ── SECTION 11: MARKET SHARE MODEL ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">11. Market Share Model</div>
+    <div style="font-size:11pt;line-height:1.9;margin-bottom:16px">
+      The Genesis Retail competitive scoring model assesses the proposed store against established competitors across three dimensions: store quality, service offering and category coverage. The model produces a market share estimate that feeds the turnover prediction.
+    </div>
+    <table>
+      <thead><tr><th>Dimension</th><th class="right">Your Store</th><th class="right">Competitor Avg</th><th class="right">Share</th></tr></thead>
+      <tbody>
+        <tr style="background:#f6f8fc"><td style="font-weight:600;color:#1a2744">Store Quality & Format</td><td class="right">${C.marketShareFactor > 0 ? Math.round(C.ourScore) : '—'}</td><td class="right">—</td><td class="right">${pct(C.marketShareFactor)}</td></tr>
+        <tr><td style="font-weight:600;color:#1a2744">Total Determinant Score</td><td class="right">${Math.round(C.ourDet)}</td><td class="right">${Math.round(C.compDet)}</td><td class="right" style="font-weight:700;color:#1a2744">${pct(C.marketShareFactor)}</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:20px">
+      <div class="callout-label">MARKET SHARE ESTIMATE</div>
+      <div style="font-size:14pt;font-weight:800;color:#1a2744;font-family:-apple-system,sans-serif">${pct(C.marketShareFactor)} of addressable market</div>
+      <div style="font-size:11pt;color:#4a5568;margin-top:6px">Weekly addressable market: ${fmt(C.weeklyMarket)} · Captured weekly: ${fmt(C.capturedWeekly)}</div>
+    </div>
+  </div>`;
+
+  // ── SECTION 12: CATEGORY MIX ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">12. Category Mix & Margin Analysis</div>
+    <table style="font-size:10pt">
+      <thead><tr><th>Category</th><th class="right">Sales Mix %</th><th class="right">Gross Margin %</th><th class="right">Annual Sales (£)</th><th class="right">Annual GP (£)</th></tr></thead>
+      <tbody>
+        ${CATS.filter(c => c.mix > 0).sort((a,b) => b.mix - a.mix).map((cat, i) => `
+        <tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:500;color:#1a2744">${cat.name}</td>
+          <td class="right">${pct(cat.mix)}</td>
+          <td class="right">${pct(cat.gp)}</td>
+          <td class="right">${fmt(C.upliftedAnn * cat.mix / 100)}</td>
+          <td class="right">${fmt(C.upliftedAnn * cat.mix / 100 * cat.gp / 100)}</td>
+        </tr>`).join('')}
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="right">${pct(CATS.reduce((s,c) => s + c.mix, 0))}</td>
+          <td class="right">${pct(C.blGP)}</td>
+          <td class="right">${fmt(C.upliftedAnn)}</td>
+          <td class="right">${fmt(C.annGP)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:9pt;color:#4a5568;font-style:italic;margin-top:8px">Source: ACS Local Shop Report 2025 — adjusted for location and catchment profile</div>
+  </div>`;
+
+  // ── BASIS OF ASSESSMENT ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">13. Basis of Assessment</div>
+    <div class="meta-label">Assumptions</div>
+    <table>
+      <thead><tr><th>Assumption</th><th>Value</th><th>Source</th></tr></thead>
+      <tbody>
+        ${[
+          ['Net selling area', S.sqft.toLocaleString()+' sq ft', 'Client / VOA'],
+          ['Daily transactions', S.footfall.toString(), 'Estimated from location and catchment'],
+          ['Average basket', '£'+(S.avgBasket||0).toFixed(2), 'Sector benchmark'],
+          ['Post-refit uplift', S.uplift+'%', 'Genesis Retail methodology'],
+          ['Blended gross margin', pct(C.blGP), 'ACS Local Shop Report 2025'],
+          ['Rent', '£'+S.rent.toLocaleString()+'/yr', 'Agent / marketing particulars'],
+          ['Business rates', '£'+S.rates.toLocaleString()+'/yr', 'VOA 2023 list'],
+          ['Staff cost ratio', S.staffPct+'% of sales', 'Sector benchmark'],
+          ['Sales growth (annual)', '3%', 'Conservative organic growth'],
+          ['Cost inflation (annual)', '2%', 'CPI-linked'],
+          ['Finance rate', S.financeRate+'% APR', 'Market rate'],
+          ['Finance term', S.financeYears+' years', 'Standard commercial loan'],
+        ].map(([a,b,c], i) => `<tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:600;color:#1a2744">${a}</td><td>${b}</td><td style="font-size:10pt;color:#4a5568">${c}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:20px;border-color:#1a2744">
+      <div class="callout-label" style="color:#1a2744">Confidence Rating: LOW to MEDIUM</div>
+      <div style="font-size:11pt;line-height:1.8">
+        This assessment is based on publicly available data, sector benchmarks, and the assessor's professional judgement. No site visit has been incorporated unless stated. Financial projections are indicative and should be validated against actual trading data where available.
+      </div>
+    </div>
+  </div>`;
+
+  // ── IMPORTANT NOTICE ──
+  html += `
+  <div class="page-break avoid-break">
+    <div class="section-head">Important Notice</div>
+    <div style="font-size:11pt;line-height:2;margin-bottom:20px">
+      <p style="margin-bottom:12px">This report has been prepared by Genesis Retail and is intended solely for the use of the named client and their appointed professional advisers. The contents are confidential and must not be reproduced, referred to or disclosed to any other party without the prior written consent of Genesis Retail.</p>
+      <p style="margin-bottom:12px">All financial projections contained in this report are based on the assumptions stated and are provided for indicative purposes only. They do not constitute a guarantee of future performance.</p>
+      <p style="margin-bottom:12px">Competitor and planning data is sourced from publicly available datasets including the Valuation Office Agency, Companies House, planning authority portals and open mapping data. This data may not reflect all operators or applications in the catchment.</p>
+      <p style="margin-bottom:12px">This report does not constitute financial, legal, property or investment advice. Genesis Retail accepts no liability for any decisions made on the basis of this assessment without independent professional verification.</p>
+      <p>The intellectual property in this report, including the methodology, scoring model and financial framework, belongs to Genesis Retail. Unauthorised reproduction, reverse-engineering or distribution is prohibited.</p>
+    </div>
+
+    <div class="meta-label">Document Control</div>
+    <table>
+      <tbody>
+        ${[
+          ['Reference', ref],
+          ['Version', '1.0'],
+          ['Date', today],
+          ['Prepared by', 'Richard Shorney, Genesis Retail'],
+          ['Issued to', S.reportIssuedTo || S.clientName || '[Client name]'],
+          ['Classification', 'Confidential — Client and professional advisers only'],
+          ['Status', S.reportStatus || 'Desktop Assessment'],
+          ['Review by', reviewBy],
+        ].map(([l,v], i) => `<tr${i%2===0?' style="background:#f6f8fc"':''}>
+          <td style="font-weight:600;color:#1a2744;width:35%">${l}</td><td>${v}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>`;
+
+  // ── BACK PAGE ──
+  html += `
+  <div class="page-break" style="background:#1a2744;padding:48px 32px;min-height:60vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border-radius:0">
+    <div style="width:80px;height:80px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+      <div style="color:#1a2744;font-weight:900;font-size:32pt;font-family:-apple-system,sans-serif">G</div>
+    </div>
+    <div style="font-size:18pt;font-weight:800;color:#fff;letter-spacing:.15em;font-family:-apple-system,sans-serif">GENESIS RETAIL</div>
+    <div style="font-size:10pt;color:#FB923C;letter-spacing:.2em;text-transform:uppercase;font-weight:600;margin-bottom:32px;font-family:-apple-system,sans-serif">Independent Convenience Consultancy</div>
+    <div style="font-size:11pt;color:#8fa0b8;line-height:2;max-width:500px;margin-bottom:32px">
+      Site viability assessments · Trading reviews & action plans<br>
+      Property acquisition · Property disposal · Range analysis<br>
+      Refit planning · Symbol group selection · Financial modelling
+    </div>
+    <div style="font-size:11pt;color:#fff;font-family:-apple-system,sans-serif">Richard Shorney</div>
+    <div style="font-size:10pt;color:#8fa0b8;margin-top:4px;font-family:-apple-system,sans-serif">rshorney@genesisretail.uk</div>
+    <div style="font-size:10pt;color:#8fa0b8;font-family:-apple-system,sans-serif">07551 827907</div>
+    <div style="font-size:10pt;color:#8fa0b8;font-family:-apple-system,sans-serif">genesisretail.uk</div>
+    <div style="font-size:9pt;color:#4a5568;margin-top:32px;font-family:-apple-system,sans-serif">© Genesis Retail ${new Date().getFullYear()} · All rights reserved</div>
+  </div>`;
+
+  // ── FOOTER (on every printed page via CSS) ──
+  html += `
+  <div class="footer" style="margin-top:40px">
+    GENESIS RETAIL UK · © ${new Date().getFullYear()} Genesis Retail UK · Confidential · ${ref}
+  </div>`;
+
+  document.getElementById('report').innerHTML = html;
+  document.getElementById('inputForm').style.display = 'none';
+
+  // Remove any existing print bar
+  document.querySelectorAll('.no-print').forEach(el => { if (el.id !== 'inputForm') el.remove(); });
+
+  // Add print button
+  const printBar = document.createElement('div');
+  printBar.className = 'no-print';
+  printBar.style.cssText = 'text-align:center;padding:20px;position:sticky;bottom:0;background:rgba(255,255,255,0.95);border-top:2px solid #1a2744;z-index:100';
+  printBar.innerHTML = '<button class="btn-print" onclick="window.print()">Print / Save as PDF</button><button class="btn-print" style="background:#1a2744" onclick="document.getElementById(\'inputForm\').style.display=\'block\';document.getElementById(\'report\').innerHTML=\'\';this.parentElement.remove();window.scrollTo(0,0)">← Edit Inputs</button>';
+  document.getElementById('report').after(printBar);
+
+  // Scroll to report
+  document.getElementById('report').scrollIntoView({behavior: 'smooth'});
+}
+
+// Auto-generate on load
+window.addEventListener('DOMContentLoaded', () => {
+  generateReport();
+});
+</script>
+</body>
+</html>
