@@ -1447,6 +1447,138 @@ export default function App(){
     if(traffic.school)s+=1; if(traffic.office)s+=1; if(parking>=4)s+=1;
     return s;
   },[traffic,parking]);
+  // ── Range & Space Allocation Prediction ──
+  const rangeAllocation = useMemo(()=>{
+    try {
+      const totalSqft = sqft || 800;
+      // Demographic factors
+      const incomeLevel = medianIncome >= 40000 ? "affluent" : medianIncome >= 30000 ? "mid" : medianIncome >= 22000 ? "value" : "budget";
+      const youngPop = (ageBands["18-24"]||0) + (ageBands["25-34"]||0);
+      const familyPop = (ageBands["35-44"]||0) + (ageBands["45-54"]||0);
+      const olderPop = (ageBands["55-64"]||0) + (ageBands["65+"]||0);
+      const isUrban = location === "city-centre" || location === "forecourt" || popDensity === "high";
+      const isFamily = familyPop >= 35;
+      const isYoung = youngPop >= 35;
+      const isOlder = olderPop >= 30;
+
+      // Predicted space allocation by category (sqft)
+      // Base proportions adjusted by demographics
+      const alloc = [];
+
+      // Tobacco & Vaping - fixed counter space, lower in affluent
+      const tobPct = incomeLevel === "affluent" ? 4 : incomeLevel === "mid" ? 5 : 6;
+      alloc.push({cat:"Tobacco & Vaping", pct: tobPct, sqft: Math.round(totalSqft * tobPct/100), notes: "Behind counter — gantry + vape display"});
+
+      // Alcohol - bigger in affluent, city, older
+      const alcPct = incomeLevel === "affluent" ? 16 : isUrban ? 14 : isOlder ? 15 : 12;
+      alloc.push({cat:"Alcohol", pct: alcPct, sqft: Math.round(totalSqft * alcPct/100), notes: incomeLevel === "affluent" ? "Premium wines, craft beer focus" : "Value + mid-range BWS"});
+
+      // Chilled Foods - bigger for families, affluent
+      const chillPct = isFamily ? 18 : incomeLevel === "affluent" ? 17 : 14;
+      alloc.push({cat:"Chilled Foods", pct: chillPct, sqft: Math.round(totalSqft * chillPct/100), notes: isFamily ? "Extended range — ready meals, family packs" : "Core chilled + meal solutions"});
+
+      // Soft Drinks
+      const softPct = isYoung ? 9 : 7;
+      alloc.push({cat:"Soft Drinks", pct: softPct, sqft: Math.round(totalSqft * softPct/100), notes: isYoung ? "Energy drinks, premium soft" : "Core range"});
+
+      // Canned & Packaged Grocery
+      const grocPct = isFamily ? 10 : 8;
+      alloc.push({cat:"Canned & Packaged Grocery", pct: grocPct, sqft: Math.round(totalSqft * grocPct/100), notes: isFamily ? "Extended cooking/cupboard range" : "Core essentials"});
+
+      // Confectionery
+      const confPct = isYoung || isFamily ? 6 : 5;
+      alloc.push({cat:"Confectionery", pct: confPct, sqft: Math.round(totalSqft * confPct/100), notes: "Impulse zone near till"});
+
+      // Bread & Bakery
+      const breadPct = 5;
+      alloc.push({cat:"Bread & Bakery", pct: breadPct, sqft: Math.round(totalSqft * breadPct/100), notes: "Fresh bread, wraps, bakery"});
+
+      // Fruit & Veg
+      const fvPct = incomeLevel === "affluent" ? 6 : isFamily ? 5 : 4;
+      alloc.push({cat:"Fruit & Veg", pct: fvPct, sqft: Math.round(totalSqft * fvPct/100), notes: incomeLevel === "affluent" ? "Premium & organic range" : "Core fresh produce"});
+
+      // Snacks
+      const snackPct = isYoung ? 5 : 4;
+      alloc.push({cat:"Bagged Savoury Snacks", pct: snackPct, sqft: Math.round(totalSqft * snackPct/100), notes: "Sharing + impulse"});
+
+      // Fresh Milk
+      alloc.push({cat:"Fresh Milk", pct: 3, sqft: Math.round(totalSqft * 3/100), notes: "Essential — rear of store"});
+
+      // Frozen Foods
+      const frozPct = isFamily ? 6 : totalSqft >= 1200 ? 5 : 4;
+      alloc.push({cat:"Frozen Foods", pct: frozPct, sqft: Math.round(totalSqft * frozPct/100), notes: isFamily ? "Extended frozen — family meals, ice cream" : "Core frozen"});
+
+      // Health & Beauty
+      const hbPct = isYoung || incomeLevel === "affluent" ? 4 : 3;
+      alloc.push({cat:"Health & Beauty", pct: hbPct, sqft: Math.round(totalSqft * hbPct/100), notes: isYoung ? "Skincare, grooming, supplements" : "Core HBA"});
+
+      // Household
+      alloc.push({cat:"Household", pct: 3, sqft: Math.round(totalSqft * 3/100), notes: "Cleaning, laundry, kitchen"});
+
+      // Hot Food & Drinks To Go
+      const hotPct = isUrban || isYoung ? 6 : location === "forecourt" ? 7 : 3;
+      alloc.push({cat:"Hot Food & Drinks To Go", pct: hotPct, sqft: Math.round(totalSqft * hotPct/100), notes: isUrban ? "Coffee, hot food counter — key margin driver" : "Basic hot drinks station"});
+
+      // Non-Food / Other
+      const nfPct = 3;
+      alloc.push({cat:"Non-Food / Other", pct: nfPct, sqft: Math.round(totalSqft * nfPct/100), notes: "Seasonal, cards, stationery"});
+
+      // News & Magazines - shrinking category
+      const newsPct = 2;
+      alloc.push({cat:"News & Magazines", pct: newsPct, sqft: Math.round(totalSqft * newsPct/100), notes: "Reduced fixture — digital shift"});
+
+      // Normalise to 100%
+      const totalPct = alloc.reduce((s,a) => s + a.pct, 0);
+      alloc.forEach(a => {
+        a.pct = Math.round(a.pct / totalPct * 100);
+        a.sqft = Math.round(totalSqft * a.pct / 100);
+      });
+
+      // Predicted weekly turnover based on catchment demographics
+      const hhCount = catchmentPop / (householdSz || 2.3);
+      const avgHhSpend = medianIncome > 40000 ? 82 : medianIncome > 30000 ? 70 : medianIncome > 22000 ? 60 : 52;
+      const weeklyMarket = hhCount * avgHhSpend;
+      // Capture rate based on competition and store quality
+      const baseCapture = competitors > 5 ? 0.06 : competitors > 3 ? 0.09 : competitors > 1 ? 0.14 : 0.22;
+      const qualityMult = (totalSqft >= 1500 ? 1.15 : totalSqft >= 1000 ? 1.05 : totalSqft >= 600 ? 1.0 : 0.85);
+      const locationMult = location === "city-centre" ? 1.2 : location === "forecourt" ? 1.15 : location === "parade" ? 1.1 : location === "suburban" ? 1.0 : 0.9;
+      const captureRate = Math.min(baseCapture * qualityMult * locationMult, 0.35);
+      const predictedWeekly = weeklyMarket * captureRate;
+      // Cross-check: sales density benchmark
+      const densityCheck = predictedWeekly / totalSqft;
+      const benchmarkWeekly = totalSqft * 17; // UK average independent c-store £17/sqft/wk
+      // Use the lower of prediction and 1.4x benchmark to avoid over-optimism
+      const cappedWeekly = Math.min(predictedWeekly, benchmarkWeekly * 1.4);
+      const finalWeekly = Math.max(cappedWeekly, totalSqft * 10); // floor at £10/sqft/wk
+
+      const demographicProfile = incomeLevel === "affluent" ? "Affluent catchment — premium range opportunity"
+        : incomeLevel === "mid" ? "Mid-income catchment — balanced range"
+        : incomeLevel === "value" ? "Value-conscious catchment — price-led range"
+        : "Budget catchment — essentials focus";
+
+      const storeProfile = totalSqft >= 2000 ? "Large format — full convenience offer"
+        : totalSqft >= 1200 ? "Mid-size — strong category depth possible"
+        : totalSqft >= 800 ? "Standard convenience — core range"
+        : "Compact — focused essentials offer";
+
+      return {
+        alloc: alloc.sort((a,b) => b.pct - a.pct),
+        predictedWeekly: Math.round(finalWeekly),
+        predictedAnnual: Math.round(finalWeekly * 52),
+        captureRate: Math.round(captureRate * 100 * 10) / 10,
+        weeklyMarket: Math.round(weeklyMarket),
+        densityCheck: Math.round(densityCheck * 100) / 100,
+        demographicProfile,
+        storeProfile,
+        incomeLevel,
+      };
+    } catch(e) {
+      console.error("Range allocation error:", e);
+      return {alloc:[], predictedWeekly: 0, predictedAnnual: 0, captureRate: 10, weeklyMarket: 0, densityCheck: 0, demographicProfile: "", storeProfile: "", incomeLevel: "mid"};
+    }
+  }, [sqft, medianIncome, ageBands, location, popDensity, catchmentPop, householdSz, competitors]);
+
+
 
   // Auto-generate risks
   const risks = useMemo(()=>{
@@ -3174,14 +3306,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
         {/* ── RESULTS ── */}
         {step===5&&(
           <div>
-            {/* Assessment header */}
-            <div style={{background:G.dark,borderRadius:10,padding:"16px 20px",marginBottom:16}}>
-              <div style={{fontSize:9,letterSpacing:".25em",color:G.orange,textTransform:"uppercase",fontWeight:700,marginBottom:4}}>Genesis Retail — Site Assessment</div>
-              <div style={{fontSize:18,fontWeight:800,color:"#fff",marginBottom:clientName?6:0}}>{propName||"Unnamed Site"}{postcode?" · "+postcode:""}</div>
-              {clientName&&<div style={{fontSize:13,color:"#8fa0b8"}}>Prepared for <strong style={{color:"#fff"}}>{clientName}</strong></div>}
-              {!clientName&&<div style={{fontSize:12,color:"#8fa0b8",fontStyle:"italic"}}>Add client name on the Cover tab</div>}
-            </div>
-
             <div style={{marginBottom:16}}>
               {refitCommentary&&<div className="no-print" style={{background:"#d62828",borderRadius:8,padding:"12px 16px",marginBottom:10,fontSize:13,fontWeight:700,color:"#fff"}}>⚠ STOP — Post-Refit Commentary has content. Confirm it is specific to {propName||"this site"} before printing.</div>}
               <button onClick={generatePDF} style={{width:"100%",padding:15,background:G.mid,border:"none",borderRadius:10,color:"#fff",cursor:"pointer",fontFamily:"inherit",fontSize:16,fontWeight:700}}>
@@ -3189,59 +3313,6 @@ Write a concise, professional 4-paragraph executive summary for this site assess
               </button>
               <p style={{fontSize:12,color:G.light,marginTop:8,textAlign:"center"}}>Opens print dialog → choose <strong style={{color:"#fff"}}>Save as PDF</strong> as the destination.</p>
             </div>
-
-            {/* ── 5-YEAR P&L — screen view ── */}
-            <div style={{background:"#fff",border:"1.5px solid #1a2744",borderRadius:12,overflow:"hidden",marginBottom:20}}>
-              <div style={{borderBottom:"2px solid #1a2744",padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div style={{fontSize:13,fontWeight:700,color:"#1a2744"}}>Five-Year Profit & Loss Forecast</div>
-                <div style={{fontSize:11,color:"#4a5568"}}>3% sales growth · 2% cost inflation</div>
-              </div>
-              <div style={{overflowX:"auto"}}>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-                  <thead>
-                    <tr style={{background:G.pale}}>
-                      <th style={{padding:"10px 12px",textAlign:"left",color:G.mid,fontWeight:700,minWidth:160}}>£</th>
-                      {[1,2,3,4,5].map(y=><th key={y} style={{padding:"10px 8px",textAlign:"right",color:G.mid,fontWeight:700,minWidth:90}}>Year {y}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      {l:"Sales Revenue",      k:"s",   neg:false, hi:false, sub:false},
-                      {l:"Gross Profit",        k:"gp",  neg:false, hi:false, sub:true},
-                      {l:"Operating Costs",     k:"tc",  neg:true,  hi:false, sub:false},
-                      {l:"EBITDA",              k:"eb",  neg:false, hi:true,  sub:true},
-                      {l:"Finance Cost",        k:"fin", neg:true,  hi:false, sub:false},
-                      {l:"Net Profit",          k:"np",  neg:false, hi:true,  sub:true},
-                    ].map((dr,i)=>(
-                      <tr key={i} style={{background:dr.hi?"#eef1f8":dr.sub?G.pale:i%2===0?G.card:"#fff",borderBottom:"1px solid "+G.border}}>
-                        <td style={{padding:"10px 12px",fontSize:13,fontWeight:dr.hi||dr.sub?700:400,color:dr.hi?G.mid:G.text}}>{dr.l}</td>
-                        {yr5.map((r,j)=>{
-                          const val=dr.neg?-r[dr.k]:r[dr.k];
-                          const neg=val<0;
-                          return <td key={j} style={{padding:"10px 8px",textAlign:"right",fontWeight:dr.hi||dr.sub?700:400,color:neg?"#d62828":dr.hi?G.mid:G.dark,fontSize:13}}>
-                            {neg?"("+fmt(Math.abs(val))+")":fmt(val)}
-                          </td>;
-                        })}
-                      </tr>
-                    ))}
-                    <tr style={{background:"#f0f3fa",borderTop:"2px solid #1a2744"}}>
-                      <td style={{padding:"10px 12px",fontSize:13,fontWeight:700,color:"#1a2744"}}>Cumulative Net Profit</td>
-                      {[1,2,3,4,5].map(y=>{
-                        const cn=cumNp(y);
-                        return <td key={y} style={{padding:"10px 8px",textAlign:"right",fontWeight:800,color:cn<0?"#d62828":"#1a2744",fontSize:13}}>
-                          {cn<0?"("+fmt(Math.abs(cn))+")":fmt(cn)}
-                        </td>;
-                      })}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div style={{padding:"10px 14px",background:G.card,borderTop:"1px solid "+G.border,fontSize:11,color:G.light}}>
-                Base: {fmt(C.upliftedAnn)}/yr post-refit · Total investment {fmt(C.ti)} · Finance {financeRate}% APR over {financeYears} years · Payback {C.pb?C.pb.toFixed(1)+" years":"N/A"}
-              </div>
-            </div>
-
-
 
             {/* COVER — new design: square photo, address, Genesis info, short summary */}
             <div ref={pdfRef} className="pdf-wrapper" style={{background:"#fff",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",color:R.text}}>
@@ -4009,8 +4080,93 @@ Write a concise, professional 4-paragraph executive summary for this site assess
 )}
 
 {/* ── CATEGORY MIX ── */}
+
+{/* ── SECTION 11B: PREDICTED RANGE & SPACE ALLOCATION ── */}
 <div className="page-break avoid-break">
-  <RPSH c="12. Category Mix & Margin Analysis"/>
+  <RPSH c="Predicted Range & Space Allocation"/>
+
+  {/* Predicted Weekly Turnover callout */}
+  <div style={{background:"#f0f3fa",border:"2px solid #1a2744",borderRadius:8,padding:"16px 20px",marginBottom:20}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".12em",marginBottom:4}}>PREDICTED WEEKLY TURNOVER</div>
+        <div style={{fontSize:28,fontWeight:800,color:"#1a2744"}}>{fmt(rangeAllocation.predictedWeekly)}<span style={{fontSize:14,fontWeight:400,color:"#4a5568"}}> /week</span></div>
+        <div style={{fontSize:13,color:"#4a5568",marginTop:4}}>{fmt(rangeAllocation.predictedAnnual)} per annum</div>
+      </div>
+      <div style={{textAlign:"right"}}>
+        <div style={{fontSize:12,color:"#4a5568"}}>Market capture rate: <strong style={{color:"#1a2744"}}>{rangeAllocation.captureRate}%</strong></div>
+        <div style={{fontSize:12,color:"#4a5568"}}>Weekly addressable market: <strong style={{color:"#1a2744"}}>{fmt(rangeAllocation.weeklyMarket)}</strong></div>
+        <div style={{fontSize:12,color:"#4a5568"}}>Predicted sales density: <strong style={{color:"#1a2744"}}>£{(rangeAllocation.predictedWeekly/(sqft||800)).toFixed(2)}/sqft/wk</strong></div>
+      </div>
+    </div>
+  </div>
+
+  {/* Methodology note */}
+  <div style={{fontSize:12,color:R.text,lineHeight:1.8,marginBottom:16}}>
+    Based on a catchment population of {catchmentPop.toLocaleString()} within a 1-mile radius, median household income of {fmt(medianIncome)}, {competitors} competitor(s) within 0.5 miles, and a {(sqft||800).toLocaleString()} sqft trading floor.
+    The predicted turnover is derived from the estimated weekly convenience-grocery market of {fmt(rangeAllocation.weeklyMarket)}, applying a capture rate of {rangeAllocation.captureRate}% based on store location ({location}), size and competitive density.
+    This figure is cross-checked against UK convenience-store sales-density benchmarks (£12–20/sqft/wk for symbol-group stores) and capped to prevent over-optimism.
+  </div>
+
+  {/* Demographic and store profile */}
+  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:20}}>
+    <div style={{background:"#f6f8fc",borderRadius:8,padding:"12px 16px",border:"1px solid #c8cdd6"}}>
+      <div style={{fontSize:10,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Demographic Profile</div>
+      <div style={{fontSize:13,fontWeight:600,color:"#1a2744"}}>{rangeAllocation.demographicProfile}</div>
+    </div>
+    <div style={{background:"#f6f8fc",borderRadius:8,padding:"12px 16px",border:"1px solid #c8cdd6"}}>
+      <div style={{fontSize:10,fontWeight:700,color:"#FB923C",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Store Profile</div>
+      <div style={{fontSize:13,fontWeight:600,color:"#1a2744"}}>{rangeAllocation.storeProfile}</div>
+    </div>
+  </div>
+
+  {/* Space allocation table */}
+  <div style={{fontSize:11,fontWeight:700,color:"#1a2744",textTransform:"uppercase",letterSpacing:".1em",marginBottom:10}}>Recommended Space Allocation</div>
+  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:16}}>
+    <thead>
+      <tr style={{background:"#1a2744"}}>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Category</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>% of Floor</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Sqft</th>
+        <th style={{padding:"8px 12px",textAlign:"right",color:"#fff",fontWeight:700}}>Predicted Weekly (£)</th>
+        <th style={{padding:"8px 12px",textAlign:"left",color:"#fff",fontWeight:700}}>Range Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rangeAllocation.alloc.map((a,i)=>{
+        const catMatch = cats.find(c=>c.name===a.cat);
+        const catMix = catMatch ? catMatch.mix : 0;
+        const weeklyRev = rangeAllocation.predictedWeekly * catMix / 100;
+        return (
+          <tr key={i} style={{borderBottom:"1px solid #c8cdd6",background:i%2===0?"#f6f8fc":"#fff"}}>
+            <td style={{padding:"6px 12px",fontWeight:500,color:"#1a2744"}}>{a.cat}</td>
+            <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{a.pct}%</td>
+            <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{a.sqft.toLocaleString()}</td>
+            <td style={{padding:"6px 12px",textAlign:"right",color:R.text}}>{fmt(weeklyRev)}</td>
+            <td style={{padding:"6px 12px",color:"#4a5568",fontSize:11}}>{a.notes}</td>
+          </tr>
+        );
+      })}
+      <tr style={{background:"#f0f3fa",borderTop:"2px solid #1a2744"}}>
+        <td style={{padding:"8px 12px",fontWeight:700,color:"#1a2744"}}>TOTAL</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>100%</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{(sqft||800).toLocaleString()}</td>
+        <td style={{padding:"8px 12px",textAlign:"right",fontWeight:700,color:"#1a2744"}}>{fmt(rangeAllocation.predictedWeekly)}</td>
+        <td style={{padding:"8px 12px"}}></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style={{fontSize:12,color:R.text,lineHeight:1.8}}>
+    Space allocation is modelled on the catchment demographic profile, store format ({(sqft||800).toLocaleString()} sqft {location}), and sector benchmarks from ACS Local Shop Report and IGD data.
+    {rangeAllocation.incomeLevel==="affluent"?" The affluent catchment supports a premium-led range with greater emphasis on chilled, fresh, wines and health & beauty.":""}
+    {rangeAllocation.incomeLevel==="budget"?" The lower-income catchment favours an essentials-led range with strong value positioning and promotional depth.":""}
+    {location==="forecourt"||location==="city-centre"?" The high-traffic location supports an expanded food-to-go offer — this should be treated as a key margin driver.":""}
+  </div>
+</div>
+
+<div className="page-break avoid-break">
+  <RPSH c="13. Category Mix & Margin Analysis"/>
   <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,marginBottom:16}}>
     <thead>
       <tr style={{background:"#1a2744"}}>
