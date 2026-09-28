@@ -1236,14 +1236,11 @@ function generateReport() {
   document.getElementById('report').scrollIntoView({behavior: 'smooth'});
 }
 
-// Generate report immediately on load
-window.addEventListener('DOMContentLoaded', () => { generateReport(); });
-
-// When Google Maps loads (async), auto-fetch competitors and regenerate
+// When Google Maps loads (async), auto-fetch competitors into the form
 function onMapsReady() {
   const pc = document.getElementById('f_postcode')?.value?.trim();
   if (pc) {
-    autoFetchCompetitors().then(() => generateReport());
+    autoFetchCompetitors();
   }
 }
 </script>
