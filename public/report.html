@@ -69,6 +69,15 @@
   .btn-next:hover{background:#e07a28}
   .btn-print{display:inline-block;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:12pt;font-weight:700;cursor:pointer;font-family:inherit;margin-right:10px}
 
+  /* ── EDITABLE REPORT ── */
+  #report[contenteditable="true"] p:hover,
+  #report[contenteditable="true"] td:hover,
+  #report[contenteditable="true"] h1:hover,
+  #report[contenteditable="true"] h2:hover,
+  #report[contenteditable="true"] h3:hover,
+  #report[contenteditable="true"] div:hover,
+  #report[contenteditable="true"] span:hover{outline:1px dashed var(--orange);outline-offset:2px;border-radius:3px}
+
   /* ── PRINT ── */
   @media print{
     @page{size:A4 portrait;margin:10mm 12mm 15mm 12mm}
@@ -1273,7 +1282,10 @@ function generateReport() {
     GENESIS RETAIL UK · © ${new Date().getFullYear()} Genesis Retail UK · Confidential · ${ref}
   </div>`;
 
-  document.getElementById('report').innerHTML = html;
+  const reportEl = document.getElementById('report');
+  reportEl.innerHTML = html;
+  reportEl.contentEditable = 'true';
+  reportEl.style.outline = 'none';
   document.getElementById('inputForm').style.display = 'none';
 
   // Remove any existing print bar
@@ -1283,11 +1295,11 @@ function generateReport() {
   const printBar = document.createElement('div');
   printBar.className = 'no-print';
   printBar.style.cssText = 'text-align:center;padding:20px;position:sticky;bottom:0;background:rgba(255,255,255,0.95);border-top:2px solid #1a2744;z-index:100';
-  printBar.innerHTML = '<button class="btn-print" onclick="window.print()">Print / Save as PDF</button><button class="btn-print" style="background:#1a2744" onclick="document.getElementById(\'inputForm\').style.display=\'block\';document.getElementById(\'report\').innerHTML=\'\';this.parentElement.remove();goStep(1)">← Edit Inputs</button>';
-  document.getElementById('report').after(printBar);
+  printBar.innerHTML = '<button class="btn-print" onclick="window.print()">Print / Save as PDF</button><button class="btn-print" style="background:#1a2744" onclick="document.getElementById(\'inputForm\').style.display=\'block\';document.getElementById(\'report\').innerHTML=\'\';document.getElementById(\'report\').contentEditable=\'false\';this.parentElement.remove();goStep(1)">← Edit Inputs</button>';
+  reportEl.after(printBar);
 
   // Scroll to report
-  document.getElementById('report').scrollIntoView({behavior: 'smooth'});
+  reportEl.scrollIntoView({behavior: 'smooth'});
 }
 
 </script>
