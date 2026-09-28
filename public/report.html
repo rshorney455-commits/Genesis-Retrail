@@ -50,10 +50,23 @@
   #inputForm textarea{min-height:60px;resize:vertical}
   .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 16px}
   .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
-  .form-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+  .form-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);display:none}
+  .form-section.active{display:block}
   .form-section-title{font-size:11pt;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
   .btn-generate{display:block;width:100%;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:14pt;font-weight:700;cursor:pointer;margin-top:20px;font-family:inherit;letter-spacing:.03em}
   .btn-generate:hover{background:#0f1a30}
+  .step-bar{display:flex;gap:4px;margin-bottom:6px}
+  .step-pip{flex:1;height:5px;border-radius:3px;background:var(--border);transition:background .3s}
+  .step-pip.done{background:var(--navy)}
+  .step-pip.current{background:var(--orange)}
+  .step-label{font-size:10pt;color:var(--muted);margin-bottom:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+  .step-label strong{color:var(--navy)}
+  .step-nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+  .btn-nav{padding:10px 24px;border:none;border-radius:8px;font-size:12pt;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em}
+  .btn-prev{background:var(--pale);color:var(--navy);border:1.5px solid var(--border)}
+  .btn-prev:hover{background:#e2e6ee}
+  .btn-next{background:var(--orange);color:#fff}
+  .btn-next:hover{background:#e07a28}
   .btn-print{display:inline-block;padding:10px 24px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:12pt;font-weight:700;cursor:pointer;font-family:inherit;margin-right:10px}
 
   /* ── PRINT ── */
@@ -81,9 +94,11 @@
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <div id="inputForm">
   <h2>Genesis Retail — Site Suitability Assessment</h2>
-  <p style="font-size:10pt;color:var(--muted);margin-bottom:14px">Fill in the site data below. The report updates live. Print to PDF when ready.</p>
+  <p style="font-size:10pt;color:var(--muted);margin-bottom:4px">Fill in each section, then generate the report. Print to PDF when ready.</p>
+  <div id="stepBar" class="step-bar"></div>
+  <div id="stepLabel" class="step-label"></div>
 
-  <div class="form-section">
+  <div class="form-section active" data-step="1" data-step-name="Site Details">
     <div class="form-section-title">Site Details</div>
     <div class="form-grid">
       <div><label>Property Name</label><input id="f_propName" value="29-31 High Street, Ramsgate"></div>
@@ -103,7 +118,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="2" data-step-name="Trading Assumptions">
     <div class="form-section-title">Trading Assumptions</div>
     <div class="form-grid">
       <div><label>Daily Transactions</label><input type="number" id="f_footfall" value="380"></div>
@@ -115,7 +130,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="3" data-step-name="Costs">
     <div class="form-section-title">Costs</div>
     <div class="form-grid">
       <div><label>Annual Rent (£)</label><input type="number" id="f_rent" value="18000"></div>
@@ -129,7 +144,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="4" data-step-name="Catchment Demographics">
     <div class="form-section-title">Catchment Demographics</div>
     <div class="form-grid">
       <div><label>Catchment Population (1-mile)</label><input type="number" id="f_catchmentPop" value="9200"></div>
@@ -148,7 +163,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="5" data-step-name="Age Bands">
     <div class="form-section-title">Age Bands (%)</div>
     <div class="form-grid" style="grid-template-columns:repeat(6,1fr)">
       <div><label>18-24</label><input type="number" id="f_age1824" value="12"></div>
@@ -160,7 +175,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="6" data-step-name="Area Trends">
     <div class="form-section-title">Area Trends</div>
     <div class="form-grid" style="grid-template-columns:repeat(6,1fr)">
       <div><label>House Prices</label><select id="f_tHP"><option>Rising</option><option selected>Stable</option><option>Declining</option></select></div>
@@ -172,7 +187,7 @@
     </div>
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="7" data-step-name="Report Narrative">
     <div class="form-section-title">Report Narrative Fields</div>
     <div class="form-grid-2">
       <div><label>Tenure</label><input id="f_reportTenure" value="New lease — terms to be agreed"></div>
@@ -194,7 +209,7 @@
     <input id="f_reportIssuedTo" value="">
   </div>
 
-  <div class="form-section">
+  <div class="form-section" data-step="8" data-step-name="Competitors">
     <div class="form-section-title">Competitors</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
       <button id="btnFetchComp" onclick="autoFetchCompetitors()" style="padding:8px 18px;background:var(--orange);color:#fff;border:none;border-radius:6px;font-size:10pt;font-weight:700;cursor:pointer;font-family:inherit">Find Competitors (from postcode)</button>
@@ -207,7 +222,11 @@
     <button onclick="addCompRow()" style="margin-top:8px;padding:6px 14px;background:var(--pale);color:var(--navy);border:1px solid var(--border);border-radius:6px;font-size:9pt;font-weight:600;cursor:pointer;font-family:inherit">+ Add row manually</button>
   </div>
 
-  <button class="btn-generate" onclick="generateReport()">Generate Report ↓</button>
+  <div id="stepNav" class="step-nav">
+    <button class="btn-nav btn-prev" onclick="goStep(currentStep-1)">← Previous</button>
+    <button id="btnNext" class="btn-nav btn-next" onclick="goStep(currentStep+1)">Next →</button>
+    <button id="btnGenerate" class="btn-generate" onclick="generateReport()" style="display:none;margin:0;width:auto;padding:14px 40px">Generate Report ↓</button>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════════════════════════════════════ -->
@@ -224,6 +243,53 @@
 
 const fmt = v => '£' + Math.round(v).toLocaleString('en-GB');
 const pct = v => (v||0).toFixed(1) + '%';
+
+// ── STEP WIZARD ──
+const TOTAL_STEPS = 8;
+let currentStep = 1;
+
+function initSteps() {
+  const bar = document.getElementById('stepBar');
+  bar.innerHTML = '';
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'step-pip';
+    pip.id = 'pip' + i;
+    pip.style.cursor = 'pointer';
+    pip.onclick = () => goStep(i);
+    bar.appendChild(pip);
+  }
+  updateStepUI();
+}
+
+function goStep(n) {
+  if (n < 1 || n > TOTAL_STEPS) return;
+  currentStep = n;
+  updateStepUI();
+  window.scrollTo(0, 0);
+}
+
+function updateStepUI() {
+  // Show/hide sections
+  document.querySelectorAll('.form-section[data-step]').forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.step) === currentStep);
+  });
+  // Update pips
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const pip = document.getElementById('pip' + i);
+    pip.className = 'step-pip' + (i < currentStep ? ' done' : '') + (i === currentStep ? ' current' : '');
+  }
+  // Update label
+  const activeSection = document.querySelector('.form-section[data-step="' + currentStep + '"]');
+  const name = activeSection ? activeSection.dataset.stepName : '';
+  document.getElementById('stepLabel').innerHTML = 'Step <strong>' + currentStep + '</strong> of ' + TOTAL_STEPS + ' — ' + name;
+  // Nav buttons
+  document.querySelector('.btn-prev').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+  document.getElementById('btnNext').style.display = currentStep === TOTAL_STEPS ? 'none' : '';
+  document.getElementById('btnGenerate').style.display = currentStep === TOTAL_STEPS ? '' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', initSteps);
 
 // ── AUTO COMPETITOR DISCOVERY ──
 const MAJOR_BRANDS = ['tesco','co-op','coop','sainsbury','morrisons','lidl','aldi','spar','nisa','premier','costcutter','one stop','londis','budgens','bargain booze','iceland'];
@@ -1217,7 +1283,7 @@ function generateReport() {
   const printBar = document.createElement('div');
   printBar.className = 'no-print';
   printBar.style.cssText = 'text-align:center;padding:20px;position:sticky;bottom:0;background:rgba(255,255,255,0.95);border-top:2px solid #1a2744;z-index:100';
-  printBar.innerHTML = '<button class="btn-print" onclick="window.print()">Print / Save as PDF</button><button class="btn-print" style="background:#1a2744" onclick="document.getElementById(\'inputForm\').style.display=\'block\';document.getElementById(\'report\').innerHTML=\'\';this.parentElement.remove();window.scrollTo(0,0)">← Edit Inputs</button>';
+  printBar.innerHTML = '<button class="btn-print" onclick="window.print()">Print / Save as PDF</button><button class="btn-print" style="background:#1a2744" onclick="document.getElementById(\'inputForm\').style.display=\'block\';document.getElementById(\'report\').innerHTML=\'\';this.parentElement.remove();goStep(1)">← Edit Inputs</button>';
   document.getElementById('report').after(printBar);
 
   // Scroll to report
