@@ -215,7 +215,6 @@
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <div id="report" style="max-width:800px;margin:0 auto"></div>
 
-<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s&libraries=places&callback=onMapsReady"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════════
 // GENESIS RETAIL — REPORT ENGINE
@@ -268,27 +267,16 @@ async function autoFetchCompetitors() {
     return;
   }
 
-  // Google Places Nearby Search via Maps JS API
-  if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
-    statusEl.textContent = 'Google Maps not loaded — refresh page';
-    statusEl.style.color = 'var(--red)';
-    btn.disabled = false;
-    return;
-  }
-
+  // Google Places Nearby Search via server-side proxy (avoids CORS)
   statusEl.textContent = 'Searching nearby stores…';
   try {
-    const service = new google.maps.places.PlacesService(document.createElement('div'));
     const storeTypes = ['convenience_store', 'supermarket', 'liquor_store'];
     const allPlaces = [];
 
     for (const sType of storeTypes) {
-      const results = await new Promise(resolve => {
-        service.nearbySearch({ location: { lat, lng }, radius: 804, type: sType }, (res, st) => {
-          resolve(st === google.maps.places.PlacesServiceStatus.OK ? res : []);
-        });
-      });
-      allPlaces.push(...results);
+      const res = await fetch('/api/places?lat=' + lat + '&lng=' + lng + '&type=' + sType);
+      const data = await res.json();
+      if (data.results) allPlaces.push(...data.results);
     }
 
     // Deduplicate by place_id
@@ -297,7 +285,7 @@ async function autoFetchCompetitors() {
 
     // Calculate distances and classify threat level
     const comps = unique.map(p => {
-      const elLat = p.geometry.location.lat(), elLng = p.geometry.location.lng();
+      const elLat = p.geometry.location.lat, elLng = p.geometry.location.lng;
       const dlat = elLat - lat, dlng = elLng - lng;
       const distM = Math.round(Math.sqrt(dlat * dlat * 111320 * 111320 + dlng * dlng * 103000 * 103000));
       const brandLower = p.name.toLowerCase();
@@ -1236,13 +1224,6 @@ function generateReport() {
   document.getElementById('report').scrollIntoView({behavior: 'smooth'});
 }
 
-// When Google Maps loads (async), auto-fetch competitors into the form
-function onMapsReady() {
-  const pc = document.getElementById('f_postcode')?.value?.trim();
-  if (pc) {
-    autoFetchCompetitors();
-  }
-}
 </script>
 </body>
 </html>
