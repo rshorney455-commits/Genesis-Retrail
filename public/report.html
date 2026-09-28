@@ -87,7 +87,7 @@
     <div class="form-section-title">Site Details</div>
     <div class="form-grid">
       <div><label>Property Name</label><input id="f_propName" value="29-31 High Street, Ramsgate"></div>
-      <div><label>Postcode</label><input id="f_postcode" value="CT11 9AG"></div>
+      <div><label>Postcode</label><input id="f_postcode" value="CT11 9AG" onchange="autoFetchCompetitors()"></div>
       <div><label>Net Selling Area (sq ft)</label><input type="number" id="f_sqft" value="1200"></div>
       <div><label>Location Type</label>
         <select id="f_location">
@@ -196,30 +196,15 @@
 
   <div class="form-section">
     <div class="form-section-title">Competitors</div>
-    <p style="font-size:9pt;color:var(--muted);margin-bottom:8px">Add up to 8 competitors. Leave blank rows empty.</p>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <button id="btnFetchComp" onclick="autoFetchCompetitors()" style="padding:8px 18px;background:var(--orange);color:#fff;border:none;border-radius:6px;font-size:10pt;font-weight:700;cursor:pointer;font-family:inherit">Find Competitors (from postcode)</button>
+      <span id="compStatus" style="font-size:9pt;color:var(--muted)"></span>
+    </div>
     <table style="font-size:10pt">
-      <thead><tr><th>Name</th><th>Distance</th><th>Type</th><th>Threat</th></tr></thead>
-      <tbody id="compTableBody">
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-        <tr><td><input class="comp-name" value=""></td><td><input class="comp-dist" value="" style="width:80px"></td>
-            <td><select class="comp-type"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>
-            <td><select class="comp-threat"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td></tr>
-      </tbody>
+      <thead><tr><th>Name</th><th>Distance</th><th>Type</th><th>Threat</th><th style="width:40px"></th></tr></thead>
+      <tbody id="compTableBody"></tbody>
     </table>
+    <button onclick="addCompRow()" style="margin-top:8px;padding:6px 14px;background:var(--pale);color:var(--navy);border:1px solid var(--border);border-radius:6px;font-size:9pt;font-weight:600;cursor:pointer;font-family:inherit">+ Add row manually</button>
   </div>
 
   <button class="btn-generate" onclick="generateReport()">Generate Report ↓</button>
@@ -230,6 +215,7 @@
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <div id="report" style="max-width:800px;margin:0 auto"></div>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s&libraries=places"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════════
 // GENESIS RETAIL — REPORT ENGINE
@@ -239,6 +225,110 @@
 
 const fmt = v => '£' + Math.round(v).toLocaleString('en-GB');
 const pct = v => (v||0).toFixed(1) + '%';
+
+// ── AUTO COMPETITOR DISCOVERY ──
+const MAJOR_BRANDS = ['tesco','co-op','coop','sainsbury','morrisons','lidl','aldi','spar','nisa','premier','costcutter','one stop','londis','budgens','bargain booze','iceland'];
+
+function addCompRow(name, dist, type, threat) {
+  const tbody = document.getElementById('compTableBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td><input class="comp-name" value="" style="width:100%;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt"></td>'
+    + '<td><input class="comp-dist" value="" style="width:80px;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt"></td>'
+    + '<td><select class="comp-type" style="border:1px solid var(--border);padding:4px;border-radius:4px;font-size:10pt"><option value="convenience_store">Convenience</option><option value="supermarket">Supermarket</option><option value="other">Other</option></select></td>'
+    + '<td><select class="comp-threat" style="border:1px solid var(--border);padding:4px;border-radius:4px;font-size:10pt"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></td>'
+    + '<td><button onclick="this.closest(\'tr\').remove()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14pt;font-weight:700" title="Remove">×</button></td>';
+  if (name) tr.querySelector('.comp-name').value = name;
+  if (dist) tr.querySelector('.comp-dist').value = dist;
+  if (type) tr.querySelector('.comp-type').value = type;
+  if (threat) tr.querySelector('.comp-threat').value = threat;
+  tbody.appendChild(tr);
+}
+
+async function autoFetchCompetitors() {
+  const postcode = document.getElementById('f_postcode').value.trim();
+  if (!postcode) return;
+
+  const statusEl = document.getElementById('compStatus');
+  const btn = document.getElementById('btnFetchComp');
+  btn.disabled = true;
+  statusEl.style.color = 'var(--muted)';
+  statusEl.textContent = 'Geocoding postcode…';
+
+  // Geocode via postcodes.io
+  let lat, lng;
+  try {
+    const res = await fetch('https://api.postcodes.io/postcodes/' + encodeURIComponent(postcode));
+    const data = await res.json();
+    if (data.status !== 200) { statusEl.textContent = 'Invalid postcode'; btn.disabled = false; return; }
+    lat = data.result.latitude;
+    lng = data.result.longitude;
+  } catch (e) {
+    statusEl.textContent = 'Geocoding failed — check connection';
+    btn.disabled = false;
+    return;
+  }
+
+  // Google Places Nearby Search via Maps JS API
+  if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+    statusEl.textContent = 'Google Maps not loaded — refresh page';
+    statusEl.style.color = 'var(--red)';
+    btn.disabled = false;
+    return;
+  }
+
+  statusEl.textContent = 'Searching nearby stores…';
+  try {
+    const service = new google.maps.places.PlacesService(document.createElement('div'));
+    const storeTypes = ['convenience_store', 'supermarket', 'liquor_store'];
+    const allPlaces = [];
+
+    for (const sType of storeTypes) {
+      const results = await new Promise(resolve => {
+        service.nearbySearch({ location: { lat, lng }, radius: 804, type: sType }, (res, st) => {
+          resolve(st === google.maps.places.PlacesServiceStatus.OK ? res : []);
+        });
+      });
+      allPlaces.push(...results);
+    }
+
+    // Deduplicate by place_id
+    const seen = new Set();
+    const unique = allPlaces.filter(p => { if (seen.has(p.place_id)) return false; seen.add(p.place_id); return true; });
+
+    // Calculate distances and classify threat level
+    const comps = unique.map(p => {
+      const elLat = p.geometry.location.lat(), elLng = p.geometry.location.lng();
+      const dlat = elLat - lat, dlng = elLng - lng;
+      const distM = Math.round(Math.sqrt(dlat * dlat * 111320 * 111320 + dlng * dlng * 103000 * 103000));
+      const brandLower = p.name.toLowerCase();
+      const isMajor = MAJOR_BRANDS.some(b => brandLower.includes(b));
+      return {
+        name: p.name,
+        distance: (distM / 1609).toFixed(2) + ' miles',
+        type: (p.types && p.types.includes('supermarket')) ? 'supermarket' : 'convenience_store',
+        threat: distM < 400 && isMajor ? 'high' : distM < 800 && isMajor ? 'medium' : distM < 400 ? 'medium' : 'low',
+        distM
+      };
+    }).sort((a, b) => a.distM - b.distM);
+
+    // Populate table
+    document.getElementById('compTableBody').innerHTML = '';
+    comps.forEach(c => addCompRow(c.name, c.distance, c.type, c.threat));
+
+    // Update summary fields
+    document.getElementById('f_competitors').value = comps.length;
+    if (comps.length > 0) {
+      document.getElementById('f_nearestComp').value = (comps[0].distM / 1609).toFixed(2);
+    }
+
+    statusEl.textContent = 'Found ' + comps.length + ' competitor' + (comps.length !== 1 ? 's' : '') + ' within 0.5 miles';
+    statusEl.style.color = 'var(--green)';
+  } catch (e) {
+    statusEl.textContent = 'Places search failed — ' + e.message;
+    statusEl.style.color = 'var(--red)';
+  }
+  btn.disabled = false;
+}
 
 function gatherInputs() {
   const v = id => document.getElementById(id)?.value || '';
@@ -1146,8 +1236,12 @@ function generateReport() {
   document.getElementById('report').scrollIntoView({behavior: 'smooth'});
 }
 
-// Auto-generate on load
-window.addEventListener('DOMContentLoaded', () => {
+// Auto-fetch competitors and generate on load
+window.addEventListener('DOMContentLoaded', async () => {
+  const pc = document.getElementById('f_postcode').value.trim();
+  if (pc && typeof google !== 'undefined' && google.maps && google.maps.places) {
+    await autoFetchCompetitors();
+  }
   generateReport();
 });
 </script>
