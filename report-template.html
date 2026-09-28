@@ -215,7 +215,7 @@
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <div id="report" style="max-width:800px;margin:0 auto"></div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s&libraries=places"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s&libraries=places&callback=onMapsReady"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════════
 // GENESIS RETAIL — REPORT ENGINE
@@ -1236,14 +1236,16 @@ function generateReport() {
   document.getElementById('report').scrollIntoView({behavior: 'smooth'});
 }
 
-// Auto-fetch competitors and generate on load
-window.addEventListener('DOMContentLoaded', async () => {
-  const pc = document.getElementById('f_postcode').value.trim();
-  if (pc && typeof google !== 'undefined' && google.maps && google.maps.places) {
-    await autoFetchCompetitors();
+// Generate report immediately on load
+window.addEventListener('DOMContentLoaded', () => { generateReport(); });
+
+// When Google Maps loads (async), auto-fetch competitors and regenerate
+function onMapsReady() {
+  const pc = document.getElementById('f_postcode')?.value?.trim();
+  if (pc) {
+    autoFetchCompetitors().then(() => generateReport());
   }
-  generateReport();
-});
+}
 </script>
 </body>
 </html>
