@@ -231,6 +231,37 @@
     <button onclick="addCompRow()" style="margin-top:8px;padding:6px 14px;background:var(--pale);color:var(--navy);border:1px solid var(--border);border-radius:6px;font-size:9pt;font-weight:600;cursor:pointer;font-family:inherit">+ Add row manually</button>
   </div>
 
+  <div class="form-section" data-step="9" data-step-name="Category Mix">
+    <div class="form-section-title">Category Mix & Margins</div>
+    <p style="font-size:9pt;color:var(--muted);margin-bottom:8px">ACS 2025 defaults loaded. Edit sales mix % and gross profit % for each category.</p>
+    <table style="font-size:10pt">
+      <thead><tr><th>Category</th><th style="width:100px">Sales Mix %</th><th style="width:100px">GP %</th></tr></thead>
+      <tbody id="catMixBody"></tbody>
+      <tfoot><tr style="background:var(--pale);font-weight:700"><td>Total Mix</td><td class="right" id="catMixTotal">—</td><td></td></tr></tfoot>
+    </table>
+    <button type="button" onclick="resetCatDefaults()" style="margin-top:8px;padding:6px 14px;background:var(--pale);color:var(--navy);border:1px solid var(--border);border-radius:6px;font-size:9pt;font-weight:600;cursor:pointer;font-family:inherit">Reset to ACS 2025 Defaults</button>
+  </div>
+
+  <div class="form-section" data-step="10" data-step-name="Space Allocation">
+    <div class="form-section-title">Space Allocation & Range</div>
+    <p style="font-size:9pt;color:var(--muted);margin-bottom:8px">Floor space % and range notes by category. Click 'Calculate' to set from your site and demographic inputs.</p>
+    <button type="button" onclick="calcSpaceDefaults()" style="margin-bottom:10px;padding:8px 18px;background:var(--orange);color:#fff;border:none;border-radius:6px;font-size:10pt;font-weight:700;cursor:pointer;font-family:inherit">Calculate from Current Inputs</button>
+    <table style="font-size:10pt">
+      <thead><tr><th>Category</th><th style="width:80px">Floor %</th><th style="width:80px">Sqft</th><th>Range Notes</th></tr></thead>
+      <tbody id="spaceAllocBody"></tbody>
+      <tfoot><tr style="background:var(--pale);font-weight:700"><td>Total</td><td class="right" id="allocPctTotal">—</td><td class="right" id="allocSqftTotal">—</td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="form-section" data-step="11" data-step-name="Model Parameters">
+    <div class="form-section-title">Model Parameters</div>
+    <p style="font-size:9pt;color:var(--muted);margin-bottom:8px">Growth and inflation assumptions used in the 5-year forecast and sensitivity analysis.</p>
+    <div class="form-grid">
+      <div><label>Annual Sales Growth (%)</label><input type="number" id="f_salesGrowth" value="3" step="0.5"></div>
+      <div><label>Annual Cost Inflation (%)</label><input type="number" id="f_costInflation" value="2" step="0.5"></div>
+    </div>
+  </div>
+
   <div id="stepNav" class="step-nav">
     <button class="btn-nav btn-prev" onclick="goStep(currentStep-1)">← Previous</button>
     <button id="btnNext" class="btn-nav btn-next" onclick="goStep(currentStep+1)">Next →</button>
@@ -254,7 +285,7 @@ const fmt = v => '£' + Math.round(v).toLocaleString('en-GB');
 const pct = v => (v||0).toFixed(1) + '%';
 
 // ── STEP WIZARD ──
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 11;
 let currentStep = 1;
 
 function initSteps() {
@@ -298,7 +329,118 @@ function updateStepUI() {
   document.getElementById('btnGenerate').style.display = currentStep === TOTAL_STEPS ? '' : 'none';
 }
 
-document.addEventListener('DOMContentLoaded', initSteps);
+document.addEventListener('DOMContentLoaded', function() {
+  initSteps();
+  initCatMixTable();
+  initSpaceAllocTable();
+});
+
+// ── CATEGORY MIX TABLE ──
+function initCatMixTable() {
+  const tbody = document.getElementById('catMixBody');
+  tbody.innerHTML = '';
+  CATS.forEach((cat, i) => {
+    const tr = document.createElement('tr');
+    if (i % 2 === 0) tr.style.background = 'var(--alt)';
+    tr.innerHTML = '<td style="font-weight:500;color:var(--navy)">' + cat.name + '</td>'
+      + '<td><input type="number" class="cat-mix" data-idx="' + i + '" value="' + cat.mix + '" step="0.1" style="width:80px;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt;text-align:right" oninput="updateCatTotal()"></td>'
+      + '<td><input type="number" class="cat-gp" data-idx="' + i + '" value="' + cat.gp + '" step="1" style="width:80px;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt;text-align:right"></td>';
+    tbody.appendChild(tr);
+  });
+  updateCatTotal();
+}
+
+function updateCatTotal() {
+  let total = 0;
+  document.querySelectorAll('.cat-mix').forEach(inp => total += parseFloat(inp.value) || 0);
+  const el = document.getElementById('catMixTotal');
+  el.textContent = total.toFixed(1) + '%';
+  el.style.color = Math.abs(total - 100) < 0.5 ? 'var(--green)' : 'var(--red)';
+}
+
+function resetCatDefaults() {
+  CATS.forEach((cat, i) => {
+    const mixInput = document.querySelector('.cat-mix[data-idx="' + i + '"]');
+    const gpInput = document.querySelector('.cat-gp[data-idx="' + i + '"]');
+    if (mixInput) mixInput.value = cat.mix;
+    if (gpInput) gpInput.value = cat.gp;
+  });
+  updateCatTotal();
+}
+
+// ── SPACE ALLOCATION TABLE ──
+function initSpaceAllocTable() {
+  const tbody = document.getElementById('spaceAllocBody');
+  tbody.innerHTML = '';
+  CATS.forEach((cat, i) => {
+    const tr = document.createElement('tr');
+    if (i % 2 === 0) tr.style.background = 'var(--alt)';
+    tr.innerHTML = '<td style="font-weight:500;color:var(--navy)">' + cat.name + '</td>'
+      + '<td><input type="number" class="alloc-pct" data-idx="' + i + '" value="" step="1" style="width:60px;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt;text-align:right" oninput="updateAllocTotals()"></td>'
+      + '<td class="right alloc-sqft" data-idx="' + i + '" style="font-size:10pt;color:var(--muted)">—</td>'
+      + '<td><input type="text" class="alloc-notes" data-idx="' + i + '" value="" style="width:100%;border:1px solid var(--border);padding:4px 6px;border-radius:4px;font-size:10pt"></td>';
+    tbody.appendChild(tr);
+  });
+  calcSpaceDefaults();
+}
+
+function updateAllocTotals() {
+  const sqft = parseFloat(document.getElementById('f_sqft').value) || 800;
+  let totalPct = 0;
+  document.querySelectorAll('.alloc-pct').forEach(inp => {
+    const p = parseFloat(inp.value) || 0;
+    totalPct += p;
+    const idx = inp.dataset.idx;
+    const sqftCell = document.querySelector('.alloc-sqft[data-idx="' + idx + '"]');
+    if (sqftCell) sqftCell.textContent = Math.round(sqft * p / 100);
+  });
+  const pctEl = document.getElementById('allocPctTotal');
+  pctEl.textContent = totalPct + '%';
+  pctEl.style.color = Math.abs(totalPct - 100) < 1 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('allocSqftTotal').textContent = sqft;
+}
+
+function calcSpaceDefaults() {
+  const sqft = parseFloat(document.getElementById('f_sqft').value) || 800;
+  const medianIncome = parseFloat(document.getElementById('f_medianIncome').value) || 28500;
+  const location = document.getElementById('f_location').value;
+  const popDensity = document.getElementById('f_popDensity').value;
+  const youngPop = (parseFloat(document.getElementById('f_age1824').value)||0) + (parseFloat(document.getElementById('f_age2534').value)||0);
+  const familyPop = (parseFloat(document.getElementById('f_age3544').value)||0) + (parseFloat(document.getElementById('f_age4554').value)||0);
+  const olderPop = (parseFloat(document.getElementById('f_age5564').value)||0) + (parseFloat(document.getElementById('f_age65').value)||0);
+  const incomeLevel = medianIncome >= 40000 ? "affluent" : medianIncome >= 30000 ? "mid" : medianIncome >= 22000 ? "value" : "budget";
+  const isUrban = location === "city-centre" || location === "forecourt" || popDensity === "high";
+  const isFamily = familyPop >= 35;
+  const isYoung = youngPop >= 35;
+  const isOlder = olderPop >= 30;
+  const defaults = [
+    {pct: incomeLevel==="affluent"?4:incomeLevel==="mid"?5:6, notes:"Behind counter — gantry + vape display"},
+    {pct: incomeLevel==="affluent"?16:isUrban?14:isOlder?15:12, notes:incomeLevel==="affluent"?"Premium wines, craft beer focus":"Value + mid-range BWS"},
+    {pct: isFamily?18:incomeLevel==="affluent"?17:14, notes:isFamily?"Extended range — ready meals, family packs":"Core chilled + meal solutions"},
+    {pct: isYoung?9:7, notes:isYoung?"Energy drinks, premium soft":"Core range"},
+    {pct: isFamily?10:8, notes:isFamily?"Extended cooking/cupboard range":"Core essentials"},
+    {pct: isYoung||isFamily?6:5, notes:"Impulse zone near till"},
+    {pct:5, notes:"Fresh bread, wraps, bakery"},
+    {pct: incomeLevel==="affluent"?6:isFamily?5:4, notes:incomeLevel==="affluent"?"Premium & organic range":"Core fresh produce"},
+    {pct: isYoung?5:4, notes:"Sharing + impulse"},
+    {pct:3, notes:"Essential — rear of store"},
+    {pct: isFamily?6:sqft>=1200?5:4, notes:isFamily?"Extended frozen — family meals, ice cream":"Core frozen"},
+    {pct: isYoung||incomeLevel==="affluent"?4:3, notes:isYoung?"Skincare, grooming, supplements":"Core HBA"},
+    {pct:3, notes:"Cleaning, laundry, kitchen"},
+    {pct: isUrban||isYoung?6:location==="forecourt"?7:3, notes:isUrban?"Coffee, hot food counter — key margin driver":"Basic hot drinks station"},
+    {pct:3, notes:"Seasonal, cards, stationery"},
+    {pct:2, notes:"Reduced fixture — digital shift"},
+  ];
+  const totalPct = defaults.reduce((s,d) => s + d.pct, 0);
+  defaults.forEach(d => d.pct = Math.round(d.pct / totalPct * 100));
+  defaults.forEach((d, i) => {
+    const pctInput = document.querySelector('.alloc-pct[data-idx="' + i + '"]');
+    const notesInput = document.querySelector('.alloc-notes[data-idx="' + i + '"]');
+    if (pctInput) pctInput.value = d.pct;
+    if (notesInput) notesInput.value = d.notes;
+  });
+  updateAllocTotals();
+}
 
 // ── AUTO COMPETITOR DISCOVERY ──
 const MAJOR_BRANDS = ['tesco','co-op','coop','sainsbury','morrisons','lidl','aldi','spar','nisa','premier','costcutter','one stop','londis','budgens','bargain booze','iceland'];
@@ -431,7 +573,19 @@ function gatherInputs() {
     reportWhatStoreMustBe: v('f_reportWhatStoreMustBe'),
     reportVerdictText: v('f_reportVerdictText'),
     reportIssuedTo: v('f_reportIssuedTo'),
-    competitorList: competitors
+    competitorList: competitors,
+    cats: Array.from(document.querySelectorAll('#catMixBody tr')).map((tr, i) => ({
+      name: CATS[i].name,
+      mix: parseFloat(tr.querySelector('.cat-mix')?.value) || 0,
+      gp: parseFloat(tr.querySelector('.cat-gp')?.value) || 0
+    })),
+    alloc: Array.from(document.querySelectorAll('#spaceAllocBody tr')).map((tr, i) => ({
+      cat: CATS[i].name,
+      pct: parseInt(tr.querySelector('.alloc-pct')?.value) || 0,
+      notes: tr.querySelector('.alloc-notes')?.value || ''
+    })),
+    salesGrowth: n('f_salesGrowth') || 3,
+    costInflation: n('f_costInflation') || 2
   };
 }
 
@@ -457,7 +611,7 @@ const CATS = [
 
 // ── COMPUTATION ENGINE ──
 function compute(S) {
-  const cats = CATS;
+  const cats = S.cats && S.cats.length ? S.cats : CATS;
   const wk = S.footfall * 7 * S.avgBasket;
   const ann = wk * 52;
   const upliftedWk = wk * (1 + S.uplift / 100);
@@ -538,33 +692,37 @@ function compute(S) {
   const isYoung = youngPop >= 35;
   const isOlder = olderPop >= 30;
 
-  const alloc = [];
-  const tobPct = incomeLevel === "affluent" ? 4 : incomeLevel === "mid" ? 5 : 6;
-  alloc.push({cat:"Tobacco & Vaping", pct:tobPct, notes:"Behind counter — gantry + vape display"});
-  const alcPct = incomeLevel === "affluent" ? 16 : isUrban ? 14 : isOlder ? 15 : 12;
-  alloc.push({cat:"Alcohol", pct:alcPct, notes:incomeLevel === "affluent" ? "Premium wines, craft beer focus" : "Value + mid-range BWS"});
-  const chillPct = isFamily ? 18 : incomeLevel === "affluent" ? 17 : 14;
-  alloc.push({cat:"Chilled Foods", pct:chillPct, notes:isFamily ? "Extended range — ready meals, family packs" : "Core chilled + meal solutions"});
-  alloc.push({cat:"Soft Drinks", pct:isYoung ? 9 : 7, notes:isYoung ? "Energy drinks, premium soft" : "Core range"});
-  alloc.push({cat:"Canned & Packaged Grocery", pct:isFamily ? 10 : 8, notes:isFamily ? "Extended cooking/cupboard range" : "Core essentials"});
-  alloc.push({cat:"Confectionery", pct:isYoung || isFamily ? 6 : 5, notes:"Impulse zone near till"});
-  alloc.push({cat:"Bread & Bakery", pct:5, notes:"Fresh bread, wraps, bakery"});
-  alloc.push({cat:"Fruit & Veg", pct:incomeLevel === "affluent" ? 6 : isFamily ? 5 : 4, notes:incomeLevel === "affluent" ? "Premium & organic range" : "Core fresh produce"});
-  alloc.push({cat:"Bagged Savoury Snacks", pct:isYoung ? 5 : 4, notes:"Sharing + impulse"});
-  alloc.push({cat:"Fresh Milk", pct:3, notes:"Essential — rear of store"});
-  alloc.push({cat:"Frozen Foods", pct:isFamily ? 6 : totalSqft >= 1200 ? 5 : 4, notes:isFamily ? "Extended frozen — family meals, ice cream" : "Core frozen"});
-  alloc.push({cat:"Health & Beauty", pct:isYoung || incomeLevel === "affluent" ? 4 : 3, notes:isYoung ? "Skincare, grooming, supplements" : "Core HBA"});
-  alloc.push({cat:"Household", pct:3, notes:"Cleaning, laundry, kitchen"});
-  const hotPct = isUrban || isYoung ? 6 : S.location === "forecourt" ? 7 : 3;
-  alloc.push({cat:"Hot Food & Drinks To Go", pct:hotPct, notes:isUrban ? "Coffee, hot food counter — key margin driver" : "Basic hot drinks station"});
-  alloc.push({cat:"Non-Food / Other", pct:3, notes:"Seasonal, cards, stationery"});
-  alloc.push({cat:"News & Magazines", pct:2, notes:"Reduced fixture — digital shift"});
-
-  const totalAllocPct = alloc.reduce((s, a) => s + a.pct, 0);
-  alloc.forEach(a => {
-    a.pct = Math.round(a.pct / totalAllocPct * 100);
-    a.sqft = Math.round(totalSqft * a.pct / 100);
-  });
+  let alloc;
+  if (S.alloc && S.alloc.length && S.alloc.some(a => a.pct > 0)) {
+    alloc = S.alloc.map(a => ({cat: a.cat, pct: a.pct, notes: a.notes, sqft: Math.round(totalSqft * a.pct / 100)}));
+  } else {
+    alloc = [];
+    const tobPct = incomeLevel === "affluent" ? 4 : incomeLevel === "mid" ? 5 : 6;
+    alloc.push({cat:"Tobacco & Vaping", pct:tobPct, notes:"Behind counter — gantry + vape display"});
+    const alcPct = incomeLevel === "affluent" ? 16 : isUrban ? 14 : isOlder ? 15 : 12;
+    alloc.push({cat:"Alcohol", pct:alcPct, notes:incomeLevel === "affluent" ? "Premium wines, craft beer focus" : "Value + mid-range BWS"});
+    const chillPct = isFamily ? 18 : incomeLevel === "affluent" ? 17 : 14;
+    alloc.push({cat:"Chilled Foods", pct:chillPct, notes:isFamily ? "Extended range — ready meals, family packs" : "Core chilled + meal solutions"});
+    alloc.push({cat:"Soft Drinks", pct:isYoung ? 9 : 7, notes:isYoung ? "Energy drinks, premium soft" : "Core range"});
+    alloc.push({cat:"Canned & Packaged Grocery", pct:isFamily ? 10 : 8, notes:isFamily ? "Extended cooking/cupboard range" : "Core essentials"});
+    alloc.push({cat:"Confectionery", pct:isYoung || isFamily ? 6 : 5, notes:"Impulse zone near till"});
+    alloc.push({cat:"Bread & Bakery", pct:5, notes:"Fresh bread, wraps, bakery"});
+    alloc.push({cat:"Fruit & Veg", pct:incomeLevel === "affluent" ? 6 : isFamily ? 5 : 4, notes:incomeLevel === "affluent" ? "Premium & organic range" : "Core fresh produce"});
+    alloc.push({cat:"Bagged Savoury Snacks", pct:isYoung ? 5 : 4, notes:"Sharing + impulse"});
+    alloc.push({cat:"Fresh Milk", pct:3, notes:"Essential — rear of store"});
+    alloc.push({cat:"Frozen Foods", pct:isFamily ? 6 : totalSqft >= 1200 ? 5 : 4, notes:isFamily ? "Extended frozen — family meals, ice cream" : "Core frozen"});
+    alloc.push({cat:"Health & Beauty", pct:isYoung || incomeLevel === "affluent" ? 4 : 3, notes:isYoung ? "Skincare, grooming, supplements" : "Core HBA"});
+    alloc.push({cat:"Household", pct:3, notes:"Cleaning, laundry, kitchen"});
+    const hotPct = isUrban || isYoung ? 6 : S.location === "forecourt" ? 7 : 3;
+    alloc.push({cat:"Hot Food & Drinks To Go", pct:hotPct, notes:isUrban ? "Coffee, hot food counter — key margin driver" : "Basic hot drinks station"});
+    alloc.push({cat:"Non-Food / Other", pct:3, notes:"Seasonal, cards, stationery"});
+    alloc.push({cat:"News & Magazines", pct:2, notes:"Reduced fixture — digital shift"});
+    const totalAllocPct = alloc.reduce((s, a) => s + a.pct, 0);
+    alloc.forEach(a => {
+      a.pct = Math.round(a.pct / totalAllocPct * 100);
+      a.sqft = Math.round(totalSqft * a.pct / 100);
+    });
+  }
   alloc.sort((a, b) => b.pct - a.pct);
 
   // Predicted weekly turnover
@@ -611,8 +769,10 @@ function compute(S) {
   if (S.staffPct > 12) risks.push({rag:"amber",title:"Staff cost ratio high",detail:`Staff at ${S.staffPct}% of sales is above sector average.`,action:"Review rota efficiency"});
 
   // ── 5-YEAR FORECAST ──
+  const salesGrowthRate = (S.salesGrowth || 3) / 100;
+  const costInflationRate = (S.costInflation || 2) / 100;
   const yr5 = [1,2,3,4,5].map(yr => {
-    const g = Math.pow(1.03, yr - 1), cg = Math.pow(1.02, yr - 1);
+    const g = Math.pow(1 + salesGrowthRate, yr - 1), cg = Math.pow(1 + costInflationRate, yr - 1);
     const s = upliftedAnn * g, gp2 = s * (blGP / 100), stf2 = s * (S.staffPct / 100);
     const tc = (S.rent + S.rates + S.utilities + S.otherCosts) * cg + stf2;
     const eb2 = gp2 - tc, fin = yr <= S.financeYears ? af : 0, np3 = eb2 - fin;
@@ -694,7 +854,7 @@ function generateCommentary(S, C) {
     ].join(' '),
 
     fiveYear: [
-      `The five-year forecast applies 3% annual sales growth with operating costs inflating at 2% per year. By Year 5, the store is forecast to generate annual sales of ${fmt(C.yr5[4]?.s||0)} and a net profit of ${fmt(C.yr5[4]?.np||0)}. Cumulative net profit across five years is ${fmt(C.cumNp(5))}.`,
+      `The five-year forecast applies ${S.salesGrowth||3}% annual sales growth with operating costs inflating at ${S.costInflation||2}% per year. By Year 5, the store is forecast to generate annual sales of ${fmt(C.yr5[4]?.s||0)} and a net profit of ${fmt(C.yr5[4]?.np||0)}. Cumulative net profit across five years is ${fmt(C.cumNp(5))}.`,
       C.cumNp(5) > 0 ? `A cumulative return of ${fmt(C.cumNp(5))} against an initial investment of ${fmt(C.ti)} represents a strong five-year position.` : `The cumulative position is negative — the investment does not recover within the modelled window on current assumptions.`
     ].join(' '),
 
@@ -1054,7 +1214,7 @@ function generateReport() {
       </tbody>
     </table>
     <div style="font-size:10pt;color:#4a5568;font-style:italic;margin-top:8px">
-      3% annual sales growth · 2% cost inflation · Finance: ${S.financeRate}% APR over ${S.financeYears} years
+      ${S.salesGrowth||3}% annual sales growth · ${S.costInflation||2}% cost inflation · Finance: ${S.financeRate}% APR over ${S.financeYears} years
     </div>
     <div class="commentary" style="margin-top:16px">${commentary.fiveYear}</div>
   </div>`;
@@ -1123,7 +1283,7 @@ function generateReport() {
       <thead><tr><th>Category</th><th class="right">% of Floor</th><th class="right">Sqft</th><th class="right">Predicted Weekly (£)</th><th>Range Notes</th></tr></thead>
       <tbody>
         ${C.alloc.map((a, i) => {
-          const catMatch = CATS.find(c => c.name === a.cat);
+          const catMatch = C.cats.find(c => c.name === a.cat);
           const catMix = catMatch ? catMatch.mix : 0;
           const weeklyRev = C.predictedWeekly * catMix / 100;
           return `<tr${i%2===0?' style="background:#f6f8fc"':''}>
@@ -1170,7 +1330,7 @@ function generateReport() {
     <table style="font-size:10pt">
       <thead><tr><th>Category</th><th class="right">Sales Mix %</th><th class="right">Gross Margin %</th><th class="right">Annual Sales (£)</th><th class="right">Annual GP (£)</th></tr></thead>
       <tbody>
-        ${CATS.filter(c => c.mix > 0).sort((a,b) => b.mix - a.mix).map((cat, i) => `
+        ${C.cats.filter(c => c.mix > 0).sort((a,b) => b.mix - a.mix).map((cat, i) => `
         <tr${i%2===0?' style="background:#f6f8fc"':''}>
           <td style="font-weight:500;color:#1a2744">${cat.name}</td>
           <td class="right">${pct(cat.mix)}</td>
@@ -1180,7 +1340,7 @@ function generateReport() {
         </tr>`).join('')}
         <tr class="total-row">
           <td>TOTAL</td>
-          <td class="right">${pct(CATS.reduce((s,c) => s + c.mix, 0))}</td>
+          <td class="right">${pct(C.cats.reduce((s,c) => s + c.mix, 0))}</td>
           <td class="right">${pct(C.blGP)}</td>
           <td class="right">${fmt(C.upliftedAnn)}</td>
           <td class="right">${fmt(C.annGP)}</td>
@@ -1207,8 +1367,8 @@ function generateReport() {
           ['Rent', '£'+S.rent.toLocaleString()+'/yr', 'Agent / marketing particulars'],
           ['Business rates', '£'+S.rates.toLocaleString()+'/yr', 'VOA 2023 list'],
           ['Staff cost ratio', S.staffPct+'% of sales', 'Sector benchmark'],
-          ['Sales growth (annual)', '3%', 'Conservative organic growth'],
-          ['Cost inflation (annual)', '2%', 'CPI-linked'],
+          ['Sales growth (annual)', (S.salesGrowth||3)+'%', 'Conservative organic growth'],
+          ['Cost inflation (annual)', (S.costInflation||2)+'%', 'CPI-linked'],
           ['Finance rate', S.financeRate+'% APR', 'Market rate'],
           ['Finance term', S.financeYears+' years', 'Standard commercial loan'],
         ].map(([a,b,c], i) => `<tr${i%2===0?' style="background:#f6f8fc"':''}>
