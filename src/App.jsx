@@ -1198,11 +1198,11 @@ export default function App(){
 
     // Google Places API — full UK coverage
     try {
-      const GKEY = "AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s";
       const types = ["convenience_store","supermarket","grocery_or_supermarket","liquor_store"];
       const allPlaces = [];
       for(const type of types) {
-        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=804&type=${type}&key=${GKEY}`;
+        // Goes through our own server (/api/places) so the Google key never reaches the browser
+        const url = `/api/places?lat=${lat}&lng=${lng}&type=${type}`;
         const res = await fetch(url);
         const data = await res.json();
         if(data.results) allPlaces.push(...data.results);

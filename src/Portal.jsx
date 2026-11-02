@@ -57,7 +57,7 @@ const EMPTY_CLIENT = {
   notes: "",
 };
 
-const ADMIN_PIN = "genesis2025";
+// Admin PIN is checked on the server (api/admin-login.js); it is not stored in this code.
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const fmt  = n => "£" + Math.round(Math.abs(n)).toLocaleString("en-GB");
@@ -128,9 +128,20 @@ function LoginScreen({ onRetailerLogin, onAdminLogin }) {
     else { setError("Client ID or password incorrect. Contact Genesis Retail for access."); }
   };
 
-  const handleAdmin = () => {
-    if (adminPin === ADMIN_PIN) { onAdminLogin(); }
-    else { setError("Incorrect admin PIN."); }
+  const handleAdmin = async () => {
+    setError("");
+    try {
+      const res = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: adminPin }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { onAdminLogin(); }
+      else { setError(data.error || "Incorrect admin PIN."); }
+    } catch {
+      setError("Could not reach the server. Check your connection and try again.");
+    }
   };
 
   return (

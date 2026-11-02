@@ -1184,7 +1184,7 @@ export default function App(){
 
     // Google Places API — full UK coverage
     try {
-      const GKEY = "AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s";
+      const GKEY = "REMOVED_KEY_now_server_side_see_api_places_js";
       const types = ["convenience_store","supermarket","grocery_or_supermarket","liquor_store"];
       const allPlaces = [];
       for(const type of types) {
