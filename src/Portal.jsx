@@ -57,7 +57,6 @@ const EMPTY_CLIENT = {
   notes: "",
 };
 
-const ADMIN_PIN = "genesis2025";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const fmt  = n => "£" + Math.round(Math.abs(n)).toLocaleString("en-GB");
@@ -128,9 +127,17 @@ function LoginScreen({ onRetailerLogin, onAdminLogin }) {
     else { setError("Client ID or password incorrect. Contact Genesis Retail for access."); }
   };
 
-  const handleAdmin = () => {
-    if (adminPin === ADMIN_PIN) { onAdminLogin(); }
-    else { setError("Incorrect admin PIN."); }
+  const handleAdmin = async () => {
+    try {
+      const res = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: adminPin }),
+      });
+      const data = await res.json();
+      if (data.ok) { onAdminLogin(); }
+      else { setError(data.error || "Incorrect admin PIN."); }
+    } catch (e) { setError("Could not check PIN. Try again."); }
   };
 
   return (
