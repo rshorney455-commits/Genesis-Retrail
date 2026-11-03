@@ -484,14 +484,14 @@ async function autoFetchCompetitors() {
     return;
   }
 
-  // Google Places Nearby Search via server-side proxy (avoids CORS)
+  // Competitor search via server-side TomTom proxy (1 mile)
   statusEl.textContent = 'Searching nearby stores…';
   try {
     const storeTypes = ['convenience_store', 'supermarket', 'liquor_store'];
     const allPlaces = [];
 
     for (const sType of storeTypes) {
-      const res = await fetch('/api/places?lat=' + lat + '&lng=' + lng + '&type=' + sType);
+      const res = await fetch('/api/places?lat=' + lat + '&lng=' + lng + '&radius=1609&type=' + sType);
       const data = await res.json();
       if (data.results) allPlaces.push(...data.results);
     }
@@ -526,7 +526,7 @@ async function autoFetchCompetitors() {
       document.getElementById('f_nearestComp').value = (comps[0].distM / 1609).toFixed(2);
     }
 
-    statusEl.textContent = 'Found ' + comps.length + ' competitor' + (comps.length !== 1 ? 's' : '') + ' within 0.5 miles';
+    statusEl.textContent = 'Found ' + comps.length + ' competitor' + (comps.length !== 1 ? 's' : '') + ' within 1 mile';
     statusEl.style.color = 'var(--green)';
   } catch (e) {
     statusEl.textContent = 'Places search failed — ' + e.message;

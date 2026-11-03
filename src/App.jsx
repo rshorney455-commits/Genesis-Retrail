@@ -32,31 +32,31 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 // ── Sector averages by location type ─────────────────────────────────────────
 const SECTOR = {
   "city-centre": {
-    footfall:600, avgBasket:5.50, staffPct:10, utilities:12000, otherCosts:9000,
+    footfall:600, avgBasket:5.50, staffPct:7, utilities:12000, otherCosts:9000,
     spendBands:{u5:35,s5:38,s10:15,s15:8,s20:4},
     missions:{"Top-up":30,"Grab and Go":35,"Treat or Impulse":15,"Food to Go":15,"Big Shop Supplement":5},
     fhour:{"6-8am":8,"8-10am":18,"10-12pm":10,"12-2pm":22,"2-4pm":10,"4-6pm":18,"6-8pm":10,"8-10pm":4},
   },
   "suburban": {
-    footfall:400, avgBasket:6.80, staffPct:9, utilities:9000, otherCosts:8000,
+    footfall:400, avgBasket:6.80, staffPct:7, utilities:9000, otherCosts:8000,
     spendBands:{u5:25,s5:38,s10:22,s15:10,s20:5},
     missions:{"Top-up":42,"Grab and Go":22,"Treat or Impulse":15,"Food to Go":8,"Big Shop Supplement":13},
     fhour:{"6-8am":4,"8-10am":14,"10-12pm":12,"12-2pm":16,"2-4pm":12,"4-6pm":18,"6-8pm":16,"8-10pm":8},
   },
   "village": {
-    footfall:250, avgBasket:8.00, staffPct:9, utilities:7500, otherCosts:7000,
+    footfall:250, avgBasket:8.00, staffPct:7, utilities:7500, otherCosts:7000,
     spendBands:{u5:15,s5:30,s10:28,s15:17,s20:10},
     missions:{"Top-up":45,"Grab and Go":18,"Treat or Impulse":12,"Food to Go":5,"Big Shop Supplement":20},
     fhour:{"6-8am":3,"8-10am":12,"10-12pm":15,"12-2pm":14,"2-4pm":13,"4-6pm":16,"6-8pm":18,"8-10pm":9},
   },
   "parade": {
-    footfall:350, avgBasket:7.00, staffPct:9, utilities:8500, otherCosts:7500,
+    footfall:350, avgBasket:7.00, staffPct:7, utilities:8500, otherCosts:7500,
     spendBands:{u5:20,s5:36,s10:24,s15:13,s20:7},
     missions:{"Top-up":40,"Grab and Go":25,"Treat or Impulse":15,"Food to Go":8,"Big Shop Supplement":12},
     fhour:{"6-8am":4,"8-10am":13,"10-12pm":14,"12-2pm":17,"2-4pm":12,"4-6pm":18,"6-8pm":16,"8-10pm":6},
   },
   "forecourt": {
-    footfall:500, avgBasket:6.00, staffPct:11, utilities:14000, otherCosts:10000,
+    footfall:500, avgBasket:6.00, staffPct:7, utilities:14000, otherCosts:10000,
     spendBands:{u5:40,s5:36,s10:14,s15:7,s20:3},
     missions:{"Top-up":25,"Grab and Go":40,"Treat or Impulse":18,"Food to Go":14,"Big Shop Supplement":3},
     fhour:{"6-8am":10,"8-10am":16,"10-12pm":12,"12-2pm":14,"2-4pm":12,"4-6pm":16,"6-8pm":14,"8-10pm":6},
@@ -65,7 +65,7 @@ const SECTOR = {
 
 const SYMBOL_GROUPS = [
   { name:"Spar",         tier:"mid",      minSpend:8000,  margin:22, bestFor:["suburban","village","parade"],      desc:"Strong fresh food, good margin, wide UK coverage" },
-  { name:"Nisa",         tier:"mid",      minSpend:8000,  margin:23, bestFor:["suburban","village","parade"],      desc:"Co-op own brand access, flexible terms" },
+  { name:"Nisa",         tier:"mid",      minSpend:8000,  margin:25, bestFor:["suburban","village","parade"],      desc:"Co-op own brand access, flexible terms" },
   { name:"Costcutter",   tier:"value",    minSpend:6000,  margin:20, bestFor:["suburban","parade","forecourt"],    desc:"Value positioning, strong chilled range" },
   { name:"Premier",      tier:"value",    minSpend:5000,  margin:19, bestFor:["village","suburban","parade"],      desc:"Lowest entry threshold, good for smaller stores" },
   { name:"Londis",       tier:"value",    minSpend:6000,  margin:20, bestFor:["city-centre","suburban","parade"],  desc:"Strong urban presence, competitive pricing" },
@@ -276,21 +276,21 @@ function AISection({ prompt, label }) {
     if(!prompt) return;
     setLoading(true); setText(""); setDone(false);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
-          model:"claude-sonnet-4-20250514",
           max_tokens:1000,
           messages:[{ role:"user", content: prompt }]
         })
       });
       const data = await res.json();
+      if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
       const output = data.content?.filter(b=>b.type==="text").map(b=>b.text).join("") || "";
       setText(output);
       setDone(true);
     } catch(e) {
-      setText("");
+      setText("AI text unavailable: "+(e.message||"request failed")+". You can type this section yourself.");
       setDone(true);
     } finally {
       setLoading(false);
@@ -576,28 +576,8 @@ function PPTXExportButton(props) {
         date: new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}),
       };
 
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({
-          model:"claude-sonnet-4-20250514",
-          max_tokens:1000,
-          messages:[{
-            role:"user",
-            content:`You are confirming receipt of a Genesis Retail site assessment for PowerPoint generation.
-
-Site: ${payload.propName}, ${payload.postcode}
-ROI: ${payload.derived.roi.toFixed(1)}%, Net Profit: £${Math.round(payload.derived.nP).toLocaleString()}, Verdict: ${payload.verdict}
-
-Reply with ONLY this exact JSON and nothing else:
-{"status":"ready","site":"${(payload.propName||"").replace(/"/g,"'")}","roi":${payload.derived.roi.toFixed(1)},"verdict":"${payload.verdict}"}`
-          }]
-        })
-      });
-      const data = await res.json();
-      const txt = data.content?.find(b=>b.type==="text")?.text||"";
       
-      // API confirmed — now trigger the actual PPTX download
+      // Build the presentation download
       // Since PptxGenJS CDN is unavailable in this sandbox, we provide a 
       // rich data-filled HTML report that the user can print-to-PDF as a presentation
       // and also offer the pre-built sample deck as a reference
@@ -921,7 +901,7 @@ function AdminTab({ onBack, appState }) {
   const [auditLoading, setAuditLoading] = useState(false);
   const [tab, setTab] = useState("agent");
 
-  const systemPrompt = `You are an expert React developer and convenience retail analyst working on the Genesis Retail Site Viability Assessor app (App_5.jsx). 
+  const systemPrompt = `You are an expert React developer and convenience retail analyst working on the Genesis Retail Site Viability Assessor app (src/App.jsx). 
 You have deep knowledge of:
 - The app's data model: all state variables, calculations, save/load logic
 - Convenience retail KPIs: ROI, EBITDA, sales density, payback period, gross margin
@@ -938,17 +918,17 @@ Current assessment state: ${JSON.stringify(appState, null, 2).slice(0, 3000)}`;
     if (!agentMsg.trim()) return;
     setAgentLoading(true); setAgentRes("");
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
           system: systemPrompt,
           messages: [{ role: "user", content: agentMsg }]
         })
       });
       const data = await res.json();
+      if(!res.ok) { setAgentRes("Error: "+(data.error||("HTTP "+res.status))); return; }
       setAgentRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
     } catch (e) { setAgentRes("Error — please try again."); }
     finally { setAgentLoading(false); }
@@ -971,16 +951,16 @@ Run a complete audit across these 5 areas and report findings with a RAG status 
 For each finding give: Status · Issue · Recommended fix. Be specific.`;
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("/api/claude", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
           messages: [{ role: "user", content: auditPrompt }]
         })
       });
       const data = await res.json();
+      if(!res.ok) { setAuditRes("Error: "+(data.error||("HTTP "+res.status))); return; }
       setAuditRes(data.content?.filter(b => b.type === "text").map(b => b.text).join("") || "No response.");
     } catch (e) { setAuditRes("Error — please try again."); }
     finally { setAuditLoading(false); }
@@ -1165,7 +1145,7 @@ export default function App(){
     setMissions({...s.missions}); setFhour({...s.fhour});
   },[location]);
 
-  // ── Standalone competitor fetch using Google Places API ────────────────────
+  // ── Standalone competitor fetch (TomTom via /api/places) ────────────────────
   const fetchCompetitors = useCallback(async (lat, lng, postcode) => {
     if(!lat || !lng) return;
 
@@ -1196,32 +1176,24 @@ export default function App(){
       setNearestComp(parseFloat(knownWithDist[0].distance));
     }
 
-    // Google Places API — full UK coverage
+    // Competitor search via TomTom (server-side proxy, 1 mile radius)
     try {
-      const GKEY = "AIzaSyB_QQUvX-Tvt5ZJD2Hj_O31wVLPQUc6k0s";
-      const types = ["convenience_store","supermarket","grocery_or_supermarket","liquor_store"];
-      const allPlaces = [];
-      for(const type of types) {
-        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=804&type=${type}&key=${GKEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if(data.results) allPlaces.push(...data.results);
-      }
-      // Deduplicate by place_id
-      const seen = new Set();
-      const unique = allPlaces.filter(p=>{ if(seen.has(p.place_id)) return false; seen.add(p.place_id); return true; });
+      const res = await fetch(`/api/places?lat=${lat}&lng=${lng}&radius=1609`);
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
+      const unique = data.results||[];
       const compList = unique.map(p=>{
         const elLat = p.geometry.location.lat, elLng = p.geometry.location.lng;
         const dlat = elLat-lat, dlng = elLng-lng;
         const distM = Math.round(Math.sqrt(dlat*dlat*111320*111320+dlng*dlng*103000*103000));
         const name = p.name;
-        const brandLower = name.toLowerCase();
-        const isMajor = ["tesco","co-op","coop","sainsbury","morrisons","lidl","aldi","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","iceland"].some(b=>brandLower.includes(b));
+        const brandLower = (name+" "+(p.brand||"")).toLowerCase();
+        const isMajor = ["tesco","co-op","coop","sainsbury","morrisons","lidl","aldi","asda","spar","nisa","premier","costcutter","one stop","londis","budgens","bargain booze","iceland","m&s","marks & spencer","waitrose"].some(b=>brandLower.includes(b));
         return {name, type:p.types?.[0]||"store", lat:elLat, lng:elLng, distance:(distM/1609).toFixed(2)+" miles", distM, threat:distM<400&&isMajor?"high":distM<800&&isMajor?"medium":distM<400?"medium":"low"};
       }).sort((a,b)=>a.distM-b.distM);
 
       if(compList.length > 0) {
-        // Merge with known — Google wins on coverage
+        // Merge with known — TomTom wins on coverage
         const existingNames = new Set(compList.map(c=>c.name.toLowerCase()));
         known.forEach(k=>{
           if(!existingNames.has(k.name.toLowerCase())){
@@ -1235,7 +1207,7 @@ export default function App(){
         setCompetitors(compList.length);
         setNearestComp(parseFloat(compList[0].distance));
       }
-    } catch(e) { console.log("Google Places fetch failed:", e); }
+    } catch(e) { console.log("Competitor search failed:", e); }
   },[]);
 
   // ── V2: Postcode lookup — auto-populates everything ──────────────────────
@@ -1330,7 +1302,7 @@ export default function App(){
         console.log("Food profile lookup failed:", e.message);
       }
 
-      // Fetch competitors using Google Places API
+      // Fetch competitors (TomTom via /api/places)
       fetchCompetitors(lat, lng, clean);
 
       // ── V2: Rates — fallback estimate until user enters rateable value ──
@@ -1823,7 +1795,7 @@ Write a concise, professional 4-paragraph executive summary for this site assess
     setPropName(saved.propName||""); setPostcode(saved.postcode||""); setSqft(saved.sqft||800);
     setLocation(saved.location||"suburban"); setFootfall(saved.footfall||400); setAvgBasket(saved.avgBasket||6.80);
     setOpenHours(saved.openHours||16); setUplift(saved.uplift||15);
-    setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||9);
+    setRent(saved.rent||18000); setRates(saved.rates||6000); setStaffPct(saved.staffPct||7);
     setUtilities(saved.utilities||9000); setOtherCosts(saved.otherCosts||8000);
     setRefitCost(saved.refitCost||110000); setStockCost(saved.stockCost||40000);
     setFinanceRate(saved.financeRate||8); setFinanceYears(saved.financeYears||5);
